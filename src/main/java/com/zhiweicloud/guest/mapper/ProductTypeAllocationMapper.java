@@ -27,16 +27,16 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
+import com.zhiweicloud.guest.model.ProductTypeAllocation;
 
 import java.util.List;
 
 /**
  * @author zhangpengfei
- * @since 2016-12-21 22:17
+ * @since 2016-12-26 22:17
  */
-public interface EmployeeMapper extends MyMapper<Employee> {
-    Employee complexSqlQuery(Long id);
+public interface ProductTypeAllocationMapper extends MyMapper<ProductTypeAllocation> {
 
-    List<Dropdownlist> getEmployeeDropdownList();
+    public List<Dropdownlist> getProductTypeDropdownList();
+
 }

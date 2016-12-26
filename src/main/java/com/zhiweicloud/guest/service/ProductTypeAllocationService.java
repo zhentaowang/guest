@@ -24,15 +24,15 @@
 
 package com.zhiweicloud.guest.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.github.pagehelper.PageHelper;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.EmployeeMapper;
+import com.zhiweicloud.guest.mapper.ProductTypeAllocationMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Employee;
-import org.apache.ibatis.type.StringTypeHandler;
+import com.zhiweicloud.guest.model.ProductTypeAllocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -42,64 +42,39 @@ import java.util.List;
 
 /**
  * @author liuzh
- * @since 2015-12-19 11:09
+ * @since 2015-12-26
  */
 @Service
-public class EmployeeService {
+public class ProductTypeAllocationService {
 
     @Autowired
-    private EmployeeMapper employeeMapper;
+    private ProductTypeAllocationMapper productTypeAllocationMapper;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    public LZResult<PaginationResult<Employee>> getAll(Employee employeeParam,Integer page, Integer rows) {
+    public LZResult<PaginationResult<ProductTypeAllocation>> getAll(Integer page, Integer rows) {
         if (page != null && rows != null) {
             PageHelper.startPage(page, rows, "id");
         }
 
         // 条件查询，自己拼条件
         Example example = new Example(Employee.class);
-        if(employeeParam.getName() != null && !employeeParam.getName().equals("")){
+        /*if(productTypeAllocationParam.getName() != null && !productTypeAllocationParam.getName().equals("")){
             example.createCriteria()
-                    .andCondition("name like '%" + employeeParam.getName() + "%'");
+                    .andCondition("name like '%" + productTypeAllocationParam.getName() + "%'");
         }
         example.createCriteria()
-                .andCondition("is_deleted = 0");
-        List<Employee> employeeList = employeeMapper.selectByExample(example);
+                .andCondition("is_deleted = 0");*/
+        List<ProductTypeAllocation> employeeList = productTypeAllocationMapper.selectByExample(example);
 
-        Integer count = employeeMapper.selectCountByExample(example);
-        // 测试复杂sql，自定义方法
-        Employee testComplexSql = employeeMapper.complexSqlQuery(12L);
-        System.out.println(" 测试复杂sql，自定义方法 : " + testComplexSql.getName());
-        PaginationResult<Employee> eqr = new PaginationResult<Employee>(count, employeeList);
-        LZResult<PaginationResult<Employee>> result = new LZResult<PaginationResult<Employee>>(eqr);
+        Integer count = productTypeAllocationMapper.selectCountByExample(example);
+        PaginationResult<ProductTypeAllocation> eqr = new PaginationResult<ProductTypeAllocation>(count, employeeList);
+        LZResult<PaginationResult<ProductTypeAllocation>> result = new LZResult<PaginationResult<ProductTypeAllocation>>(eqr);
         return result;
     }
 
-    public Employee getById(Long id) {
-        return employeeMapper.selectByPrimaryKey(id);
-    }
-
-    public void saveOrUpdate(Employee employee) {
-        if (employee.getId() != null) {
-            employeeMapper.updateByPrimaryKey(employee);
-        } else {
-            employeeMapper.insert(employee);
-        }
-    }
-
-    public void deleteById(List<Long> ids) {
-        for(int i = 0; i< ids.size();i++){
-            Employee temp = new Employee();
-            temp.setId(ids.get(i));
-            temp.setIsDeleted(Constant.MARK_AS_DELETED);
-            employeeMapper.updateByPrimaryKeySelective(temp);
-        }
+    public List<Dropdownlist> queryProductTypeAllocationDropdownList(){
+       return productTypeAllocationMapper.getProductTypeDropdownList();
     }
 
 
-    public List<Dropdownlist> queryEmployeeDropdownList() {
-        return employeeMapper.getEmployeeDropdownList();
-    }
+
 }

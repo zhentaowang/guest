@@ -26,8 +26,7 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
+import com.zhiweicloud.guest.model.InstitutionClient;
 
 import java.util.List;
 
@@ -35,8 +34,6 @@ import java.util.List;
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-public interface EmployeeMapper extends MyMapper<Employee> {
-    Employee complexSqlQuery(Long id);
-
-    List<Dropdownlist> getEmployeeDropdownList();
+public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
+    List<InstitutionClient> getListByConidition();
 }

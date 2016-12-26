@@ -17,4 +17,12 @@
   </select>
 
 
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getEmployeeDropdownList" resultMap="DropdownlistMap">
+    select id,name as value from employee where is_deleted = 0
+  </select>
 </mapper>
