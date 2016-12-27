@@ -23,7 +23,7 @@
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
     <result column="employee_name" property="employeeName" jdbcType="VARCHAR"/>
@@ -37,13 +37,13 @@
     institution_client i left join employee e on i.employee_id = e.id
     where i.is_deleted = 0
     <if test="criteria.no != null and !criteria.no.trim().equals('')" >
-      and i.no like concat('%',#{criteria.code},'%')
+      and i.no like concat('%',#{criteria.no},'%')
     </if>
     <if test="criteria.name != null and !criteria.name.trim().equals('')" >
       and i.name like concat('%',#{criteria.name},'%')
     </if>
     <if test="criteria.type != null and !criteria.type.trim().equals('')" >
-      and i.type = #{criteria.name}
+      and i.type = #{criteria.type}
     </if>
     order by  i.id desc
     LIMIT #{page.startPageNo},#{page.pCount}

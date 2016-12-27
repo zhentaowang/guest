@@ -1,7 +1,6 @@
 package com.zhiweicloud.guest.pageUtil;
 
 
-import org.apache.ibatis.type.Alias;
 import org.springframework.context.annotation.Configuration;
 
 

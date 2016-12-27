@@ -6,6 +6,7 @@
 */
 package com.zhiweicloud.guest.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -46,6 +47,7 @@ public class InstitutionClient {
     @ApiModelProperty(value="备注",name="remark")
     private String remark;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyyMMddHHmmss")
     @ApiModelProperty(value="创建时间",name="createTime")
     private Date createTime;
 

@@ -74,7 +74,7 @@ public class InstitutionClientService {
         }
         if(param.getType() != null && !param.getType().equals("")){
             example.createCriteria()
-                    .andCondition("type = " + param.getType() + "");
+                    .andCondition("type = '" + param.getType() + "'");
         }
         example.createCriteria()
                 .andCondition("is_deleted = 0");
