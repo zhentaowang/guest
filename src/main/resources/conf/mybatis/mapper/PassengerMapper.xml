@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="resources.conf.mybatis.mapper.PassengerMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Passenger">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="BIGINT" property="phone" />
+    <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
+    <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+    <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+    <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+    <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
+    <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
+    <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
+    <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="ariport_id" jdbcType="BIGINT" property="ariportId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_id, name, phone, identity_card, work_unit, vip_card, sit_no, cabin_no, 
+    ticket_no, card_no, card_type, expire_time, create_time, update_time, is_deleted, 
+    ariport_id
+  </sql>
+
+</mapper>
