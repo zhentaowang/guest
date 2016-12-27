@@ -1,8 +1,8 @@
 /**
- * BsOrder.java
+ * GuestOrder.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-23 14:52:38 Created By zhangpengfei
+ * 2016-12-27 19:28:28 Created By zhangpengfei
 */
 package com.zhiweicloud.guest.model;
 
@@ -10,22 +10,24 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
- * BsOrder.java
+ * GuestOrder.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-23 14:52:38 Created By zhangpengfei
+ * 2016-12-27 19:28:28 Created By zhangpengfei
 */
-@ApiModel(value="BsOrder",description="bs_order")
-public class BsOrder {
+@ApiModel(value="GuestOrder",description="guest_order")
+public class GuestOrder {
     @ApiModelProperty(value="主键自增id",name="id", required=true)
     @NotEmpty
     @Id
+    @GeneratedValue(generator = "JDBC")
     private Long id;
 
     @ApiModelProperty(value="协议id",name="protocolId", required=true)
@@ -38,14 +40,14 @@ public class BsOrder {
     @ApiModelProperty(value="是否重要：0：重要，1：不重要",name="isImportant")
     private Short isImportant;
 
+    @ApiModelProperty(value="0:预约订单，1：消费订单",name="orderStatus")
+    private Short orderStatus;
+
     @ApiModelProperty(value="订单备注",name="orderRemark")
     private String orderRemark;
 
     @ApiModelProperty(value="签字人",name="signerPerson")
     private String signerPerson;
-
-    @ApiModelProperty(value="服务名称",name="serviceId")
-    private Long serviceId;
 
     @ApiModelProperty(value="航班日期",name="flightDate")
     private Date flightDate;
@@ -56,6 +58,9 @@ public class BsOrder {
     @ApiModelProperty(value="航段",name="flightSegment")
     private String flightSegment;
 
+    @ApiModelProperty(value="停机位",name="flightPosition")
+    private String flightPosition;
+
     @ApiModelProperty(value="计划起飞时间",name="planTakeOffTime")
     private Date planTakeOffTime;
 
@@ -65,8 +70,14 @@ public class BsOrder {
     @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
     private Short isInOrOut;
 
+    @ApiModelProperty(value="登机口",name="boardingPort")
+    private String boardingPort;
+
     @ApiModelProperty(value="远机位：0，近机位：1",name="isNearOrFar")
     private Short isNearOrFar;
+
+    @ApiModelProperty(value="冠名厅",name="serviceId")
+    private Long serviceId;
 
     @ApiModelProperty(value="提前打登机牌 0:需要，1：不需要",name="isPrintBoardingCheck")
     private Short isPrintBoardingCheck;
@@ -92,11 +103,8 @@ public class BsOrder {
     @ApiModelProperty(value="车辆数",name="carNum")
     private Integer carNum;
 
-    @ApiModelProperty(value="预约订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单",name="type")
-    private Short type;
-
-    @ApiModelProperty(value="0:预约订单，1：消费订单",name="orderStatus")
-    private Short orderStatus;
+    @ApiModelProperty(value="订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单",name="orderType")
+    private Short orderType;
 
     @ApiModelProperty(value="收费服务",name="chargeService")
     private String chargeService;
@@ -116,14 +124,20 @@ public class BsOrder {
     @ApiModelProperty(value="修改时间",name="updateTime")
     private Date updateTime;
 
+    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
+    private Short isDeleted;
+
+    @ApiModelProperty(value="机场id",name="ariportId", required=true)
+    @NotEmpty
+    private Long ariportId;
+
     @Transient
     @ApiModelProperty(value = "车辆",name="orderCar")
-    private List<BsOrderCar> orderCarList;
+    private List<OrderCar> orderCarList;
 
     @Transient
     @ApiModelProperty(value = "乘客信息",name="bsPassenger")
-    private List<BsPassenger> bsPassengerList;
-
+    private List<Passenger> passengerList;
 
     /**
      * 主键自增id
@@ -190,6 +204,22 @@ public class BsOrder {
     }
 
     /**
+     * 0:预约订单，1：消费订单
+     * @return order_status 0:预约订单，1：消费订单
+     */
+    public Short getOrderStatus() {
+        return orderStatus;
+    }
+
+    /**
+     * 0:预约订单，1：消费订单
+     * @param orderStatus 0:预约订单，1：消费订单
+     */
+    public void setOrderStatus(Short orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    /**
      * 订单备注
      * @return order_remark 订单备注
      */
@@ -219,22 +249,6 @@ public class BsOrder {
      */
     public void setSignerPerson(String signerPerson) {
         this.signerPerson = signerPerson;
-    }
-
-    /**
-     * 服务名称
-     * @return service_id 服务名称
-     */
-    public Long getServiceId() {
-        return serviceId;
-    }
-
-    /**
-     * 服务名称
-     * @param serviceId 服务名称
-     */
-    public void setServiceId(Long serviceId) {
-        this.serviceId = serviceId;
     }
 
     /**
@@ -286,6 +300,22 @@ public class BsOrder {
     }
 
     /**
+     * 停机位
+     * @return flight_position 停机位
+     */
+    public String getFlightPosition() {
+        return flightPosition;
+    }
+
+    /**
+     * 停机位
+     * @param flightPosition 停机位
+     */
+    public void setFlightPosition(String flightPosition) {
+        this.flightPosition = flightPosition;
+    }
+
+    /**
      * 计划起飞时间
      * @return plan_take_off_time 计划起飞时间
      */
@@ -334,6 +364,22 @@ public class BsOrder {
     }
 
     /**
+     * 登机口
+     * @return boarding_port 登机口
+     */
+    public String getBoardingPort() {
+        return boardingPort;
+    }
+
+    /**
+     * 登机口
+     * @param boardingPort 登机口
+     */
+    public void setBoardingPort(String boardingPort) {
+        this.boardingPort = boardingPort;
+    }
+
+    /**
      * 远机位：0，近机位：1
      * @return is_near_or_far 远机位：0，近机位：1
      */
@@ -347,6 +393,22 @@ public class BsOrder {
      */
     public void setIsNearOrFar(Short isNearOrFar) {
         this.isNearOrFar = isNearOrFar;
+    }
+
+    /**
+     * 冠名厅
+     * @return service_id 冠名厅
+     */
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    /**
+     * 冠名厅
+     * @param serviceId 冠名厅
+     */
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 
     /**
@@ -478,35 +540,19 @@ public class BsOrder {
     }
 
     /**
-     * 预约订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
-     * @return type 预约订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
+     * 订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
+     * @return order_type 订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
      */
-    public Short getType() {
-        return type;
+    public Short getOrderType() {
+        return orderType;
     }
 
     /**
-     * 预约订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
-     * @param type 预约订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
+     * 订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
+     * @param orderType 订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单
      */
-    public void setType(Short type) {
-        this.type = type;
-    }
-
-    /**
-     * 0:预约订单，1：消费订单
-     * @return order_status 0:预约订单，1：消费订单
-     */
-    public Short getOrderStatus() {
-        return orderStatus;
-    }
-
-    /**
-     * 0:预约订单，1：消费订单
-     * @param orderStatus 0:预约订单，1：消费订单
-     */
-    public void setOrderStatus(Short orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setOrderType(Short orderType) {
+        this.orderType = orderType;
     }
 
     /**
@@ -605,57 +651,51 @@ public class BsOrder {
         this.updateTime = updateTime;
     }
 
-    public List<BsOrderCar> getOrderCarList() {
+    /**
+     * 是否删除：默认为0，0：不删除，1：删除
+     * @return is_deleted 是否删除：默认为0，0：不删除，1：删除
+     */
+    public Short getIsDeleted() {
+        return isDeleted;
+    }
+
+    /**
+     * 是否删除：默认为0，0：不删除，1：删除
+     * @param isDeleted 是否删除：默认为0，0：不删除，1：删除
+     */
+    public void setIsDeleted(Short isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    /**
+     * 机场id
+     * @return ariport_id 机场id
+     */
+    public Long getAriportId() {
+        return ariportId;
+    }
+
+    /**
+     * 机场id
+     * @param ariportId 机场id
+     */
+    public void setAriportId(Long ariportId) {
+        this.ariportId = ariportId;
+    }
+
+    public List<OrderCar> getOrderCarList() {
         return orderCarList;
     }
 
-    public void setOrderCarList(List<BsOrderCar> orderCarList) {
+    public void setOrderCarList(List<OrderCar> orderCarList) {
         this.orderCarList = orderCarList;
     }
 
-    public List<BsPassenger> getBsPassengerList() {
-        return bsPassengerList;
+    public List<Passenger> getPassengerList() {
+        return passengerList;
     }
 
-    public void setBsPassengerList(List<BsPassenger> bsPassengerList) {
-        this.bsPassengerList = bsPassengerList;
-    }
-
-    @Override
-    public String toString() {
-        return "BsOrder{" +
-                "id=" + id +
-                ", protocolId=" + protocolId +
-                ", bookingPerson='" + bookingPerson + '\'' +
-                ", isImportant=" + isImportant +
-                ", orderRemark='" + orderRemark + '\'' +
-                ", signerPerson='" + signerPerson + '\'' +
-                ", serviceId=" + serviceId +
-                ", flightDate=" + flightDate +
-                ", flightNo='" + flightNo + '\'' +
-                ", flightSegment='" + flightSegment + '\'' +
-                ", planTakeOffTime=" + planTakeOffTime +
-                ", planLandingTime=" + planLandingTime +
-                ", isInOrOut=" + isInOrOut +
-                ", isNearOrFar=" + isNearOrFar +
-                ", isPrintBoardingCheck=" + isPrintBoardingCheck +
-                ", sitRequire='" + sitRequire + '\'' +
-                ", packageNo=" + packageNo +
-                ", packageWeight=" + packageWeight +
-                ", isConsign=" + isConsign +
-                ", serverPersonNum=" + serverPersonNum +
-                ", companyPersonNum=" + companyPersonNum +
-                ", carNum=" + carNum +
-                ", type=" + type +
-                ", orderStatus=" + orderStatus +
-                ", chargeService='" + chargeService + '\'' +
-                ", chargeBy=" + chargeBy +
-                ", chargeContent='" + chargeContent + '\'' +
-                ", chargeAmount=" + chargeAmount +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", orderCarList=" + orderCarList +
-                ", bsPassengerList=" + bsPassengerList +
-                '}';
+    public void setPassengerList(List<Passenger> passengerList) {
+        this.passengerList = passengerList;
     }
 }

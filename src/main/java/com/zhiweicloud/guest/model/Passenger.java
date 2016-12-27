@@ -1,8 +1,8 @@
 /**
- * BsPassenger.java
+ * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-23 14:53:02 Created By zhangpengfei
+ * 2016-12-27 19:30:02 Created By zhangpengfei
 */
 package com.zhiweicloud.guest.model;
 
@@ -13,19 +13,19 @@ import javax.persistence.Id;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
- * BsPassenger.java
+ * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-23 14:53:02 Created By zhangpengfei
+ * 2016-12-27 19:30:02 Created By zhangpengfei
 */
-@ApiModel(value="BsPassenger",description="bs_passenger")
-public class BsPassenger {
+@ApiModel(value="Passenger",description="passenger")
+public class Passenger {
     @ApiModelProperty(value="主键自增id",name="id", required=true)
     @NotEmpty
     @Id
     private Long id;
 
-    @ApiModelProperty(value="预约订单id",name="orderId", required=true)
+    @ApiModelProperty(value="订单id",name="orderId", required=true)
     @NotEmpty
     private Long orderId;
 
@@ -68,6 +68,13 @@ public class BsPassenger {
     @ApiModelProperty(value="修改时间",name="updateTime")
     private Date updateTime;
 
+    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
+    private Short isDeleted;
+
+    @ApiModelProperty(value="机场id",name="ariportId", required=true)
+    @NotEmpty
+    private Long ariportId;
+
     /**
      * 主键自增id
      * @return id 主键自增id
@@ -85,16 +92,16 @@ public class BsPassenger {
     }
 
     /**
-     * 预约订单id
-     * @return order_id 预约订单id
+     * 订单id
+     * @return order_id 订单id
      */
     public Long getOrderId() {
         return orderId;
     }
 
     /**
-     * 预约订单id
-     * @param orderId 预约订单id
+     * 订单id
+     * @param orderId 订单id
      */
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
@@ -306,5 +313,37 @@ public class BsPassenger {
      */
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    /**
+     * 是否删除：默认为0，0：不删除，1：删除
+     * @return is_deleted 是否删除：默认为0，0：不删除，1：删除
+     */
+    public Short getIsDeleted() {
+        return isDeleted;
+    }
+
+    /**
+     * 是否删除：默认为0，0：不删除，1：删除
+     * @param isDeleted 是否删除：默认为0，0：不删除，1：删除
+     */
+    public void setIsDeleted(Short isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    /**
+     * 机场id
+     * @return ariport_id 机场id
+     */
+    public Long getAriportId() {
+        return ariportId;
+    }
+
+    /**
+     * 机场id
+     * @param ariportId 机场id
+     */
+    public void setAriportId(Long ariportId) {
+        this.ariportId = ariportId;
     }
 }

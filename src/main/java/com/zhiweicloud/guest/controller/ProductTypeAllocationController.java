@@ -24,14 +24,9 @@
 
 package com.zhiweicloud.guest.controller;
 
-import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
-import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.BsOrder;
 import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.model.ProductTypeAllocation;
 import com.zhiweicloud.guest.service.ProductTypeAllocationService;
 import io.swagger.annotations.*;
@@ -40,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -61,3 +61,4 @@ spring:
 #        typeAliasesPackage: tk.mybatis.springboot.model
 #    mapperScanner:
 #        basePackage: tk.mybatis.springboot.mapper
+

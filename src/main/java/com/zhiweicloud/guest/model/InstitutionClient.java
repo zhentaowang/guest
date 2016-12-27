@@ -47,7 +47,6 @@ public class InstitutionClient {
     @ApiModelProperty(value="备注",name="remark")
     private String remark;
 
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyyMMddHHmmss")
     @ApiModelProperty(value="创建时间",name="createTime")
     private Date createTime;
 
