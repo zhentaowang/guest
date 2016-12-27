@@ -27,6 +27,7 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.InstitutionClient;
+import com.zhiweicloud.guest.pageUtil.BasePagination;
 
 import java.util.List;
 
@@ -35,5 +36,5 @@ import java.util.List;
  * @since 2016-12-21 22:17
  */
 public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
-    List<InstitutionClient> getListByConidition();
+    List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
 }

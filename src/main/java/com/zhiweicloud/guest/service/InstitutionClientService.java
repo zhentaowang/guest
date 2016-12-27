@@ -31,6 +31,8 @@ import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.GeneratorSerNo;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.InstitutionClient;
+import com.zhiweicloud.guest.pageUtil.BasePagination;
+import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -72,13 +74,18 @@ public class InstitutionClientService {
         }
         if(param.getType() != null && !param.getType().equals("")){
             example.createCriteria()
-                    .andCondition("type like '%" + param.getType() + "%'");
+                    .andCondition("type = " + param.getType() + "");
         }
         example.createCriteria()
                 .andCondition("is_deleted = 0");
-        List<InstitutionClient> institutionClientList = institutionClientMapper.selectByExample(example);
+        //List<InstitutionClient> institutionClientList = institutionClientMapper.selectByExample(example);
+
+        BasePagination<InstitutionClient> queryCondition = new BasePagination<InstitutionClient>(param, new PageModel(page, rows));
 
         Integer count = institutionClientMapper.selectCountByExample(example);
+
+        List<InstitutionClient> institutionClientList = institutionClientMapper.getListByConidition(queryCondition);
+
         PaginationResult<InstitutionClient> eqr = new PaginationResult<InstitutionClient>(count, institutionClientList);
         LZResult<PaginationResult<InstitutionClient>> result = new LZResult<PaginationResult<InstitutionClient>>(eqr);
         return result;
