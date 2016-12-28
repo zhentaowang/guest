@@ -48,7 +48,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/institutionClientController")
-@Api(value="机构客户管理",description="", tags={"InstitutionClient"})
+@Api(value="机构客户管理",description="", tags={"InstitutionClientModel"})
 public class InstitutionClientController {
     private static final Logger logger = LoggerFactory.getLogger(InstitutionClientController.class);
 
@@ -96,12 +96,11 @@ public class InstitutionClientController {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
             institutionClientService.saveOrUpdate(institutionClient);
-            LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
             return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
         }
-        return null;
     }
 
 

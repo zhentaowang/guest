@@ -2,7 +2,7 @@
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-27 19:30:02 Created By zhangpengfei
+ * 2016-12-27 20:19:25 Created By zhangpengfei
 */
 package com.zhiweicloud.guest.model;
 
@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-27 19:30:02 Created By zhangpengfei
+ * 2016-12-27 20:19:25 Created By zhangpengfei
 */
 @ApiModel(value="Passenger",description="passenger")
 public class Passenger {
@@ -71,9 +71,9 @@ public class Passenger {
     @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     private Short isDeleted;
 
-    @ApiModelProperty(value="机场id",name="ariportId", required=true)
+    @ApiModelProperty(value="机场id",name="airportCode", required=true)
     @NotEmpty
-    private Long ariportId;
+    private String airportCode;
 
     /**
      * 主键自增id
@@ -335,15 +335,15 @@ public class Passenger {
      * 机场id
      * @return ariport_id 机场id
      */
-    public Long getAriportId() {
-        return ariportId;
+    public String getAirportCode() {
+        return airportCode;
     }
 
     /**
      * 机场id
-     * @param ariportId 机场id
+     * @param airportCode 机场id
      */
-    public void setAriportId(Long ariportId) {
-        this.ariportId = ariportId;
+    public void setAirportCode(String airportCode) {
+        this.airportCode = airportCode;
     }
 }

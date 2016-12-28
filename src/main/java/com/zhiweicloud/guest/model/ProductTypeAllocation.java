@@ -46,7 +46,7 @@ public class ProductTypeAllocation {
     @ApiModelProperty(value="修改时间",name="updateTime")
     private Date updateTime;
 
-    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted", required=true)
+    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     @NotEmpty
     private Short isDeleted;
 

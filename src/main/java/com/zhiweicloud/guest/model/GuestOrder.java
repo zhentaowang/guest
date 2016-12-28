@@ -24,11 +24,15 @@ import org.hibernate.validator.constraints.NotEmpty;
 */
 @ApiModel(value="GuestOrder",description="guest_order")
 public class GuestOrder {
-    @ApiModelProperty(value="主键自增id",name="id", required=true)
+    @ApiModelProperty(value="主键自增id",name="id", required=true,hidden = true) //不想显示在前端UI接口中的字段，添加hidden=true属性
     @NotEmpty
     @Id
     @GeneratedValue(generator = "JDBC")
     private Long id;
+
+    @ApiModelProperty(value="机场编码 LJG:丽江机场，HQG：虹桥机场",name="airportCode",required=true)
+    @NotEmpty
+    private String airportCode;
 
     @ApiModelProperty(value="协议id",name="protocolId", required=true)
     @NotEmpty
@@ -118,18 +122,18 @@ public class GuestOrder {
     @ApiModelProperty(value="收费金额",name="chargeAmount")
     private Double chargeAmount;
 
-    @ApiModelProperty(value="创建时间",name="createTime")
+    @ApiModelProperty(value="创建时间",name="createTime",hidden = true)
     private Date createTime;
 
-    @ApiModelProperty(value="修改时间",name="updateTime")
+    @ApiModelProperty(value="修改时间",name="updateTime",hidden = true)
     private Date updateTime;
 
-    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
+    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted",hidden = true)
     private Short isDeleted;
 
-    @ApiModelProperty(value="机场id",name="ariportId", required=true)
-    @NotEmpty
-    private Long ariportId;
+    @ApiModelProperty(value="订单编号",name="order_no",hidden = true)
+    private String orderNo;
+
 
     @Transient
     @ApiModelProperty(value = "车辆",name="orderCar")
@@ -669,18 +673,18 @@ public class GuestOrder {
 
     /**
      * 机场id
-     * @return ariport_id 机场id
+     * @return ariport_code 机场code
      */
-    public Long getAriportId() {
-        return ariportId;
+    public String getAirportCode() {
+        return airportCode;
     }
 
     /**
      * 机场id
-     * @param ariportId 机场id
+     * @param airportCode 机场id
      */
-    public void setAriportId(Long ariportId) {
-        this.ariportId = ariportId;
+    public void setAirportCode(String airportCode) {
+        this.airportCode = airportCode;
     }
 
     public List<OrderCar> getOrderCarList() {
@@ -697,5 +701,19 @@ public class GuestOrder {
 
     public void setPassengerList(List<Passenger> passengerList) {
         this.passengerList = passengerList;
+    }
+    /**
+     * 订单编号
+     * @return order_no 订单编号
+     */
+    public String getOrderNo() {
+        return orderNo;
+    }
+    /**
+     * 订单编号
+     * @param orderNo
+     */
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }

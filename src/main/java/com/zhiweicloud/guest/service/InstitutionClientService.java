@@ -38,7 +38,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -78,7 +77,7 @@ public class InstitutionClientService {
         }
         example.createCriteria()
                 .andCondition("is_deleted = 0");
-        //List<InstitutionClient> institutionClientList = institutionClientMapper.selectByExample(example);
+        //List<InstitutionClientModel> institutionClientList = institutionClientMapper.selectByExample(example);
 
         BasePagination<InstitutionClient> queryCondition = new BasePagination<InstitutionClient>(param, new PageModel(page, rows));
 

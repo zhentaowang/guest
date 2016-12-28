@@ -79,12 +79,11 @@ public class ProductTypeController {
     @ApiOperation(value="产品品类 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
     public LXResult save(@ApiParam(value = "employee", required = true) @RequestBody RequsetParams<TbbasProductType> params){
         try {
-            LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+           return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
             return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
         }
-        return null;
     }
 
 

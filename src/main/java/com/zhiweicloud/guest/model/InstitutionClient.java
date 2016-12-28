@@ -53,8 +53,7 @@ public class InstitutionClient {
     @ApiModelProperty(value="修改时间",name="updateTime")
     private Date updateTime;
 
-    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted", required=true)
-    @NotEmpty
+    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     private Short isDeleted;
 
     /**

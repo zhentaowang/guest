@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,20 +61,26 @@ public class OrderController {
             {
             @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
             @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})
+            @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "orderType", value = "订单类型： 0；VIP预约订单，1；CIP预约订单,2:头等舱消费订单，3：金银卡消费订单", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+            })
     public LZResult<PaginationResult<GuestOrder>> list(
             @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
             @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
-            @RequestParam(value = "name", required = false) String name) {
-        List<GuestOrder> list = new ArrayList<GuestOrder>();
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value="orderType",required = true,defaultValue = "0") short orderType,
+            @RequestParam(value = "airportCode", required = true) String airportCode) {
+        GuestOrder param = new GuestOrder();
+        param.setOrderType(orderType);
+        param.setAirportCode(airportCode);
 
-        PaginationResult<GuestOrder> eqr = new PaginationResult<GuestOrder>(1, list);
-        LZResult<PaginationResult<GuestOrder>> result = new LZResult<PaginationResult<GuestOrder>>(eqr);
+        LZResult<PaginationResult<GuestOrder>> result  = orderService.getAll(param,page,rows);
         return result;
     }
 
     /**
-     * 员工管理 - 新增or更新
+     * 订单管理 - 新增or更新
      * 需要判断name是否重复
      * @param params
      * @return
@@ -85,27 +90,19 @@ public class OrderController {
     @ApiOperation(value="订单 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
     public LXResult save(@ApiParam(value = "employee", required = true) @RequestBody RequsetParams<GuestOrder> params){
         try {
-            //保存订单
             GuestOrder order = null;
             if(!CollectionUtils.isEmpty(params.getData())){
                 order = params.getData().get(0);
             }
-
             if (order == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
             orderService.saveOrUpdate(order);
-            LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
-            //保存乘客
-
-            //保存车辆
-
-            LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
             return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
         }
-        return null;
     }
 
 
@@ -118,10 +115,13 @@ public class OrderController {
     @ResponseBody
     @ApiOperation(value = "订单 - 根据id查询 ", notes = "返回订单详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query")
+            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<GuestOrder> view(@RequestParam(value = "id", required = true) Long id) {
-        return new LZResult<GuestOrder>(new GuestOrder());
+    public LZResult<GuestOrder> view(@RequestParam(value = "id", required = true) Long id,
+                                     @RequestParam(value = "airportCode", required = true) String airportCode) {
+        GuestOrder guestOrder = orderService.getById(id,airportCode);
+        return new LZResult<>(guestOrder);
     }
 
     /**
@@ -136,8 +136,13 @@ public class OrderController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "订单 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    public LXResult delete(@RequestBody RequsetParams<Long> params) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    })
+    public LXResult delete(@RequestBody RequsetParams<Long> params, @RequestParam(value = "airportCode", required = true) String airportCode) {
         try {
+            List<Long> ids = params.getData();
+            orderService.deleteById(ids,airportCode);
             return LXResult.success();
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);

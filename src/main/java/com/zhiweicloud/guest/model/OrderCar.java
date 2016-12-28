@@ -44,9 +44,9 @@ public class OrderCar {
     @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     private Short isDeleted;
 
-    @ApiModelProperty(value="机场id",name="ariportId", required=true)
+    @ApiModelProperty(value="机场id",name="airportCode", required=true)
     @NotEmpty
-    private Long ariportId;
+    private String airportCode;
     /**
      * 主键自增id
      * @return id 主键自增id
@@ -144,18 +144,18 @@ public class OrderCar {
     }
 
     /**
-     * 机场id
-     * @return ariport_id 机场id
+     * 机场编码
+     * @return airport_code 机场编码
      */
-    public Long getAriportId() {
-        return ariportId;
+    public String getAirportCode() {
+        return airportCode;
     }
 
     /**
-     * 机场id
-     * @param ariportId 机场id
+     * 机场编码
+     * @param airportCode 机场code
      */
-    public void setAriportId(Long ariportId) {
-        this.ariportId = ariportId;
+    public void setAirportCode(String airportCode) {
+        this.airportCode = airportCode;
     }
 }

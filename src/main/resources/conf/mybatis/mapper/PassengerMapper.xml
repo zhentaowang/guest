@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="resources.conf.mybatis.mapper.PassengerMapper">
+<mapper namespace="com.zhiweicloud.guest.mapper.PassengerMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Passenger">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="order_id" jdbcType="BIGINT" property="orderId" />
@@ -25,5 +25,6 @@
     ticket_no, card_no, card_type, expire_time, create_time, update_time, is_deleted, 
     ariport_id
   </sql>
+
 
 </mapper>
