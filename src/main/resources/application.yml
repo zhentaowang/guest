@@ -15,7 +15,7 @@ spring:
 #        type: com.alibaba.druid.pool.DruidDataSource
 #        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
         name: test
-        url: jdbc:mysql://192.168.1.199:3306/test
+        url: jdbc:mysql://192.168.1.100:8066/test
         username: root
         password: root
         # 使用druid数据源

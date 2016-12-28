@@ -18,7 +18,7 @@
             <property name="suppressAllComments" value="false" />
         </commentGenerator>-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://192.168.1.199:3306/test" userId="root"
+			connectionURL="jdbc:mysql://192.168.1.100:8066/test" userId="root"
 			password="root" />
 		<!-- 所生成的实体类的位置默认资源包src -->
 		<javaModelGenerator targetPackage="com.zhiweicloud.guest.model" targetProject="src/main/java" />
