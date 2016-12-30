@@ -57,9 +57,9 @@ public class InstitutionClientService {
     private static final String STR_FORMAT = "0000";
 
     public LZResult<PaginationResult<InstitutionClient>> getAll(InstitutionClient param, Integer page, Integer rows) {
-        if (page != null && rows != null) {
+        /*if (page != null && rows != null) {
             PageHelper.startPage(page, rows, "id");
-        }
+        }*/
 
         // 条件查询，自己拼条件
         Example example = new Example(InstitutionClient.class);
@@ -67,16 +67,19 @@ public class InstitutionClientService {
             example.createCriteria()
                     .andCondition("no like '%" + param.getNo() + "%'");
         }
+
         if(param.getName() != null && !param.getName().equals("")){
             example.createCriteria()
                     .andCondition("name like '%" + param.getName() + "%'");
         }
+
         if(param.getType() != null && !param.getType().equals("")){
             example.createCriteria()
                     .andCondition("type = '" + param.getType() + "'");
         }
         example.createCriteria()
                 .andCondition("is_deleted = 0");
+
         //List<InstitutionClientModel> institutionClientList = institutionClientMapper.selectByExample(example);
 
         BasePagination<InstitutionClient> queryCondition = new BasePagination<InstitutionClient>(param, new PageModel(page, rows));
@@ -96,7 +99,7 @@ public class InstitutionClientService {
 
     public void saveOrUpdate(InstitutionClient institutionClient) {
         if (institutionClient.getId() != null) {
-            institutionClientMapper.updateByPrimaryKey(institutionClient);
+            institutionClientMapper.updateByPrimaryKeySelective(institutionClient);
         } else {
             String sql = "select  NEXTVAL('orgCustomer')";
             Integer currentValue = this.jdbcTemplate.queryForObject(sql,Integer.class);

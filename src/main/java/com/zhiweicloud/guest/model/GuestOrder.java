@@ -2,12 +2,14 @@
  * GuestOrder.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-27 19:28:28 Created By zhangpengfei
+ * 2016-12-30 11:03:55 Created By zhangpengfei
 */
 package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.sql.JDBCType;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.GeneratedValue;
@@ -20,19 +22,15 @@ import org.hibernate.validator.constraints.NotEmpty;
  * GuestOrder.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-27 19:28:28 Created By zhangpengfei
+ * 2016-12-30 11:03:55 Created By zhangpengfei
 */
 @ApiModel(value="GuestOrder",description="guest_order")
 public class GuestOrder {
-    @ApiModelProperty(value="主键自增id",name="id", required=true,hidden = true) //不想显示在前端UI接口中的字段，添加hidden=true属性
+    @ApiModelProperty(value="主键自增id",name="id", required=true)
     @NotEmpty
     @Id
     @GeneratedValue(generator = "JDBC")
     private Long id;
-
-    @ApiModelProperty(value="机场编码 LJG:丽江机场，HQG：虹桥机场",name="airportCode",required=true)
-    @NotEmpty
-    private String airportCode;
 
     @ApiModelProperty(value="协议id",name="protocolId", required=true)
     @NotEmpty
@@ -122,18 +120,17 @@ public class GuestOrder {
     @ApiModelProperty(value="收费金额",name="chargeAmount")
     private Double chargeAmount;
 
-    @ApiModelProperty(value="创建时间",name="createTime",hidden = true)
+    @ApiModelProperty(value="创建时间",name="createTime")
     private Date createTime;
 
-    @ApiModelProperty(value="修改时间",name="updateTime",hidden = true)
+    @ApiModelProperty(value="修改时间",name="updateTime")
     private Date updateTime;
 
-    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted",hidden = true)
+    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     private Short isDeleted;
 
-    @ApiModelProperty(value="订单编号",name="order_no",hidden = true)
-    private String orderNo;
-
+    @ApiModelProperty(value="机场code",name="airportCode")
+    private String airportCode;
 
     @Transient
     @ApiModelProperty(value = "车辆",name="orderCar")
@@ -142,7 +139,6 @@ public class GuestOrder {
     @Transient
     @ApiModelProperty(value = "乘客信息",name="bsPassenger")
     private List<Passenger> passengerList;
-
     /**
      * 主键自增id
      * @return id 主键自增id
@@ -672,16 +668,16 @@ public class GuestOrder {
     }
 
     /**
-     * 机场id
-     * @return ariport_code 机场code
+     * 机场code
+     * @return airport_code 机场code
      */
     public String getAirportCode() {
         return airportCode;
     }
 
     /**
-     * 机场id
-     * @param airportCode 机场id
+     * 机场code
+     * @param airportCode 机场code
      */
     public void setAirportCode(String airportCode) {
         this.airportCode = airportCode;
@@ -701,19 +697,5 @@ public class GuestOrder {
 
     public void setPassengerList(List<Passenger> passengerList) {
         this.passengerList = passengerList;
-    }
-    /**
-     * 订单编号
-     * @return order_no 订单编号
-     */
-    public String getOrderNo() {
-        return orderNo;
-    }
-    /**
-     * 订单编号
-     * @param orderNo
-     */
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
     }
 }

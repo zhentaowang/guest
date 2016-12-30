@@ -25,18 +25,14 @@
 package com.zhiweicloud.guest.service;
 
 import com.github.pagehelper.PageHelper;
-import com.sun.tools.internal.jxc.ap.Const;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.OrderCarMapper;
 import com.zhiweicloud.guest.mapper.GuestOrderMapper;
 import com.zhiweicloud.guest.mapper.PassengerMapper;
 import com.zhiweicloud.guest.model.GuestOrder;
 import com.zhiweicloud.guest.model.OrderCar;
 import com.zhiweicloud.guest.model.Passenger;
-import org.omg.CORBA.Object;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -73,9 +69,11 @@ public class OrderService {
 
         // 条件查询，自己拼条件
         Example example = new Example(GuestOrder.class);
-        example.createCriteria().andCondition("order_type=",param.getOrderType());
-        example.createCriteria().andCondition("is_deleted=",0);
-       // example.createCriteria().andCondition("airport_id=",1);
+        //example.createCriteria().andCondition("order_type=",param.getOrderType());
+       // example.createCriteria().andCondition("is_deleted=",0);
+        //example.createCriteria().andCondition("airport_code=",param.getAirportCode());
+
+        // example.createCriteria().andCondition("airport_id=",1);
 
        /* if(param.getName() != null && !param.getName().equals("")){
             example.createCriteria()
@@ -88,7 +86,7 @@ public class OrderService {
         return result;
     }
 
-    public GuestOrder getById(Long id,String airportCode) {
+    public GuestOrder getById(Long id, String airportCode) {
         GuestOrder temp = new GuestOrder();
         temp.setId(id);
         temp.setAirportCode(airportCode);
@@ -112,7 +110,7 @@ public class OrderService {
 
             guestOrderMapper.updateByExample(guestOrder,example);
             //还涉及到旅客和车辆的更新问题，解决办法：先把之前这个订单下的乘客和车辆都删除，然后重新插入
-            this.deletePassengerAndOrderCarByOrderId(guestOrder.getId());
+            this.deletePassengerAndOrderCarByOrderId(guestOrder.getId(),guestOrder.getAirportCode());
             this.addPassengerAndCar(guestOrder);
         } else {
            guestOrder.setServerPersonNum(guestOrder.getPassengerList().size());
@@ -130,7 +128,7 @@ public class OrderService {
         String deleteGuestOrder = "update guest_order set is_deleted = 1 where id = ?　and ariport_id = ?";
         for(int i = 0; i< ids.size();i++){
             this.jdbcTemplate.update(deleteGuestOrder,new java.lang.Object[]{ids,airportCode});
-            this.deletePassengerAndOrderCarByOrderId(ids.get(i));
+            this.deletePassengerAndOrderCarByOrderId(ids.get(i),airportCode);
         }
     }
 
@@ -138,7 +136,7 @@ public class OrderService {
      * 添加旅客和车辆
      * @param guestOrder
      */
-    private  void addPassengerAndCar(GuestOrder guestOrder){
+    private void addPassengerAndCar(GuestOrder guestOrder){
         for(int i = 0 ; i < guestOrder.getPassengerList().size();i++){
             Passenger p = guestOrder.getPassengerList().get(i);
             p.setOrderId(guestOrder.getId());
@@ -157,17 +155,17 @@ public class OrderService {
      * 根据订单id逻辑删除旅客和车辆
      * @param orderId
      */
-    private void deletePassengerAndOrderCarByOrderId(Long orderId){
+    private void deletePassengerAndOrderCarByOrderId(Long orderId,String airportCode){
         /**
          * 逻辑删除旅客
          */
-        String deletePassenger = "update passenger set is_deleted = 1 where order_id = ?";
-        this.jdbcTemplate.update(deletePassenger, orderId) ;
+        String deletePassenger = "update passenger set is_deleted = 1 where order_id = ? and airport_code = ?";
+        this.jdbcTemplate.update(deletePassenger, orderId,airportCode) ;
         /**
          * 逻辑删除车辆
          */
         String deleteOrderCar = "update order_car set is_deleted = 1 where order_id = ?";
-        this.jdbcTemplate.update(deleteOrderCar, orderId) ;
+        this.jdbcTemplate.update(deleteOrderCar, orderId,airportCode) ;
     }
 
 
