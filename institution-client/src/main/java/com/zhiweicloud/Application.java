@@ -8,13 +8,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * Created by zhangpengfei on 2016/12/14.
  */
 @SpringBootApplication
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 public class Application {
 
-	public static void main(String[] args) {
-
-		SpringApplication.run(Application.class, args);
-
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
 }
