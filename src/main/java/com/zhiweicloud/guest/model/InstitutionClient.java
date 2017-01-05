@@ -56,6 +56,10 @@ public class InstitutionClient {
     @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     private Short isDeleted;
 
+    @ApiModelProperty(value="机场code",name="airportCode", required=true)
+    @NotEmpty
+    private String airportCode;
+
     /**
      * 主键自增id
      * @return id 主键自增id
@@ -206,5 +210,21 @@ public class InstitutionClient {
 
     public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
+    }
+
+    /**
+     * 机场code
+     * @return airport_code 机场code
+     */
+    public String getAirportCode() {
+        return airportCode;
+    }
+
+    /**
+     * 机场code
+     * @param airportCode 机场code
+     */
+    public void setAirportCode(String airportCode) {
+        this.airportCode = airportCode;
     }
 }

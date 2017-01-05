@@ -32,8 +32,10 @@ import com.zhiweicloud.guest.pageUtil.BasePagination;
 import java.util.List;
 
 /**
- * @author zhangpengfei
- * @since 2016-12-21 22:17
+ * InstitutionClientMapper.java
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2016-12-26 15:45:36 Created By zhangpengfei
  */
 public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
     List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
