@@ -29,12 +29,11 @@
     <result column="employee_name" property="employeeName" jdbcType="VARCHAR"/>
   </resultMap>
 
-
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
     SELECT
     i.*,e.name as employee_name
     FROM
-    institution_client i left join employee e on i.employee_id = e.id
+    v_institution_client i left join employee e on i.employee_id = e.id
     where i.is_deleted = 0
     <if test="criteria.no != null and !criteria.no.trim().equals('')" >
       and i.no like concat('%',#{criteria.no},'%')
@@ -44,6 +43,9 @@
     </if>
     <if test="criteria.type != null and !criteria.type.trim().equals('')" >
       and i.type = #{criteria.type}
+    </if>
+    <if test="criteria.airportCode != null and !criteria.airportCode.trim().equals('')" >
+      and i.airport_code = #{criteria.airportCode}
     </if>
     order by  i.id desc
     LIMIT #{page.startPageNo},#{page.pCount}

@@ -63,13 +63,15 @@ public class InstitutionClientController {
             @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
             @ApiImplicitParam(name = "no", value = "机构客户编号", dataType = "String", required = false, paramType = "query"),
             @ApiImplicitParam(name = "name", value = "机构客户名称", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "type", value = "类型", dataType = "String", required = false, paramType = "query")})
     public LZResult<PaginationResult<InstitutionClient>> list(
             @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
             @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
             @RequestParam(value = "no", required = false) String no,
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "type", required = false) String type) {
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value="airportCode",required = false) String airportCode) {
         InstitutionClient param = new InstitutionClient();
         param.setNo(no);
         param.setName(name);
@@ -113,11 +115,14 @@ public class InstitutionClientController {
     @ResponseBody
     @ApiOperation(value = "机构客户管理 - 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query")
+            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<InstitutionClient> view(@RequestParam(value = "id", required = true) Long id) {
-        InstitutionClient institutionClient = institutionClientService.getById(id);
-        return new LZResult<InstitutionClient>(institutionClient);
+    public LZResult<InstitutionClient> view(
+            @RequestParam(value = "id", required = true) Long id,
+            @RequestParam(value = "airportCode", required = true) String airportCode) {
+        InstitutionClient institutionClient = institutionClientService.getById(id,airportCode);
+        return new LZResult<>(institutionClient);
     }
 
     /**
@@ -132,10 +137,13 @@ public class InstitutionClientController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "机构客户管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    public LXResult delete(@RequestBody RequsetParams<Long> params) {
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public LXResult delete(
+            @RequestBody RequsetParams<Long> params,
+            @RequestParam(value = "airportCode", required = true) String airportCode) {
         try {
             List<Long> ids = params.getData();
-            institutionClientService.deleteById(ids);
+            institutionClientService.deleteById(ids,airportCode);
             return LXResult.success();
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);

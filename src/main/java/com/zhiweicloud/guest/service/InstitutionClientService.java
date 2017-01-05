@@ -24,11 +24,9 @@
 
 package com.zhiweicloud.guest.service;
 
-import com.github.pagehelper.PageHelper;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.GeneratorSerNo;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -39,10 +37,11 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
-
 /**
- * @author liuzh
- * @since 2015-12-19 11:09
+ * InstitutionClientMapper.java
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2016-12-26 15:45:36 Created By zhangpengfei
  */
 @Service
 public class InstitutionClientService {
@@ -77,12 +76,14 @@ public class InstitutionClientService {
             example.createCriteria()
                     .andCondition("type = '" + param.getType() + "'");
         }
+        if(param.getAirportCode() != null && !param.getAirportCode().equals("")){
+            example.createCriteria()
+                    .andCondition("airport_code = '" + param.getAirportCode() + "'");
+        }
         example.createCriteria()
                 .andCondition("is_deleted = 0");
 
-        //List<InstitutionClientModel> institutionClientList = institutionClientMapper.selectByExample(example);
-
-        BasePagination<InstitutionClient> queryCondition = new BasePagination<InstitutionClient>(param, new PageModel(page, rows));
+        BasePagination<InstitutionClient> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
 
         Integer count = institutionClientMapper.selectCountByExample(example);
 
@@ -93,32 +94,36 @@ public class InstitutionClientService {
         return result;
     }
 
-    public InstitutionClient getById(Long id) {
-        return institutionClientMapper.selectByPrimaryKey(id);
+    public InstitutionClient getById(Long id,String airportCode) {
+        InstitutionClient temp = new InstitutionClient();
+        temp.setId(id);
+        temp.setAirportCode(airportCode);
+        temp.setIsDeleted(Constant.MARK_AS_NOT_DELETED);
+        /**
+         * 只能返回一条记录，如果有多条了就会报错，就跟selectByPrimaryKey一样的效果
+         */
+        return institutionClientMapper.selectOne(temp);
     }
 
     public void saveOrUpdate(InstitutionClient institutionClient) {
         if (institutionClient.getId() != null) {
-            institutionClientMapper.updateByPrimaryKeySelective(institutionClient);
+            Example example = new Example(InstitutionClient.class);
+            example.createCriteria().andCondition("ariport_code=",institutionClient.getAirportCode());
+            example.createCriteria().andCondition("id=",institutionClient.getId());
+            institutionClientMapper.updateByExample(institutionClient,example);
         } else {
-            String sql = "select  NEXTVAL('orgCustomer')";
-            Integer currentValue = this.jdbcTemplate.queryForObject(sql,Integer.class);
-            StringBuffer airPortCode = new StringBuffer();
-            airPortCode.append("LJG");
-            airPortCode.append(GeneratorSerNo.generatorCodeFormatThree(currentValue));
-            institutionClient.setNo(airPortCode.toString());
-
             institutionClientMapper.insert(institutionClient);
         }
     }
 
 
 
-    public void deleteById(List<Long> ids) {
+    public void deleteById(List<Long> ids,String airportCode) {
         for(int i = 0; i< ids.size();i++){
             InstitutionClient temp = new InstitutionClient();
             temp.setId(ids.get(i));
             temp.setIsDeleted(Constant.MARK_AS_DELETED);
+            temp.setAirportCode(airportCode);
             institutionClientMapper.updateByPrimaryKeySelective(temp);
         }
     }

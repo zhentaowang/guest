@@ -8,5 +8,8 @@ public class Constant {
      *  标记为删除
      */
     public  static  final short  MARK_AS_DELETED = 1;
-
+    /**
+     *  未删除数据
+     */
+    public  static  final short  MARK_AS_NOT_DELETED = 0;
 }
