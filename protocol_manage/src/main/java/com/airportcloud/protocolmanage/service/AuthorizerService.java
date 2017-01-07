@@ -28,41 +28,50 @@ public class AuthorizerService {
     @Autowired
     private ProtocolMapper protocolMapper;
 
-
-    public LZResult<PaginationResult<Authorizer>> getAll(Map<String,Object> param, Integer page, Integer rows) {
-
-        int count = authorizerMapper.getListCount(param);
-
-        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-        List<Authorizer> servList = authorizerMapper.getListByConidition(queryCondition);
-        PaginationResult<Authorizer> eqr = new PaginationResult<>(count, servList);
-        LZResult<PaginationResult<Authorizer>> result = new LZResult<>(eqr);
+    /**
+     * 分页获取授权人列表
+     * @param param
+     * @param page
+     * @param rows
+     */
+    public LZResult<List<Authorizer>> getAll(Map<String,Object> param, Integer page, Integer rows) {
+        List<Authorizer> authorizerList = authorizerMapper.getListByConidition(param);
+        LZResult<List<Authorizer>> result = new LZResult<>(authorizerList);
         return result;
     }
 
-    public Map<String,Object> getById(Map<String,Object> param) {
+    /**
+     * 获取授权人详情
+     * @param param
+     */
+    public Authorizer getById(Map<String,Object> param) {
         return authorizerMapper.selectById(param);
     }
 
+    /**
+     * 授权人添加与修改
+     * @param authorizer
+     */
     public void saveOrUpdate(Authorizer authorizer) {
         if (authorizer.getId() != null) {
             authorizerMapper.updateByIdAndAirportCode(authorizer);
         } else {
-            Map<String,Object> protocolParam = new HashMap<>();
-            protocolParam.put("airportCode",authorizer.getAirportCode());
-            protocolParam.put("protocolName",authorizer.getProtocolName());
-            authorizer.setProtocolId(protocolMapper.getIdByCondition(protocolParam));
             authorizerMapper.insert(authorizer);
         }
     }
 
-    public void deleteById(List<String> ids) {
-        for(int i = 1; i< ids.size();i++){
-            Authorizer temp = new Authorizer();
-            temp.setAirportCode(ids.get(0));
-            temp.setId(Long.parseLong(ids.get(i)));
-            temp.setIsDeleted(Constant.MARK_AS_DELETED);
-            authorizerMapper.updateByIdAndAirportCode(temp);
+    /**
+     * 删除授权人
+     * @param airportCode
+     * @param ids
+     */
+    public void deleteById(List<Long> ids,String airportCode) {
+        for(int i = 0; i< ids.size();i++){
+            Authorizer authorizer = new Authorizer();
+            authorizer.setAirportCode(airportCode);
+            authorizer.setId(ids.get(i));
+            authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
+            authorizerMapper.updateByIdAndAirportCode(authorizer);
         }
     }
 }

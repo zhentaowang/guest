@@ -18,8 +18,8 @@
             <property name="suppressAllComments" value="false" />
         </commentGenerator>-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://192.168.1.100:8066/airport" userId="root"
-			password="root" />
+			connectionURL="jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
+			password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
 		<javaModelGenerator targetPackage="com.airportcloud.protocolmanage.model" targetProject="src/main/java" />
 			

@@ -39,19 +39,24 @@
       </if>
       update_time = CURRENT_TIMESTAMP
     </set>
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and id = #{id,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR}
+    <if test="protocolId != null">
+      and protocol_id = #{protocolId,jdbcType=BIGINT}
+    </if>
+    <if test="id != null">
+      and id = #{id,jdbcType=BIGINT}
+    </if>
   </update>
 
-  <select id="getListByConidition" parameterType="com.airportcloud.protocolmanage.pageUtil.BasePagination" resultMap="BaseResultMap">
+  <select id="getListByConidition" parameterType="map" resultMap="BaseResultMap">
     SELECT
     id,name,cellphone,telephone
     FROM authorizer
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.protocolId != null" >
-      and protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    <if test="protocolId != null" >
+      and protocol_id = #{protocolId,jdbcType=BIGINT}
     </if>
     order by id desc
-    LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
@@ -64,7 +69,7 @@
     </if>
   </select>
 
-  <select id="selectById" parameterType="map" resultType="java.util.Map">
+  <select id="selectById" parameterType="map" resultMap="BaseResultMap">
     SELECT
     name,cellphone,telephone
     FROM authorizer

@@ -12,10 +12,8 @@ import java.util.Map;
  * Created by wzt on 2017/1/4.
  */
 public interface ProtocolServMapper extends MyMapper<ProtocolServ> {
-    Map<String,Object> selectById(Map<String, Object> map);
+    ProtocolServ selectById(Map<String, Object> map);
     List<ProtocolServ> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);
     Integer updateByIdAndAirportCode(ProtocolServ protocolServ);
-    Long getIdByCondition(Map<String,Object> servParam);
-    Long getCategoryId(Map<String,Object> params);
 }

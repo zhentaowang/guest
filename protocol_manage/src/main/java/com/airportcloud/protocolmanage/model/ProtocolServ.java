@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -40,10 +41,10 @@ public class ProtocolServ {
     @ApiModelProperty(value="产品类型配置id",name="productTypeAllocationId")
     private Long productTypeAllocationId;
 
-    @ApiModelProperty(value="价格说明",name="price")
-    private String price;
+    @ApiModelProperty(value="单价，单位：元",name="price")
+    private BigDecimal price;
 
-    @ApiModelProperty(value="说明",name="description")
+    @ApiModelProperty(value="价格说明",name="description")
     private String description;
 
     @ApiModelProperty(value="创建时间",name="createTime")
@@ -66,26 +67,6 @@ public class ProtocolServ {
     @Transient
     @ApiModelProperty(value="服务类型",name="serviceType")
     private String serviceType;
-
-    @Transient
-    @ApiModelProperty(value="协议名称",name="protocolName")
-    private String protocolName;
-
-    /**
-     * 协议名称
-     * @return protocolName 协议名称
-     */
-    public String getProtocolName() {
-        return protocolName;
-    }
-
-    /**
-     * 协议名称
-     * @param protocolName 协议名称
-     */
-    public void setProtocolName(String protocolName) {
-        this.protocolName = protocolName;
-    }
 
     /**
      * 服务名称
@@ -216,32 +197,32 @@ public class ProtocolServ {
     }
 
     /**
-     * 价格说明
-     * @return price 价格说明
+     * 单价，单位：元
+     * @return price 单价，单位：元
      */
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
     /**
-     * 价格说明
-     * @param price 价格说明
+     * 单价，单位：元
+     * @param price 单价，单位：元
      */
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
     /**
-     * 说明
-     * @return description 说明
+     * 价格说明
+     * @return description 价格说明
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * 说明
-     * @param description 说明
+     * 价格说明
+     * @param description 价格说明
      */
     public void setDescription(String description) {
         this.description = description;

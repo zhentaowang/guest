@@ -25,6 +25,7 @@
 package com.airportcloud.protocolmanage.controller;
 
 
+import com.airportcloud.protocolmanage.APIUtil.LZResult;
 import com.airportcloud.protocolmanage.model.Dropdownlist;
 import com.airportcloud.protocolmanage.service.ProtocolService;
 import io.swagger.annotations.Api;
@@ -61,11 +62,13 @@ public class CommonController {
     @ResponseBody
     @ApiOperation(value = "协议表 - 查询协议名称", notes = "返回协议名称列表", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
+            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "协议类型:冠名、头等舱、金银卡", dataType = "String", required = false, paramType = "query")
     })
-    public List<Dropdownlist> getProtocolDropdownList(@RequestParam(value = "airportCode", defaultValue = "LJG", required = true) String airportCode
+    public LZResult<List<Dropdownlist>> getProtocolDropdownList(@RequestParam(value = "airportCode", defaultValue = "LJG", required = true) String airportCode,
+                                                      @RequestParam(value = "type", required = false) String type
     ) {
-        List<Dropdownlist> protocolNameList = protocolService.getProtocolDropdownList(airportCode);
-        return protocolNameList;
+        List<Dropdownlist> protocolNameList = protocolService.getProtocolDropdownList(airportCode,type);
+        return new LZResult<List<Dropdownlist>>(protocolNameList);
     }
 }

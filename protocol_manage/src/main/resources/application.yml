@@ -1,5 +1,5 @@
 server:
-    port: 8080
+    port: 2235
     context-path: #/liuzh/
 
 logging:
@@ -14,10 +14,10 @@ spring:
 #        # 使用druid数据源
 #        type: com.alibaba.druid.pool.DruidDataSource
 #        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-        name: airport
-        url: jdbc:mysql://192.168.1.100:8066/airport
-        username: root
-        password: root
+        name: wyun_guest
+        url: jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest
+        username: airport
+        password: Wyun4test
         # 使用druid数据源
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.jdbc.Driver

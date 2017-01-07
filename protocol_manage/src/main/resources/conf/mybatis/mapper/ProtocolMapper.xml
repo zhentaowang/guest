@@ -40,12 +40,12 @@
     remark, create_time, update_time, is_deleted
   </sql>
 
-  <select id="getProtocolDropdownList" resultMap="DropdownlistMap">
-    select id,name as value from protocol where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-  </select>
-
-  <select id="getCurrentValue"  resultType="java.lang.Integer">
-    select  NEXTVAL('protocol')
+  <select id="getProtocolDropdownList" parameterType="map" resultMap="DropdownlistMap">
+    select id,name as value from protocol where airport_code = #{airportCode,jdbcType=VARCHAR}
+    <if test="type != null">
+      and type = #{type,jdbcType=VARCHAR}
+    </if>
+    and is_deleted = 0
   </select>
 
   <update id="updateByIdAndAirportCode" parameterType="com.airportcloud.protocolmanage.model.Protocol">
@@ -86,10 +86,10 @@
 
   <select id="getListByConidition" parameterType="com.airportcloud.protocolmanage.pageUtil.BasePagination" resultMap="BaseResultMapPage">
   SELECT
-  p.id,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no,p.no,p.name,p.type,clear_form,start_time,end_time
-  FROM
-  protocol p left join institution_client i on p.institution_client_id = i.id
-  where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+    p.id,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no,p.no,p.name,p.type,clear_form,start_time,end_time
+    FROM
+    v_protocol p left join v_institution_client i on p.institution_client_id = i.id
+    where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
   <if test="criteria.institutionClientName != null and !criteria.institutionClientName.trim().equals('')" >
     and i.name like concat('%',#{criteria.institutionClientName},'%')
   </if>
@@ -126,11 +126,12 @@
     </if>
   </select>
 
-  <select id="getIdByCondition"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT id from protocol where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{name,jdbcType=VARCHAR}
+  <select id="selectById" parameterType="map" resultMap="BaseResultMapPage">
+    SELECT
+  p.id,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no,p.no,p.name,p.type,clear_form,start_time,end_time,p.remark
+  FROM
+  v_protocol p left join v_institution_client i on p.institution_client_id = i.id
+  where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.id = #{id,jdbcType=BIGINT}
   </select>
 
-  <select id="getInstitutionClientIdByCondition"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT id from institution_client where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{institutionClientName,jdbcType=VARCHAR}
-  </select>
 </mapper>

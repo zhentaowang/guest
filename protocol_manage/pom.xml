@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.airportcloud.protocolmanage</groupId>
-    <artifactId>protocolmanage</artifactId>
-    <packaging>war</packaging>
+    <artifactId>protocol_manage</artifactId>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>protocolmanage Maven Webapp</name>
+    <name>protocol_manage Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -119,7 +119,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>protocolmanage</finalName>
+        <finalName>protocol_manage</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

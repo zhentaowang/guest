@@ -13,11 +13,9 @@ import java.util.Map;
  * Created by wzt on 2016/12/30.
  */
 public interface ProtocolMapper extends MyMapper<Protocol> {
-    List<Dropdownlist> getProtocolDropdownList(String airportCode);
-    Integer getCurrentValue();
+    List<Dropdownlist> getProtocolDropdownList(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Protocol protocol);
     List<Protocol> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);
-    Long getIdByCondition(Map<String, Object> protocolParam);
-    Long getInstitutionClientIdByCondition(Map<String, Object> institutionClientParam);
+    Protocol selectById(Map<String, Object> map);
 }

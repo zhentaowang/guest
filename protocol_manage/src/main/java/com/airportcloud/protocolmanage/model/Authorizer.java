@@ -52,26 +52,6 @@ public class Authorizer {
     @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
     private Short isDeleted;
 
-    @Transient
-    @ApiModelProperty(value="协议名称",name="protocolName")
-    private String protocolName;
-
-    /**
-     * 协议名称
-     * @return protocolName 协议名称
-     */
-    public String getProtocolName() {
-        return protocolName;
-    }
-
-    /**
-     * 协议名称
-     * @param protocolName 协议名称
-     */
-    public void setProtocolName(String protocolName) {
-        this.protocolName = protocolName;
-    }
-
     /**
      * 主键自增id
      * @return id 主键自增id

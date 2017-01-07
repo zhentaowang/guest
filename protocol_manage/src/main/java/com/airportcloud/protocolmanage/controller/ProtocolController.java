@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +26,6 @@ import java.util.Map;
  * 2017-01-03 13:17:52 Created By wzt
  */
 @RestController
-@RequestMapping("/Protocol")
 @Api(value="协议",description="协议desc ", tags={"Protocol"})
 public class ProtocolController {
     private static final Logger logger = LoggerFactory.getLogger(ProtocolController.class);
@@ -70,7 +70,7 @@ public class ProtocolController {
      * @param params
      * @return
      */
-    @RequestMapping(value="/saveOrUpdate", method=RequestMethod.POST)
+    @RequestMapping(value="/save-or-update", method=RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value="协议管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
     public LXResult save(@ApiParam(value = "protocol", required = true) @RequestBody RequsetParams<Protocol> params){
@@ -88,6 +88,52 @@ public class ProtocolController {
         } catch (Exception e) {
             e.printStackTrace();
             return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+        }
+    }
+
+    /**
+     * 协议管理 - 根据id查询
+     * @param airportCode
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "协议 - 根据id查询 ", notes = "返回协议详情", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "id", value = "服务id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+    })
+    public LZResult<Protocol> view(@RequestParam(value = "airportCode", defaultValue = "LJG", required = true) String airportCode,
+                                             @RequestParam(value = "id", defaultValue = "1", required = true) Long id
+    ) {
+        Map<String,Object> param = new HashMap();
+        param.put("airportCode",airportCode);
+        param.put("id",id);
+        Protocol protocolServ = protocolService.getById(param);
+        return new LZResult<>(protocolServ);
+    }
+
+    /**
+     * 协议管理 - 删除
+     * @param airportCode
+     * @param params ids
+     * @return
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "协议管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public LXResult delete(
+            @RequestBody RequsetParams<Long> params,
+            @RequestParam(value = "airportCode", required = true) String airportCode) {
+        try {
+            List<Long> ids = params.getData();
+            protocolService.deleteById(ids,airportCode);
+            return LXResult.success();
+        } catch (Exception e) {
+            logger.error("delete protocol by ids error", e);
+            return LXResult.error();
         }
     }
 

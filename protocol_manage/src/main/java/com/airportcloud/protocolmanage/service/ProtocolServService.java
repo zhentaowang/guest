@@ -22,53 +22,57 @@ import java.util.Map;
 @Service
 public class ProtocolServService {
     @Autowired
-    private ProtocolServMapper protocolservMapper;
+    private ProtocolServMapper protocolServMapper;
 
-    @Autowired
-    private ProtocolMapper protocolMapper;
-
+    /**
+     * 分页获取协议服务列表
+     * @param param
+     * @param page
+     * @param rows
+     */
     public LZResult<PaginationResult<ProtocolServ>> getAll(Map<String,Object> param, Integer page, Integer rows) {
 
-        int count = protocolservMapper.getListCount(param);
+        int count = protocolServMapper.getListCount(param);
 
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-        List<ProtocolServ> protocolservList = protocolservMapper.getListByConidition(queryCondition);
+        List<ProtocolServ> protocolservList = protocolServMapper.getListByConidition(queryCondition);
         PaginationResult<ProtocolServ> eqr = new PaginationResult<>(count, protocolservList);
         LZResult<PaginationResult<ProtocolServ>> result = new LZResult<>(eqr);
         return result;
     }
 
-    public Map<String,Object> getById(Map<String,Object> param) {
-        return protocolservMapper.selectById(param);
+    /**
+     * 获取协议服务详情
+     * @param param
+     */
+    public ProtocolServ getById(Map<String,Object> param) {
+        return protocolServMapper.selectById(param);
     }
 
+    /**
+     * 协议服务添加与修改
+     * @param protocolServ
+     */
     public void saveOrUpdate(ProtocolServ protocolServ) {
         if (protocolServ.getId() != null) {
-            protocolservMapper.updateByIdAndAirportCode(protocolServ);
+            protocolServMapper.updateByIdAndAirportCode(protocolServ);
         } else {
-            Map<String,Object> protocolParam = new HashMap<>();
-            protocolParam.put("airportCode",protocolServ.getAirportCode());
-            protocolParam.put("protocolName",protocolServ.getProtocolName());
-            protocolServ.setProtocolId(protocolMapper.getIdByCondition(protocolParam));
-            Map<String,Object> servParam = new HashMap<>();
-            servParam.put("airportCode",protocolServ.getAirportCode());
-            servParam.put("serviceName",protocolServ.getServiceName());
-            protocolServ.setServiceId(protocolservMapper.getIdByCondition(servParam));
-            Map<String,Object> productTypeAllocationParam = new HashMap<>();
-            productTypeAllocationParam.put("airportCode",protocolServ.getAirportCode());
-            productTypeAllocationParam.put("serviceType",protocolServ.getServiceType());
-            protocolServ.setProductTypeAllocationId(protocolservMapper.getCategoryId(productTypeAllocationParam));
-            protocolservMapper.insert(protocolServ);
+            protocolServMapper.insert(protocolServ);
         }
     }
 
-    public void deleteById(List<String> ids) {
-        for(int i = 1; i< ids.size();i++){
-            ProtocolServ temp = new ProtocolServ();
-            temp.setAirportCode(ids.get(0));
-            temp.setId(Long.parseLong(ids.get(i)));
-            temp.setIsDeleted(Constant.MARK_AS_DELETED);
-            protocolservMapper.updateByIdAndAirportCode(temp);
+    /**
+     * 删除协议服务
+     * @param airportCode
+     * @param ids
+     */
+    public void deleteById(List<Long> ids,String airportCode) {
+        for(int i = 0; i< ids.size();i++){
+            ProtocolServ protocolServ = new ProtocolServ();
+            protocolServ.setAirportCode(airportCode);
+            protocolServ.setId(ids.get(i));
+            protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
+            protocolServMapper.updateByIdAndAirportCode(protocolServ);
         }
     }
 }

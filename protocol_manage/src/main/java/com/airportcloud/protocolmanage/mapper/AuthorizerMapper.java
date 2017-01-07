@@ -13,8 +13,8 @@ import java.util.Map;
  * Created by wzt on 2017/1/4.
  */
 public interface AuthorizerMapper extends MyMapper<Authorizer> {
-    Map<String,Object> selectById(Map<String, Object> map);
-    List<Authorizer> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
+    Authorizer selectById(Map<String, Object> map);
+    List<Authorizer> getListByConidition(Map<String, Object> map);
     int getListCount(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Authorizer authorizer);
 }
