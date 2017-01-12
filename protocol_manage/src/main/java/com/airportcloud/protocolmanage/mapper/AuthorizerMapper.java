@@ -17,4 +17,5 @@ public interface AuthorizerMapper extends MyMapper<Authorizer> {
     List<Authorizer> getListByConidition(Map<String, Object> map);
     int getListCount(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Authorizer authorizer);
+    Integer deleteByIdAndAirportCode(Map<String, Object> map);
 }

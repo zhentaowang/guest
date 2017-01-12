@@ -44,6 +44,28 @@ public class ProtocolServ {
     @ApiModelProperty(value="单价，单位：元",name="price")
     private BigDecimal price;
 
+    public BigDecimal getOverStaffUnitPrice() {
+        return overStaffUnitPrice;
+    }
+
+    public void setOverStaffUnitPrice(BigDecimal overStaffUnitPrice) {
+        this.overStaffUnitPrice = overStaffUnitPrice;
+    }
+
+    public Integer getFreeRetinueNum() {
+        return freeRetinueNum;
+    }
+
+    public void setFreeRetinueNum(Integer freeRetinueNum) {
+        this.freeRetinueNum = freeRetinueNum;
+    }
+
+    @ApiModelProperty(value="免费随员人数",name="freeRetinueNum")
+    private Integer freeRetinueNum;
+
+    @ApiModelProperty(value="超员单价，单位：元",name="overStaffUnitPrice")
+    private BigDecimal overStaffUnitPrice;
+
     @ApiModelProperty(value="价格说明",name="description")
     private String description;
 

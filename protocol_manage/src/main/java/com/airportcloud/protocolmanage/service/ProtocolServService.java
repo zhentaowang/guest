@@ -57,7 +57,7 @@ public class ProtocolServService {
         if (protocolServ.getId() != null) {
             protocolServMapper.updateByIdAndAirportCode(protocolServ);
         } else {
-            protocolServMapper.insert(protocolServ);
+            protocolServMapper.insertSelective(protocolServ);
         }
     }
 

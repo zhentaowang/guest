@@ -8,6 +8,8 @@
     <result column="service_id" jdbcType="BIGINT" property="serviceId" />
     <result column="product_type_allocation_id" jdbcType="BIGINT" property="productTypeAllocationId" />
     <result column="price" jdbcType="DECIMAL" property="price" />
+      <result column="over_staff_unit_price" jdbcType="DECIMAL" property="overStaffUnitPrice" />
+      <result column="free_retinue_num" jdbcType="BIGINT" property="freeRetinueNum" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -21,6 +23,8 @@
     <result column="service_id" jdbcType="BIGINT" property="serviceId" />
     <result column="product_type_allocation_id" jdbcType="BIGINT" property="productTypeAllocationId" />
     <result column="price" jdbcType="DECIMAL" property="price" />
+      <result column="over_staff_unit_price" jdbcType="DECIMAL" property="overStaffUnitPrice" />
+      <result column="free_retinue_num" jdbcType="BIGINT" property="freeRetinueNum" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -37,16 +41,16 @@
 
   <select id="getListByConidition" parameterType="com.airportcloud.protocolmanage.pageUtil.BasePagination" resultMap="BaseResultMapPage">
     select
-    pss.id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price
+    pss.id,pss.protocol_id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
     from (
-        select ps.id,ps.service_id,s.name,ps.product_type_allocation_id,ps.price
+        select ps.*,s.name
              from protocol_serv as ps
         left join serv s on ps.service_id = s.id
         where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
         <if test="criteria.protocolId != null" >
              and ps.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
         </if>
-        and s.is_deleted = 0
+        and s.is_deleted = 0 and ps.is_deleted = 0
     ) as pss
     left join product_type_allocation p on pss.product_type_allocation_id = p.id
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
@@ -100,14 +104,14 @@
 
     <select id="selectById" parameterType="map" resultMap="BaseResultMapPage">
         select
-        p.product_category,p.service_type,pss.name,pss.price,pss.description
+        p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.protocol_id,pss.over_staff_unit_price,pss.free_retinue_num
         from (
-        select ps.id,ps.service_id,s.name,s.product_type_allocation_id,ps.price,ps.description
+        select ps.*,s.name
         from protocol_serv as ps
         left join serv s on ps.service_id = s.id
         where s.airport_code = #{airportCode,jdbcType=VARCHAR}
         and ps.id = #{id,jdbcType=BIGINT}
-        and s.is_deleted = 0
+        and s.is_deleted = 0 and ps.is_deleted = 0
         ) as pss
         left join product_type_allocation p on pss.product_type_allocation_id = p.id
         where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0

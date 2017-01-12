@@ -75,4 +75,8 @@
     FROM authorizer
     where airport_code = #{airportCode,jdbcType=VARCHAR} and id = #{id,jdbcType=BIGINT} and is_deleted = 0
   </select>
+
+  <select id="deleteByIdAndAirportCode" parameterType="map">
+    update authorizer set is_deleted = 1 where id not in (#{ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
+  </select>
 </mapper>
