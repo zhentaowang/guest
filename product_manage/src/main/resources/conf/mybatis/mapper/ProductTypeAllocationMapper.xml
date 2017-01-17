@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.airportcloud.productmanage.mapper.ProductTypeAllocationMapper">
-  <resultMap id="BaseResultMap" type="com.airportcloud.productmanage.model.ProductTypeAllocation">
+<mapper namespace="com.zhiweicloud.productmanage.mapper.ProductTypeAllocationMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.productmanage.model.ProductTypeAllocation">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
     <result column="category_no" jdbcType="VARCHAR" property="categoryNo" />
@@ -14,7 +14,7 @@
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
   </resultMap>
 
-  <resultMap id="DropdownlistMap" type="com.airportcloud.productmanage.model.Dropdownlist">
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
   <id column="id" jdbcType="BIGINT" property="id" />
   <result column="value" jdbcType="VARCHAR" property="value" />
 </resultMap>
@@ -39,7 +39,7 @@
   SELECT id from product_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type = #{serviceType,jdbcType=VARCHAR}
 </select>
 
-  <select id="getListByConidition" parameterType="com.airportcloud.productmanage.pageUtil.BasePagination" resultMap="BaseResultMap">
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     SELECT category_no, product_category, service_type, remark from product_type_allocation where airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
     order by id desc
     LIMIT #{page.startPageNo},#{page.pCount}

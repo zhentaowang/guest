@@ -84,6 +84,12 @@
             <artifactId>mapper</artifactId>
             <version>${mapper.version}</version>
         </dependency>
+        <!-- 机场云 公共类 -->
+        <dependency>
+            <groupId>com.zhiweicloud.guest</groupId>
+            <artifactId>guest-util</artifactId>
+            <version>1.0.release</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>

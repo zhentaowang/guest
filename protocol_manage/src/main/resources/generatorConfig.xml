@@ -21,7 +21,7 @@
 			connectionURL="jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
 			password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
-		<javaModelGenerator targetPackage="com.airportcloud.protocolmanage.model" targetProject="src/main/java" />
+		<javaModelGenerator targetPackage="com.zhiweicloud.protocolmanage.model" targetProject="src/main/java" />
 			
 		<!-- 所生成的sqlMap的影射文件的位置,默认资源包src -->
 		<sqlMapGenerator targetPackage="resources.conf.mybatis.mapper" targetProject="src/main"/>
