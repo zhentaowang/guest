@@ -25,6 +25,7 @@
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
     <result column="clear_form" jdbcType="SMALLINT" property="clearForm" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="institution_client_name" jdbcType="VARCHAR" property="institutionClientName" />
     <result column="institution_client_type" jdbcType="VARCHAR" property="institutionClientType" />
     <result column="institution_client_no" jdbcType="VARCHAR" property="institutionClientNo" />
@@ -148,7 +149,7 @@
   FROM
   v_protocol p left join v_institution_client i on p.institution_client_id = i.id
   where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.id = #{id,jdbcType=BIGINT}
-  ) as pi left join authorizer as a on pi.id = a.protocol_id where a.airport_code = #{airportCode,jdbcType=VARCHAR} and a.is_deleted = 0
+  ) as pi left join (select * from authorizer where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as a on pi.id = a.protocol_id
   </select>
 
 </mapper>

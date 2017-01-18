@@ -65,8 +65,8 @@ public class ProtocolService {
             protocolMapper.updateByIdAndAirportCode(protocol);
 
             //授权人修改
+            StringBuffer ids = new StringBuffer();
             if(protocol.getAuthorizerList() != null){
-                StringBuffer ids = new StringBuffer();
                 for(int i = 0; i < protocol.getAuthorizerList().size(); i++){
                     Authorizer authorizer = protocol.getAuthorizerList().get(i);
                     if(authorizer.getId() != null){
@@ -81,21 +81,32 @@ public class ProtocolService {
                         authorizer.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                         authorizer.setAirportCode(protocol.getAirportCode());
                         authorizerMapper.insertSelective(authorizer);
+                        ids.append(authorizer.getId()+",");
                     }
                 }
-                params.put("ids",ids.substring(0,ids.length() - 1));
+                if(ids.length() != 0){
+                    params.put("ids",ids.substring(0,ids.length() - 1));
+                    authorizerMapper.deleteByIdAndAirportCode(params);
+                }
+                else{
+                    params.put("ids",ids.append(0));
+                    authorizerMapper.deleteByIdAndAirportCode(params);
+                }
+            }
+            else{
+                params.put("ids",ids.append(0));
                 authorizerMapper.deleteByIdAndAirportCode(params);
             }
 
             //协议服务修改
+            StringBuffer ids00 = new StringBuffer();
             if(protocol.getProtocolServList() != null){
-                StringBuffer ids = new StringBuffer();
                 for(int i = 0; i < protocol.getProtocolServList().size(); i++){
                     ProtocolServ protocolServ = protocol.getProtocolServList().get(i);
                     if (protocolServ.getId() != null){
                         protocolServ.setAirportCode(protocol.getAirportCode());
                         protocolServ.setProtocolId(protocol.getId());
-                        ids.append(protocolServ.getId()+",");
+                        ids00.append(protocolServ.getId()+",");
                         protocolServMapper.updateByIdAndAirportCode(protocolServ);
                     }else{
                         protocolServ.setCreateTime(new Date());
@@ -104,9 +115,20 @@ public class ProtocolService {
                         protocolServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                         protocolServ.setAirportCode(protocol.getAirportCode());
                         protocolServMapper.insertSelective(protocolServ);
+                        ids00.append(protocolServ.getId()+",");
                     }
                 }
-                params.put("ids",ids.substring(0,ids.length() - 1));
+                if(ids00.length() != 0){
+                    params.put("ids00",ids00.substring(0,ids00.length() - 1));
+                    protocolServMapper.deleteByIdAndAirportCode(params);
+                }
+                else{
+                    params.put("ids00",ids00.append(0));
+                    protocolServMapper.deleteByIdAndAirportCode(params);
+                }
+            }
+            else{
+                params.put("ids00",ids00.append(0));
                 protocolServMapper.deleteByIdAndAirportCode(params);
             }
         } else {

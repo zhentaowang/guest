@@ -124,7 +124,7 @@
     </select>
 
     <select id="deleteByIdAndAirportCode" parameterType="map">
-        update protocol_serv set is_deleted = 1 where id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
+        update protocol_serv set is_deleted = 1 where id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
     </select>
 
 </mapper>

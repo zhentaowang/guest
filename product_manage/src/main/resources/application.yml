@@ -1,5 +1,5 @@
 server:
-    port: 2236
+    port: 2229
     context-path: #/liuzh/
 
 logging:

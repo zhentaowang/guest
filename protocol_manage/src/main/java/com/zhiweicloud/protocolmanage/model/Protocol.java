@@ -6,6 +6,8 @@
 */
 package com.zhiweicloud.protocolmanage.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.zhiweicloud.guest.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -23,17 +25,7 @@ import java.util.List;
  * 2016-12-30 15:34:40 Created By wzt
 */
 @ApiModel(value="Protocol",description="protocol")
-public class Protocol {
-    @ApiModelProperty(value="主键自增id",name="id", required=true)
-    @NotEmpty
-    @Id
-    @GeneratedValue(generator = "JDBC")
-    private Long id;
-
-    @ApiModelProperty(value="机场code",name="airportCode", required=true)
-    @NotEmpty
-    private String airportCode;
-
+public class Protocol extends BaseEntity{
     @ApiModelProperty(value="机构客户id",name="institutionClientId")
     private Long institutionClientId;
 
@@ -59,9 +51,11 @@ public class Protocol {
     private String type;
 
     @ApiModelProperty(value="开始时间",name="startTime")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
 
     @ApiModelProperty(value="结束时间",name="endTime")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     @ApiModelProperty(value="结算方式，0：预付，1：月结，2：包量，3：接待",name="clearForm")
@@ -69,15 +63,6 @@ public class Protocol {
 
     @ApiModelProperty(value="备注",name="remark")
     private String remark;
-
-    @ApiModelProperty(value="创建时间",name="createTime")
-    private Date createTime;
-
-    @ApiModelProperty(value="修改时间",name="updateTime")
-    private Date updateTime;
-
-    @ApiModelProperty(value="是否删除：默认为0，0：不删除，1：删除",name="isDeleted")
-    private Short isDeleted;
 
     @Transient
     @ApiModelProperty(value = "授权人",name="authorizer")
@@ -161,38 +146,6 @@ public class Protocol {
 
     public void setAuthorizerList(List<Authorizer> authorizerList) {
         this.authorizerList = authorizerList;
-    }
-
-    /**
-     * 主键自增id
-     * @return id 主键自增id
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * 主键自增id
-     * @param id 主键自增id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * 机场code
-     * @return airport_code 机场code
-     */
-    public String getAirportCode() {
-        return airportCode;
-    }
-
-    /**
-     * 机场code
-     * @param airportCode 机场code
-     */
-    public void setAirportCode(String airportCode) {
-        this.airportCode = airportCode;
     }
 
     /**
@@ -369,53 +322,5 @@ public class Protocol {
      */
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    /**
-     * 创建时间
-     * @return create_time 创建时间
-     */
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * 创建时间
-     * @param createTime 创建时间
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
-     * 修改时间
-     * @return update_time 修改时间
-     */
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    /**
-     * 修改时间
-     * @param updateTime 修改时间
-     */
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    /**
-     * 是否删除：默认为0，0：不删除，1：删除
-     * @return is_deleted 是否删除：默认为0，0：不删除，1：删除
-     */
-    public Short getIsDeleted() {
-        return isDeleted;
-    }
-
-    /**
-     * 是否删除：默认为0，0：不删除，1：删除
-     * @param isDeleted 是否删除：默认为0，0：不删除，1：删除
-     */
-    public void setIsDeleted(Short isDeleted) {
-        this.isDeleted = isDeleted;
     }
 }
