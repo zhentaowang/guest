@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+"-//mybatis.org//DTD MyBatis Generator Configuration 
+1.0//EN"
+"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"
+>
+<generatorConfiguration>
+	<classPathEntry location="C:/Users/wzt/.m2/repository/mysql/mysql-connector-java/5.1.21/mysql-connector-java-5.1.21.jar" />
+	<!-- 配置数据源和生成的代码所存放的位置 -->
+	<context id="context1">
+	 	<!-- 生成的Java文件的编码 -->  
+	    <property name="javaFileEncoding" value="UTF-8"/>  
+		<!--去除注释  -->
+        <commentGenerator type="com.project.common.util.MyCommentGenerator">
+            <property name="suppressAllComments" value="false" />
+        </commentGenerator>
+      <!-- <commentGenerator type="org.mybatis.generator.internal.DG2CommentGenerator">
+            <property name="suppressAllComments" value="false" />
+        </commentGenerator>-->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+						connectionURL="jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
+						password="Wyun4test" />
+		<!-- 所生成的实体类的位置默认资源包src -->
+		<javaModelGenerator targetPackage="com.zhiweicloud.productmanage.model" targetProject="src/main/java" />
+			
+		<!-- 所生成的sqlMap的影射文件的位置,默认资源包src -->
+		<sqlMapGenerator targetPackage="resources.conf.mybatis.mapper" targetProject="src/main"/>
+		
+		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
+		
+		
+		<table schema="" tableName="authorizer" enableCountByExample="false"
+				enableUpdateByExample="false" enableDeleteByExample="false"
+				enableSelectByExample="false" selectByExampleQueryId="false">
+			<ignoreColumn column="update_time"/>
+			<ignoreColumn column="create_time"/>
+			<ignoreColumn column="is_deleted"/>
+			<ignoreColumn column="id"/>
+			<ignoreColumn column="airport_code"/>
+		</table>
+
+
+	</context>
+</generatorConfiguration>
+	
