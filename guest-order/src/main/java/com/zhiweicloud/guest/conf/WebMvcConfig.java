@@ -22,24 +22,34 @@
  * THE SOFTWARE.
  */
 
-package com.zhiweicloud.guest.mapper;
+package com.zhiweicloud.guest.conf;
 
-
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.InstitutionClient;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
-
-import java.util.List;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * InstitutionClientMapper.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2016-12-26 15:45:36 Created By zhangpengfei
+ * @author liuzh_3nofxnp
+ * @since 2015-12-19 16:16
  */
-public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
-    List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
+@Configuration
+public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-    List<Dropdownlist> getInstitutionClientDropdownList(String airportCode);
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+    }
+
+//    @Override
+//    public void configureViewResolvers(ViewResolverRegistry registry) {
+//        registry.enableContentNegotiation(new MappingJackson2JsonView());
+//        registry.freeMarker().cache(false);
+//    }
+//
+//    @Bean
+//    public FreeMarkerConfigurer freeMarkerConfigurer() {
+//        FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
+//        configurer.setTemplateLoaderPath("/WEB-INF/");
+//        return configurer;
+//    }
 }

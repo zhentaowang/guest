@@ -29,6 +29,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.service.InstitutionClientService;
 import io.swagger.annotations.*;
@@ -47,7 +48,6 @@ import java.util.List;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @RestController
-@RequestMapping("/institutionClientController")
 @Api(value="机构客户管理",description="", tags={"InstitutionClientModel"})
 public class InstitutionClientController {
     private static final Logger logger = LoggerFactory.getLogger(InstitutionClientController.class);
@@ -76,6 +76,7 @@ public class InstitutionClientController {
         param.setNo(no);
         param.setName(name);
         param.setType(type);
+        param.setAirportCode(airportCode);
         LZResult<PaginationResult<InstitutionClient>> result  = institutionClientService.getAll(param,page,rows);
         return result;
     }
@@ -87,7 +88,7 @@ public class InstitutionClientController {
     @RequestMapping(value="/saveOrUpdate", method=RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value="机构客户管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "employee", required = true) @RequestBody RequsetParams<InstitutionClient> params){
+    public LXResult save(@ApiParam(value = "institutionClient", required = true) @RequestBody RequsetParams<InstitutionClient> params){
         try{
             InstitutionClient institutionClient = null;
             if(!CollectionUtils.isEmpty(params.getData())){
@@ -149,6 +150,19 @@ public class InstitutionClientController {
             logger.error("delete employee by ids error", e);
             return LXResult.error();
         }
+    }
+
+    /**
+     * 产品品类下拉框 数据
+     * @return
+     */
+    @RequestMapping(value="/queryInstitutionClientDropdownList",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="系统中用到员工信息下来框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public LZResult<List<Dropdownlist>> queryEmployeeDropdownList(@RequestParam(value = "airportCode", required = true) String airportCode) {
+        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode);
+        return new LZResult<>(list);
     }
 
 

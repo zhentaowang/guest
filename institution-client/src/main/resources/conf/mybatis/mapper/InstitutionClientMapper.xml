@@ -50,4 +50,13 @@
     order by  i.id desc
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="string">
+    select id,name as value from institution_client where is_deleted = 0 and airport_code = #{airportCode}
+  </select>
 </mapper>

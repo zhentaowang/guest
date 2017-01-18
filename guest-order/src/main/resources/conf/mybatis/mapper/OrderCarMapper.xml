@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.OrderCarMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderCar">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="car_no" jdbcType="VARCHAR" property="carNo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="ariport_id" jdbcType="BIGINT" property="ariportId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_id, car_no, create_time, update_time, is_deleted, ariport_id
+  </sql>
+
+  <insert id="insertByExists">
+    INSERT INTO order_car (order_id,car_no,airport_code)
+    SELECT #{orderId},#{carNo},#{airportCode}
+    FROM dual
+    WHERE not exists (
+            select * from order_car where order_id = #{orderId} and car_no = #{carNo} and airport_code = #{airportCode}
+    )
+  </insert>
+  <update id="deleteCarNo">
+    update order_car set is_deleted = 1 where car_no not in (${carNoStr})  and airport_code = #{airportCode} and order_id = #{orderId}
+  </update>
+
+</mapper>

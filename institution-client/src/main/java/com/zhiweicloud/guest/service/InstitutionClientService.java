@@ -28,6 +28,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -98,7 +99,7 @@ public class InstitutionClientService {
         InstitutionClient temp = new InstitutionClient();
         temp.setId(id);
         temp.setAirportCode(airportCode);
-        temp.setIsDeleted(Constant.MARK_AS_NOT_DELETED);
+        temp.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
         /**
          * 只能返回一条记录，如果有多条了就会报错，就跟selectByPrimaryKey一样的效果
          */
@@ -129,4 +130,7 @@ public class InstitutionClientService {
     }
 
 
+    public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode) {
+        return institutionClientMapper.getInstitutionClientDropdownList(airportCode);
+    }
 }

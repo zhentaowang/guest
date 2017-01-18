@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhiweicloud.guest.mapper.GuestOrderMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.GuestOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
+    <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
+    <result column="is_important" jdbcType="SMALLINT" property="isImportant" />
+    <result column="order_status" jdbcType="SMALLINT" property="orderStatus" />
+    <result column="order_remark" jdbcType="VARCHAR" property="orderRemark" />
+    <result column="signer_person" jdbcType="VARCHAR" property="signerPerson" />
+   <!-- <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+    <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
+    <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+    <result column="plan_take_off_time" jdbcType="TIMESTAMP" property="planTakeOffTime" />
+    <result column="plan_landing_time" jdbcType="TIMESTAMP" property="planLandingTime" />
+    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+    <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
+    <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />-->
+
+    <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
+    <result column="service_id" jdbcType="BIGINT" property="serviceId" />
+    <result column="is_print_boarding_check" jdbcType="SMALLINT" property="isPrintBoardingCheck" />
+    <result column="sit_require" jdbcType="VARCHAR" property="sitRequire" />
+    <result column="package_no" jdbcType="INTEGER" property="packageNo" />
+    <result column="package_weight" jdbcType="REAL" property="packageWeight" />
+    <result column="is_consign" jdbcType="SMALLINT" property="isConsign" />
+    <result column="server_person_num" jdbcType="INTEGER" property="serverPersonNum" />
+    <result column="company_person_num" jdbcType="INTEGER" property="companyPersonNum" />
+    <result column="car_num" jdbcType="INTEGER" property="carNum" />
+    <result column="order_type" jdbcType="SMALLINT" property="orderType" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+
+    <result column="protocol_name" jdbcType="VARCHAR" property="protocolName" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+    <result column="passage_way_name" jdbcType="VARCHAR" property="passageWayName" />
+
+    <result column="org_customer_id" jdbcType="BIGINT" property="orgCustomerId" />
+    <result column="protocol_remark" jdbcType="VARCHAR" property="protocolRemark" />
+    <association property="flight" javaType="com.zhiweicloud.guest.model.Flight">
+      <result column="flight_id" jdbcType="BIGINT" property="id" />
+      <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+      <result column="order_id" jdbcType="BIGINT" property="orderId" />
+      <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+      <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
+      <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+      <result column="plan_take_off_time" jdbcType="TIMESTAMP" property="planTakeOffTime" />
+      <result column="plan_landing_time" jdbcType="TIMESTAMP" property="planLandingTime" />
+      <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+      <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
+      <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+    </association>
+    <collection property="passengerList" ofType="com.zhiweicloud.guest.model.Passenger">
+      <id column="passenger_id" property="id" />
+      <result column="order_id" jdbcType="BIGINT" property="orderId" />
+      <result column="passenger_name" property="name" />
+      <result column="phone" jdbcType="BIGINT" property="phone" />
+      <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
+      <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+      <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+      <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+      <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
+      <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
+      <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
+      <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+      <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    </collection >
+    <collection property="orderCarList" ofType="com.zhiweicloud.guest.model.OrderCar">
+      <id column="car_id" property="id" />
+      <result column="car_no" property="carNo" />
+    </collection >
+    <collection property="orderChargeList" ofType="com.zhiweicloud.guest.model.OrderCharge">
+      <id column="charge_id" jdbcType="BIGINT" property="id" />
+      <result column="order_id" jdbcType="BIGINT" property="orderId" />
+      <result column="charge_service" jdbcType="VARCHAR" property="chargeService" />
+      <result column="charge_by" jdbcType="SMALLINT" property="chargeBy" />
+      <result column="charge_num" jdbcType="VARCHAR" property="chargeNum" />
+      <result column="charge_price" jdbcType="DOUBLE" property="chargePrice" />
+      <result column="charge_amount" jdbcType="DOUBLE" property="chargeAmount" />
+    </collection >
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    id,protocol_id,org_customer_id,protocol_remark,booking_person,is_important,order_status,order_remark,signer_person,
+flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_landing_time,is_in_or_out,server_time,boarding_port,is_near_or_far,service_id,passageway_id,is_print_boarding_check,sit_require,package_no,package_weight,is_consign,server_person_num,company_person_num,car_num,car_no,order_type,is_deleted,airport_code
+
+  </sql>
+
+  <resultMap id="protocolInfoMap" type="com.zhiweicloud.guest.model.ProtocolInfo">
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <association property="orgCustomer" javaType="com.zhiweicloud.guest.model.Dropdownlist">
+      <id column="ic_id" jdbcType="BIGINT" property="id" />
+      <result column="name" jdbcType="VARCHAR" property="value" />
+    </association>
+    <association property="protocol" javaType="com.zhiweicloud.guest.model.Dropdownlist">
+      <id column="p_id" jdbcType="BIGINT" property="id" />
+      <result column="p_name" jdbcType="VARCHAR" property="value" />
+    </association>
+  </resultMap>
+
+  <resultMap id="dropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getProtocolInfo" parameterType="com.zhiweicloud.guest.model.ProtocolInfo" resultMap="protocolInfoMap">
+    select p.id as p_id,p.name as p_name,p.no,ic.id as ic_id,ic.name,p.remark from protocol p
+    inner join institution_client ic
+    on ic.id = p.institution_client_id
+    WHERE p.is_deleted = 0 and p.airport_code = #{airportCode}
+    <if test="protocol.id != null" >
+      AND p.id = #{protocol.id,jdbcType=BIGINT}
+    </if>
+    <if test="protocol.value != null" >
+      and p.no = #{protocol.value,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <select id="getProtocolPersonInfo" parameterType="com.zhiweicloud.guest.model.ProtocolInfo" resultMap="dropdownlistMap">
+    select t.id,CONCAT(t.name,',',t.cellphone,',',t.telephone) as value
+    from authorizer t left join
+    protocol p on p.id = t.protocol_id
+    where p.is_deleted = 0 and p.airport_code = #{airportCode}
+    <if test="protocol.id != null" >
+      AND p.id = #{protocol.id,jdbcType=BIGINT}
+    </if>
+    <if test="protocol.value != null" >
+      and p.no = #{protocol.value,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+
+  <select id="getServerListInfo" parameterType="map" resultMap="dropdownlistMap">
+    SELECT id,name as value from serv where id in (
+      select service_id from protocol_serv ps,product_type_allocation pta
+      where protocol_id = #{protocolId}
+      and ps.product_type_allocation_id = pta.id
+      and ps.is_deleted = 0 and ps.airport_code = #{airportCode}
+      and pta.is_deleted = 0 and pta.airport_code = #{airportCode}
+      <if test="productCategory != null and !''.equals(productCategory)">
+        and pta.product_category = #{productCategory}
+      </if>
+      <if test="serviceType != null and !''.equals(serviceType)">
+        and pta.service_type = #{serviceType}
+      </if>
+    ) and is_deleted = 0 and airport_code = #{airportCode}
+
+  </select>
+
+  <select id="selectByComplexQueryCount" resultType="int" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination">
+    SELECT
+    count(DISTINCT(t.id))
+    from
+    (SELECT
+    o.id
+    FROM
+    guest_order o inner join protocol prot on o.protocol_id = prot.id
+    inner join flight f on f.order_id = o.id
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)" >
+      and o.order_type = #{criteria.queryOrderType}
+    </if>
+
+    <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
+      and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
+    </if>
+    <if test="criteria.queryIsConsign != null and !''.equals(criteria.queryIsConsign)" >
+      and o.is_consign = #{criteria.queryIsConsign}
+    </if>
+
+
+    <if test="criteria.queryFlightStartDate != null " >
+      and f.flight_date &gt;= #{criteria.queryFlightStartDate}
+    </if>
+    <if test="criteria.queryFlightEndDate != null " >
+      and f.flight_date &lt;= #{criteria.queryFlightEndDate}
+    </if>
+
+    <if test="criteria.queryBookingStartDate != null " >
+      and f.create_time &gt;= #{criteria.queryBookingStartDate}
+    </if>
+    <if test="criteria.queryBookingEndDate != null " >
+      and f.create_time &lt;= #{criteria.queryBookingEndDate}
+    </if>
+
+    and o.is_deleted = 0 and o.airport_code = #{criteria.airportCode}
+    left join institution_client ic on prot.institution_client_id = ic.id
+    <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
+      and ic.name  like concat('%',#{criteria.queryCustomerName},'%')
+    </if>
+
+    left join serv sv on sv.id = o.service_id
+    <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
+      and sv.name = #{criteria.queryCustomerName}
+    </if>
+    left join serv svp on svp.id = o.passageway_id
+    limit #{page.startPageNo},#{page.pCount}
+    ) t
+    inner JOIN passenger p on t.id = p.order_id
+    and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
+    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
+      and p.name like concat('%',#{criteria.queryPassengerName},'%')
+    </if>
+
+    inner join order_car car on car.order_id = t.id
+    and car.is_deleted = 0 and car.airport_code = #{criteria.airportCode}
+    </select>
+
+  <select id="selectByComplexQuery" resultMap="BaseResultMap" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination">
+    SELECT
+      t.*,
+      p.id AS passenger_id,p.NAME as passenger_name  ,
+      car.id as car_id,car.car_no
+    from
+      (SELECT
+        o.id,concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.order_type,o.is_print_boarding_check,o.is_consign,o.server_person_num,
+		o.order_status,o.is_important,o.create_time,o.airport_code,
+        f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,
+        prot.name protocol_name,ic.name as customer_name,
+        sv.name as service_name,svp.name as passage_way_name
+      FROM
+        guest_order o inner join protocol prot on o.protocol_id = prot.id
+        inner join flight f on f.order_id = o.id
+        <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)" >
+          and o.order_type = #{criteria.queryOrderType}
+        </if>
+
+        <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
+          and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
+        </if>
+        <if test="criteria.queryIsConsign != null and !''.equals(criteria.queryIsConsign)" >
+          and o.is_consign = #{criteria.queryIsConsign}
+        </if>
+
+
+        <if test="criteria.queryFlightStartDate != null " >
+          and f.flight_date &gt;= #{criteria.queryFlightStartDate}
+        </if>
+        <if test="criteria.queryFlightEndDate != null " >
+          and f.flight_date &lt;= #{criteria.queryFlightEndDate}
+        </if>
+
+        <if test="criteria.queryBookingStartDate != null " >
+          and f.create_time &gt;= #{criteria.queryBookingStartDate}
+        </if>
+        <if test="criteria.queryBookingEndDate != null " >
+          and f.create_time &lt;= #{criteria.queryBookingEndDate}
+        </if>
+
+        and o.is_deleted = 0
+        left join institution_client ic on prot.institution_client_id = ic.id
+        <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
+          and ic.name  like concat('%',#{criteria.queryCustomerName},'%')
+        </if>
+
+        left join serv sv on sv.id = o.service_id
+        <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
+          and sv.name = #{criteria.queryCustomerName}
+        </if>
+        left join serv svp on svp.id = o.passageway_id
+
+      ) t
+    inner JOIN passenger p on t.id = p.order_id
+    and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
+    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
+      and p.name like concat('%',#{criteria.queryPassengerName},'%')
+    </if>
+
+     inner join order_car car on car.order_id = t.id
+    and car.is_deleted = 0 and car.airport_code = #{criteria.airportCode} and t.airport_code = #{criteria.airportCode}
+    order by t.id desc
+
+
+  </select>
+
+
+  <select id="selectByIdAndAirCode" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    t.*,
+    p.id AS passenger_id,p.NAME as passenger_name, p.phone, p.identity_card, p.work_unit, p.vip_card, p.sit_no, p.cabin_no,
+    p.ticket_no, p.card_no, p.card_type, p.expire_time,
+    car.id as car_id,car.car_no,
+    oc.id as charge_id,oc.charge_service,oc.charge_by,oc.charge_num,oc.charge_price,oc.charge_amount,oc.airport_code
+    from
+    (SELECT
+     concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.id,o.protocol_id,o.org_customer_id,o.protocol_remark,o.booking_person,o.is_important,o.order_status,o.order_remark,o.signer_person,
+     f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,
+     o.service_id,o.passageway_id,o.is_print_boarding_check,o.sit_require,o.package_no,o.package_weight,o.is_consign,o.server_person_num,o.company_person_num,o.car_num,o.order_type,o.airport_code,
+
+        prot.name protocol_name,ic.name as customer_name,
+        sv.name as service_name,svp.name as passage_way_name
+    FROM
+    guest_order o inner join protocol prot on o.protocol_id = prot.id
+    inner join flight f on f.order_id = o.id
+    left join institution_client ic on prot.institution_client_id = ic.id
+    left join serv sv on sv.id = o.service_id
+    left join serv svp on svp.id = o.passageway_id
+    ) t
+    inner JOIN passenger p on t.id = p.order_id
+    and p.is_deleted = 0 and p.airport_code = #{airportCode}
+    inner join order_car car on  t.id = car.order_id
+    and car.is_deleted = 0 and car.airport_code = #{airportCode}
+    inner join order_charge oc on oc.order_id = car.order_id
+    and oc.is_deleted = 0 and oc.airport_code = #{airportCode}
+    where t.id = #{id} and t.airport_code = #{airportCode}
+
+
+  </select>
+
+  <update id="markChildRowsAsDeleted" parameterType="map">
+    update ${tableName} set is_deleted = 1 where id not in (${ids})  and airport_code = #{airportCode} and order_id = #{orderId}
+  </update>
+
+</mapper>

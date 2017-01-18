@@ -29,15 +29,15 @@
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="institution_client" enableCountByExample="false"
+		<table schema="" tableName="flight" enableCountByExample="false"
 				enableUpdateByExample="false" enableDeleteByExample="false"
 				enableSelectByExample="false" selectByExampleQueryId="false">
-				<!--<ignoreColumn column="create_user"/>
-			<ignoreColumn column="update_user"/>
-			<ignoreColumn column="create_date"/>
-			<ignoreColumn column="update_date"/>
+			<ignoreColumn column="create_time"/>
+			<ignoreColumn column="update_time"/>
 			<ignoreColumn column="is_deleted"/>
-			<ignoreColumn column="is_enabled"/>-->
+			<ignoreColumn column="update_date"/>
+			<ignoreColumn column="airport_code"/>
+			<ignoreColumn column="id"/>
 		</table> 
 		
 		

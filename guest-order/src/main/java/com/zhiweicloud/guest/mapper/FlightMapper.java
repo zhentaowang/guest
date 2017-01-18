@@ -26,20 +26,18 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.InstitutionClient;
+import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 
 import java.util.List;
 
 /**
- * InstitutionClientMapper.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2016-12-26 15:45:36 Created By zhangpengfei
+ * Created by zhangpengfei on 2016/12/26.
  */
-public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
-    List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
+public interface FlightMapper extends MyMapper<Flight> {
 
-    List<Dropdownlist> getInstitutionClientDropdownList(String airportCode);
+
+    int selectFlightTotal(Flight flight);
+
+    List<Flight> selectFlightList(BasePagination<Flight> queryCondition);
 }

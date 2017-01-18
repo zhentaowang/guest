@@ -27,19 +27,53 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.InstitutionClient;
+import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.GuestOrder;
+import com.zhiweicloud.guest.model.ProtocolInfo;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * InstitutionClientMapper.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2016-12-26 15:45:36 Created By zhangpengfei
+ * Created by zhangpengfei on 2016/12/26.
  */
-public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
-    List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
+public interface GuestOrderMapper extends MyMapper<GuestOrder> {
+    /**
+     * 获取协议备注，协议客户名称，协议编号等信息
+     *
+     * @param protocolInfo 协议id
+     * @param protocolInfo 协议编号
+     * @return
+     */
+    public ProtocolInfo getProtocolInfo(ProtocolInfo protocolInfo);
 
-    List<Dropdownlist> getInstitutionClientDropdownList(String airportCode);
+    /**
+     * 获取协议备注，协议客户名称，协议编号等信息
+     *
+     * @param protocolInfo 协议id
+     * @param protocolInfo 协议编号
+     * @return
+     */
+    public List<Dropdownlist> getProtocolPersonInfo(ProtocolInfo protocolInfo);
+
+    List<Dropdownlist> getServerListInfo(Map<String, Object> map);
+
+    List<GuestOrder> selectByComplexQuery(BasePagination<GuestOrder> queryCondition);
+
+    /**
+     * 根据主键id和机场编码获取单条记录详情
+     * @param map
+     * @return
+     */
+    GuestOrder selectByIdAndAirCode(Map<String, Object> map);
+
+    /**
+     * 根据条件删除当前订单下的乘客，车辆，收费服务
+     * @param map
+     */
+    void markChildRowsAsDeleted(Map<String,Object> map);
+
+
+    int selectByComplexQueryCount(BasePagination<GuestOrder> queryCondition);
 }
