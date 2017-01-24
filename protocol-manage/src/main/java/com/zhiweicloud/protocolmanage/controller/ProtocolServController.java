@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,16 +40,54 @@ public class ProtocolServController {
                     @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", required = false, paramType = "query")})
+                    @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "productTypeAllocationId", value = "产品类型配置id", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "price", value = "服务单价", dataType = "BigDecimal", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "freeRetinueNum", value = "免费随员人数", dataType = "Integer", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "overStaffUnitPrice", value = "超员单价", dataType = "BigDecimal", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "description", value = "价格说明", dataType = "String", required = false, paramType = "query")})
     public LZResult<PaginationResult<ProtocolServ>> list(
             @RequestParam(value = "airportCode", required = true, defaultValue = "LJG") String airportCode,
             @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
             @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
-            @RequestParam(value = "protocolId", required = false) Long protocolId) {
+            @RequestParam(value = "protocolId", required = false) Long protocolId,
+            @RequestParam(value = "productTypeAllocationId", required = false) Long productTypeAllocationId,
+            @RequestParam(value = "price", required = false) BigDecimal price,
+            @RequestParam(value = "freeRetinueNum", required = false) Integer freeRetinueNum,
+            @RequestParam(value = "overStaffUnitPrice", required = false) BigDecimal overStaffUnitPrice,
+            @RequestParam(value = "description", required = false) String description) {
         Map<String,Object> param = new HashMap();
         param.put("airportCode",airportCode);
         param.put("protocolId",protocolId);
+        param.put("productTypeAllocationId",productTypeAllocationId);
+        param.put("price",price);
+        param.put("freeRetinueNum",freeRetinueNum);
+        param.put("overStaffUnitPrice",overStaffUnitPrice);
+        param.put("description",description);
         LZResult<PaginationResult<ProtocolServ>> result  = protocolServService.getAll(param,page,rows);
+        return result;
+    }
+
+    @RequestMapping(value ="/protocol-serv-type")
+    @ApiOperation(value = "协议服务管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "serviceId", value = "服务id", dataType = "Long", required = false, paramType = "query")})
+    public LZResult<PaginationResult<ProtocolServ>> protocolServType(
+            @RequestParam(value = "airportCode", required = true, defaultValue = "LJG") String airportCode,
+            @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
+            @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
+            @RequestParam(value = "protocolId", required = false) Long protocolId,
+            @RequestParam(value = "serviceId", required = false) Long serviceId) {
+        Map<String,Object> param = new HashMap();
+        param.put("airportCode",airportCode);
+        param.put("protocolId",protocolId);
+        param.put("serviceId",serviceId);
+        LZResult<PaginationResult<ProtocolServ>> result  = protocolServService.getProtocolServType(param,page,rows);
         return result;
     }
 

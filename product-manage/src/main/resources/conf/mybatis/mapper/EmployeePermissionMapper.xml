@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="resources.conf.mybatis.mapper.EmployeePermissionMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.productmanage.model.EmployeePermission">
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.zhiweicloud.productmanage.model.EmployeePermission">
+    insert into employee_permission (employee_id, permission_id)
+    values (#{employeeId,jdbcType=BIGINT}, #{permissionId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhiweicloud.productmanage.model.EmployeePermission">
+    insert into employee_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+</mapper>

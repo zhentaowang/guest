@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -40,19 +42,13 @@ public class ServController {
                     @ApiImplicitParam(name = "productCategory", value = "产品品类", dataType = "String", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "serviceType", value = "服务类型", dataType = "String", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "name", value = "服务名称", dataType = "String", required = false, paramType = "query")})
-    public LZResult<PaginationResult<Serv>> list(
-            @RequestParam(value = "airportCode", required = true, defaultValue = "LJG") String airportCode,
-            @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
-            @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
-            @RequestParam(value = "productCategory", required = false) String productCategory,
-            @RequestParam(value = "serviceType", required = false) String serviceType,
-            @RequestParam(value = "name", required = false) String name) {
+    public LZResult<PaginationResult<Serv>> list(HttpServletRequest request) {
         Map<String,Object> param = new HashMap();
-        param.put("airportCode",airportCode);
-        param.put("productCategory",productCategory);
-        param.put("serviceType",serviceType);
-        param.put("name",name);
-        LZResult<PaginationResult<Serv>> result  = servService.getAll(param,page,rows);
+        param.put("airportCode",request.getParameter("airportCode"));
+        param.put("productCategory", request.getSession().getAttribute("productCategory"));
+        param.put("serviceType", request.getParameter("serviceType"));
+        param.put("name",request.getParameter("name"));
+        LZResult<PaginationResult<Serv>> result  = servService.getAll(param,Integer.parseInt(request.getParameter("page")),Integer.parseInt(request.getParameter("rows")));
         return result;
     }
 
@@ -150,10 +146,10 @@ public class ServController {
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public LXResult delete(
             @RequestBody RequsetParams<Long> params,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+            @RequestParam(value = "airportCode", required = true) String airportCode,HttpServletRequest request) {
         try {
             List<Long> ids = params.getData();
-            servService.deleteById(ids,airportCode);
+            servService.deleteById(ids,airportCode,Long.parseLong(request.getSession().getAttribute("productTypeAllocationId").toString()));
             return LXResult.success();
         } catch (Exception e) {
             logger.error("delete serv by ids error", e);

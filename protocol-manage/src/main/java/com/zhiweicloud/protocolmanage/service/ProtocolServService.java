@@ -41,6 +41,23 @@ public class ProtocolServService {
     }
 
     /**
+     * 分页获取协议服务列表
+     * @param param
+     * @param page
+     * @param rows
+     */
+    public LZResult<PaginationResult<ProtocolServ>> getProtocolServType(Map<String,Object> param, Integer page, Integer rows) {
+
+        int count = protocolServMapper.getTypeCount(param);
+
+        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        List<ProtocolServ> protocolservList = protocolServMapper.getProtocolServType(queryCondition);
+        PaginationResult<ProtocolServ> eqr = new PaginationResult<>(count, protocolservList);
+        LZResult<PaginationResult<ProtocolServ>> result = new LZResult<>(eqr);
+        return result;
+    }
+
+    /**
      * 获取协议服务详情
      * @param param
      */
@@ -58,10 +75,15 @@ public class ProtocolServService {
         } else {
             if(protocolServ.getProtocolServList() != null && protocolServ.getProtocolServList().get(0).getAirportCode() != null){
                 for(int i = 0; i < protocolServ.getProtocolServList().size(); i++){
-                    protocolServ.getProtocolServList().get(i).setCreateTime(new Date());
-                    protocolServ.getProtocolServList().get(i).setUpdateTime(new Date());
-                    protocolServ.getProtocolServList().get(i).setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-                    protocolServMapper.insert(protocolServ.getProtocolServList().get(i));
+                    if(protocolServ.getProtocolServList().get(i).getId() != null){
+                        protocolServMapper.updateByIdAndAirportCode(protocolServ.getProtocolServList().get(i));
+                    }
+                    else{
+                        protocolServ.getProtocolServList().get(i).setCreateTime(new Date());
+                        protocolServ.getProtocolServList().get(i).setUpdateTime(new Date());
+                        protocolServ.getProtocolServList().get(i).setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                        protocolServMapper.insert(protocolServ.getProtocolServList().get(i));
+                    }
                 }
             }
             else{

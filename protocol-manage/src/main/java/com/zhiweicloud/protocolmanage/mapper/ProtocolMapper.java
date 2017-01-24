@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public interface ProtocolMapper extends MyMapper<Protocol> {
     List<Dropdownlist> getProtocolDropdownList(Map<String, Object> map);
+    List<Dropdownlist> getProtocolNoDropdownList(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Protocol protocol);
     List<Protocol> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);

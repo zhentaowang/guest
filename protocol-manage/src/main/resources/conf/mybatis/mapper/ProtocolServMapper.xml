@@ -50,29 +50,110 @@
         <if test="criteria.protocolId != null" >
              and ps.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
         </if>
+      <if test="criteria.productTypeAllocationId != null" >
+          and ps.product_type_allocation_id = #{criteria.productTypeAllocationId,jdbcType=BIGINT}
+      </if>
         and s.is_deleted = 0 and ps.is_deleted = 0
     ) as pss
     left join product_type_allocation p on pss.product_type_allocation_id = p.id
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+      <if test="criteria.productTypeAllocationId != null" >
+          and pss.product_type_allocation_id = #{criteria.productTypeAllocationId,jdbcType=BIGINT}
+      </if>
+      <if test="criteria.price != null" >
+          and pss.price = #{criteria.price,jdbcType=DECIMAL}
+      </if>
+      <if test="criteria.description != null" >
+          and pss.description = #{criteria.description,jdbcType=VARCHAR}
+      </if>
+      <if test="criteria.overStaffUnitPrice != null" >
+          and pss.over_staff_unit_price = #{criteria.overStaffUnitPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="criteria.freeRetinueNum != null" >
+          and pss.free_retinue_num = #{criteria.freeRetinueNum,jdbcType=BIGINT}
+      </if>
     order by pss.id desc
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
+
+    <select id="getProtocolServType" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
+        select
+        pss.id,pss.service_id,pss.protocol_id,pss.product_type_allocation_id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
+        from (
+        select ps.*,s.name
+        from protocol_serv as ps
+        left join serv s on ps.service_id = s.id
+        where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
+        <if test="criteria.protocolId != null" >
+            and ps.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
+        </if>
+        <if test="criteria.serviceId != null" >
+            and ps.service_id = #{criteria.serviceId,jdbcType=BIGINT}
+        </if>
+        and s.is_deleted = 0 and ps.is_deleted = 0
+        ) as pss
+        left join product_type_allocation p on pss.product_type_allocation_id = p.id
+        where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+        group by p.product_category,p.service_type,pss.description
+        order by pss.id desc
+        LIMIT #{page.startPageNo},#{page.pCount}
+    </select>
+
+    <select id="getTypeCount" parameterType="map" resultType="int">
+        select count(mm.id) from(
+        select
+        pss.id,pss.service_id,pss.protocol_id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
+        from (
+        select ps.*,s.name
+        from protocol_serv as ps
+        left join serv s on ps.service_id = s.id
+        where s.airport_code = #{airportCode,jdbcType=VARCHAR}
+        <if test="protocolId != null" >
+            and ps.protocol_id = #{protocolId,jdbcType=BIGINT}
+        </if>
+        <if test="serviceId != null" >
+            and ps.service_id = #{serviceId,jdbcType=BIGINT}
+        </if>
+        and s.is_deleted = 0 and ps.is_deleted = 0
+        ) as pss
+        left join product_type_allocation p on pss.product_type_allocation_id = p.id
+        where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+        group by p.product_category,p.service_type,pss.description) as mm
+    </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
     select
     count(pss.id)
     from (
-        select ps.id,ps.service_id,s.name,s.product_type_allocation_id,ps.price
+        select ps.*,s.name
         from protocol_serv as ps
         left join serv s on ps.service_id = s.id
         where s.airport_code = #{airportCode,jdbcType=VARCHAR}
         <if test="protocolId != null">
             and ps.protocol_id = #{protocolId,jdbcType=BIGINT}
         </if>
+      <if test="productTypeAllocationId != null" >
+          and ps.product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
+      </if>
         and s.is_deleted = 0
     ) as pss
     left join product_type_allocation p on pss.product_type_allocation_id = p.id
     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+      <if test="productTypeAllocationId != null" >
+          and pss.product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
+      </if>
+      <if test="price != null" >
+          and pss.price = #{price,jdbcType=DECIMAL}
+      </if>
+      <if test="description != null" >
+          and pss.description = #{description,jdbcType=VARCHAR}
+      </if>
+      <if test="overStaffUnitPrice != null" >
+          and pss.over_staff_unit_price = #{overStaffUnitPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="freeRetinueNum != null" >
+          and pss.free_retinue_num = #{freeRetinueNum,jdbcType=BIGINT}
+      </if>
   </select>
 
     <update id="updateByIdAndAirportCode" parameterType="com.zhiweicloud.protocolmanage.model.ProtocolServ">

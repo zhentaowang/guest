@@ -29,9 +29,18 @@
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="authorizer" enableCountByExample="false"
+		<table schema="" tableName="employee_permission" enableCountByExample="false"
 				enableUpdateByExample="false" enableDeleteByExample="false"
 				enableSelectByExample="false" selectByExampleQueryId="false">
+			<ignoreColumn column="update_time"/>
+			<ignoreColumn column="create_time"/>
+			<ignoreColumn column="is_deleted"/>
+			<ignoreColumn column="id"/>
+			<ignoreColumn column="airport_code"/>
+		</table>
+		<table schema="" tableName="permission" enableCountByExample="false"
+			   enableUpdateByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" selectByExampleQueryId="false">
 			<ignoreColumn column="update_time"/>
 			<ignoreColumn column="create_time"/>
 			<ignoreColumn column="is_deleted"/>

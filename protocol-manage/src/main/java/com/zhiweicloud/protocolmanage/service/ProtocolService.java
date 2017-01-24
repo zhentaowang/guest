@@ -98,39 +98,39 @@ public class ProtocolService {
                 authorizerMapper.deleteByIdAndAirportCode(params);
             }
 
-            //协议服务修改
-            StringBuffer ids00 = new StringBuffer();
-            if(protocol.getProtocolServList() != null){
-                for(int i = 0; i < protocol.getProtocolServList().size(); i++){
-                    ProtocolServ protocolServ = protocol.getProtocolServList().get(i);
-                    if (protocolServ.getId() != null){
-                        protocolServ.setAirportCode(protocol.getAirportCode());
-                        protocolServ.setProtocolId(protocol.getId());
-                        ids00.append(protocolServ.getId()+",");
-                        protocolServMapper.updateByIdAndAirportCode(protocolServ);
-                    }else{
-                        protocolServ.setCreateTime(new Date());
-                        protocolServ.setProtocolId(protocol.getId());
-                        protocolServ.setUpdateTime(new Date());
-                        protocolServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-                        protocolServ.setAirportCode(protocol.getAirportCode());
-                        protocolServMapper.insertSelective(protocolServ);
-                        ids00.append(protocolServ.getId()+",");
-                    }
-                }
-                if(ids00.length() != 0){
-                    params.put("ids00",ids00.substring(0,ids00.length() - 1));
-                    protocolServMapper.deleteByIdAndAirportCode(params);
-                }
-                else{
-                    params.put("ids00",ids00.append(0));
-                    protocolServMapper.deleteByIdAndAirportCode(params);
-                }
-            }
-            else{
-                params.put("ids00",ids00.append(0));
-                protocolServMapper.deleteByIdAndAirportCode(params);
-            }
+//            //协议服务修改
+//            StringBuffer ids00 = new StringBuffer();
+//            if(protocol.getProtocolServList() != null){
+//                for(int i = 0; i < protocol.getProtocolServList().size(); i++){
+//                    ProtocolServ protocolServ = protocol.getProtocolServList().get(i);
+//                    if (protocolServ.getId() != null){
+//                        protocolServ.setAirportCode(protocol.getAirportCode());
+//                        protocolServ.setProtocolId(protocol.getId());
+//                        ids00.append(protocolServ.getId()+",");
+//                        protocolServMapper.updateByIdAndAirportCode(protocolServ);
+//                    }else{
+//                        protocolServ.setCreateTime(new Date());
+//                        protocolServ.setProtocolId(protocol.getId());
+//                        protocolServ.setUpdateTime(new Date());
+//                        protocolServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+//                        protocolServ.setAirportCode(protocol.getAirportCode());
+//                        protocolServMapper.insertSelective(protocolServ);
+//                        ids00.append(protocolServ.getId()+",");
+//                    }
+//                }
+//                if(ids00.length() != 0){
+//                    params.put("ids00",ids00.substring(0,ids00.length() - 1));
+//                    protocolServMapper.deleteByIdAndAirportCode(params);
+//                }
+//                else{
+//                    params.put("ids00",ids00.append(0));
+//                    protocolServMapper.deleteByIdAndAirportCode(params);
+//                }
+//            }
+//            else{
+//                params.put("ids00",ids00.append(0));
+//                protocolServMapper.deleteByIdAndAirportCode(params);
+//            }
         } else {
 
             //协议添加
@@ -181,12 +181,26 @@ public class ProtocolService {
      * 获取协议列表，包括id,name两个字段
      * @param airportCode
      * @param type
+     * @param name
      */
-    public List<Dropdownlist> getProtocolDropdownList(String airportCode,String type){
+    public List<Dropdownlist> getProtocolDropdownList(String airportCode,String type,String name){
         Map<String,Object> params = new HashMap<>();
         params.put("airportCode",airportCode);
         params.put("type",type);
+        params.put("name",name);
         return protocolMapper.getProtocolDropdownList(params);
+    }
+
+    /**
+     * 获取协议列表，包括id,no两个字段
+     * @param airportCode
+     * @param no
+     */
+    public List<Dropdownlist> getProtocolNoDropdownList(String airportCode,String no){
+        Map<String,Object> params = new HashMap<>();
+        params.put("airportCode",airportCode);
+        params.put("no",no);
+        return protocolMapper.getProtocolNoDropdownList(params);
     }
 
     /**
