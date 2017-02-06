@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.zhiweicloud</groupId>
-  <artifactId>util</artifactId>
+  <artifactId>guest-order</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>guest Maven Webapp</name>
@@ -101,6 +101,11 @@
       <artifactId>guest-util</artifactId>
       <version>1.0.release</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.1</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -127,10 +132,9 @@
         <version>1.3.5</version>
             <dependencies>
               <dependency>
-                <groupId>com.project.common.util</groupId>
-                <artifactId>MyCommentGeneraotr</artifactId>
-                <version>1.0.RELEASE</version>
-              </dependency>
+                <groupId>com.zhiweicloud</groupId>
+                <artifactId>mybatis-generator-fix</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependencies>
         <configuration>
           <verbose>true</verbose>
