@@ -48,6 +48,7 @@ import java.util.List;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
+@RequestMapping(value = "/guest-order")
 @RestController
 @Api(value = "订单", description = "订单desc ", tags = {"order"})
 public class OrderController {
