@@ -135,6 +135,7 @@
                 <groupId>com.zhiweicloud</groupId>
                 <artifactId>mybatis-generator-fix</artifactId>
                 <version>1.0-SNAPSHOT</version>
+              </dependency>
             </dependencies>
         <configuration>
           <verbose>true</verbose>
