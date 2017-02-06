@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: product-manage
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: product-manage
+    spec:
+      containers:
+        - name: product-manage
+          image: java:8-jre-alpine
+          command: ["java","-jar","/code/product_manage.jar"]
+          volumeMounts:
+          - mountPath: "/code"
+            name: code
+            subPath: guest/product-manage
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-manage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: product-manage
