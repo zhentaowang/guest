@@ -20,7 +20,7 @@ import java.util.*;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @RestController
-@RequestMapping("/commonController")
+@RequestMapping("/guest-protocol")
 @Api(value="系统公共接口",description="产品品类desc ", tags={"commonController"})
 public class CommonController {
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);

@@ -19,6 +19,7 @@ import java.util.*;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @RestController
+@RequestMapping("/guest-product")
 @Api(value="产品类型配置",description="产品类型配置desc ", tags={"productTypeAllocation"})
 public class ProductTypeAllocationController {
     private static final Logger logger = LoggerFactory.getLogger(ProductTypeAllocationController.class);
