@@ -11,16 +11,6 @@
     <result column="order_status" jdbcType="SMALLINT" property="orderStatus" />
     <result column="order_remark" jdbcType="VARCHAR" property="orderRemark" />
     <result column="signer_person" jdbcType="VARCHAR" property="signerPerson" />
-   <!-- <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
-    <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
-    <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
-    <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
-    <result column="plan_take_off_time" jdbcType="TIMESTAMP" property="planTakeOffTime" />
-    <result column="plan_landing_time" jdbcType="TIMESTAMP" property="planLandingTime" />
-    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
-    <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
-    <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />-->
-
     <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
     <result column="service_id" jdbcType="BIGINT" property="serviceId" />
     <result column="is_print_boarding_check" jdbcType="SMALLINT" property="isPrintBoardingCheck" />
@@ -44,6 +34,14 @@
 
     <result column="org_customer_id" jdbcType="BIGINT" property="orgCustomerId" />
     <result column="protocol_remark" jdbcType="VARCHAR" property="protocolRemark" />
+
+    <result column="check_person" jdbcType="BIGINT" property="checkPerson" />
+    <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+    <result column="check_complete" jdbcType="SMALLINT" property="checkComplete" />
+    <result column="consign_person" jdbcType="BIGINT" property="consignPerson" />
+    <result column="consign_time" jdbcType="TIMESTAMP" property="consignTime" />
+    <result column="consign_complete" jdbcType="BIGINT" property="consignComplete" />
+
     <association property="flight" javaType="com.zhiweicloud.guest.model.Flight">
       <result column="flight_id" jdbcType="BIGINT" property="id" />
       <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
@@ -56,6 +54,7 @@
       <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
       <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
       <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+      <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
     </association>
     <collection property="passengerList" ofType="com.zhiweicloud.guest.model.Passenger">
       <id column="passenger_id" property="id" />
@@ -157,18 +156,32 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
   </select>
 
   <select id="selectByComplexQueryCount" resultType="int" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination">
-    SELECT
-    count(DISTINCT(t.id))
+    select count(DISTINCT(orderPassangerCarCharge.id))
     from
-    (SELECT
-    o.id
+    (
+    select orderPassangerCar.*,oc.id as charge_id,oc.charge_service,oc.charge_by,oc.charge_num,oc.charge_price,oc.charge_amount from
+    (
+    SELECT
+    orderPassenger.*,car.id as car_id,car.car_no
+    from
+    (
+    SELECT t.*,
+    p.id AS passenger_id,p.NAME as passenger_name, p.phone, p.identity_card, p.work_unit, p.vip_card, p.sit_no, p.cabin_no,
+    p.ticket_no, p.card_no, p.card_type, p.expire_time
+    from
+    (
+    SELECT
+    concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.id,o.protocol_id,o.org_customer_id,o.protocol_remark,o.booking_person,o.is_important,o.order_status,o.order_remark,o.signer_person,
+    f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,f.plan_no,
+    o.service_id,o.passageway_id,o.is_print_boarding_check,o.sit_require,o.package_no,o.package_weight,o.is_consign,o.server_person_num,o.company_person_num,o.car_num,o.order_type,o.airport_code,
+    o.check_person,o.check_time,o.check_complete,o.consign_person,o.consign_time,o.consign_complete,
+    prot.name protocol_name,ic.name as customer_name,
+    sv.name as service_name,svp.name as passage_way_name
     FROM
     guest_order o inner join protocol prot on o.protocol_id = prot.id
-    inner join flight f on f.order_id = o.id
     <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)" >
       and o.order_type = #{criteria.queryOrderType}
     </if>
-
     <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
       and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
     </if>
@@ -177,6 +190,13 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     </if>
 
 
+    and o.is_deleted = 0
+
+
+    inner join flight f on f.order_id = o.id and f.is_deleted = 0
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)" >
+      and f.is_in_or_out = #{criteria.queryIsInOrOut}
+    </if>
     <if test="criteria.queryFlightStartDate != null " >
       and f.flight_date &gt;= #{criteria.queryFlightStartDate}
     </if>
@@ -190,8 +210,97 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     <if test="criteria.queryBookingEndDate != null " >
       and f.create_time &lt;= #{criteria.queryBookingEndDate}
     </if>
+    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)" >
+      and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
+    </if>
 
-    and o.is_deleted = 0 and o.airport_code = #{criteria.airportCode}
+
+    left join institution_client ic on prot.institution_client_id = ic.id
+    <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
+      and ic.name  like concat('%',#{criteria.queryCustomerName},'%')
+    </if>
+
+    left join serv sv on sv.id = o.service_id
+    <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
+      and sv.name = #{criteria.queryCustomerName}
+    </if>
+    left join serv svp on svp.id = o.passageway_id
+
+    ) t
+    left JOIN passenger p on t.id = p.order_id
+
+    and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
+    ) as orderPassenger
+    left join order_car car on  orderPassenger.id = car.order_id
+    and car.is_deleted = 0 and car.airport_code = #{criteria.airportCode}
+    ) as orderPassangerCar
+    left join order_charge oc on oc.order_id = orderPassangerCar.id
+    and oc.is_deleted = 0 and oc.airport_code = #{criteria.airportCode}
+    ) as orderPassangerCarCharge
+
+    where orderPassangerCarCharge.airport_code = #{criteria.airportCode}
+    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
+      and orderPassangerCarCharge.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
+    </if>
+    </select>
+
+  <select id="selectByComplexQuery" resultMap="BaseResultMap" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination">
+
+    select orderPassangerCarCharge.*
+    from
+    (
+    select orderPassangerCar.*,oc.id as charge_id,oc.charge_service,oc.charge_by,oc.charge_num,oc.charge_price,oc.charge_amount from
+    (
+    SELECT
+    orderPassenger.*,car.id as car_id,car.car_no
+    from
+    (
+    SELECT t.*,
+    p.id AS passenger_id,p.NAME as passenger_name, p.phone, p.identity_card, p.work_unit, p.vip_card, p.sit_no, p.cabin_no,
+    p.ticket_no, p.card_no, p.card_type, p.expire_time
+    from
+    (
+    SELECT
+    concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.id,o.protocol_id,o.org_customer_id,o.protocol_remark,o.booking_person,o.is_important,o.order_status,o.order_remark,o.signer_person,
+    f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,f.plan_no,
+    o.service_id,o.passageway_id,o.is_print_boarding_check,o.sit_require,o.package_no,o.package_weight,o.is_consign,o.server_person_num,o.company_person_num,o.car_num,o.order_type,o.airport_code,
+    o.check_person,o.check_time,o.check_complete,o.consign_person,o.consign_time,o.consign_complete,
+    prot.name protocol_name,ic.name as customer_name,
+    sv.name as service_name,svp.name as passage_way_name
+    FROM
+    guest_order o inner join protocol prot on o.protocol_id = prot.id and o.is_deleted = 0
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)" >
+      and o.order_type = #{criteria.queryOrderType}
+    </if>
+    <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
+      and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
+    </if>
+    <if test="criteria.queryIsConsign != null and !''.equals(criteria.queryIsConsign)" >
+      and o.is_consign = #{criteria.queryIsConsign}
+    </if>
+
+    inner join flight f on f.order_id = o.id  and f.is_deleted = 0
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)" >
+      and f.is_in_or_out = #{criteria.queryIsInOrOut}
+    </if>
+    <if test="criteria.queryFlightStartDate != null " >
+      and f.flight_date &gt;= #{criteria.queryFlightStartDate}
+    </if>
+    <if test="criteria.queryFlightEndDate != null " >
+      and f.flight_date &lt;= #{criteria.queryFlightEndDate}
+    </if>
+
+    <if test="criteria.queryBookingStartDate != null " >
+      and f.create_time &gt;= #{criteria.queryBookingStartDate}
+    </if>
+    <if test="criteria.queryBookingEndDate != null " >
+      and f.create_time &lt;= #{criteria.queryBookingEndDate}
+    </if>
+    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)" >
+      and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
+    </if>
+
+
     left join institution_client ic on prot.institution_client_id = ic.id
     <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
       and ic.name  like concat('%',#{criteria.queryCustomerName},'%')
@@ -204,113 +313,66 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     left join serv svp on svp.id = o.passageway_id
     limit #{page.startPageNo},#{page.pCount}
     ) t
-    inner JOIN passenger p on t.id = p.order_id
-    and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
-    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
-      and p.name like concat('%',#{criteria.queryPassengerName},'%')
-    </if>
+    left JOIN passenger p on t.id = p.order_id and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
 
-    inner join order_car car on car.order_id = t.id
+
+    ) as orderPassenger
+    left join order_car car on  orderPassenger.id = car.order_id
     and car.is_deleted = 0 and car.airport_code = #{criteria.airportCode}
-    </select>
+    ) as orderPassangerCar
+    left join order_charge oc on oc.order_id = orderPassangerCar.id
+    and oc.is_deleted = 0 and oc.airport_code = #{criteria.airportCode}
+    ) as orderPassangerCarCharge
 
-  <select id="selectByComplexQuery" resultMap="BaseResultMap" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination">
-    SELECT
-      t.*,
-      p.id AS passenger_id,p.NAME as passenger_name  ,
-      car.id as car_id,car.car_no
-    from
-      (SELECT
-        o.id,concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.order_type,o.is_print_boarding_check,o.is_consign,o.server_person_num,
-		o.order_status,o.is_important,o.create_time,o.airport_code,
-        f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,
-        prot.name protocol_name,ic.name as customer_name,
-        sv.name as service_name,svp.name as passage_way_name
-      FROM
-        guest_order o inner join protocol prot on o.protocol_id = prot.id
-        inner join flight f on f.order_id = o.id
-        <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)" >
-          and o.order_type = #{criteria.queryOrderType}
-        </if>
-
-        <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
-          and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
-        </if>
-        <if test="criteria.queryIsConsign != null and !''.equals(criteria.queryIsConsign)" >
-          and o.is_consign = #{criteria.queryIsConsign}
-        </if>
-
-
-        <if test="criteria.queryFlightStartDate != null " >
-          and f.flight_date &gt;= #{criteria.queryFlightStartDate}
-        </if>
-        <if test="criteria.queryFlightEndDate != null " >
-          and f.flight_date &lt;= #{criteria.queryFlightEndDate}
-        </if>
-
-        <if test="criteria.queryBookingStartDate != null " >
-          and f.create_time &gt;= #{criteria.queryBookingStartDate}
-        </if>
-        <if test="criteria.queryBookingEndDate != null " >
-          and f.create_time &lt;= #{criteria.queryBookingEndDate}
-        </if>
-
-        and o.is_deleted = 0
-        left join institution_client ic on prot.institution_client_id = ic.id
-        <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
-          and ic.name  like concat('%',#{criteria.queryCustomerName},'%')
-        </if>
-
-        left join serv sv on sv.id = o.service_id
-        <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
-          and sv.name = #{criteria.queryCustomerName}
-        </if>
-        left join serv svp on svp.id = o.passageway_id
-
-      ) t
-    inner JOIN passenger p on t.id = p.order_id
-    and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
+    where orderPassangerCarCharge.airport_code = #{criteria.airportCode}
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
-      and p.name like concat('%',#{criteria.queryPassengerName},'%')
+      and orderPassangerCarCharge.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
-
-     inner join order_car car on car.order_id = t.id
-    and car.is_deleted = 0 and car.airport_code = #{criteria.airportCode} and t.airport_code = #{criteria.airportCode}
-    order by t.id desc
-
+    order by orderPassangerCarCharge.id desc
 
   </select>
 
 
   <select id="selectByIdAndAirCode" resultMap="BaseResultMap" parameterType="map">
-    SELECT
-    t.*,
-    p.id AS passenger_id,p.NAME as passenger_name, p.phone, p.identity_card, p.work_unit, p.vip_card, p.sit_no, p.cabin_no,
-    p.ticket_no, p.card_no, p.card_type, p.expire_time,
-    car.id as car_id,car.car_no,
-    oc.id as charge_id,oc.charge_service,oc.charge_by,oc.charge_num,oc.charge_price,oc.charge_amount,oc.airport_code
-    from
-    (SELECT
-     concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.id,o.protocol_id,o.org_customer_id,o.protocol_remark,o.booking_person,o.is_important,o.order_status,o.order_remark,o.signer_person,
-     f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,
-     o.service_id,o.passageway_id,o.is_print_boarding_check,o.sit_require,o.package_no,o.package_weight,o.is_consign,o.server_person_num,o.company_person_num,o.car_num,o.order_type,o.airport_code,
-
-        prot.name protocol_name,ic.name as customer_name,
-        sv.name as service_name,svp.name as passage_way_name
-    FROM
-    guest_order o inner join protocol prot on o.protocol_id = prot.id
-    inner join flight f on f.order_id = o.id
-    left join institution_client ic on prot.institution_client_id = ic.id
-    left join serv sv on sv.id = o.service_id
-    left join serv svp on svp.id = o.passageway_id
-    ) t
-    inner JOIN passenger p on t.id = p.order_id
-    and p.is_deleted = 0 and p.airport_code = #{airportCode}
-    inner join order_car car on  t.id = car.order_id
-    and car.is_deleted = 0 and car.airport_code = #{airportCode}
-    inner join order_charge oc on oc.order_id = car.order_id
+    select orderPassangerCarCharge.*
+from
+	(
+		select orderPassangerCar.*,oc.id as charge_id,oc.charge_service,oc.charge_by,oc.charge_num,oc.charge_price,oc.charge_amount from
+		(
+				SELECT
+						orderPassenger.*,car.id as car_id,car.car_no
+						from
+							(
+									SELECT t.*,
+									p.id AS passenger_id,p.NAME as passenger_name, p.phone, p.identity_card, p.work_unit, p.vip_card, p.sit_no, p.cabin_no,
+									p.ticket_no, p.card_no, p.card_type, p.expire_time
+									from
+									(
+										SELECT
+										 concat(o.airport_code,lpad(o.id,6,'0')) AS order_no,o.id,o.protocol_id,o.org_customer_id,o.protocol_remark,o.booking_person,o.is_important,o.order_status,o.order_remark,o.signer_person,
+										 f.id as flight_id,f.flight_date,f.flight_no,f.flight_segment,f.flight_position,f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.server_time,f.boarding_port,f.is_near_or_far,f.plan_no,
+										 o.service_id,o.passageway_id,o.is_print_boarding_check,o.sit_require,o.package_no,o.package_weight,o.is_consign,o.server_person_num,o.company_person_num,o.car_num,o.order_type,o.airport_code,
+										 o.check_person,o.check_time,o.check_complete,o.consign_person,o.consign_time,o.consign_complete,
+												prot.name protocol_name,ic.name as customer_name,
+												sv.name as service_name,svp.name as passage_way_name
+										FROM
+										guest_order o inner join protocol prot on o.protocol_id = prot.id
+										inner join flight f on f.order_id = o.id
+										left join institution_client ic on prot.institution_client_id = ic.id
+										left join serv sv on sv.id = o.service_id
+										left join serv svp on svp.id = o.passageway_id
+									) t
+									left JOIN passenger p on t.id = p.order_id
+									and p.is_deleted = 0 and p.airport_code = #{airportCode}
+							) as orderPassenger
+							left join order_car car on  orderPassenger.id = car.order_id
+							and car.is_deleted = 0 and car.airport_code = #{airportCode}
+		) as orderPassangerCar
+		left join order_charge oc on oc.order_id = orderPassangerCar.id
     and oc.is_deleted = 0 and oc.airport_code = #{airportCode}
-    where t.id = #{id} and t.airport_code = #{airportCode}
+) as orderPassangerCarCharge
+
+ where orderPassangerCarCharge.id = #{id} and orderPassangerCarCharge.airport_code = #{airportCode}
 
 
   </select>

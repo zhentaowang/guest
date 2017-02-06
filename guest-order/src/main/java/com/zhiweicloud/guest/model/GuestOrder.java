@@ -7,6 +7,7 @@
 package com.zhiweicloud.guest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -135,7 +136,29 @@ public class GuestOrder extends GuestOrderQuery {
 
     @Transient
     @ApiModelProperty(value = "确认消费，仅仅用于前台标志 是用来更改订单的状态,确认：1")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer changeOrderStatus;
+
+
+    @ApiModelProperty(value="办票操作人",name="checkPerson")
+    private Long checkPerson;
+
+    @ApiModelProperty(value="办票完成时间",name="checkTime")
+    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd")
+    private Date checkTime;
+
+    @ApiModelProperty(value="办票是否完成 默认未完成 0：未完成，1：完成",name="checkComplete")
+    private Short checkComplete;
+
+    @ApiModelProperty(value="托运操作人",name="consignPerson")
+    private Long consignPerson;
+
+    @ApiModelProperty(value="托运完成时间",name="consignTime")
+    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd")
+    private Date consignTime;
+
+    @ApiModelProperty(value="托运是否完成 默认未完成 0：未完成，1：完成",name="consignComplete")
+    private Long consignComplete;
 
 
 
@@ -764,5 +787,101 @@ public class GuestOrder extends GuestOrderQuery {
 
     public void setStrServerTime(String strServerTime) {
         this.strServerTime = strServerTime;
+    }
+
+    /**
+     * 办票操作人
+     * @return check_person 办票操作人
+     */
+    public Long getCheckPerson() {
+        return checkPerson;
+    }
+
+    /**
+     * 办票操作人
+     * @param checkPerson 办票操作人
+     */
+    public void setCheckPerson(Long checkPerson) {
+        this.checkPerson = checkPerson;
+    }
+
+    /**
+     * 办票完成时间
+     * @return check_time 办票完成时间
+     */
+    public Date getCheckTime() {
+        return checkTime;
+    }
+
+    /**
+     * 办票完成时间
+     * @param checkTime 办票完成时间
+     */
+    public void setCheckTime(Date checkTime) {
+        this.checkTime = checkTime;
+    }
+
+    /**
+     * 办票是否完成
+     * @return check_complete 办票是否完成
+     */
+    public Short getCheckComplete() {
+        return checkComplete;
+    }
+
+    /**
+     * 办票是否完成
+     * @param checkComplete 办票是否完成
+     */
+    public void setCheckComplete(Short checkComplete) {
+        this.checkComplete = checkComplete;
+    }
+
+    /**
+     * 托运操作人
+     * @return consign_person 托运操作人
+     */
+    public Long getConsignPerson() {
+        return consignPerson;
+    }
+
+    /**
+     * 托运操作人
+     * @param consignPerson 托运操作人
+     */
+    public void setConsignPerson(Long consignPerson) {
+        this.consignPerson = consignPerson;
+    }
+
+    /**
+     * 托运完成时间
+     * @return consign_time 托运完成时间
+     */
+    public Date getConsignTime() {
+        return consignTime;
+    }
+
+    /**
+     * 托运完成时间
+     * @param consignTime 托运完成时间
+     */
+    public void setConsignTime(Date consignTime) {
+        this.consignTime = consignTime;
+    }
+
+    /**
+     * 托运是否完成
+     * @return consign_complete 托运是否完成
+     */
+    public Long getConsignComplete() {
+        return consignComplete;
+    }
+
+    /**
+     * 托运是否完成
+     * @param consignComplete 托运是否完成
+     */
+    public void setConsignComplete(Long consignComplete) {
+        this.consignComplete = consignComplete;
     }
 }

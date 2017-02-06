@@ -132,13 +132,14 @@ public class OrderService {
             }
 
             if (guestOrder.getId() != null) {
-                if (guestOrder.getPassengerList() != null) {
+                //车辆和乘客个数由前端传递过来
+                /*if (guestOrder.getPassengerList() != null) {
                     guestOrder.setServerPersonNum(guestOrder.getPassengerList().size());
                 }
 
                 if (guestOrder.getOrderCarList() != null) {
                     guestOrder.setCarNum(guestOrder.getOrderCarList().size());
-                }
+                }*/
 
                 Example example = new Example(GuestOrder.class);
                 String sql = "id = " + guestOrder.getId() + " and airport_code = '" + guestOrder.getAirportCode() + "'";
@@ -148,7 +149,7 @@ public class OrderService {
 
                 //涉及到修改状态的时候，怎么处理乘客和车辆的问题,修改状态的时候，是不修改乘客和车辆的相关信息的
                 //changeOrderStatus 默认不传这个属性 是 0
-                if (guestOrder.getChangeOrderStatus() == 0) {
+                if (guestOrder.getChangeOrderStatus() == null || guestOrder.getChangeOrderStatus() == 0 ) {
                     this.addPassengerAndCarAndOrderCharge(guestOrder);
                 }
             } else {

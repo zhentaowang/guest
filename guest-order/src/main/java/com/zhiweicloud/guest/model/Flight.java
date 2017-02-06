@@ -65,7 +65,7 @@ public class Flight extends BaseEntity{
     @JsonFormat(timezone="GMT+8",pattern = "HH:mm:ss")
     private String strPlanLandingTime;
 
-    @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
+    @ApiModelProperty(value="出港：0，进港：1",name="isInOrOut")
     private Short isInOrOut;
 
     @ApiModelProperty(value="登机口",name="boardingPort")
@@ -73,6 +73,11 @@ public class Flight extends BaseEntity{
 
     @ApiModelProperty(value="远机位：0，近机位：1",name="isNearOrFar")
     private Short isNearOrFar;
+
+
+
+    @ApiModelProperty(value="机号",name="planNo")
+    private String planNo;
 
     /*@ApiModelProperty(value="服务时间",name="serverTime",hidden = true)
     @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -276,7 +281,13 @@ public class Flight extends BaseEntity{
         this.strPlanLandingTime = strPlanLandingTime;
     }
 
+    public String getPlanNo() {
+        return planNo;
+    }
 
+    public void setPlanNo(String planNo) {
+        this.planNo = planNo;
+    }
 
     public Integer getTakeOffTimeFlag() {
         return takeOffTimeFlag;

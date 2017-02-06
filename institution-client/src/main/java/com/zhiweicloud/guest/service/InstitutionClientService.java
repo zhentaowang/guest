@@ -37,7 +37,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * InstitutionClientMapper.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
@@ -109,7 +112,7 @@ public class InstitutionClientService {
     public void saveOrUpdate(InstitutionClient institutionClient) {
         if (institutionClient.getId() != null) {
             Example example = new Example(InstitutionClient.class);
-            example.createCriteria().andCondition("ariport_code=",institutionClient.getAirportCode());
+            example.createCriteria().andCondition("airport_code=",institutionClient.getAirportCode());
             example.createCriteria().andCondition("id=",institutionClient.getId());
             institutionClientMapper.updateByExample(institutionClient,example);
         } else {
@@ -130,7 +133,11 @@ public class InstitutionClientService {
     }
 
 
-    public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode) {
-        return institutionClientMapper.getInstitutionClientDropdownList(airportCode);
+    public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name) {
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        map.put("name",name);
+
+        return institutionClientMapper.getInstitutionClientDropdownList(map);
     }
 }

@@ -48,6 +48,7 @@ import java.util.List;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
+@RequestMapping(value = "/guest-order")
 @RestController
 @Api(value = "订单", description = "订单desc ", tags = {"order"})
 public class OrderController {
@@ -69,7 +70,11 @@ public class OrderController {
             return result;
         }catch (Exception e){
             e.printStackTrace();
-            return  null;
+            LZResult<PaginationResult<GuestOrder>> result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return  result;
         }
     }
 
@@ -117,9 +122,19 @@ public class OrderController {
     })
     public LZResult<GuestOrder> view(@RequestParam(value = "id", required = true) Long id,
                                      @RequestParam(value = "airportCode", required = true) String airportCode) {
-        GuestOrder guestOrder = orderService.getById(id, airportCode);
-        return new LZResult<>(guestOrder);
+        try {
+            GuestOrder guestOrder = orderService.getById(id, airportCode);
+            return new LZResult<>(guestOrder);
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult<GuestOrder> result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return result;
+        }
     }
+
 
     /**
      * 订单管理 - 删除
@@ -167,13 +182,22 @@ public class OrderController {
             @RequestParam(value = "protocolId", required = false) Long protocolId,
             @RequestParam(value = "protocolNo", required = false) String protocolNo,
             @RequestParam(value = "airportCode", required = true) String airportCode) {
-        ProtocolInfo param = new ProtocolInfo();
-        Dropdownlist d = new Dropdownlist();
-        d.setId(protocolId);
-        d.setValue(protocolNo);
-        param.setProtocol(d);
-        param.setAirportCode(airportCode);
-        return new LZResult<>(orderService.getProtocolInfoBy(param));
+        try {
+            ProtocolInfo param = new ProtocolInfo();
+            Dropdownlist d = new Dropdownlist();
+            d.setId(protocolId);
+            d.setValue(protocolNo);
+            param.setProtocol(d);
+            param.setAirportCode(airportCode);
+            return new LZResult<>(orderService.getProtocolInfoBy(param));
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult<ProtocolInfo> result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return result;
+        }
     }
 
     /**
@@ -202,8 +226,17 @@ public class OrderController {
             @RequestParam(value = "serviceType", required = true) String serviceType,
             @RequestParam(value = "protocolId", required = true) String protocolId,
             @RequestParam(value = "airportCode", required = true) String airportCode) {
-        List<Dropdownlist> list = orderService.getServerList(productCategory, serviceType, protocolId,airportCode);
-        return new LZResult<>(list);
+        try {
+            List<Dropdownlist> list = orderService.getServerList(productCategory, serviceType, protocolId,airportCode);
+            return new LZResult<>(list);
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult<List<Dropdownlist>> result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return result;
+        }
     }
 
     @RequestMapping(value ="/flightList")
@@ -242,7 +275,7 @@ public class OrderController {
             }
 
             if(isInOrOut != null && !isInOrOut.equals("")){
-                flight.setIsNearOrFar(Short.valueOf(isInOrOut));
+                flight.setIsInOrOut(Short.valueOf(isInOrOut));
             }
 
             if(takeOffTimeFlag != null && !takeOffTimeFlag.equals("")){
@@ -252,12 +285,15 @@ public class OrderController {
             if(landingTimeFlag != null && !landingTimeFlag.equals("")){
                 flight.setLandingTimeFlag(Integer.valueOf(landingTimeFlag));
             }
-
-
             LZResult<PaginationResult<Flight>> result  = orderService.getFlightList(flight,page,rows);
             return result;
         }catch(Exception e) {
-            return null;
+            e.printStackTrace();
+            LZResult<PaginationResult<Flight>> result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return result;
         }
     }
 

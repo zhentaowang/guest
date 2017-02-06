@@ -56,7 +56,10 @@
     <result column="value" jdbcType="VARCHAR" property="value" />
   </resultMap>
 
-  <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="string">
+  <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="map">
     select id,name as value from institution_client where is_deleted = 0 and airport_code = #{airportCode}
+    <if test="name != null and !name.trim().equals('')" >
+      and name like concat('%',#{name},'%')
+    </if>
   </select>
 </mapper>

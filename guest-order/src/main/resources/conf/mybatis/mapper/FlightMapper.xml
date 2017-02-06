@@ -13,6 +13,8 @@
     <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
     <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
     <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+
   </resultMap>
 
   <select id="selectFlightTotal" parameterType="com.zhiweicloud.guest.model.Flight" resultType="int">
@@ -73,7 +75,7 @@
     <if test="criteria.flightNo != null and !''.equals(criteria.flightNo)">
       and f.flight_no like concat('%',#{criteria.flightNo},'%')
     </if>
-    <if test="criteria.isInOrOut != null and !''.equals(criteria.isInOrOut)">
+    <if test="criteria.isInOrOut != null and !''.equals(criteria.isInOrOut) and -1 != criteria.isInOrOut">
       and f.is_in_or_out = #{criteria.isInOrOut}
     </if>
     order by f.flight_no

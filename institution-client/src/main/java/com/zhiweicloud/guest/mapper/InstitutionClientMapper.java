@@ -31,6 +31,7 @@ import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * InstitutionClientMapper.java
@@ -41,5 +42,5 @@ import java.util.List;
 public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
     List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
 
-    List<Dropdownlist> getInstitutionClientDropdownList(String airportCode);
+    List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
 }
