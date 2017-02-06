@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: protocol-manage
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: protocol-manage
+    spec:
+      containers:
+        - name: protocol-manage
+          image: java:8-jre-alpine
+          command: ["java","-jar","/code/protocol_manage.jar"]
+          volumeMounts:
+          - mountPath: "/code"
+            name: code
+            subPath: guest/protocol-manage
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: protocol-manage
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: protocol-manage

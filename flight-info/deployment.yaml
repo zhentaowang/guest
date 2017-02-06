@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: flight-info
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flight-info
+    spec:
+      containers:
+        - name: flight-info
+          image: java:8-jre-alpine
+          command: ["java","-jar","/code/flight-info-1.0-SNAPSHOT.jar"]
+          volumeMounts:
+          - mountPath: "/code"
+            name: code
+            subPath: guest/flight-info
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flight-info
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: flight-info
