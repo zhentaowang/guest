@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.zhiweicloud.guest</groupId>
-  <artifactId>institution-client</artifactId>
+  <artifactId>flight-info</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>guest Maven Webapp</name>
@@ -22,6 +22,7 @@
   </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
@@ -94,11 +95,17 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-eureka</artifactId>
     </dependency>
+
     <!-- 机场云 公共类 -->
     <dependency>
       <groupId>com.zhiweicloud.guest</groupId>
       <artifactId>guest-util</artifactId>
       <version>1.0.release</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.1</version>
     </dependency>
   </dependencies>
 
@@ -126,9 +133,9 @@
         <version>1.3.5</version>
             <dependencies>
               <dependency>
-                <groupId>com.zhiweicloud</groupId>
-                <artifactId>mybatis-generator-fix</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <groupId>com.project.common.util</groupId>
+                <artifactId>MyCommentGeneraotr</artifactId>
+                <version>1.0.RELEASE</version>
               </dependency>
             </dependencies>
         <configuration>

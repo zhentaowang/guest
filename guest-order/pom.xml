@@ -99,7 +99,7 @@
     <dependency>
       <groupId>com.zhiweicloud.guest</groupId>
       <artifactId>guest-util</artifactId>
-      <version>1.0.release</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -135,6 +135,7 @@
                 <groupId>com.zhiweicloud</groupId>
                 <artifactId>mybatis-generator-fix</artifactId>
                 <version>1.0-SNAPSHOT</version>
+              </dependency>
             </dependencies>
         <configuration>
           <verbose>true</verbose>
