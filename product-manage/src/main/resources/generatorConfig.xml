@@ -18,7 +18,7 @@
             <property name="suppressAllComments" value="false" />
         </commentGenerator>-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-						connectionURL="jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
+						connectionURL="jdbc:mysql://rm-bp16g8z8690uc47lyo.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
 						password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
 		<javaModelGenerator targetPackage="com.zhiweicloud.productmanage.model" targetProject="src/main/java" />
@@ -29,15 +29,15 @@
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="employee_permission" enableCountByExample="false"
-				enableUpdateByExample="false" enableDeleteByExample="false"
-				enableSelectByExample="false" selectByExampleQueryId="false">
-			<ignoreColumn column="update_time"/>
-			<ignoreColumn column="create_time"/>
-			<ignoreColumn column="is_deleted"/>
-			<ignoreColumn column="id"/>
-			<ignoreColumn column="airport_code"/>
-		</table>
+		<!--<table schema="" tableName="employee_permission" enableCountByExample="false"-->
+				<!--enableUpdateByExample="false" enableDeleteByExample="false"-->
+				<!--enableSelectByExample="false" selectByExampleQueryId="false">-->
+			<!--<ignoreColumn column="update_time"/>-->
+			<!--<ignoreColumn column="create_time"/>-->
+			<!--<ignoreColumn column="is_deleted"/>-->
+			<!--<ignoreColumn column="id"/>-->
+			<!--<ignoreColumn column="airport_code"/>-->
+		<!--</table>-->
 		<table schema="" tableName="permission" enableCountByExample="false"
 			   enableUpdateByExample="false" enableDeleteByExample="false"
 			   enableSelectByExample="false" selectByExampleQueryId="false">

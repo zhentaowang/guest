@@ -20,7 +20,7 @@ import java.util.*;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @RestController
-@RequestMapping("/commonController")
+@RequestMapping("/guest-protocol")
 @Api(value="系统公共接口",description="产品品类desc ", tags={"commonController"})
 public class CommonController {
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
@@ -32,7 +32,7 @@ public class CommonController {
      * 协议表 - 查询协议名称
      * @return
      */
-    @RequestMapping(value = "/getProtocolDropdownList", method = RequestMethod.GET)
+    @RequestMapping(value = "/protocol-dropdown-list", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "协议表 - 查询协议名称", notes = "返回协议名称列表", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
@@ -52,7 +52,7 @@ public class CommonController {
      * 协议表 - 查询协议编号
      * @return
      */
-    @RequestMapping(value = "/getProtocolNoDropdownList", method = RequestMethod.GET)
+    @RequestMapping(value = "/protocol-no-dropdown-list", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "协议表 - 查询协议编号", notes = "返回协议编号列表", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({

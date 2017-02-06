@@ -26,6 +26,7 @@ import java.util.Map;
  * 2017-01-03 13:17:52 Created By wzt
  */
 @RestController
+@RequestMapping("/guest-protocol")
 @Api(value="协议",description="协议desc ", tags={"Protocol"})
 public class ProtocolController {
     private static final Logger logger = LoggerFactory.getLogger(ProtocolController.class);
