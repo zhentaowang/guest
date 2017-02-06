@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.InstitutionClientMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.InstitutionClient">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, no, name, type, employee_id, remark, create_time, update_time, is_deleted
+  </sql>
+
+  <resultMap id="BaseResultMapPage" type="com.zhiweicloud.guest.model.InstitutionClient">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="employee_name" property="employeeName" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
+    SELECT
+    i.*,e.name as employee_name
+    FROM
+    v_institution_client i left join employee e on i.employee_id = e.id
+    where i.is_deleted = 0
+    <if test="criteria.no != null and !criteria.no.trim().equals('')" >
+      and i.no like concat('%',#{criteria.no},'%')
+    </if>
+    <if test="criteria.name != null and !criteria.name.trim().equals('')" >
+      and i.name like concat('%',#{criteria.name},'%')
+    </if>
+    <if test="criteria.type != null and !criteria.type.trim().equals('')" >
+      and i.type = #{criteria.type}
+    </if>
+    <if test="criteria.airportCode != null and !criteria.airportCode.trim().equals('')" >
+      and i.airport_code = #{criteria.airportCode}
+    </if>
+    order by  i.id desc
+    LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="map">
+    select id,name as value from institution_client where is_deleted = 0 and airport_code = #{airportCode}
+    <if test="name != null and !name.trim().equals('')" >
+      and name like concat('%',#{name},'%')
+    </if>
+  </select>
+</mapper>

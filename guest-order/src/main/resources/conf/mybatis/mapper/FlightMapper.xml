@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.FlightMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Flight">
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+    <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
+    <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+    <result column="plan_take_off_time" jdbcType="TIME" property="planTakeOffTime" />
+    <result column="plan_landing_time" jdbcType="TIME" property="planLandingTime" />
+    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+    <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
+    <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+    <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+
+  </resultMap>
+
+  <select id="selectFlightTotal" parameterType="com.zhiweicloud.guest.model.Flight" resultType="int">
+    select count(id) from flight f
+    where is_deleted = 0 and airport_code = #{airportCode}
+    <if test="flightDate != null ">
+      and f.flight_date = #{flightDate}
+    </if>
+    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 0">
+      and f.plan_take_off_time  between '06:00:00' and '12:00:00'
+    </if>
+    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 1">
+      and f.plan_take_off_time  between '12:00:00' and '18:00:00'
+    </if>
+    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 1">
+      and f.plan_take_off_time  between '18:00:00' and '24:00:00'
+    </if>
+    <if test="landingTimeFlag != null and landingTimeFlag == 0">
+      and f.plan_landing_time  between '06:00:00' and '12:00:00'
+    </if>
+    <if test="landingTimeFlag != null and landingTimeFlag == 1">
+      and f.plan_landing_time  between '12:00:00' and '18:00:00'
+    </if>
+    <if test="landingTimeFlag != null and landingTimeFlag == 1">
+      and f.plan_landing_time  between '18:00:00' and '24:00:00'
+    </if>
+    <if test="flightNo != null and !''.equals(flightNo)">
+      and f.flight_no like concat('%',#{flightNo},'%')
+    </if>
+    <if test="isInOrOut != null and !''.equals(isInOrOut)">
+      and f.is_in_or_out = #{isInOrOut}
+    </if>
+  </select>
+  <select id="selectFlightList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    select * from flight f
+    where is_deleted = 0 and airport_code = #{criteria.airportCode}
+    <if test="criteria.flightDate != null ">
+      and f.flight_date = date_format(#{criteria.flightDate},'%Y-%m-%d')
+    </if>
+    <if test="criteria.takeOffTimeFlag != null and criteria.takeOffTimeFlag == 0">
+      and f.plan_take_off_time  between '06:00:00' and '12:00:00'
+    </if>
+    <if test="criteria.takeOffTimeFlag != null and criteria.takeOffTimeFlag == 1">
+      and f.plan_take_off_time  between '12:00:00' and '18:00:00'
+    </if>
+    <if test="criteria.takeOffTimeFlag != null and criteria.takeOffTimeFlag == 2">
+      and f.plan_take_off_time  between '18:00:00' and '24:00:00'
+    </if>
+    <if test="criteria.landingTimeFlag != null and criteria.landingTimeFlag == 0">
+      and f.plan_landing_time  between '06:00:00' and '12:00:00'
+    </if>
+    <if test="criteria.landingTimeFlag != null and criteria.landingTimeFlag == 1">
+      and f.plan_landing_time  between '12:00:00' and '18:00:00'
+    </if>
+    <if test="criteria.landingTimeFlag != null and criteria.landingTimeFlag == 2">
+      and f.plan_landing_time  between '18:00:00' and '24:00:00'
+    </if>
+    <if test="criteria.flightNo != null and !''.equals(criteria.flightNo)">
+      and f.flight_no like concat('%',#{criteria.flightNo},'%')
+    </if>
+    <if test="criteria.isInOrOut != null and !''.equals(criteria.isInOrOut) and -1 != criteria.isInOrOut">
+      and f.is_in_or_out = #{criteria.isInOrOut}
+    </if>
+    order by f.flight_no
+    limit #{page.startPageNo},#{page.pCount}
+
+  </select>
+</mapper>
