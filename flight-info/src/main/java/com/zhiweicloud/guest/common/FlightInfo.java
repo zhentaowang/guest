@@ -67,7 +67,7 @@ public class FlightInfo {
 
     }
 
-    public static void main(String args[]) throws Exception{
+    /*public static void main(String args[]) throws Exception{
         String privateKey = Global.getPrivateKey();
         Map<String, String> params = new HashMap<>();
         params.put("date", "2017-01-27");
@@ -90,5 +90,5 @@ public class FlightInfo {
         String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
         System.out.println(ret);
 
-    }
+    }*/
 }
