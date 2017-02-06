@@ -47,6 +47,8 @@ import java.util.List;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
+
+@RequestMapping(value ="/institution-client")
 @RestController
 @Api(value="机构客户管理",description="", tags={"InstitutionClientModel"})
 public class InstitutionClientController {
