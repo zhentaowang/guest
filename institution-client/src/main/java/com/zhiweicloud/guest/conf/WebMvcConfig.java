@@ -46,13 +46,13 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private UserInterceptor userInterceptor;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userInterceptor).addPathPatterns("/institution-client/**");  //对来自/** 这个链接来的请求进行拦截
-    }
+//    @Autowired
+//    private UserInterceptor userInterceptor;
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(userInterceptor).addPathPatterns("/institution-client/**");  //对来自/** 这个链接来的请求进行拦截
+//    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
