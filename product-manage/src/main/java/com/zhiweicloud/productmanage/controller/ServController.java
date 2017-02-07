@@ -46,7 +46,12 @@ public class ServController {
     public LZResult<PaginationResult<Serv>> list(HttpServletRequest request) {
         Map<String,Object> param = new HashMap();
         param.put("airportCode",request.getParameter("airportCode"));
-        param.put("productCategory", request.getSession().getAttribute("productCategory"));
+        if(request.getSession().getAttribute("productCategory") != null){
+            param.put("productCategory", request.getSession().getAttribute("productCategory"));
+        }
+        else{
+            param.put("productCategory", request.getParameter("productCategory"));
+        }
         param.put("serviceType", request.getParameter("serviceType"));
         param.put("name",request.getParameter("name"));
         LZResult<PaginationResult<Serv>> result  = servService.getAll(param,Integer.parseInt(request.getParameter("page")),Integer.parseInt(request.getParameter("rows")));

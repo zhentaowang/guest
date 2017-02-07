@@ -53,28 +53,6 @@ public class EmployeeService {
     private EmployeeMapper employeeMapper;
 
     public LZResult<PaginationResult<Employee>> getAll(Employee employeeParam, Integer page, Integer rows) {
-        /*if (page != null && rows != null) {
-            PageHelper.startPage(page, rows, "id");
-        }
-
-        // 条件查询，自己拼条件
-        Example example = new Example(Employee.class);
-        if(employeeParam.getName() != null && !employeeParam.getName().equals("")){
-            example.createCriteria()
-                    .andCondition("name like '%" + employeeParam.getName() + "%'");
-        }
-        example.createCriteria()
-                .andCondition("is_deleted = 0");
-        List<Employee> employeeList = employeeMapper.selectByExample(example);
-
-        Integer count = employeeMapper.selectCountByExample(example);
-        // 测试复杂sql，自定义方法
-        Employee testComplexSql = employeeMapper.complexSqlQuery(12L);
-        System.out.println(" 测试复杂sql，自定义方法 : " + testComplexSql.getName());
-        PaginationResult<Employee> eqr = new PaginationResult<Employee>(count, employeeList);
-        LZResult<PaginationResult<Employee>> result = new LZResult<PaginationResult<Employee>>(eqr);
-        return result;*/
-
         BasePagination<Employee> queryCondition = new BasePagination<>(employeeParam, new PageModel(page, rows));
 
         int total = employeeMapper.selectEmployeeTotal(employeeParam);

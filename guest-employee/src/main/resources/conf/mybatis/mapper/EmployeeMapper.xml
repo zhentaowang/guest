@@ -30,17 +30,17 @@
 
   <select id="selectEmployeeTotal" parameterType="com.zhiweicloud.guest.model.Employee" resultType="int">
     select count(id) from employee e
-    where is_deleted = 0 and airport_code = #{airportCode}
+    where e.is_deleted = 0 and e.airport_code = #{airportCode}
     <if test="name != null ">
-      and e.name like  like concat('%',#{name},'%')
+      and e.name like concat('%',#{name},'%')
     </if>
   </select>
 
   <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select id,concat(e.airport_code,lpad(e.id,3,'0')) AS account,e.name,e.password,e.sex from employee e
-    where is_deleted = 0 and airport_code = #{criteria.airportCode}
+    where e.is_deleted = 0 and e.airport_code = #{criteria.airportCode}
     <if test="criteria.name != null ">
-      and e.name like  like concat('%',#{criteria.name},'%')
+      and e.name like concat('%',#{criteria.name},'%')
     </if>
     order by e.id desc
   </select>
