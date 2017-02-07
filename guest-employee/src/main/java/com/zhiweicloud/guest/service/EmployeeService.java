@@ -91,7 +91,7 @@ public class EmployeeService {
                 String result = HttpClientUtil.httpPostRequest("http://airport.zhiweicloud.com/oauth/auth/register" , p);
                 JSONObject oauth = JSON.parseObject(result);
                 employee.setId(oauth.getLong("user_id"));
-                employeeMapper.insert(employee);
+                employeeMapper.insertSelective(employee);
             }
         }catch (Exception e){
             e.printStackTrace();
