@@ -94,12 +94,13 @@ public class UserInterceptor implements HandlerInterceptor {
          */
         StringBuffer result = new StringBuffer();
         BufferedReader in = null;
+        Map<String, String[]> params = request.getParameterMap();
         Map<String, Object> param = new HashMap<>();
         if(request.getParameter("access_token") == null){
             return false;
         }
         else{
-            if(request.getRequestURI().equals("/list")){
+            if(request.getRequestURI().equals("/guest-product/list")){
                 param.put("access_token", request.getParameter("access_token"));
                 try {
                     StringBuffer args = new StringBuffer();
