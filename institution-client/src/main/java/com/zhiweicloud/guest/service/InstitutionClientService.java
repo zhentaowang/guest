@@ -99,21 +99,17 @@ public class InstitutionClientService {
     }
 
     public InstitutionClient getById(Long id,String airportCode) {
-        InstitutionClient temp = new InstitutionClient();
-        temp.setId(id);
-        temp.setAirportCode(airportCode);
-        temp.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-        /**
-         * 只能返回一条记录，如果有多条了就会报错，就跟selectByPrimaryKey一样的效果
-         */
-        return institutionClientMapper.selectOne(temp);
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("airportCode", airportCode);
+        return institutionClientMapper.viewByIdAndAirCode(map);
     }
 
     public void saveOrUpdate(InstitutionClient institutionClient) {
         if (institutionClient.getId() != null) {
             Example example = new Example(InstitutionClient.class);
-            example.createCriteria().andCondition("airport_code=",institutionClient.getAirportCode());
-            example.createCriteria().andCondition("id=",institutionClient.getId());
+            String sql = "id = " + institutionClient.getId() + " and airport_code = '" + institutionClient.getAirportCode() + "'";
+            example.createCriteria().andCondition(sql);
             institutionClientMapper.updateByExample(institutionClient,example);
         } else {
             institutionClientMapper.insert(institutionClient);

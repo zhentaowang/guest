@@ -43,4 +43,6 @@ public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
     List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
 
     List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
+
+    InstitutionClient viewByIdAndAirCode(Map<String, Object> map);
 }
