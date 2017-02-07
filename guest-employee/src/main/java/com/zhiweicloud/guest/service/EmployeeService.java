@@ -24,6 +24,9 @@
 
 package com.zhiweicloud.guest.service;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
@@ -70,13 +73,28 @@ public class EmployeeService {
     }
 
     public void saveOrUpdate(Employee employee) {
-        if (employee.getId() != null) {
-            Example example = new Example(Employee.class);
-            String sql = "id = " + employee.getId() + " and airport_code = '" + employee.getAirportCode() + "'";
-            example.createCriteria().andCondition(sql);
-            employeeMapper.updateByExampleSelective(employee, example);
-        } else {
-            employeeMapper.insert(employee);
+        try {
+            if (employee.getId() != null) {
+                Example example = new Example(Employee.class);
+                String sql = "id = " + employee.getId() + " and airport_code = '" + employee.getAirportCode() + "'";
+                example.createCriteria().andCondition(sql);
+                employeeMapper.updateByExampleSelective(employee, example);
+            } else {
+                Map<String, Object> p = new HashMap<>();
+                p.put("grant_type","password");
+                p.put("client_id",employee.getAirportCode());
+                p.put("client_secret",employee.getPassword());
+                p.put("username",employee.getName());
+                p.put("password",employee.getPassword());
+                p.put("password_confirmation",employee.getPassword());
+
+                String result = HttpClientUtil.httpPostRequest("http://airport.zhiweicloud.com/oauth/auth/register" , p);
+                JSONObject oauth = JSON.parseObject(result);
+                employee.setId(oauth.getLong("user_id"));
+                employeeMapper.insert(employee);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

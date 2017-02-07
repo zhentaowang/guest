@@ -97,12 +97,11 @@ public class EmployeeController {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
             employeeService.saveOrUpdate(employee);
-            LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
             return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
         }
-        return null;
     }
 
 
