@@ -99,7 +99,7 @@ public class UserInterceptor implements HandlerInterceptor {
             return false;
         }
         else{
-            if(request.getRequestURI().equals("/list")){
+            if(request.getRequestURI().equals("/guest-product/list")){
                 param.put("access_token", request.getParameter("access_token"));
                 try {
                     StringBuffer args = new StringBuffer();

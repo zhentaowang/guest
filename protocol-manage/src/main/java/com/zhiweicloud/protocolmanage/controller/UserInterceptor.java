@@ -1,4 +1,4 @@
-package com.zhiweicloud.guest.controller;
+package com.zhiweicloud.protocolmanage.controller;
 
 /**
  * Created by wzt on 2017/1/20.
@@ -49,6 +49,42 @@ public class UserInterceptor implements HandlerInterceptor {
         logger.info(String.format("请求参数, url: %s, method: %s, uri: %s, params: %s", url, method, uri, queryString));
 
         /**
+         * 校验权限get:/list
+         */
+
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("airportCode",request.getParameter("airportCode"));
+//        map.put("account","010");//员工账号
+//        map.put("url",request.getRequestURI());
+//        if(request.getRequestURI().equals("/list")){
+//            //request.getSession().setAttribute("productCategory","VIP");
+//            List<Permission> permissionList = permissionMapper.getPermission(map);
+//            if(permissionList != null){
+//                for(int i = 0; i < permissionList.size(); i++){
+//                    if(permissionList.get(i).getAuthorizer() != null){
+//                        request.getSession().setAttribute(permissionList.get(i).getAuthorizer().split("=")[0],permissionList.get(i).getAuthorizer().split("=")[1]);
+//                    }
+//                }
+//                return true;
+//            }
+//            else{
+//                return false;
+//            }
+//        }
+//        else{
+//            return false;
+//        }
+
+
+//        /**
+//         * 校验权限post:/delete
+//         */
+//        if(uri.equals("/delete")){
+//            request.getSession().setAttribute("productTypeAllocationId",1);
+//        }
+//        return true;
+
+        /**
          * 校验用户权限
          * @param authority  权限
          * @param requestContext  requestContext
@@ -62,7 +98,7 @@ public class UserInterceptor implements HandlerInterceptor {
             return false;
         }
         else{
-            if(request.getRequestURI().equals("/guest-role/getMenuByUserId")){
+            if(request.getRequestURI().equals("/guest-protocol/list")){
                 param.put("access_token", request.getParameter("access_token"));
                 try {
                     StringBuffer args = new StringBuffer();

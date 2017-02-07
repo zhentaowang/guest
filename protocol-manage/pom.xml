@@ -22,6 +22,7 @@
         <java.version>1.8</java.version>
         <pagehelper.version>4.1.1</pagehelper.version>
         <mapper.version>3.3.6</mapper.version>
+        <fastjson.version>1.2.11</fastjson.version>
     </properties>
 
     <dependencies>
@@ -71,6 +72,11 @@
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
         <!--分页插件-->
         <dependency>
