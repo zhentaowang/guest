@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class FlightInfo {
             p.put("sign", sign);
 
             String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
-            System.out.println(ret);
+            System.out.println(URLDecoder.decode(ret, "UTF-8"));
             return ret;
         }catch (Exception e){
             e.printStackTrace();
@@ -67,29 +68,4 @@ public class FlightInfo {
 
 
     }
-
-    /*public static void main(String args[]) throws Exception{
-        String privateKey = Global.getPrivateKey();
-        Map<String, String> params = new HashMap<>();
-        params.put("date", "2017-01-27");
-        params.put("fnum", "CA1352");
-        params.put("lg", "zh-cn");
-        params.put("sysCode", "dpctest");
-
-
-        String sign = DragonSignature.rsaSign(params, privateKey, "UTF-8");
-        System.out.print("sign:" + sign);
-
-
-        Map<String, Object> p = new HashMap<>();
-        p.put("date", "2017-01-27");
-        p.put("fnum", "CA1352");
-        p.put("lg", "zh-cn");
-        p.put("sysCode", "dpctest");
-        p.put("sign", sign);
-
-        String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
-        System.out.println(ret);
-
-    }*/
 }
