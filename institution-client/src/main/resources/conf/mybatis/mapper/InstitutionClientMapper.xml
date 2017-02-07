@@ -27,6 +27,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
     <result column="employee_name" property="employeeName" jdbcType="VARCHAR"/>
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
   </resultMap>
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
@@ -61,5 +62,10 @@
     <if test="name != null and !name.trim().equals('')" >
       and name like concat('%',#{name},'%')
     </if>
+  </select>
+
+  <select id="viewByIdAndAirCode" parameterType="map" resultMap="BaseResultMapPage">
+    select ic.id, ic.no, ic.name, ic.type, ic.employee_id, ic.remark,ic.airport_code,e.name as employee_name from  institution_client ic
+    inner join employee e on ic.employee_id = e.id where ic.id = #{id} and ic.airport_code = #{airportCode}
   </select>
 </mapper>

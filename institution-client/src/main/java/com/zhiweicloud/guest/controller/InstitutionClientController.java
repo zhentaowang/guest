@@ -124,8 +124,17 @@ public class InstitutionClientController {
     public LZResult<InstitutionClient> view(
             @RequestParam(value = "id", required = true) Long id,
             @RequestParam(value = "airportCode", required = true) String airportCode) {
-        InstitutionClient institutionClient = institutionClientService.getById(id,airportCode);
-        return new LZResult<>(institutionClient);
+        try {
+            InstitutionClient institutionClient = institutionClientService.getById(id,airportCode);
+            return new LZResult<>(institutionClient);
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult<InstitutionClient> result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return result;
+        }
     }
 
     /**
