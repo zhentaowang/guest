@@ -84,6 +84,9 @@
     <if test="region != null">
       region = #{region,jdbcType=VARCHAR},
     </if>
+    <if test="productTypeAllocationId != null">
+      product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT},
+    </if>
     <if test="addressDetail != null">
       address_detail = #{addressDetail,jdbcType=VARCHAR},
     </if>
