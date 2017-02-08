@@ -93,9 +93,6 @@
       update_time = CURRENT_TIMESTAMP
   </set>
   where airport_code = #{airportCode,jdbcType=VARCHAR} and id = #{id,jdbcType=BIGINT}
-    <if test="productTypeAllocationId != null" >
-      and product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
-    </if>
 </update>
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
