@@ -84,6 +84,10 @@ public class ProtocolController {
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
+            if (protocol.getName() == null || protocol.getClearForm() == null || protocol.getInstitutionClientName() == null
+                    || protocol.getType() == null || protocol.getStartTime() == null || protocol.getEndTime() == null) {
+                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            }
             protocolService.saveOrUpdate(protocol);
             return  LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
