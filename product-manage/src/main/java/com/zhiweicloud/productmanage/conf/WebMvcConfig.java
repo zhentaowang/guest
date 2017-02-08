@@ -37,13 +37,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
-    //
+//
 //    @Autowired
 //    private UserInterceptor userInterceptor;
 //
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(userInterceptor).addPathPatterns("/guest-protocol/**");  //对来自/** 这个链接来的请求进行拦截
+//        registry.addInterceptor(userInterceptor).addPathPatterns("/guest-product/**");  //对来自/** 这个链接来的请求进行拦截
 //    }
 
     @Override

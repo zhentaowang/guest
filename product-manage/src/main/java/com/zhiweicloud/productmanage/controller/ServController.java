@@ -152,10 +152,10 @@ public class ServController {
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public LXResult delete(
             @RequestBody RequsetParams<Long> params,
-            @RequestParam(value = "airportCode", required = true) String airportCode,HttpServletRequest request) {
+            @RequestParam(value = "airportCode", required = true) String airportCode) {
         try {
             List<Long> ids = params.getData();
-            servService.deleteById(ids,airportCode,Long.parseLong(request.getSession().getAttribute("productTypeAllocationId").toString()));
+            servService.deleteById(ids,airportCode);
             return LXResult.success();
         } catch (Exception e) {
             logger.error("delete serv by ids error", e);
