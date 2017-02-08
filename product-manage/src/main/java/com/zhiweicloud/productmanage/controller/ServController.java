@@ -108,6 +108,12 @@ public class ServController {
             if (serv == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
+            if (serv.getProductTypeAllocationId() == null) {
+                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            }
+            if (serv.getName() == null) {
+                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            }
             servService.saveOrUpdate(serv);
             return  LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
