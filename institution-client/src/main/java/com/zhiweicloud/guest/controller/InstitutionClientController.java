@@ -100,6 +100,11 @@ public class InstitutionClientController {
             if (institutionClient == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
+            if (institutionClient.getName() == null || "".equals(institutionClient.getName())
+                    || institutionClient.getEmployeeId() == null || "".equals(institutionClient.getEmployeeId())
+                    || institutionClient.getType() == null || "".equals(institutionClient.getType())) {
+                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            }
             institutionClientService.saveOrUpdate(institutionClient);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
@@ -169,13 +174,33 @@ public class InstitutionClientController {
      */
     @RequestMapping(value="/queryInstitutionClientDropdownList",method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value="系统中用到员工信息下来框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    @ApiOperation(value="系统中用到机构客户信息下来框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "模糊查询name", dataType = "String", required = false, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<List<Dropdownlist>> queryEmployeeDropdownList(@RequestParam(value = "airportCode", required = true) String airportCode,@RequestParam(value = "name", required = false) String name) {
+    public LZResult<List<Dropdownlist>> queryInstitutionClientDropdownList(
+            @RequestParam(value = "airportCode", required = true) String airportCode,
+            @RequestParam(value = "name", required = false) String name) {
         List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode,name);
+        return new LZResult<>(list);
+    }
+
+    /**
+     * 产品品类下拉框 数据
+     * @return
+     */
+    @RequestMapping(value="/queryInstitutionClientNoList",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="系统中用到机构信息下来框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "no", value = "模糊查询编号", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    })
+    public LZResult<List<String>> queryInstitutionClientNoList(
+            @RequestParam(value = "airportCode", required = true) String airportCode,
+            @RequestParam(value = "no", required = false) String no) {
+        List<String> list = institutionClientService.queryInstitutionClientNoList(airportCode,no);
         return new LZResult<>(list);
     }
 

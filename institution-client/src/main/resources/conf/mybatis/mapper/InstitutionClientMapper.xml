@@ -58,9 +58,19 @@
   </resultMap>
 
   <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="map">
-    select id,name as value from institution_client where is_deleted = 0 and airport_code = #{airportCode}
+    select id,name as value from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
     <if test="name != null and !name.trim().equals('')" >
       and name like concat('%',#{name},'%')
+    </if>
+    <if test="no != null and !no.trim().equals('')" >
+      and no like concat('%',#{no},'%')
+    </if>
+  </select>
+  <select id="getInstitutionClientNoList" resultType="string" parameterType="map">
+    select no from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
+
+    <if test="no != null and !no.trim().equals('')" >
+      and no like concat('%',#{no},'%')
     </if>
   </select>
 

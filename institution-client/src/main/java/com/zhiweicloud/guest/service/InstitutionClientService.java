@@ -136,4 +136,11 @@ public class InstitutionClientService {
 
         return institutionClientMapper.getInstitutionClientDropdownList(map);
     }
+
+    public List<String> queryInstitutionClientNoList(String airportCode, String no) {
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        map.put("no",no);
+        return institutionClientMapper.getInstitutionClientNoList(map);
+    }
 }
