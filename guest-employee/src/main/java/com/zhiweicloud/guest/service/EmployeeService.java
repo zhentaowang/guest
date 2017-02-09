@@ -24,10 +24,8 @@
 
 package com.zhiweicloud.guest.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -37,7 +35,6 @@ import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -65,10 +62,10 @@ public class EmployeeService {
         return result;
     }
 
-    public Employee getById(Long id,String airportCode) {
+    public Employee getById(Long id, String airportCode) {
         Map map = new HashMap();
-        map.put("id",id);
-        map.put("airportCode",airportCode);
+        map.put("id", id);
+        map.put("airportCode", airportCode);
         return employeeMapper.selectByIdAndAirportCode(map);
     }
 
@@ -81,25 +78,25 @@ public class EmployeeService {
                 employeeMapper.updateByExampleSelective(employee, example);
             } else {
                 Map<String, Object> p = new HashMap<>();
-                p.put("grant_type","password");
-                p.put("client_id",employee.getAirportCode());
-                p.put("client_secret",employee.getPassword());
-                p.put("username",employee.getName());
-                p.put("password",employee.getPassword());
-                p.put("password_confirmation",employee.getPassword());
+                p.put("grant_type", "password");
+                p.put("client_id", employee.getAirportCode());
+                p.put("client_secret", employee.getPassword());
+                p.put("username", employee.getName());
+                p.put("password", employee.getPassword());
+                p.put("password_confirmation", employee.getPassword());
 
-                String result = HttpClientUtil.httpPostRequest("http://airport.zhiweicloud.com/oauth/auth/register" , p);
+                String result = HttpClientUtil.httpPostRequest("http://airport.zhiweicloud.com/oauth/auth/register", p);
                 JSONObject oauth = JSON.parseObject(result);
                 employee.setId(oauth.getLong("user_id"));
                 employeeMapper.insertSelective(employee);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteById(List<Long> ids,String airportCode) {
-        for(int i = 0; i< ids.size();i++){
+    public void deleteById(List<Long> ids, String airportCode) {
+        for (int i = 0; i < ids.size(); i++) {
             Employee temp = new Employee();
             temp.setId(ids.get(i));
             temp.setIsDeleted(Constant.MARK_AS_DELETED);

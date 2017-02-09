@@ -24,6 +24,8 @@
 
 package com.zhiweicloud.guest.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -36,9 +38,11 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
@@ -47,8 +51,8 @@ import java.util.List;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
-@RequestMapping(value ="/guest-employee")
-@RestController
+@Component
+@Path("guest-employee")
 @Api(value="员工管理",description="", tags={"Employee"})
 public class EmployeeController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
@@ -56,7 +60,9 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @RequestMapping(value ="/list")
+    @GET
+    @Path("list")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams(
             {
@@ -64,17 +70,17 @@ public class EmployeeController {
             @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})
-    public LZResult<PaginationResult<Employee>> list(
-            @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
-            @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value="airportCode",required = false) String airportCode) {
+    public String list(
+            @QueryParam(value = "page") Integer page,
+            @QueryParam(value = "rows") Integer rows,
+            @QueryParam(value = "name") String name,
+            @QueryParam(value="airportCode") String airportCode) {
         Employee employeeParam = new Employee();
         employeeParam.setName(name);
         employeeParam.setAirportCode(airportCode);
 
         LZResult<PaginationResult<Employee>> result  = employeeService.getAll(employeeParam,page,rows);
-        return result;
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -83,19 +89,15 @@ public class EmployeeController {
      * @param params
      * @return
      */
-    @RequestMapping(value="/saveOrUpdate", method=RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path("saveOrUpdate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value="员工管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "employee", required = true) @RequestBody RequsetParams<Employee> params){
+    public LXResult save(@ApiParam(value = "employee", required = true) String json){
         try{
-            Employee employee = null;
-            if(!CollectionUtils.isEmpty(params.getData())){
-                employee = params.getData().get(0);
-            }
-
-            if (employee == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
-            }
+            JSONObject param = JSON.parseObject(json);
+            Employee employee = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), Employee.class);
             employeeService.saveOrUpdate(employee);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
@@ -110,18 +112,19 @@ public class EmployeeController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    @ResponseBody
+    @GET
+    @Path("view")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<Employee> view(
-            @RequestParam(value = "id", required = true) Long id,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+    public String view(
+            @QueryParam("id") Long id,
+            @QueryParam("airportCode") String airportCode) {
         Employee employee = employeeService.getById(id,airportCode);
-        return new LZResult<Employee>(employee);
+        return JSON.toJSONString(employee);
     }
 
     /**
