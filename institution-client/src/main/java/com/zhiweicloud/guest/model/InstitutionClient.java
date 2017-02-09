@@ -31,7 +31,7 @@ public class InstitutionClient {
     @ApiModelProperty(value="机构客户编号",name="no")
     private String no;
 
-    @ApiModelProperty(value="机构客户名称",name="name")
+    @ApiModelProperty(value="机构客户名称",name="name",required = true)
     private String name;
 
     @ApiModelProperty(value="机构客户类型",name="type")

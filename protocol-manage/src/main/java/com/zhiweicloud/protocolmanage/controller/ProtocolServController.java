@@ -108,7 +108,7 @@ public class ProtocolServController {
                 protocolServ = params.getData().get(0);
             }
 
-            if (protocolServ == null) {
+            if (protocolServ.getProtocolServList().size() == 0) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
             protocolServService.saveOrUpdate(protocolServ);

@@ -3,7 +3,7 @@
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017-01-09 11:08:54 Created By zhangpengfei
-*/
+ */
 package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
@@ -15,22 +15,22 @@ import org.hibernate.validator.constraints.NotEmpty;
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017-01-09 11:08:54 Created By zhangpengfei
-*/
-@ApiModel(value="Employee",description="employee")
-public class Employee extends  BaseEntity{
-    @ApiModelProperty(value="账号",name="account")
+ */
+@ApiModel(value = "Employee", description = "employee")
+public class Employee extends BaseEntity {
+    @ApiModelProperty(value = "账号", name = "account")
     @NotEmpty
     private String account;
 
-    @ApiModelProperty(value="用户名",name="name", required=true)
+    @ApiModelProperty(value = "用户名", name = "name", required = true)
     @NotEmpty
     private String name;
 
-    @ApiModelProperty(value="密码",name="password", required=true)
+    @ApiModelProperty(value = "密码", name = "password", required = true)
     @NotEmpty
     private String password;
 
-    @ApiModelProperty(value="性别：0：男，1：女",name="sex")
+    @ApiModelProperty(value = "性别：0：男，1：女", name = "sex")
     private Short sex;
 
     /**
