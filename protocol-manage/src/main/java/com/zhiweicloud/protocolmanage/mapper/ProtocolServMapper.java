@@ -18,5 +18,6 @@ public interface ProtocolServMapper extends MyMapper<ProtocolServ> {
     List<ProtocolServ> getProtocolServType(BasePagination<Map<String, Object>> queryCondition);
     int getTypeCount(Map<String, Object> map);
     Integer updateByIdAndAirportCode(ProtocolServ protocolServ);
+    Integer deleteByType(Map<String, Object> map);
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
 }
