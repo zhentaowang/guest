@@ -211,16 +211,16 @@
     <select id="deleteByType" parameterType="map">
         update protocol_serv set is_deleted = 1 where airport_code = #{airportCode,jdbcType=VARCHAR} and product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
         and protocol_id = #{protocolId,jdbcType=BIGINT}
-        <if test="price != null" >
+        <if test="price != 'null' and price!= null" >
             and price = #{price,jdbcType=DECIMAL}
         </if>
-        <if test="description != null" >
+        <if test="description != 'null' and description!= null" >
             and description = #{description,jdbcType=VARCHAR}
         </if>
-        <if test="overStaffUnitPrice != null" >
+        <if test="overStaffUnitPrice != 'null' and overStaffUnitPrice!= null" >
             and over_staff_unit_price = #{overStaffUnitPrice,jdbcType=DECIMAL}
         </if>
-        <if test="freeRetinueNum != null" >
+        <if test="freeRetinueNum != 'null' and freeRetinueNum != null" >
             and free_retinue_num = #{freeRetinueNum,jdbcType=BIGINT}
         </if>
     </select>
