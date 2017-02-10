@@ -38,10 +38,8 @@ import java.util.Map;
  */
 public interface ProductTypeAllocationMapper extends MyMapper<ProductTypeAllocation> {
 
-    public List<Dropdownlist> getProductTypeDropdownList();
-    Long getCategoryId(Map<String,Object> params);
-    public List<Dropdownlist> getServiceTypeDropdownList(Map<String,Object> param);
-    public List<Dropdownlist> getProductCategoryDropdownList(Map<String,Object> param);
+    List<Dropdownlist> getServiceTypeDropdownList(Map<String,Object> param);
+    List<Dropdownlist> getProductCategoryDropdownList(Map<String,Object> param);
     List<ProductTypeAllocation> getListByConidition(BasePagination<Map<String,Object>> queryCondition);
     int getListCount(Map<String,Object> map);
 

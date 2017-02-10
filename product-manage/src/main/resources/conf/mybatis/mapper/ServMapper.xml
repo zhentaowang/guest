@@ -55,10 +55,6 @@
     where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.id = #{id,jdbcType=BIGINT} and s.is_deleted = 0
   </select>
 
-  <select id="getCurrentValue"  resultType="java.lang.Integer">
-    select  NEXTVAL('serv')
-  </select>
-
   <update id="updateByIdAndAirportCode" parameterType="com.zhiweicloud.productmanage.model.Serv">
     <!--
       WARNING - @mbggenerated
@@ -124,10 +120,16 @@
     FROM
     v_serv s left join product_type_allocation p on s.product_type_allocation_id = p.id
     where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and s.product_type_allocation_id = #{criteria.productTypeAllocationId,jdbcType=BIGINT} and s.is_deleted = 0
-    and s.id not in (select service_id from protocol_serv where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    and protocol_id = #{criteria.protocolId,jdbcType=BIGINT})
+    <if test="criteria.ids != null and !criteria.ids.trim().equals('')" >
+      and s.id not in (${criteria.ids})
+    </if>
     order by s.id desc
     LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getServiceId"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    select service_id from protocol_serv where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    and protocol_id = #{protocolId,jdbcType=BIGINT} and product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
@@ -153,17 +155,13 @@
     FROM
     v_serv s left join product_type_allocation p on s.product_type_allocation_id = p.id
     where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT} and s.is_deleted = 0
+    <if test="ids != null and !ids.trim().equals('')" >
+      and s.id not in (${ids})
+    </if>
   </select>
 
-  <delete id="deleteByIdAndAirportCode">
-    delete
-    from
-    serv
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and id = #{id,jdbcType=BIGINT}
-  </delete>
-
-  <select id="getIdByCondition"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT id from serv where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{serviceName,jdbcType=VARCHAR}
+  <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    SELECT count(id) from serv where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{serviceName,jdbcType=VARCHAR}
   </select>
 
   <select id="getServiceNameDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">

@@ -15,7 +15,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -104,15 +103,11 @@ public class ServController {
             if(!CollectionUtils.isEmpty(params.getData())){
                 serv = params.getData().get(0);
             }
-
-            if (serv == null) {
+            if (serv == null || serv.getProductTypeAllocationId() == null || serv.getName() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            if (serv.getProductTypeAllocationId() == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
-            }
-            if (serv.getName() == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            if(servService.selectByName(serv) == true){
+                return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
             }
             servService.saveOrUpdate(serv);
             return  LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());

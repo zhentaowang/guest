@@ -5,7 +5,6 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.productmanage.mapper.ProductTypeAllocationMapper;
 import com.zhiweicloud.productmanage.mapper.ServMapper;
 import com.zhiweicloud.productmanage.model.Serv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,6 @@ public class ServService {
 
     @Autowired
     private ServMapper servMapper;
-
-    @Autowired
-    private ProductTypeAllocationMapper productTypeAllocationMapper;
 
     /**
      * 分页获取服务列表
@@ -58,6 +54,14 @@ public class ServService {
      */
     public LZResult<PaginationResult<Serv>> getServAll(Map<String,Object> param, Integer page, Integer rows,BigDecimal price,Integer freeRetinueNum,BigDecimal overStaffUnitPrice,String description) {
 
+        List<Long> serviceId= servMapper.getServiceId(param);
+        if(serviceId.size() !=0){
+            StringBuffer ids = new StringBuffer();
+            for(int i = 0; i < serviceId.size(); i++){
+                ids.append(serviceId.get(i)+",");
+            }
+            param.put("ids",ids.substring(0,ids.length() - 1));
+        }
         int count = servMapper.getServListCount(param);
 
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
@@ -87,6 +91,24 @@ public class ServService {
     }
 
     /**
+     * 服务名称查重
+     * @param serv
+     * @return boolean
+     */
+    public boolean selectByName(Serv serv) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("serviceName",serv.getName());
+        params.put("airportCode",serv.getAirportCode());
+        Long count = servMapper.selectByName(params);
+        if(count > 0){//count大于0，说明该名称已存在
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
      * 服务添加与修改
      * @param serv
      */
@@ -94,9 +116,7 @@ public class ServService {
         if (serv.getId() != null) {
             servMapper.updateByIdAndAirportCode(serv);
         } else {
-            Map<String,Object> params = new HashMap<>();
-            Short isDeleted = 0;
-            serv.setIsDeleted(isDeleted);
+            serv.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             serv.setCreateTime(new Date());
             serv.setUpdateTime(new Date());
             servMapper.insert(serv);
