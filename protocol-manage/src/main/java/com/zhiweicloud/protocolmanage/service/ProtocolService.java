@@ -135,9 +135,7 @@ public class ProtocolService {
 
             //协议添加
             protocol.setCreateTime(new Date());
-            protocol.setStartTime(new Date());
             protocol.setUpdateTime(new Date());
-            protocol.setEndTime(new Date());
             protocol.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             protocolMapper.insert(protocol);
 
