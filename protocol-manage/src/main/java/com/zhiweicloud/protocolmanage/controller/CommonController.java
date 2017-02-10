@@ -57,12 +57,14 @@ public class CommonController {
     @ApiOperation(value = "协议表 - 查询协议编号", notes = "返回协议编号列表", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "协议类型:VIP、CIP", dataType = "String", required = false, paramType = "query"),
             @ApiImplicitParam(name = "no", value = "协议编号", dataType = "String", required = false, paramType = "query")
     })
     public LZResult<List<Dropdownlist>> getProtocolNoDropdownList(@RequestParam(value = "airportCode", defaultValue = "LJG", required = true) String airportCode,
+                                                                  @RequestParam(value = "type", required = false) String type,
                                                                 @RequestParam(value = "no", required = false) String no
     ) {
-        List<Dropdownlist> protocolNameList = protocolService.getProtocolNoDropdownList(airportCode, no);
+        List<Dropdownlist> protocolNameList = protocolService.getProtocolNoDropdownList(airportCode,type, no);
         return new LZResult<List<Dropdownlist>>(protocolNameList);
     }
 }

@@ -194,9 +194,10 @@ public class ProtocolService {
      * @param airportCode
      * @param no
      */
-    public List<Dropdownlist> getProtocolNoDropdownList(String airportCode,String no){
+    public List<Dropdownlist> getProtocolNoDropdownList(String airportCode,String type,String no){
         Map<String,Object> params = new HashMap<>();
         params.put("airportCode",airportCode);
+        params.put("type",type);
         params.put("no",no);
         return protocolMapper.getProtocolNoDropdownList(params);
     }
