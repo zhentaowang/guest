@@ -85,7 +85,13 @@ public class ServController {
         param.put("productTypeAllocationId",productTypeAllocationId);
         param.put("protocolId",protocolId);
         LZResult<PaginationResult<Serv>> result  = servService.getServAll(param,page,rows,price,freeRetinueNum,overStaffUnitPrice,description);
-        return result;
+        if(result.getData().getTotal() == 0){
+            result.setMsg("该类型下所有服务已经被添加");
+            result.setStatus(5000);
+            return  result;
+        }else{
+            return result;
+        }
     }
 
     /**
