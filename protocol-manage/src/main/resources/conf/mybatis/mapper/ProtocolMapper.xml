@@ -26,6 +26,7 @@
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
     <result column="clear_form" jdbcType="SMALLINT" property="clearForm" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
     <result column="institution_client_name" jdbcType="VARCHAR" property="institutionClientName" />
     <result column="institution_client_type" jdbcType="VARCHAR" property="institutionClientType" />
     <result column="institution_client_no" jdbcType="VARCHAR" property="institutionClientNo" />
