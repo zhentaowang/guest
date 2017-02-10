@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @Import({SpringConfiguration.class})
-public class MybatisConfig {
+public class MyBatisConfig {
 
     @Bean(name = "resourceLoader")
     public ResourceLoader resourceLoader(){

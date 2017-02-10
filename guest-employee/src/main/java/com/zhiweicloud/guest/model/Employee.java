@@ -8,7 +8,6 @@ package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * Employee.java
@@ -19,15 +18,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 @ApiModel(value = "Employee", description = "employee")
 public class Employee extends BaseEntity {
     @ApiModelProperty(value = "账号", name = "account")
-    @NotEmpty
     private String account;
 
     @ApiModelProperty(value = "用户名", name = "name", required = true)
-    @NotEmpty
     private String name;
 
     @ApiModelProperty(value = "密码", name = "password", required = true)
-    @NotEmpty
     private String password;
 
     @ApiModelProperty(value = "性别：0：男，1：女", name = "sex")
