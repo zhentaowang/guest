@@ -19,4 +19,5 @@ public interface ProtocolMapper extends MyMapper<Protocol> {
     List<Protocol> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);
     Protocol selectById(Map<String, Object> map);
+    Long selectByName(Map<String,Object> map);
 }

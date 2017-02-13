@@ -171,4 +171,8 @@
   ) as pi left join (select * from authorizer where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as a on pi.id = a.protocol_id
   </select>
 
+  <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    SELECT count(id) from protocol where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{protocolName,jdbcType=VARCHAR}
+  </select>
+
 </mapper>

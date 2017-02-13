@@ -234,4 +234,22 @@ public class ProtocolService {
 
         }
     }
+
+    /**
+     * 协议名称查重
+     * @param protocol
+     * @return boolean
+     */
+    public boolean selectByName(Protocol protocol) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("protocolName",protocol.getName());
+        params.put("airportCode",protocol.getAirportCode());
+        Long count = protocolMapper.selectByName(params);
+        if(count > 0){//count大于0，说明该名称已存在
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }
