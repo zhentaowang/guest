@@ -60,9 +60,9 @@
     select m.id,m.name as value from
     (select vp.id,vp.name from
     (select v.*,p.product_type_allocation_id from v_protocol as v left join protocol_serv as p on v.id = p.protocol_id
-    where v.airport_code = #{airportCode,jdbcType=VARCHAR} and v.is_deleted = 0 and p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0) as vp
-    left join (select * from product_type_allocation where product_category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
-    and is_deleted = 0) as pta on vp.product_type_allocation_id = pta.id
+    where v.airport_code = #{airportCode,jdbcType=VARCHAR} and v.is_deleted = 0 and p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+    and p.product_type_allocation_id in (select id from product_type_allocation where product_category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    and is_deleted = 0)) as vp
     group by vp.id) as m
     <if test="name != null and !name.trim().equals('')">
       where m.name like concat('%',#{name},'%')
@@ -73,9 +73,9 @@
     select m.id,m.no as value from
     (select vp.id,vp.no from
     (select v.*,p.product_type_allocation_id from v_protocol as v left join protocol_serv as p on v.id = p.protocol_id
-    where v.airport_code = #{airportCode,jdbcType=VARCHAR} and v.is_deleted = 0 and p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0) as vp
-    left join (select * from product_type_allocation where product_category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
-    and is_deleted = 0) as pta on vp.product_type_allocation_id = pta.id
+    where v.airport_code = #{airportCode,jdbcType=VARCHAR} and v.is_deleted = 0 and p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+    and p.product_type_allocation_id in (select id from product_type_allocation where product_category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    and is_deleted = 0)) as vp
     group by vp.id) as m
     <if test="no != null and !no.trim().equals('')" >
       where m.no like concat('%',#{no},'%')
