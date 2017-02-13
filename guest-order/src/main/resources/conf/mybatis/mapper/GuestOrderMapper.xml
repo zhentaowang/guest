@@ -112,7 +112,7 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
   </resultMap>
 
   <select id="getProtocolInfo" parameterType="com.zhiweicloud.guest.model.ProtocolInfo" resultMap="protocolInfoMap">
-    select p.id as p_id,p.name as p_name,p.no,ic.id as ic_id,ic.name,p.remark from protocol p
+    select p.id as p_id,p.name as p_name,p.no,ic.id as ic_id,ic.name,p.remark,p.no from v_protocol p
     inner join institution_client ic
     on ic.id = p.institution_client_id
     WHERE p.is_deleted = 0 and p.airport_code = #{airportCode}
@@ -125,9 +125,9 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
   </select>
 
   <select id="getProtocolPersonInfo" parameterType="com.zhiweicloud.guest.model.ProtocolInfo" resultMap="dropdownlistMap">
-    select t.id,CONCAT(t.name,',',t.cellphone,',',t.telephone) as value
+    select t.id,CONCAT_WS(',',t.NAME,t.cellphone,t.telephone) as value
     from authorizer t left join
-    protocol p on p.id = t.protocol_id
+    v_protocol p on p.id = t.protocol_id
     where p.is_deleted = 0 and p.airport_code = #{airportCode}
     <if test="protocol.id != null" >
       AND p.id = #{protocol.id,jdbcType=BIGINT}
