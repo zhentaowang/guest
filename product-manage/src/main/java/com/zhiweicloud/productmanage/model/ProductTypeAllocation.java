@@ -30,9 +30,6 @@ public class ProductTypeAllocation extends BaseEntity {
     @ApiModelProperty(value="服务类型",name="serviceType")
     private String serviceType;
 
-    @ApiModelProperty(value="免费随员人数",name="freeRetinueNum")
-    private Integer freeRetinueNum;
-
     @ApiModelProperty(value="备注",name="remark")
     private String remark;
 
@@ -82,22 +79,6 @@ public class ProductTypeAllocation extends BaseEntity {
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
-    }
-
-    /**
-     * 免费随员人数
-     * @return free_retinue_num 免费随员人数
-     */
-    public Integer getFreeRetinueNum() {
-        return freeRetinueNum;
-    }
-
-    /**
-     * 免费随员人数
-     * @param freeRetinueNum 免费随员人数
-     */
-    public void setFreeRetinueNum(Integer freeRetinueNum) {
-        this.freeRetinueNum = freeRetinueNum;
     }
 
     /**

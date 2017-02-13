@@ -30,7 +30,6 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.service.EmployeeService;
@@ -39,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -53,7 +51,7 @@ import java.util.List;
  */
 @Component
 @Path("guest-employee")
-@Api(value="员工管理",description="", tags={"Employee"})
+@Api(value = "员工管理", description = "", tags = {"Employee"})
 public class EmployeeController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
@@ -66,26 +64,27 @@ public class EmployeeController {
     @ApiOperation(value = "员工列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams(
             {
-            @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})
     public String list(
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
-            @QueryParam(value="airportCode") String airportCode) {
+            @QueryParam(value = "airportCode") String airportCode) {
         Employee employeeParam = new Employee();
         employeeParam.setName(name);
         employeeParam.setAirportCode(airportCode);
 
-        LZResult<PaginationResult<Employee>> result  = employeeService.getAll(employeeParam,page,rows);
+        LZResult<PaginationResult<Employee>> result = employeeService.getAll(employeeParam, page, rows);
         return JSON.toJSONString(result);
     }
 
     /**
      * 员工管理 - 新增or更新
      * 需要判断name是否重复
+     *
      * @param params
      * @return
      */
@@ -93,9 +92,9 @@ public class EmployeeController {
     @Path("saveOrUpdate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value="员工管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "employee", required = true) String json){
-        try{
+    @ApiOperation(value = "员工管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
+    public LXResult save(@ApiParam(value = "employee", required = true) String json) {
+        try {
             JSONObject param = JSON.parseObject(json);
             Employee employee = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), Employee.class);
             employeeService.saveOrUpdate(employee);
@@ -109,6 +108,7 @@ public class EmployeeController {
 
     /**
      * 员工管理 - 根据id查询员工
+     *
      * @param id
      * @return
      */
@@ -123,49 +123,54 @@ public class EmployeeController {
     public String view(
             @QueryParam("id") Long id,
             @QueryParam("airportCode") String airportCode) {
-        Employee employee = employeeService.getById(id,airportCode);
+        Employee employee = employeeService.getById(id, airportCode);
         return JSON.toJSONString(employee);
     }
 
     /**
      * 员工管理 - 删除
      * {
-        "data": [
-        6,7,8
-        ]
-    }
+     * "data": [
+     * 6,7,8
+     * ]
+     * }
+     *
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path("delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public LXResult delete(
-            @RequestBody RequsetParams<Long> params,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+    public String delete(
+            @QueryParam("airportCode") String airportCode,
+            String params) {
         try {
-            List<Long> ids = params.getData();
-            employeeService.deleteById(ids,airportCode);
-            return LXResult.success();
+            JSONObject param = JSON.parseObject(params);
+            List<Long> ids =  null;
+            employeeService.deleteById(ids, airportCode);
+            return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);
-            return LXResult.error();
+            return JSON.toJSONString(LXResult.error());
         }
     }
 
     /**
      * 产品品类下拉框 数据
+     *
      * @return
      */
-    @RequestMapping(value="/queryEmployeeDropdownList",method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation(value="系统中用到员工信息下来框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    @GET
+    @Path("queryEmployeeDropdownList")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "系统中用到员工信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public LZResult<List<Dropdownlist>> queryEmployeeDropdownList(@RequestParam(value = "airportCode", required = true) String airportCode) {
+    public LZResult<List<Dropdownlist>> queryEmployeeDropdownList(@QueryParam("airportCode") String airportCode) {
         List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode);
         return new LZResult<List<Dropdownlist>>(list);
     }
-
 
 
 }

@@ -166,4 +166,48 @@ public class ProtocolServController {
         }
     }
 
+    /**
+     * 协议服务管理 - 按类别删除
+     * @param airportCode
+     * @param productTypeAllocationId
+     * @param description
+     * @return
+     */
+    @RequestMapping(value = "/protocol-serv-delete-by-type", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "协议服务管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "productTypeAllocationId", value = "产品类型配置id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "description", value = "价格说明", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "price", value = "服务单价", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "freeRetinueNum", value = "免费随员人数", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "overStaffUnitPrice", value = "超员单价", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "String", required = true, paramType = "query")
+    })
+    public LXResult deleteByType(
+            @RequestParam(value = "airportCode", required = true) String airportCode,
+            @RequestParam(value = "productTypeAllocationId", required = true) String productTypeAllocationId,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "freeRetinueNum", required = false) String freeRetinueNum,
+            @RequestParam(value = "overStaffUnitPrice", required = false) String overStaffUnitPrice,
+            @RequestParam(value = "protocolId", required = true) String protocolId) {
+        try {
+            Map<String,Object> param = new HashMap();
+            param.put("airportCode",airportCode);
+            param.put("productTypeAllocationId",productTypeAllocationId);
+            param.put("description",description);
+            param.put("protocolId",protocolId);
+            param.put("price",price);
+            param.put("freeRetinueNum",freeRetinueNum);
+            param.put("overStaffUnitPrice",overStaffUnitPrice);
+            protocolServService.deleteByType(param);
+            return LXResult.success();
+        } catch (Exception e) {
+            logger.error("delete  protocolServ by type error", e);
+            return LXResult.error();
+        }
+    }
+
 }

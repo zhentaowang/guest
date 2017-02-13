@@ -94,7 +94,7 @@
         ) as pss
         left join product_type_allocation p on pss.product_type_allocation_id = p.id
         where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
-        group by p.product_category,p.service_type,pss.description
+        group by p.product_category,p.service_type,pss.description,pss.price,pss.over_staff_unit_price,pss.free_retinue_num
         order by pss.id desc
         LIMIT #{page.startPageNo},#{page.pCount}
     </select>
@@ -206,6 +206,23 @@
 
     <select id="deleteByIdAndAirportCode" parameterType="map">
         update protocol_serv set is_deleted = 1 where id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
+    </select>
+
+    <select id="deleteByType" parameterType="map">
+        update protocol_serv set is_deleted = 1 where airport_code = #{airportCode,jdbcType=VARCHAR} and product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
+        and protocol_id = #{protocolId,jdbcType=BIGINT}
+        <if test="price != 'null' and price!= null" >
+            and price = #{price,jdbcType=DECIMAL}
+        </if>
+        <if test="description != 'null' and description!= null" >
+            and description = #{description,jdbcType=VARCHAR}
+        </if>
+        <if test="overStaffUnitPrice != 'null' and overStaffUnitPrice!= null" >
+            and over_staff_unit_price = #{overStaffUnitPrice,jdbcType=DECIMAL}
+        </if>
+        <if test="freeRetinueNum != 'null' and freeRetinueNum != null" >
+            and free_retinue_num = #{freeRetinueNum,jdbcType=BIGINT}
+        </if>
     </select>
 
 </mapper>

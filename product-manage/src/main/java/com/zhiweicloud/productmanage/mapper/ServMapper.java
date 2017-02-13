@@ -16,9 +16,8 @@ public interface ServMapper extends MyMapper<Serv> {
     List<Serv> getServListByConidition(BasePagination<Map<String,Object>> queryCondition);
     int getListCount(Map<String,Object> map);
     int getServListCount(Map<String,Object> map);
-    Integer getCurrentValue();
+    Long selectByName(Map<String,Object> map);
     Integer updateByIdAndAirportCode(Serv serv);
-    Long getIdByCondition(Map<String,Object> servParam);
-    public List<Dropdownlist> getServiceNameDropdownList(Map<String,Object> param);
-    Integer deleteByIdAndAirportCode(Serv serv);
+    List<Long> getServiceId(Map<String,Object> servParam);
+    List<Dropdownlist> getServiceNameDropdownList(Map<String,Object> param);
 }

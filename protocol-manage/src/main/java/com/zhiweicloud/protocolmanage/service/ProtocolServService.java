@@ -109,4 +109,12 @@ public class ProtocolServService {
             protocolServMapper.updateByIdAndAirportCode(protocolServ);
         }
     }
+
+    /**
+     * 根据类型删除协议服务
+     * @param param;机场code、产品类型配置id、价格说明
+     */
+    public void deleteByType(Map<String,Object> param) {
+        protocolServMapper.deleteByType(param);
+    }
 }

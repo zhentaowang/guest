@@ -109,9 +109,9 @@ public class UserInterceptor implements HandlerInterceptor {
                 }
                 JSONObject oauth = JSON.parseObject(result.toString());
                 oauth.getString("id");
-                if(Integer.parseInt(oauth.getString("permission")) == 2){//2为普通用户
-//                    request.getSession().setAttribute("productCategory","VIP");
-                }
+//                if(Integer.valueOf(oauth.getString("permission")) == 2){//2为普通用户
+////                    request.getSession().setAttribute("productCategory","VIP");
+//                }
                 oauth.getString("permission");
                 request.getSession().setAttribute("userId",oauth.getString("id"));
             }
