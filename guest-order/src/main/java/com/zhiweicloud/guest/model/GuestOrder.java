@@ -35,6 +35,10 @@ public class GuestOrder extends GuestOrderQuery {
     @Transient
     private String protocolName;
 
+    @ApiModelProperty(value = "协议编号", name = "protocolNo")
+    @Transient
+    private String protocolNo;
+
     @ApiModelProperty(value = "机构名称id", name = "orgCustomerId", required = true)
     @NotEmpty
     private Long orgCustomerId;
@@ -56,6 +60,10 @@ public class GuestOrder extends GuestOrderQuery {
 
     @ApiModelProperty(value = "预约人", name = "bookingPerson")
     private Long bookingPerson;
+
+    @ApiModelProperty(value = "预约人姓名", name = "bookingPersonName")
+    @Transient
+    private String bookingPersonName;
 
     @ApiModelProperty(value = "是否重要：0：重要，1：不重要", name = "isImportant")
     private Short isImportant;
@@ -883,5 +891,21 @@ public class GuestOrder extends GuestOrderQuery {
      */
     public void setConsignComplete(Long consignComplete) {
         this.consignComplete = consignComplete;
+    }
+
+    public String getProtocolNo() {
+        return protocolNo;
+    }
+
+    public void setProtocolNo(String protocolNo) {
+        this.protocolNo = protocolNo;
+    }
+
+    public String getBookingPersonName() {
+        return bookingPersonName;
+    }
+
+    public void setBookingPersonName(String bookingPersonName) {
+        this.bookingPersonName = bookingPersonName;
     }
 }

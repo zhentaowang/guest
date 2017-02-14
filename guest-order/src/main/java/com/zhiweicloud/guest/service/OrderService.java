@@ -113,8 +113,7 @@ public class OrderService {
      *
      * @param guestOrder
      */
-    public void saveOrUpdate(GuestOrder guestOrder) {
-        try {
+    public void saveOrUpdate(GuestOrder guestOrder) throws Exception{
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if(guestOrder.getFlight() != null){
                 if(guestOrder.getFlight().getStrFlightDate() != null && !guestOrder.getFlight().getStrFlightDate().equals("string")){
@@ -163,9 +162,7 @@ public class OrderService {
                 guestOrderMapper.insertSelective(guestOrder);
                 this.addPassengerAndCarAndOrderCharge(guestOrder);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 
     /**
