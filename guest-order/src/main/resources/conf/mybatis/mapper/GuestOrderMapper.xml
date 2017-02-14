@@ -323,6 +323,7 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
       and sv.name = #{criteria.queryCustomerName}
     </if>
     left join serv svp on svp.id = o.passageway_id
+    order by o.id desc
     limit #{page.startPageNo},#{page.pCount}
     ) t
     left JOIN passenger p on t.id = p.order_id and p.is_deleted = 0 and p.airport_code = #{criteria.airportCode}
