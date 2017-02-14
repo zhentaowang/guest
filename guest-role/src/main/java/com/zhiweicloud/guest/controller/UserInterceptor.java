@@ -5,6 +5,7 @@ package com.zhiweicloud.guest.controller;
  */
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,11 +109,12 @@ public class UserInterceptor implements HandlerInterceptor {
                     }
                 }
                 JSONObject oauth = JSON.parseObject(result.toString());
+                JSONArray test = JSON.parseArray(oauth.getString("permission"));
+                JSONObject test0 = JSON.parseObject(test.get(0).toString());
                 oauth.getString("id");
-//                if(Integer.valueOf(oauth.getString("permission")) == 2){//2为普通用户
-////                    request.getSession().setAttribute("productCategory","VIP");
-//                }
-                oauth.getString("permission");
+                if(Integer.valueOf(test0.getString("permission_id")) == 2){//2为普通用户
+                    request.getSession().setAttribute("productCategory","VIP");
+                }
                 request.getSession().setAttribute("userId",oauth.getString("id"));
             }
             return true;
