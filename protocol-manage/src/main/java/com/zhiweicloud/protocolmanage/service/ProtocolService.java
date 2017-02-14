@@ -153,15 +153,15 @@ public class ProtocolService {
             }
 
             //协议服务添加
-            if(protocol.getProtocolServList() != null){
-                for(int i = 0; i < protocol.getProtocolServList().size(); i++){
-                    ProtocolServ p = protocol.getProtocolServList().get(i);
+            if(protocol.getProtocolServList().get(0).getProtocolServList() != null){
+                for(int i = 0; i < protocol.getProtocolServList().get(0).getProtocolServList().size(); i++){
+                    ProtocolServ p = protocol.getProtocolServList().get(0).getProtocolServList().get(i);
                     p.setCreateTime(new Date());
                     p.setProtocolId(protocol.getId());
                     p.setUpdateTime(new Date());
                     p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                     p.setAirportCode(protocol.getAirportCode());
-                    protocolServMapper.insert(p);
+                    protocolServMapper.insertSelective(p);
                 }
             }
         }
