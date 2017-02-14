@@ -180,7 +180,12 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     FROM
     guest_order o inner join protocol prot on o.protocol_id = prot.id
     <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and -1 != criteria.queryOrderType" >
-      and o.order_type = #{criteria.queryOrderType}
+      <if test="0 == criteria.queryOrderType">
+        and o.order_type = #{criteria.queryOrderType}
+      </if>
+      <if test="1 == criteria.queryOrderType">
+        and o.order_type in (1,2,3)
+      </if>
     </if>
     <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
       and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
@@ -269,8 +274,13 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     sv.name as service_name,svp.name as passage_way_name
     FROM
     guest_order o inner join protocol prot on o.protocol_id = prot.id and o.is_deleted = 0
-    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)" >
-      and o.order_type = #{criteria.queryOrderType}
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and -1 != criteria.queryOrderType">
+      <if test="0 == criteria.queryOrderType">
+        and o.order_type = #{criteria.queryOrderType}
+      </if>
+      <if test="1 == criteria.queryOrderType">
+        and o.order_type in (1,2,3)
+      </if>
     </if>
     <if test="criteria.queryIsPrintBoardingCheck != null and !''.equals(criteria.queryIsPrintBoardingCheck)" >
       and o.is_print_boarding_check =#{criteria.queryIsPrintBoardingCheck}
@@ -280,7 +290,7 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     </if>
 
     inner join flight f on f.order_id = o.id  and f.is_deleted = 0
-    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)" >
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut) and -1 != criteria.queryIsInOrOut" >
       and f.is_in_or_out = #{criteria.queryIsInOrOut}
     </if>
     <if test="criteria.queryFlightStartDate != null " >
