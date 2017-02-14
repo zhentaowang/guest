@@ -173,6 +173,9 @@
 
   <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">
     SELECT count(id) from protocol where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{protocolName,jdbcType=VARCHAR}
+    <if test="id != null">
+      and id != #{id,jdbcType=BIGINT}
+    </if>
   </select>
 
 </mapper>
