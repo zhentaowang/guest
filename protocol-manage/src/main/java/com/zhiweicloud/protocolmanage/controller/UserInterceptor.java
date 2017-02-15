@@ -57,7 +57,7 @@ public class UserInterceptor implements HandlerInterceptor {
 //        map.put("account","010");//员工账号
 //        map.put("url",request.getRequestURI());
 //        if(request.getRequestURI().equals("/list")){
-//            //request.getSession().setAttribute("productCategory","VIP");
+//            request.getSession().setAttribute("productCategory","VIP");
 //            List<Permission> permissionList = permissionMapper.getPermission(map);
 //            if(permissionList != null){
 //                for(int i = 0; i < permissionList.size(); i++){
