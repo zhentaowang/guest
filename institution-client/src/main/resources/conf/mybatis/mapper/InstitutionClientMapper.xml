@@ -52,13 +52,14 @@
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
-  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.DropdownlistExt">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
   </resultMap>
 
   <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="map">
-    select id,name as value from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
+    select id,name as value,no from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
     <if test="name != null and !name.trim().equals('')" >
       and name like concat('%',#{name},'%')
     </if>
@@ -66,13 +67,7 @@
       and no like concat('%',#{no},'%')
     </if>
   </select>
-  <select id="getInstitutionClientNoList" resultType="string" parameterType="map">
-    select no from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
 
-    <if test="no != null and !no.trim().equals('')" >
-      and no like concat('%',#{no},'%')
-    </if>
-  </select>
 
   <select id="viewByIdAndAirCode" parameterType="map" resultMap="BaseResultMapPage">
     select ic.id, ic.no, ic.name, ic.type, ic.employee_id, ic.remark,ic.airport_code,e.name as employee_name from  institution_client ic
