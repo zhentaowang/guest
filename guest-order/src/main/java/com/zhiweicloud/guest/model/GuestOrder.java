@@ -156,7 +156,7 @@ public class GuestOrder extends GuestOrderQuery {
     private String checkPersonName;
 
     @ApiModelProperty(value="办票完成时间",name="checkTime")
-    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd HH:mm")
     private Date checkTime;
 
     @ApiModelProperty(value="办票是否完成 默认未完成 0：未完成，1：完成",name="checkComplete")
@@ -170,7 +170,7 @@ public class GuestOrder extends GuestOrderQuery {
     private String consignPersonName;
 
     @ApiModelProperty(value="托运完成时间",name="consignTime")
-    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd HH:mm")
     private Date consignTime;
 
     @ApiModelProperty(value="托运是否完成 默认未完成 0：未完成，1：完成",name="consignComplete")
