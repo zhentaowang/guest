@@ -61,36 +61,6 @@
         "operationId" : "list",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "page",
           "in" : "query",
           "description" : "起始页",
@@ -184,18 +154,7 @@
         "description" : "返回合同详情",
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "query",
-          "required" : false,
-          "type" : "integer",
-          "format" : "int64"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
+        "parameters" : [  {
           "name" : "id",
           "in" : "query",
           "description" : "员工id",
