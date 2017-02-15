@@ -152,6 +152,7 @@ public class GuestOrder extends GuestOrderQuery {
     private Long checkPerson;
 
     @ApiModelProperty(value="办票操作人姓名",name="checkPersonName")
+    @Transient
     private String checkPersonName;
 
     @ApiModelProperty(value="办票完成时间",name="checkTime")
@@ -165,6 +166,7 @@ public class GuestOrder extends GuestOrderQuery {
     private Long consignPerson;
 
     @ApiModelProperty(value="托运操作人姓名",name="consignPersonName")
+    @Transient
     private String consignPersonName;
 
     @ApiModelProperty(value="托运完成时间",name="consignTime")
