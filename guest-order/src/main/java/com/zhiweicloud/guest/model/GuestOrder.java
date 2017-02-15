@@ -151,6 +151,9 @@ public class GuestOrder extends GuestOrderQuery {
     @ApiModelProperty(value="办票操作人",name="checkPerson")
     private Long checkPerson;
 
+    @ApiModelProperty(value="办票操作人姓名",name="checkPersonName")
+    private String checkPersonName;
+
     @ApiModelProperty(value="办票完成时间",name="checkTime")
     @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd")
     private Date checkTime;
@@ -160,6 +163,9 @@ public class GuestOrder extends GuestOrderQuery {
 
     @ApiModelProperty(value="托运操作人",name="consignPerson")
     private Long consignPerson;
+
+    @ApiModelProperty(value="托运操作人姓名",name="consignPersonName")
+    private String consignPersonName;
 
     @ApiModelProperty(value="托运完成时间",name="consignTime")
     @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd")
@@ -907,5 +913,21 @@ public class GuestOrder extends GuestOrderQuery {
 
     public void setBookingPersonName(String bookingPersonName) {
         this.bookingPersonName = bookingPersonName;
+    }
+
+    public String getCheckPersonName() {
+        return checkPersonName;
+    }
+
+    public void setCheckPersonName(String checkPersonName) {
+        this.checkPersonName = checkPersonName;
+    }
+
+    public String getConsignPersonName() {
+        return consignPersonName;
+    }
+
+    public void setConsignPersonName(String consignPersonName) {
+        this.consignPersonName = consignPersonName;
     }
 }

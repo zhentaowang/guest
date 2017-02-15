@@ -43,6 +43,9 @@
     <result column="consign_person" jdbcType="BIGINT" property="consignPerson" />
     <result column="consign_time" jdbcType="TIMESTAMP" property="consignTime" />
     <result column="consign_complete" jdbcType="BIGINT" property="consignComplete" />
+    <result column="check_person_name" jdbcType="VARCHAR" property="checkPersonName" />
+    <result column="consign_person_name" jdbcType="VARCHAR" property="consignPersonName" />
+
 
     <association property="flight" javaType="com.zhiweicloud.guest.model.Flight">
       <result column="flight_id" jdbcType="BIGINT" property="id" />
@@ -249,6 +252,9 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
       and orderPassangerCarCharge.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
+    <if test="criteria.queryServerName != null and !''.equals(criteria.queryServerName)" >
+      and orderPassangerCarCharge.service_name like concat('%',#{criteria.queryServerName},'%')
+    </if>
     </select>
 
   <select id="selectByComplexQuery" resultMap="BaseResultMap" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination">
@@ -319,9 +325,7 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     </if>
 
     left join serv sv on sv.id = o.service_id
-    <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)" >
-      and sv.name = #{criteria.queryCustomerName}
-    </if>
+
     left join serv svp on svp.id = o.passageway_id
     order by o.id desc
     limit #{page.startPageNo},#{page.pCount}
@@ -340,6 +344,9 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     where orderPassangerCarCharge.airport_code = #{criteria.airportCode}
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
       and orderPassangerCarCharge.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
+    </if>
+    <if test="criteria.queryServerName != null and !''.equals(criteria.queryServerName)" >
+      and orderPassangerCarCharge.service_name like concat('%',#{criteria.queryServerName},'%')
     </if>
     order by orderPassangerCarCharge.id desc
 
@@ -368,11 +375,15 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
 										 o.check_person,o.check_time,o.check_complete,o.consign_person,o.consign_time,o.consign_complete,
 												prot.name protocol_name,prot.no as protocol_no, ic.name as customer_name,
 												sv.name as service_name,svp.name as passage_way_name,
-                        bookingPerson.name as booking_person_name
+                                                bookingPerson.name as booking_person_name,
+                                                emp.name as check_person_name,
+                                                employee.name as consign_person_name
 										FROM
 										guest_order o inner join v_protocol prot on o.protocol_id = prot.id
 										inner join flight f on f.order_id = o.id
-                    inner join authorizer bookingPerson on o.booking_person = bookingPerson.id
+                                        inner join authorizer bookingPerson on o.booking_person = bookingPerson.id
+                                        left join employee emp on emp.id = o.check_person
+										left join employee employee on employee.id = o.consign_person
 										left join institution_client ic on prot.institution_client_id = ic.id
 										left join serv sv on sv.id = o.service_id
 										left join serv svp on svp.id = o.passageway_id
