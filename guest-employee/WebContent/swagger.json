@@ -1,0 +1,319 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "员工调试接口",
+    "version" : "v1",
+    "title" : "Guest Employee",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "Luo Jing",
+      "email" : "luojing@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "localhost:8080",
+  "tags" : [ {
+    "name" : "Employee"
+  }, {
+    "name" : "common:公共接口"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/guest-employee/delete" : {
+      "post" : {
+        "tags" : [ "Employee" ],
+        "summary" : "员工管理 - 删除",
+        "description" : "返回响应结果",
+        "operationId" : "delete",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Long"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/guest-employee/list" : {
+      "get" : {
+        "tags" : [ "Employee" ],
+        "summary" : "员工列表 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "起始页",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "1"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "description" : "每页显示数目",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "10"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "姓名",
+          "required" : false,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/guest-employee/queryEmployeeDropdownList" : {
+      "get" : {
+        "tags" : [ "common:公共接口" ],
+        "summary" : "系统中用到员工信息下来框，只包含id，和value的对象",
+        "description" : "根据数据字典的分类名称获取详情数据,下拉",
+        "operationId" : "queryEmployeeDropdownList",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/guest-employee/saveOrUpdate" : {
+      "post" : {
+        "tags" : [ "Employee" ],
+        "summary" : "员工管理 - 新增/修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "save",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "employee",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Employee"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/guest-employee/view" : {
+      "get" : {
+        "tags" : [ "Employee" ],
+        "summary" : "员工管理 - 根据id查询员工 ",
+        "description" : "返回合同详情",
+        "operationId" : "view",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "员工id",
+          "required" : true,
+          "type" : "Long"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Employee" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "name", "password" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "account" : {
+          "type" : "string",
+          "description" : "账号"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "用户名"
+        },
+        "password" : {
+          "type" : "string",
+          "description" : "密码"
+        },
+        "sex" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "性别：0：男，1：女"
+        }
+      },
+      "description" : "employee"
+    },
+    "全局统一接受参数Employee" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/Employee"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "全局统一接受参数Long" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "响应结果" : {
+      "type" : "object",
+      "required" : [ "msg", "status" ],
+      "properties" : {
+        "status" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "响应状态码"
+        },
+        "msg" : {
+          "type" : "string",
+          "description" : "响应消息"
+        },
+        "data" : {
+          "type" : "object",
+          "description" : "响应数据"
+        }
+      },
+      "description" : "响应结果"
+    }
+  }
+}
