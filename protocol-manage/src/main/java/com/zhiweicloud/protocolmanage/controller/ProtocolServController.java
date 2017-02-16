@@ -156,18 +156,19 @@ public class ProtocolServController {
     @RequestMapping(value = "/protocol-serv-delete", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "协议服务管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "protocolId", value = "协议服务id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+    })
     public LXResult delete(
             @RequestBody RequsetParams<Long> params,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+            @RequestParam(value = "airportCode", required = true) String airportCode,
+            @RequestParam(value = "protocolId", defaultValue = "1", required = true) Long protocolId) {
         try {
             List<Long> ids = params.getData();
-            boolean flame;
-            for(int i = 0; i < ids.size(); i++){
-                flame = protocolService.selectOrderByProtocolId(ids.get(i),airportCode);
-                if(flame == true){
-                    return LXResult.build(4998, "该协议被订单引用，协议下服务不能被删除");
-                }
+            boolean flame = protocolService.selectOrderByProtocolId(protocolId,airportCode);
+            if(flame == true){
+                return LXResult.build(4998, "该协议被订单引用，协议下服务不能被删除");
             }
             protocolServService.deleteById(ids,airportCode);
             return LXResult.success();
