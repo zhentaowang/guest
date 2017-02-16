@@ -1,0 +1,316 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "机构接口调试",
+    "version" : "v1",
+    "title" : "Guest Employee",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "Luo Jing",
+      "email" : "luojing@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "localhost:8080",
+  "tags" : [ {
+    "name" : "InstitutionClientModel"
+  }, {
+    "name" : "common:公共接口"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/institution-client/delete" : {
+      "post" : {
+        "tags" : [ "InstitutionClientModel" ],
+        "summary" : "机构客户管理 - 删除",
+        "description" : "返回响应结果",
+        "operationId" : "delete",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Long"
+          }
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/institution-client/list" : {
+      "get" : {
+        "tags" : [ "InstitutionClientModel" ],
+        "summary" : "机构客户管理 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1,
+          "format" : "int32"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
+        }, {
+          "name" : "no",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/institution-client/queryInstitutionClientDropdownList" : {
+      "get" : {
+        "tags" : [ "common:公共接口" ],
+        "summary" : "系统中用到机构客户信息下来框，只包含id，和value的对象",
+        "description" : "根据数据字典的分类名称获取详情数据,下拉",
+        "operationId" : "queryInstitutionClientDropdownList",
+        "produces" : [ "application/json;charset=utf-8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "no",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "模糊查询name",
+          "required" : false,
+          "type" : "String"
+        }, {
+          "name" : "no",
+          "in" : "query",
+          "description" : "模糊查询编号",
+          "required" : false,
+          "type" : "String"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/institution-client/saveOrUpdate" : {
+      "post" : {
+        "tags" : [ "InstitutionClientModel" ],
+        "summary" : "机构客户管理 - 新增/修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "save",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "institutionClient",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数InstitutionClient"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/institution-client/view" : {
+      "get" : {
+        "tags" : [ "InstitutionClientModel" ],
+        "summary" : "机构客户管理 - 根据id查询员工 ",
+        "description" : "返回合同详情",
+        "operationId" : "view",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "InstitutionClient" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "name" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "no" : {
+          "type" : "string",
+          "description" : "机构客户编号"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "机构客户名称"
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "机构客户类型"
+        },
+        "employeeId" : {
+          "type" : "string",
+          "description" : "跟进人名称"
+        },
+        "remark" : {
+          "type" : "string",
+          "description" : "备注"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        }
+      },
+      "description" : "institution_client"
+    },
+    "全局统一接受参数InstitutionClient" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/InstitutionClient"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "全局统一接受参数Long" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "响应结果" : {
+      "type" : "object",
+      "required" : [ "msg", "status" ],
+      "properties" : {
+        "status" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "响应状态码"
+        },
+        "msg" : {
+          "type" : "string",
+          "description" : "响应消息"
+        },
+        "data" : {
+          "type" : "object",
+          "description" : "响应数据"
+        }
+      },
+      "description" : "响应结果"
+    }
+  }
+}
