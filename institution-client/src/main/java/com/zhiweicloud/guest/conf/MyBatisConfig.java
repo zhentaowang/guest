@@ -1,97 +1,90 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2014-2016 abel533@gmail.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package com.zhiweicloud.guest.conf;
 
-import com.github.pagehelper.PageHelper;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.session.SqlSessionFactory;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.mysql.jdbc.Driver;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-
-import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
- * MyBatis基础配置
- *
- * @author liuzh
- * @since 2015-12-19 10:11
+ * Created by zhengzh on 2016/8/17.
  */
 @Configuration
 @EnableTransactionManagement
-public class MyBatisConfig implements TransactionManagementConfigurer {
+@Import({SpringConfiguration.class})
+public class MyBatisConfig {
 
-    @Autowired
-    DataSource dataSource;
+    @Bean(name = "resourceLoader")
+    public ResourceLoader resourceLoader(){
+        return new DefaultResourceLoader();
+    }
+
+    @Bean(name = "resourcePatternResolver")
+    public ResourcePatternResolver resourcePatternResolver(){
+        return new PathMatchingResourcePatternResolver();
+    }
+
+    @Profile("production")
+    @Bean(name = "dataSource",initMethod = "init",destroyMethod = "close")
+    public DruidDataSource dataSource(Environment environment) throws Exception{
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setName("masterDataSource");
+        druidDataSource.setUsername(environment.getProperty("spring.datasource.username"));
+        druidDataSource.setPassword(environment.getProperty("spring.datasource.password"));
+        druidDataSource.setUrl(environment.getProperty("spring.datasource.url"));
+        druidSettings(druidDataSource);
+        return druidDataSource;
+    }
+
+    @Bean(name = "transactionManager")
+    public DataSourceTransactionManager dataSourceTransactionManager(DruidDataSource dataSource){
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(dataSource);
+        return dataSourceTransactionManager;
+    }
+
+    @Bean
+    public MapperScannerConfigurer mapperScannerConfigurer(){
+        MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
+        mapperScannerConfigurer.setBasePackage("com.zhiweicloud.guest.mapper");
+        mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+        return mapperScannerConfigurer;
+    }
 
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactoryBean() {
-        SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-        bean.setDataSource(dataSource);
-        bean.setTypeAliasesPackage("com.zhiweicloud.guest.model");
-
-        //分页插件
-        PageHelper pageHelper = new PageHelper();
-        Properties properties = new Properties();
-        properties.setProperty("reasonable", "true");
-        properties.setProperty("supportMethodsArguments", "true");
-        properties.setProperty("returnPageInfo", "check");
-        properties.setProperty("params", "count=countSql");
-        pageHelper.setProperties(properties);
-
-        //添加插件
-        bean.setPlugins(new Interceptor[]{pageHelper});
-
-        //添加XML目录
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        try {
-            bean.setMapperLocations(resolver.getResources("classpath:conf/mybatis/mapper/*.xml"));
-            return bean.getObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+    public SqlSessionFactoryBean sqlSessionFactoryBean(DruidDataSource dataSource,ResourceLoader resourceLoader,ResourcePatternResolver resourcePatternResolver) throws Exception{
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(dataSource);
+        sqlSessionFactoryBean.setMapperLocations(resourcePatternResolver.getResources("classpath:conf/mybatis/mapper/*.xml"));
+        sqlSessionFactoryBean.setConfigLocation(resourceLoader.getResource("classpath:mybatis.xml"));
+        sqlSessionFactoryBean.setTypeAliasesPackage("com.zhiweicloud.guest.model");
+        return sqlSessionFactoryBean;
     }
 
-    @Bean
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
-    }
-
-    @Bean
-    @Override
-    public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return new DataSourceTransactionManager(dataSource);
+    public void druidSettings(DruidDataSource druidDataSource) throws Exception{
+        druidDataSource.setMaxActive(40);
+        druidDataSource.setInitialSize(3);
+        druidDataSource.setUseUnfairLock(true);
+        druidDataSource.setMinIdle(10);
+        druidDataSource.setMaxWait(60000);
+        druidDataSource.setPoolPreparedStatements(false);
+        druidDataSource.setTestOnBorrow(false);
+        druidDataSource.setTestOnReturn(false);
+        druidDataSource.setTestWhileIdle(true);
+        druidDataSource.setTimeBetweenEvictionRunsMillis(6000);
+        druidDataSource.setMinEvictableIdleTimeMillis(30000*4);
+        druidDataSource.setRemoveAbandoned(true);
+        druidDataSource.setRemoveAbandonedTimeout(180);
+        druidDataSource.setLogAbandoned(true);
+        druidDataSource.setFilters("stat");
+        druidDataSource.setTimeBetweenLogStatsMillis(60000*60); //每10分钟自动将监控的数据存储到日志中
+        druidDataSource.setDriver(new Driver());
     }
 }
