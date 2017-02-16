@@ -348,6 +348,9 @@ flight_date,flight_no,flight_segment,flight_position,plan_take_off_time,plan_lan
     <if test="criteria.queryServerName != null and !''.equals(criteria.queryServerName)" >
       and orderPassangerCarCharge.service_name like concat('%',#{criteria.queryServerName},'%')
     </if>
+    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)" >
+      and f.orderPassangerCarCharge.id in (select order_id from flight flightTemp where flightTemp.flight_no like concat('%',#{criteria.queryFlightNo},'%') )
+    </if>
     order by orderPassangerCarCharge.id desc
 
   </select>

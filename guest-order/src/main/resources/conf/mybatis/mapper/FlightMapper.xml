@@ -14,12 +14,19 @@
     <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
     <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
     <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
-
+    <result column="server_person_num" jdbcType="VARCHAR" property="serverPersonNum"/>
   </resultMap>
 
   <select id="selectFlightTotal" parameterType="com.zhiweicloud.guest.model.Flight" resultType="int">
-    select count(id) from flight f
-    where f.is_deleted = 0 and f.airport_code = #{airportCode}
+    select count(m.flight_no) from
+    (
+    select t.flight_no
+    from guest_order
+    inner  JOIN
+    (
+    select
+    f.order_id as orderIds,
+    f.* from flight f where f.is_deleted = 0 and f.airport_code = #{airportCode}
     <if test="flightDate != null ">
       and f.flight_date = date_format(#{flightDate},'%Y-%m-%d')
     </if>
@@ -29,7 +36,7 @@
     <if test="takeOffTimeFlag != null and takeOffTimeFlag == 1">
       and f.plan_take_off_time  between '12:00:00' and '18:00:00'
     </if>
-    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 1">
+    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 2">
       and f.plan_take_off_time  between '18:00:00' and '24:00:00'
     </if>
     <if test="landingTimeFlag != null and landingTimeFlag == 0">
@@ -38,19 +45,26 @@
     <if test="landingTimeFlag != null and landingTimeFlag == 1">
       and f.plan_landing_time  between '12:00:00' and '18:00:00'
     </if>
-    <if test="landingTimeFlag != null and landingTimeFlag == 1">
+    <if test="landingTimeFlag != null and landingTimeFlag == 2">
       and f.plan_landing_time  between '18:00:00' and '24:00:00'
     </if>
     <if test="flightNo != null and !''.equals(flightNo)">
       and f.flight_no like concat('%',#{flightNo},'%')
     </if>
-    <if test="isInOrOut != null and !''.equals(isInOrOut) and -1 != isInOrOut" >
+    <if test="isInOrOut != null and !''.equals(isInOrOut) and -1 != isInOrOut">
       and f.is_in_or_out = #{isInOrOut}
     </if>
+    ) t
+    on guest_order.id = t.order_id group by t.flight_no) m
   </select>
   <select id="selectFlightList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    select * from flight f
-    where f.is_deleted = 0 and f.airport_code = #{criteria.airportCode}
+    select t.flight_no, sum(server_person_num) as server_person_num,t.*
+    from guest_order
+    inner  JOIN
+    (
+    select
+    f.order_id as orderIds,
+    f.* from flight f where f.is_deleted = 0 and f.airport_code = #{criteria.airportCode}
     <if test="criteria.flightDate != null ">
       and f.flight_date = date_format(#{criteria.flightDate},'%Y-%m-%d')
     </if>
@@ -78,7 +92,10 @@
     <if test="criteria.isInOrOut != null and !''.equals(criteria.isInOrOut) and -1 != criteria.isInOrOut">
       and f.is_in_or_out = #{criteria.isInOrOut}
     </if>
-    order by f.flight_no
+    ) t
+    on guest_order.id = t.order_id
+
+    group by t.flight_no
     limit #{page.startPageNo},#{page.pCount}
 
   </select>
