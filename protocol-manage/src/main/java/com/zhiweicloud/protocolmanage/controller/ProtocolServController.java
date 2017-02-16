@@ -213,7 +213,7 @@ public class ProtocolServController {
             param.put("price",price);
             param.put("freeRetinueNum",freeRetinueNum);
             param.put("overStaffUnitPrice",overStaffUnitPrice);
-            if(protocolService.selectOrderByProtocolId(Long.getLong(protocolId),airportCode) == true){
+            if(protocolService.selectOrderByProtocolId(Long.parseLong(protocolId),airportCode) == true){
                 return LXResult.build(4998, "该协议被订单引用，协议下服务不能被删除");
             }
             protocolServService.deleteByType(param);
