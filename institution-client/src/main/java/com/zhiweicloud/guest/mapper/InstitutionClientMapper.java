@@ -39,7 +39,7 @@ import java.util.Map;
  * https://www.zhiweicloud.com
  * 2016-12-26 15:45:36 Created By zhangpengfei
  */
-public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
+public interface InstitutionClientMapper extends tk.mybatis.mapper.common.Mapper<InstitutionClient>, tk.mybatis.mapper.common.MySqlMapper<InstitutionClient> {
     List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
 
     List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);

@@ -8,6 +8,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.protocolmanage.model.ProtocolServ;
 import com.zhiweicloud.protocolmanage.service.ProtocolServService;
+import com.zhiweicloud.protocolmanage.service.ProtocolService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class ProtocolServController {
     private static final Logger logger = LoggerFactory.getLogger(ProtocolServController.class);
     @Autowired
     private ProtocolServService protocolServService;
+
+    @Autowired
+    private ProtocolService protocolService;
 
     @RequestMapping(value ="/protocol-serv-list")
     @ApiOperation(value = "协议服务管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
@@ -152,12 +156,20 @@ public class ProtocolServController {
     @RequestMapping(value = "/protocol-serv-delete", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "协议服务管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "protocolId", value = "协议服务id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+    })
     public LXResult delete(
             @RequestBody RequsetParams<Long> params,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+            @RequestParam(value = "airportCode", required = true) String airportCode,
+            @RequestParam(value = "protocolId", defaultValue = "1", required = true) Long protocolId) {
         try {
             List<Long> ids = params.getData();
+            boolean flame = protocolService.selectOrderByProtocolId(protocolId,airportCode);
+            if(flame == true){
+                return LXResult.build(4998, "该协议被订单引用，协议下服务不能被删除");
+            }
             protocolServService.deleteById(ids,airportCode);
             return LXResult.success();
         } catch (Exception e) {
@@ -202,6 +214,9 @@ public class ProtocolServController {
             param.put("price",price);
             param.put("freeRetinueNum",freeRetinueNum);
             param.put("overStaffUnitPrice",overStaffUnitPrice);
+            if(protocolService.selectOrderByProtocolId(Long.parseLong(protocolId),airportCode) == true){
+                return LXResult.build(4998, "该协议被订单引用，协议下服务不能被删除");
+            }
             protocolServService.deleteByType(param);
             return LXResult.success();
         } catch (Exception e) {

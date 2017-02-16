@@ -53,8 +53,6 @@ public class InstitutionClientService {
     @Autowired
     private InstitutionClientMapper institutionClientMapper;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     //流水号加1后返回，流水号长度为4
     private static final String STR_FORMAT = "0000";

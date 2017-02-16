@@ -255,4 +255,24 @@ public class ProtocolService {
             return false;
         }
     }
+
+    /**
+     * 删除协议时判断是否有订单已经引用
+     * @param protocolId
+     * @param airportCode
+     * @return boolean
+     */
+    public boolean selectOrderByProtocolId(Long protocolId,String airportCode) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("protocolId",protocolId);
+        params.put("airportCode",airportCode);
+        Long count = protocolMapper.selectOrderByProtocolId(params);
+        if(count > 0){//count大于0，说明有订单已经引用该协议
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 }

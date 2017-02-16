@@ -178,4 +178,8 @@
     </if>
   </select>
 
+  <select id="selectOrderByProtocolId"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    SELECT count(id) from guest_order where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
+  </select>
+
 </mapper>

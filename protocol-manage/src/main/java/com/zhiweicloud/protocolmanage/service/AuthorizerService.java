@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,5 +74,17 @@ public class AuthorizerService {
             authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
             authorizerMapper.updateByIdAndAirportCode(authorizer);
         }
+    }
+
+    /**
+     * 根据协议id查询授权人个数
+     * @param airportCode
+     * @param protocolId
+     */
+    public Integer selectByProtocolId(Long protocolId,String airportCode) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("airportCode",airportCode);
+        params.put("protocolId",protocolId);
+        return authorizerMapper.getListCount(params);
     }
 }
