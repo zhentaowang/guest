@@ -20,4 +20,5 @@ public interface ProtocolMapper extends MyMapper<Protocol> {
     int getListCount(Map<String, Object> map);
     Protocol selectById(Map<String, Object> map);
     Long selectByName(Map<String,Object> map);
+    Long selectOrderByProtocolId(Map<String,Object> map);
 }

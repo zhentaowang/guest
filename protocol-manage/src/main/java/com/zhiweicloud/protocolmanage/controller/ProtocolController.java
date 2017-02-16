@@ -7,6 +7,7 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.protocolmanage.model.Protocol;
+import com.zhiweicloud.protocolmanage.service.AuthorizerService;
 import com.zhiweicloud.protocolmanage.service.ProtocolService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class ProtocolController {
     private static final Logger logger = LoggerFactory.getLogger(ProtocolController.class);
     @Autowired
     private ProtocolService protocolService;
+
+    @Autowired
+    private AuthorizerService authorizerService;
 
     @RequestMapping(value ="/list")
     @ApiOperation(value = "协议管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
@@ -88,6 +92,11 @@ public class ProtocolController {
                     || protocol.getType() == null || protocol.getStartTime() == null || protocol.getEndTime() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
+            if(protocol.getId() != null && protocolService.selectOrderByProtocolId(protocol.getId(),protocol.getAirportCode()) == true){//协议修改
+                if(authorizerService.selectByProtocolId(protocol.getId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
+                    return LXResult.build(4999, "该协议被订单引用，协议下预约人不能被删除");
+                }
+            }
             if(protocolService.selectByName(protocol) == true){
                 return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
             }
@@ -137,6 +146,13 @@ public class ProtocolController {
             @RequestParam(value = "airportCode", required = true) String airportCode) {
         try {
             List<Long> ids = params.getData();
+            boolean flame;
+            for(int i = 0; i < ids.size(); i++){
+                flame = protocolService.selectOrderByProtocolId(ids.get(i),airportCode);
+                if(flame == true){
+                    return LXResult.build(4997, "该协议被订单引用，不能被删除");
+                }
+            }
             protocolService.deleteById(ids,airportCode);
             return LXResult.success();
         } catch (Exception e) {
