@@ -63,29 +63,27 @@
         "parameters" : [ {
           "name" : "page",
           "in" : "query",
-          "description" : "起始页",
-          "required" : true,
-          "type" : "Integer",
-          "default" : "1"
+          "required" : false,
+          "type" : "integer",
+          "default" : 1,
+          "format" : "int32"
         }, {
           "name" : "rows",
           "in" : "query",
-          "description" : "每页显示数目",
-          "required" : true,
-          "type" : "Integer",
-          "default" : "10"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "description" : "机场编号",
-          "required" : true,
-          "type" : "String"
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
         }, {
           "name" : "name",
           "in" : "query",
-          "description" : "姓名",
           "required" : false,
-          "type" : "String"
+          "type" : "string"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -154,7 +152,18 @@
         "description" : "返回合同详情",
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
-        "parameters" : [  {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "id",
           "in" : "query",
           "description" : "员工id",

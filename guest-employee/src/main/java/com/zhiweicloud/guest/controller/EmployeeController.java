@@ -38,6 +38,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,23 +69,28 @@ public class EmployeeController {
     @Path("list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})
+
     public String list(
-            @QueryParam(value = "page") Integer page,
-            @QueryParam(value = "rows") Integer rows,
+            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
             @QueryParam(value = "airportCode") String airportCode) {
-        Employee employeeParam = new Employee();
-        employeeParam.setName(name);
-        employeeParam.setAirportCode(airportCode);
 
-        LZResult<PaginationResult<Employee>> result = employeeService.getAll(employeeParam, page, rows);
-        return JSON.toJSONString(result);
+        try {
+            Employee employeeParam = new Employee();
+            employeeParam.setName(name);
+            employeeParam.setAirportCode(airportCode);
+
+            LZResult<PaginationResult<Employee>> result = employeeService.getAll(employeeParam, page, rows);
+            return JSON.toJSONString(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return  JSON.toJSONString(result);
+        }
     }
 
     /**

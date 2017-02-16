@@ -247,7 +247,7 @@
                                     <name>Apache 2.0</name>
                                 </license>
                             </info>
-                            <swaggerDirectory>api</swaggerDirectory>
+                            <swaggerDirectory>WebContent</swaggerDirectory>
                         </apiSource>
                     </apiSources>
                 </configuration>
