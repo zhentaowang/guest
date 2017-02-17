@@ -24,6 +24,7 @@
 
 package com.zhiweicloud.guest.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -38,10 +39,14 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
@@ -50,8 +55,8 @@ import java.util.List;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
-@RequestMapping(value ="/guest-role")
-@RestController
+@Component
+@Path("guest-role")
 @Api(value="角色管理",description="", tags={"SysRole"})
 public class RoleController {
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
@@ -59,25 +64,27 @@ public class RoleController {
     @Autowired
     private SysRoleService sysRoleService;
 
-    @RequestMapping(value ="/list")
+    @GET
+    @Path(value ="list")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "角色列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams(
+    /*@ApiImplicitParams(
             {
             @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
             @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})
-    public LZResult<PaginationResult<SysRole>> list(
-            @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
-            @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value="airportCode",required = false) String airportCode) {
+            @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})*/
+    public String list(
+            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @QueryParam(value = "name") String name,
+            @QueryParam(value="airportCode") String airportCode) {
         SysRole SysRoleParam = new SysRole();
         SysRoleParam.setName(name);
         SysRoleParam.setAirportCode(airportCode);
 
         LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
-        return result;
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -86,8 +93,10 @@ public class RoleController {
      * @param params
      * @return
      */
-    @RequestMapping(value="/saveOrUpdate", method=RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path(value="saveOrUpdate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf-8")
     @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
     public LXResult save(@ApiParam(value = "sysRole", required = true) @RequestBody RequsetParams<SysRole> params){
         try{
@@ -113,18 +122,16 @@ public class RoleController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    @ResponseBody
+    @GET
+    @Path(value = "view")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "角色管理- 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    })
-    public LZResult<SysRole> view(
-            @RequestParam(value = "id", required = true) Long id,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+
+    public String view(
+            @QueryParam(value = "id") Long id,
+            @QueryParam(value = "airportCode") String airportCode) {
         SysRole sysRole = sysRoleService.getById(id,airportCode);
-        return new LZResult<SysRole>(sysRole);
+        return JSON.toJSONString(new LZResult<SysRole>(sysRole));
     }
 
     /**
@@ -136,20 +143,21 @@ public class RoleController {
     }
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path(value = "delete")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "角色管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public LXResult delete(
+    /*@ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")*/
+    public String delete(
             @RequestBody RequsetParams<Long> params,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+            @QueryParam(value = "airportCode") String airportCode) {
         try {
             List<Long> ids = params.getData();
             sysRoleService.deleteById(ids,airportCode);
-            return LXResult.success();
+            return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete SysRole by ids error", e);
-            return LXResult.error();
+            return JSON.toJSONString(LXResult.error());
         }
     }
 
@@ -158,8 +166,9 @@ public class RoleController {
      * @param params
      * @return
      */
-    @RequestMapping(value="/assignMenuToRole", method=RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path(value="assignMenuToRole")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value="角色管理 - 给角色分配菜单", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
     public LXResult assignMenuToRole(@ApiParam(value = "sysRole", required = true) @RequestBody RequsetParams<SysRoleParam> params){
         try{
@@ -180,23 +189,24 @@ public class RoleController {
     }
 
     /**
-     * 角色管理 - 给角色分配菜单
+     * 菜单管理 - 查询所有菜单
      * @param
      * @return
      */
-    @RequestMapping(value="/getMenuByUserId", method=RequestMethod.GET)
-    @ResponseBody
+    @GET
+    @Path(value="getMenuByUserId")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value="菜单管理 - 查询所有菜单", notes ="返回成功还是失败",httpMethod ="GET", produces="application/json")
-    @ApiImplicitParams({
+    /*@ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "access_token", value = "Access_Token", dataType = "String", required = true, paramType = "query")
-    })
+    })*/
     public LZResult<List<SysMenu>> getMenuByUserId( HttpServletRequest request,
-            @RequestParam(value = "airportCode", required = true) String airportCode,
-            @RequestParam(value = "access_token", required = true) String access_token){
+            @QueryParam(value = "airportCode") String airportCode,
+            @QueryParam(value = "access_token") String access_token){
         try{
-            String userIdStr = (String)request.getSession().getAttribute("userId");
-            List<SysMenu> result = sysRoleService.getMenuByUserId(Long.valueOf(userIdStr),airportCode);
+//            String userIdStr = (String)request.getSession().getAttribute("userId");
+            List<SysMenu> result = sysRoleService.getMenuByUserId(Long.valueOf(40),airportCode);
             return new LZResult<>(result);
         } catch (Exception e) {
             e.printStackTrace();
