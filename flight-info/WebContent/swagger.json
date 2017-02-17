@@ -1,0 +1,52 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "航班信息调试接口",
+    "version" : "v1",
+    "title" : "Flight Info",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "Luo Jing",
+      "email" : "luojing@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "localhost:8080",
+  "tags" : [ {
+    "name" : "flight-info"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/flight-info/flightInfo" : {
+      "get" : {
+        "tags" : [ "flight-info" ],
+        "summary" : "航班信息 - 航班号+航班日期,航班号+航班日期+航段,航班日期+航段 查询 ",
+        "description" : "返回订单详情",
+        "operationId" : "view",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "fnum",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "date",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
