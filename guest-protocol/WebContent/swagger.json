@@ -22,7 +22,7 @@
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/guest-protocol/authorizer-delete" : {
+    "/authorizer-delete" : {
       "post" : {
         "tags" : [ "protocol" ],
         "summary" : "授权人管理 - 删除",
@@ -53,7 +53,7 @@
         }
       }
     },
-    "/guest-protocol/authorizer-list" : {
+    "/authorizer-list" : {
       "get" : {
         "tags" : [ "protocol" ],
         "summary" : "授权人管理 - 分页查询",
@@ -120,7 +120,7 @@
         }
       }
     },
-    "/guest-protocol/authorizer-save-or-update" : {
+    "/authorizer-save-or-update" : {
       "post" : {
         "tags" : [ "protocol" ],
         "summary" : "授权人管理 - 新增/修改",
@@ -147,7 +147,7 @@
         }
       }
     },
-    "/guest-protocol/authorizer-view" : {
+    "/authorizer-view" : {
       "get" : {
         "tags" : [ "protocol" ],
         "summary" : "授权人管理 - 根据id查询 ",

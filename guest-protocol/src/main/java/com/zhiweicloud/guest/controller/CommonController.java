@@ -27,7 +27,7 @@ import java.util.List;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path("guest-protocol")
+@Path("/")
 @Api(value="系统公共接口",description="产品品类desc ", tags={"commonController"})
 public class CommonController {
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);

@@ -32,7 +32,7 @@ import java.util.Map;
  * 2016-12-26 13:17:52 Created By wzt
  */
 @Component
-@Path("guest-protocol")
+@Path("/")
 @Api(value="协议",description="协议desc ", tags={"protocol"})
 public class ProtocolServController {
     private static final Logger logger = LoggerFactory.getLogger(ProtocolServController.class);
