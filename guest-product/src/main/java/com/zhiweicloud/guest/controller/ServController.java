@@ -31,7 +31,7 @@ import java.util.Map;
  * 2016-12-26 13:17:52 Created By wzt
  */
 @Component
-@Path("guest-product")
+@Path("/")
 @Api(value="服务",description="服务desc", tags={"service"})
 public class ServController {
     private static final Logger logger = LoggerFactory.getLogger(ServController.class);

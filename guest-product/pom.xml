@@ -230,7 +230,7 @@
                 <scheme>http</scheme>
               </schemes>
               <host>localhost:8080</host>
-              <!--<basePath>/api</basePath>-->
+              <!--<basePath>/guest-product</basePath>-->
               <info>
                 <title>Guest Product</title>
                 <version>v1</version>

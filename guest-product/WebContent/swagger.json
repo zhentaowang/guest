@@ -22,7 +22,7 @@
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/guest-product/delete" : {
+    "/delete" : {
       "post" : {
         "tags" : [ "service" ],
         "summary" : "服务管理 - 删除",
@@ -53,7 +53,7 @@
         }
       }
     },
-    "/guest-product/list" : {
+    "/list" : {
       "get" : {
         "tags" : [ "service" ],
         "summary" : "服务管理 - 分页查询",
@@ -142,7 +142,7 @@
         }
       }
     },
-    "/guest-product/product-category-dropdown-list" : {
+    "/product-category-dropdown-list" : {
       "get" : {
         "tags" : [ "productTypeAllocation" ],
         "summary" : "产品类型配置 - 产品品类下拉框 数据 ",
@@ -172,7 +172,7 @@
         }
       }
     },
-    "/guest-product/product-type-allocation-list" : {
+    "/product-type-allocation-list" : {
       "get" : {
         "tags" : [ "productTypeAllocation" ],
         "summary" : "产品类型配置 - 分页查询",
@@ -228,7 +228,7 @@
         }
       }
     },
-    "/guest-product/save-or-update" : {
+    "/save-or-update" : {
       "post" : {
         "tags" : [ "service" ],
         "summary" : "服务管理 - 新增/修改",
@@ -255,7 +255,7 @@
         }
       }
     },
-    "/guest-product/serv-list" : {
+    "/serv-list" : {
       "get" : {
         "tags" : [ "service" ],
         "summary" : "服务管理 - 分页查询",
@@ -382,7 +382,7 @@
         }
       }
     },
-    "/guest-product/service-name-dropdown-list" : {
+    "/service-name-dropdown-list" : {
       "get" : {
         "tags" : [ "productTypeAllocation" ],
         "summary" : "产品类型配置 - 根据id查询 ",
@@ -425,7 +425,7 @@
         }
       }
     },
-    "/guest-product/service-type-dropdown-list" : {
+    "/service-type-dropdown-list" : {
       "get" : {
         "tags" : [ "productTypeAllocation" ],
         "summary" : "产品类型配置 - 根据productCategory查询 ",
@@ -467,7 +467,7 @@
         }
       }
     },
-    "/guest-product/view" : {
+    "/view" : {
       "get" : {
         "tags" : [ "service" ],
         "summary" : "服务 - 根据id查询 ",
@@ -654,7 +654,8 @@
           "type" : "object",
           "description" : "响应数据"
         }
-      }
+      },
+      "description" : "响应结果"
     }
   }
 }

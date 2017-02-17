@@ -29,7 +29,7 @@ import java.util.Map;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path("guest-product")
+@Path("/")
 @Api(value = "产品类型配置", description = "产品类型配置desc", tags = {"productTypeAllocation"})
 public class ProductTypeAllocationController {
     private static final Logger logger = LoggerFactory.getLogger(ProductTypeAllocationController.class);
