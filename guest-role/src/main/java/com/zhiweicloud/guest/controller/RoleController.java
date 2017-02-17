@@ -56,7 +56,7 @@ import java.util.List;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path("guest-role")
+@Path("/")
 @Api(value="角色管理",description="", tags={"SysRole"})
 public class RoleController {
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
@@ -147,7 +147,7 @@ public class RoleController {
     @Path(value = "delete")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "角色管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    /*@ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")*/
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public String delete(
             @RequestBody RequsetParams<Long> params,
             @QueryParam(value = "airportCode") String airportCode) {
