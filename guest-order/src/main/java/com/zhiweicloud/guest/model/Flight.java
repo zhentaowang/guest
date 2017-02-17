@@ -74,6 +74,9 @@ public class Flight extends BaseEntity{
     @ApiModelProperty(value="远机位：0，近机位：1",name="isNearOrFar")
     private Short isNearOrFar;
 
+    @Transient
+    @ApiModelProperty(value="服务人次",name="serverPersonNum")
+    private String serverPersonNum;
 
 
     @ApiModelProperty(value="机号",name="planNo")
@@ -303,5 +306,13 @@ public class Flight extends BaseEntity{
 
     public void setLandingTimeFlag(Integer landingTimeFlag) {
         this.landingTimeFlag = landingTimeFlag;
+    }
+
+    public String getServerPersonNum() {
+        return serverPersonNum;
+    }
+
+    public void setServerPersonNum(String serverPersonNum) {
+        this.serverPersonNum = serverPersonNum;
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.ProductTypeAllocationMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.ProductTypeAllocation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <result column="category_no" jdbcType="VARCHAR" property="categoryNo" />
+    <result column="product_category" jdbcType="VARCHAR" property="productCategory" />
+    <result column="service_type" jdbcType="VARCHAR" property="serviceType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+  </resultMap>
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+  <id column="id" jdbcType="BIGINT" property="id" />
+  <result column="value" jdbcType="VARCHAR" property="value" />
+</resultMap>
+
+  <sql id="Base_Column_List">
+    id, airport_code, category_no, product_category, service_type, remark, create_time, update_time, is_deleted
+  </sql>
+
+  <select id="getServiceTypeDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">
+    select id,service_type as value from product_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR} and product_category = #{productCategory,jdbcType=VARCHAR} and is_deleted = 0
+  </select>
+
+  <select id="getProductCategoryDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">
+    select product_category as value,id from product_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by category_no
+  </select>
+
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    SELECT category_no, product_category, service_type, remark from product_type_allocation where airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
+    order by id desc
+    LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getListCount" parameterType="map" resultType="int">
+    SELECT count(id) from product_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
+</mapper>
