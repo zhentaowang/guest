@@ -57,7 +57,7 @@ import java.util.List;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path("guest-employee")
+@Path("/")
 @Api(value = "员工管理", description = "", tags = {"Employee"})
 public class EmployeeController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);

@@ -53,7 +53,7 @@ import java.util.List;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path(value ="institution-client")
+@Path("/")
 @Api(value="机构客户管理",description="", tags={"InstitutionClientModel"})
 public class InstitutionClientController {
     private static final Logger logger = LoggerFactory.getLogger(InstitutionClientController.class);

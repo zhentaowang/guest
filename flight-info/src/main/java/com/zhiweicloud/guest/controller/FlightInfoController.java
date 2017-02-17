@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by zhangpengfei on 2017/1/22.
  */
 @Component
-@Path(value = "flight-info")
+@Path("/")
 @Api(value = "航班信息", description = "航班信息desc ", tags = {"flight-info"})
 public class FlightInfoController {
 
