@@ -25,6 +25,7 @@
 package com.zhiweicloud.guest.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -33,14 +34,22 @@ import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderService;
 import io.swagger.annotations.*;
+import io.swagger.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * SysMenuController.java
@@ -48,8 +57,8 @@ import java.util.List;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
-@RequestMapping(value = "/guest-order")
-@RestController
+@Component
+@Path("/")
 @Api(value = "订单", description = "订单desc ", tags = {"order"})
 public class OrderController {
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
@@ -58,23 +67,25 @@ public class OrderController {
     private OrderService orderService;
 
 
-    @RequestMapping(value = "/list")
+    @POST
+    @Path(value = "list")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "订单 - 分页查询", notes = "返回分页结果", httpMethod = "POST", produces = "application/json")
-    public LZResult<PaginationResult<GuestOrder>> list(@RequestBody RequsetParams<GuestOrderQueryParam> param) {
+    public String list(@RequestBody RequsetParams<GuestOrderQueryParam> param) {
         try {
             GuestOrderQueryParam guestOrderQueryParam = null;
             if (!CollectionUtils.isEmpty(param.getData())) {
                 guestOrderQueryParam = param.getData().get(0);
             }
             LZResult<PaginationResult<GuestOrder>> result = orderService.getAll(guestOrderQueryParam);
-            return result;
+            return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
             LZResult<PaginationResult<GuestOrder>> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return  result;
+            return  JSON.toJSONString(result);
         }
     }
 
@@ -86,24 +97,34 @@ public class OrderController {
      * @param params
      * @return
      */
-    @RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path(value = "saveOrUpdate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult save(@ApiParam(value = "GuestOrder", required = true) @RequestBody RequsetParams<GuestOrder> params) {
+    public String save(@ApiParam(value = "GuestOrder", required = true) @RequestBody RequsetParams<GuestOrder> params) {
+        LZResult<String> result = new LZResult<>();
         try {
             GuestOrder order = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
                 order = params.getData().get(0);
             }
             if (order == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
             }
             orderService.saveOrUpdate(order);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
         }
+        return JSON.toJSONString(result);
     }
 
 
@@ -113,26 +134,30 @@ public class OrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    @ResponseBody
+    @GET
+    @Path(value = "view")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "订单 - 根据id查询 ", notes = "返回订单详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "订单id", dataType = "Long", required = true, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<GuestOrder> view(@RequestParam(value = "id", required = true) Long id,
-                                     @RequestParam(value = "airportCode", required = true) String airportCode) {
+    public String view(@QueryParam(value = "id") Long id,
+                                     @QueryParam(value = "airportCode") String airportCode) {
+        LZResult<GuestOrder> result = new LZResult<>();
         try {
             GuestOrder guestOrder = orderService.getById(id, airportCode);
-            return new LZResult<>(guestOrder);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(guestOrder);
+            return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
-            LZResult<GuestOrder> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return result;
         }
+        return JSON.toJSONString(result);
     }
 
 
@@ -146,20 +171,21 @@ public class OrderController {
      *
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ResponseBody
+    @POST
+    @Path(value = "delete")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "订单 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
-    public LXResult delete(@RequestBody RequsetParams<Long> params, @RequestParam(value = "airportCode", required = true) String airportCode) {
+    public String delete(@RequestBody RequsetParams<Long> params, @QueryParam(value = "airportCode") String airportCode) {
         try {
             List<Long> ids = params.getData();
             orderService.deleteById(ids, airportCode);
-            return LXResult.success();
+            return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);
-            return LXResult.error();
+            return JSON.toJSONString(LXResult.error());
         }
     }
 
@@ -170,18 +196,20 @@ public class OrderController {
      * @param protocolNo
      * @return
      */
-    @RequestMapping(value = "/protocolInfo", method = RequestMethod.GET)
-    @ResponseBody
+    @GET
+    @Path(value = "protocolInfo")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "订单 - 根据协议查询客户名称，预约人，备注信息 ", notes = "返回协议相关信息", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", required = false, paramType = "query"),
             @ApiImplicitParam(name = "protocolNo", value = "协议编号", dataType = "String", required = false, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编码", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<ProtocolInfo> protocolInfo(
-            @RequestParam(value = "protocolId", required = false) Long protocolId,
-            @RequestParam(value = "protocolNo", required = false) String protocolNo,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+    public String protocolInfo(
+            @QueryParam(value = "protocolId") Long protocolId,
+            @QueryParam(value = "protocolNo") String protocolNo,
+            @QueryParam(value = "airportCode") String airportCode) {
+        LZResult<ProtocolInfo> result = new LZResult<>();
         try {
             ProtocolInfo param = new ProtocolInfo();
             Dropdownlist d = new Dropdownlist();
@@ -189,15 +217,18 @@ public class OrderController {
             d.setValue(protocolNo);
             param.setProtocol(d);
             param.setAirportCode(airportCode);
-            return new LZResult<>(orderService.getProtocolInfoBy(param));
+
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(orderService.getProtocolInfoBy(param));
+            return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
-            LZResult<ProtocolInfo> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return result;
         }
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -212,8 +243,9 @@ public class OrderController {
      *
      * @return
      */
-    @RequestMapping(value = "/getServerList", method = RequestMethod.GET)
-    @ResponseBody
+    @GET
+    @Path(value = "getServerList")
+    @Produces("application/json;charset=utf8")
     @ApiOperation(value = "订单 - 根据协议查询服务,休息室，通道 ", notes = "返回协议相关信息", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "productCategory", value = "CIP/VIP", dataType = "String", required = true, paramType = "query"),
@@ -221,25 +253,29 @@ public class OrderController {
             @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "airportCode", value = "机场编码", dataType = "String", required = true, paramType = "query")
     })
-    public LZResult<List<Dropdownlist>> getServerList(
-            @RequestParam(value = "productCategory", required = true) String productCategory,
-            @RequestParam(value = "serviceType", required = true) String serviceType,
-            @RequestParam(value = "protocolId", required = true) String protocolId,
-            @RequestParam(value = "airportCode", required = true) String airportCode) {
+    public String getServerList(
+            @QueryParam(value = "productCategory") String productCategory,
+            @QueryParam(value = "serviceType") String serviceType,
+            @QueryParam(value = "protocolId") String protocolId,
+            @QueryParam(value = "airportCode") String airportCode) {
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
         try {
             List<Dropdownlist> list = orderService.getServerList(productCategory, serviceType, protocolId,airportCode);
-            return new LZResult<>(list);
+
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
         }catch (Exception e){
             e.printStackTrace();
-            LZResult<List<Dropdownlist>> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return result;
         }
+        return JSON.toJSONString(result);
     }
 
-    @RequestMapping(value ="/flightList")
+    @GET
+    @Path(value ="flightList")
     @ApiOperation(value = "航班信息列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams(
             {
@@ -253,15 +289,15 @@ public class OrderController {
             @ApiImplicitParam(name = "isInOrOut", value = "进出港。 出港：0，进港1", dataType = "String", required = false, paramType = "query"),
 
             })
-    public LZResult<PaginationResult<Flight>> flightList(
-            @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
-            @RequestParam(value = "rows", required = true, defaultValue = "10") Integer rows,
-            @RequestParam(value="airportCode",required = true) String airportCode,
-            @RequestParam(value="flightDate",required = true) String flightDate,
-            @RequestParam(value="takeOffTimeFlag",required = false) String takeOffTimeFlag,
-            @RequestParam(value="landingTimeFlag",required = false) String landingTimeFlag,
-            @RequestParam(value="flightNo",required = false) String flightNo,
-            @RequestParam(value="isInOrOut",required = false) String isInOrOut) {
+    public String flightList(
+            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @QueryParam(value="airportCode") String airportCode,
+            @QueryParam(value="flightDate") String flightDate,
+            @QueryParam(value="takeOffTimeFlag") String takeOffTimeFlag,
+            @QueryParam(value="landingTimeFlag") String landingTimeFlag,
+            @QueryParam(value="flightNo") String flightNo,
+            @QueryParam(value="isInOrOut") String isInOrOut) {
         try {
             Flight flight = new Flight();
             flight.setAirportCode(airportCode);
@@ -286,14 +322,14 @@ public class OrderController {
                 flight.setLandingTimeFlag(Integer.valueOf(landingTimeFlag));
             }
             LZResult<PaginationResult<Flight>> result  = orderService.getFlightList(flight,page,rows);
-            return result;
+            return JSON.toJSONString(result);
         }catch(Exception e) {
             e.printStackTrace();
             LZResult<PaginationResult<Flight>> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return result;
+            return JSON.toJSONString(result);
         }
     }
 
