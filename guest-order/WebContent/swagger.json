@@ -1,0 +1,993 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "订单调试接口",
+    "version" : "v1",
+    "title" : "Guest Order",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "Luo Jing",
+      "email" : "luojing@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "localhost:8080",
+  "tags" : [ {
+    "name" : "order"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/delete" : {
+      "post" : {
+        "tags" : [ "order" ],
+        "summary" : "订单 - 删除",
+        "description" : "返回响应结果",
+        "operationId" : "delete",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Long"
+          }
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/flightList" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "summary" : "航班信息列表 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "flightList",
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1,
+          "format" : "int32"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "flightDate",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "takeOffTimeFlag",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "landingTimeFlag",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "flightNo",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "isInOrOut",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "起始页",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "1"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "description" : "每页显示数目",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "10"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        }, {
+          "name" : "flightDate",
+          "in" : "query",
+          "description" : "航班日期",
+          "required" : true,
+          "type" : "String"
+        }, {
+          "name" : "takeOffTimeFlag",
+          "in" : "query",
+          "description" : "起飞时段",
+          "required" : false,
+          "type" : "String"
+        }, {
+          "name" : "landingTimeFlag",
+          "in" : "query",
+          "description" : "降落时段",
+          "required" : false,
+          "type" : "String"
+        }, {
+          "name" : "flightNo",
+          "in" : "query",
+          "description" : "航班号",
+          "required" : false,
+          "type" : "String"
+        }, {
+          "name" : "isInOrOut",
+          "in" : "query",
+          "description" : "进出港。 出港：0，进港1",
+          "required" : false,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/getServerList" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "summary" : "订单 - 根据协议查询服务,休息室，通道 ",
+        "description" : "返回协议相关信息",
+        "operationId" : "getServerList",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "productCategory",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "serviceType",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "protocolId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "productCategory",
+          "in" : "query",
+          "description" : "CIP/VIP",
+          "required" : true,
+          "type" : "String"
+        }, {
+          "name" : "serviceType",
+          "in" : "query",
+          "description" : "冠名厅，休息室，通道",
+          "required" : true,
+          "type" : "String"
+        }, {
+          "name" : "protocolId",
+          "in" : "query",
+          "description" : "协议id",
+          "required" : true,
+          "type" : "String"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编码",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/list" : {
+      "post" : {
+        "tags" : [ "order" ],
+        "summary" : "订单 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数GuestOrderQuery"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/protocolInfo" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "summary" : "订单 - 根据协议查询客户名称，预约人，备注信息 ",
+        "description" : "返回协议相关信息",
+        "operationId" : "protocolInfo",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "protocolId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "protocolNo",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "protocolId",
+          "in" : "query",
+          "description" : "协议id",
+          "required" : false,
+          "type" : "Long"
+        }, {
+          "name" : "protocolNo",
+          "in" : "query",
+          "description" : "协议编号",
+          "required" : false,
+          "type" : "String"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编码",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/saveOrUpdate" : {
+      "post" : {
+        "tags" : [ "order" ],
+        "summary" : "订单 - 新增/修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "save",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf-8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "GuestOrder",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数GuestOrder"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/view" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "summary" : "订单 - 根据id查询 ",
+        "description" : "返回订单详情",
+        "operationId" : "view",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "订单id",
+          "required" : true,
+          "type" : "Long"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Flight" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "orderId" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "订单id"
+        },
+        "flightDate" : {
+          "type" : "string",
+          "description" : "航班日期"
+        },
+        "flightNo" : {
+          "type" : "string",
+          "description" : "航班号"
+        },
+        "flightSegment" : {
+          "type" : "string",
+          "description" : "航段"
+        },
+        "flightPosition" : {
+          "type" : "string",
+          "description" : "停机位"
+        },
+        "planTakeOffTime" : {
+          "type" : "string",
+          "description" : "计划起飞时间"
+        },
+        "planLandingTime" : {
+          "type" : "string",
+          "description" : "计划降落时间"
+        },
+        "isInOrOut" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "出港：0，进港：1"
+        },
+        "boardingPort" : {
+          "type" : "string",
+          "description" : "登机口"
+        },
+        "isNearOrFar" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "远机位：0，近机位：1"
+        },
+        "serverPersonNum" : {
+          "type" : "string",
+          "description" : "服务人次"
+        },
+        "planNo" : {
+          "type" : "string",
+          "description" : "机号"
+        },
+        "takeOffTimeFlag" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "起飞时段,0:上午 6:00-12:00,1:下午 12：00-18：00,2:晚上 18：00-24：00"
+        },
+        "landingTimeFlag" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "降落时段,0:上午 6:00-12:00,1:下午 12：00-18：00,2:晚上 18：00-24：00"
+        }
+      },
+      "description" : "flight"
+    },
+    "GuestOrder" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "orderType", "orgCustomerId", "protocolId" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "protocolId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "协议id"
+        },
+        "protocolName" : {
+          "type" : "string",
+          "description" : "协议名称"
+        },
+        "protocolNo" : {
+          "type" : "string",
+          "description" : "协议编号"
+        },
+        "orgCustomerId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "机构名称id"
+        },
+        "customerName" : {
+          "type" : "string",
+          "description" : "机构名称"
+        },
+        "serviceName" : {
+          "type" : "string",
+          "description" : "服务名称"
+        },
+        "passageWayName" : {
+          "type" : "string",
+          "description" : "通道名称"
+        },
+        "protocolRemark" : {
+          "type" : "string",
+          "description" : "协议备注"
+        },
+        "bookingPerson" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "预约人"
+        },
+        "bookingPersonName" : {
+          "type" : "string",
+          "description" : "预约人姓名"
+        },
+        "isImportant" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否重要：0：重要，1：不重要"
+        },
+        "orderStatus" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "0:预约，1：消费,2 : 取消"
+        },
+        "orderRemark" : {
+          "type" : "string",
+          "description" : "订单备注"
+        },
+        "signerPerson" : {
+          "type" : "string",
+          "description" : "签字人"
+        },
+        "orderNo" : {
+          "type" : "string",
+          "description" : "订单编号"
+        },
+        "serverTime" : {
+          "type" : "string",
+          "description" : "服务时间"
+        },
+        "flight" : {
+          "description" : "航班信息",
+          "$ref" : "#/definitions/Flight"
+        },
+        "serviceId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "冠名厅/休息室"
+        },
+        "passagewayId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "通道"
+        },
+        "isPrintBoardingCheck" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "提前打登机牌 0:需要，1：不需要"
+        },
+        "sitRequire" : {
+          "type" : "string",
+          "description" : "座位要求"
+        },
+        "packageNo" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "行李件数"
+        },
+        "packageWeight" : {
+          "type" : "number",
+          "format" : "float",
+          "description" : "行李kg"
+        },
+        "isConsign" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否托运, 0:托运，1：不托运"
+        },
+        "serverPersonNum" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "服务人数"
+        },
+        "companyPersonNum" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "随员人数"
+        },
+        "carNum" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "车辆数"
+        },
+        "carNo" : {
+          "type" : "string",
+          "description" : "车牌"
+        },
+        "orderType" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "订单类型： 0；VIP订单，1；CIP订单,1:头等舱订单，1：金银卡订单"
+        },
+        "orderCar" : {
+          "type" : "array",
+          "description" : "车辆",
+          "items" : {
+            "$ref" : "#/definitions/OrderCar"
+          }
+        },
+        "bsPassenger" : {
+          "type" : "array",
+          "description" : "乘客信息",
+          "items" : {
+            "$ref" : "#/definitions/Passenger"
+          }
+        },
+        "orderChargeList" : {
+          "type" : "array",
+          "description" : "收费服务",
+          "items" : {
+            "$ref" : "#/definitions/OrderCharge"
+          }
+        },
+        "changeOrderStatus" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "确认消费，仅仅用于前台标志 是用来更改订单的状态,确认：1"
+        },
+        "checkPerson" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "办票操作人"
+        },
+        "checkPersonName" : {
+          "type" : "string",
+          "description" : "办票操作人姓名"
+        },
+        "checkTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "办票完成时间"
+        },
+        "checkComplete" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "办票是否完成 默认未完成 0：未完成，1：完成"
+        },
+        "consignPerson" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "托运操作人"
+        },
+        "consignPersonName" : {
+          "type" : "string",
+          "description" : "托运操作人姓名"
+        },
+        "consignTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "托运完成时间"
+        },
+        "consignComplete" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "托运是否完成 默认未完成 0：未完成，1：完成"
+        }
+      },
+      "description" : "guest_order"
+    },
+    "GuestOrderQuery" : {
+      "type" : "object",
+      "required" : [ "airportCode", "page", "rows" ],
+      "properties" : {
+        "queryFlightStartDate" : {
+          "type" : "string",
+          "description" : "航班开始日期"
+        },
+        "queryFlightEndDate" : {
+          "type" : "string",
+          "description" : "航班结束日期"
+        },
+        "queryFlightNo" : {
+          "type" : "string",
+          "description" : "航班号"
+        },
+        "queryIsInOrOut" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "进出港：出港：0，进港：1"
+        },
+        "queryPassengerName" : {
+          "type" : "string",
+          "description" : "旅客姓名"
+        },
+        "queryOrderType" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "品  类： 0；VIP订单，1；CIP订单,2:头等舱订单，3：金银卡订单"
+        },
+        "queryServerName" : {
+          "type" : "string",
+          "description" : "服务名称"
+        },
+        "queryCustomerName" : {
+          "type" : "string",
+          "description" : "机构客户"
+        },
+        "queryBookingStartDate" : {
+          "type" : "string",
+          "description" : "预定开始时间"
+        },
+        "queryBookingEndDate" : {
+          "type" : "string",
+          "description" : "预定结束时间"
+        },
+        "queryIsPrintBoardingCheck" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "办票,0:是，1：否"
+        },
+        "queryIsConsign" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "托运, 0:是，1：否"
+        },
+        "page" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "起始页"
+        },
+        "rows" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "每页显示数目"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        }
+      },
+      "description" : "仅用订单条件查询使用"
+    },
+    "OrderCar" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "orderId" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "预约订单id"
+        },
+        "carNo" : {
+          "type" : "string",
+          "description" : "车牌"
+        }
+      },
+      "description" : "order_car"
+    },
+    "OrderCharge" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "orderId" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "预约订单id"
+        },
+        "chargeService" : {
+          "type" : "string",
+          "description" : "收费服务"
+        },
+        "chargeBy" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "收费方式,0:现金,1:刷卡,2:其他"
+        },
+        "chargeNum" : {
+          "type" : "string",
+          "description" : "收费数量"
+        },
+        "chargePrice" : {
+          "type" : "number",
+          "format" : "double",
+          "description" : "收费单价"
+        },
+        "chargeAmount" : {
+          "type" : "number",
+          "format" : "double",
+          "description" : "收费金额"
+        }
+      },
+      "description" : "order_charge"
+    },
+    "Passenger" : {
+      "type" : "object",
+      "required" : [ "airportCode", "id", "orderId" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "订单id"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "旅客姓名"
+        },
+        "phone" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "联系方式"
+        },
+        "identityCard" : {
+          "type" : "string",
+          "description" : "身份证"
+        },
+        "workUnit" : {
+          "type" : "string",
+          "description" : "单位"
+        },
+        "vipCard" : {
+          "type" : "string",
+          "description" : "贵宾卡"
+        },
+        "sitNo" : {
+          "type" : "string",
+          "description" : "座位号"
+        },
+        "cabinNo" : {
+          "type" : "string",
+          "description" : "舱位"
+        },
+        "ticketNo" : {
+          "type" : "string",
+          "description" : "客票号"
+        },
+        "cardNo" : {
+          "type" : "string",
+          "description" : "卡号"
+        },
+        "cardType" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "0：金卡，1：银卡"
+        },
+        "expireTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "有效期"
+        }
+      },
+      "description" : "passenger"
+    },
+    "全局统一接受参数GuestOrder" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/GuestOrder"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "全局统一接受参数GuestOrderQuery" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/GuestOrderQuery"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "全局统一接受参数Long" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    }
+  }
+}
