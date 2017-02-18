@@ -205,8 +205,10 @@ public class RoleController {
             @QueryParam(value = "airportCode") String airportCode,
             @QueryParam(value = "access_token") String access_token){
         try{
-            String userIdStr = (String)request.getSession().getAttribute("userId");
-            List<SysMenu> result = sysRoleService.getMenuByUserId(Long.valueOf(userIdStr),airportCode);
+            //@TODO:权限过滤
+//            String userIdStr = (String)request.getSession().getAttribute("userId");
+
+            List<SysMenu> result = sysRoleService.getMenuByUserId(Long.valueOf(40),airportCode);
             return new LZResult<>(result);
         } catch (Exception e) {
             e.printStackTrace();
