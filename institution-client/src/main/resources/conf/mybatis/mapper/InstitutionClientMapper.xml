@@ -30,6 +30,27 @@
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
   </resultMap>
 
+  <select id="getListByConiditionCount" parameterType="com.zhiweicloud.guest.model.InstitutionClient" resultType="int">
+    SELECT
+    count(i.id)
+    FROM
+    v_institution_client i left join employee e on i.employee_id = e.id
+    where i.is_deleted = 0
+    <if test="no != null and !no.trim().equals('')" >
+      and i.no like concat('%',#{no},'%')
+    </if>
+    <if test="name != null and !name.trim().equals('')" >
+      and i.name like concat('%',#{name},'%')
+    </if>
+    <if test="type != null and !type.trim().equals('')" >
+      and i.type = #{type}
+    </if>
+    <if test="airportCode != null and !airportCode.trim().equals('')" >
+      and i.airport_code = #{airportCode}
+    </if>
+
+  </select>
+
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
     SELECT
     i.*,e.name as employee_name

@@ -53,45 +53,14 @@ public class InstitutionClientService {
     @Autowired
     private InstitutionClientMapper institutionClientMapper;
 
-
-    //流水号加1后返回，流水号长度为4
-    private static final String STR_FORMAT = "0000";
-
     public LZResult<PaginationResult<InstitutionClient>> getAll(InstitutionClient param, Integer page, Integer rows) {
-        /*if (page != null && rows != null) {
-            PageHelper.startPage(page, rows, "id");
-        }*/
-
-        // 条件查询，自己拼条件
-        Example example = new Example(InstitutionClient.class);
-        if(param.getNo() != null && !param.getNo().equals("")){
-            example.createCriteria()
-                    .andCondition("no like '%" + param.getNo() + "%'");
-        }
-
-        if(param.getName() != null && !param.getName().equals("")){
-            example.createCriteria()
-                    .andCondition("name like '%" + param.getName() + "%'");
-        }
-
-        if(param.getType() != null && !param.getType().equals("")){
-            example.createCriteria()
-                    .andCondition("type = '" + param.getType() + "'");
-        }
-        if(param.getAirportCode() != null && !param.getAirportCode().equals("")){
-            example.createCriteria()
-                    .andCondition("airport_code = '" + param.getAirportCode() + "'");
-        }
-        example.createCriteria()
-                .andCondition("is_deleted = 0");
-
         BasePagination<InstitutionClient> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
 
-        Integer count = institutionClientMapper.selectCountByExample(example);
+        Integer count = institutionClientMapper.getListByConiditionCount(param);
 
         List<InstitutionClient> institutionClientList = institutionClientMapper.getListByConidition(queryCondition);
 
-        PaginationResult<InstitutionClient> eqr = new PaginationResult<InstitutionClient>(count, institutionClientList);
+        PaginationResult<InstitutionClient> eqr = new PaginationResult<>(count, institutionClientList);
         LZResult<PaginationResult<InstitutionClient>> result = new LZResult<PaginationResult<InstitutionClient>>(eqr);
         return result;
     }
