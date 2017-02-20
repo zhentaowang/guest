@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -81,7 +82,7 @@ public class EmployeeController {
             employeeParam.setName(name);
             employeeParam.setAirportCode(airportCode);
 
-            LZResult<PaginationResult<Employee>> result = employeeService.getAll(employeeParam, page, rows);
+            LZResult<PaginationResult<Map>> result = employeeService.getAll(employeeParam, page, rows);
             return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();

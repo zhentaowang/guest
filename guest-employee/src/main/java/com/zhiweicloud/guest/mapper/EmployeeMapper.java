@@ -43,7 +43,9 @@ public interface EmployeeMapper extends tk.mybatis.mapper.common.Mapper<Employee
 
     int selectEmployeeTotal(Employee employeeParam);
 
-    List<Employee> selectEmployeeList(BasePagination<Employee> queryCondition);
+    //List<Employee> selectEmployeeList(BasePagination<Employee> queryCondition);
+
+    List<Map> selectEmployeeList(BasePagination<Employee> queryCondition);
 
     Employee selectByIdAndAirportCode(Map map);
 }

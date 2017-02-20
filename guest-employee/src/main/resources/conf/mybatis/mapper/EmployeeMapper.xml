@@ -36,7 +36,7 @@
     </if>
   </select>
 
-  <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+  <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
     select id,concat(e.airport_code,lpad(e.id,3,'0')) AS account,e.name,e.password,e.sex from employee e
     where e.is_deleted = 0 and e.airport_code = #{criteria.airportCode}
     <if test="criteria.name != null ">

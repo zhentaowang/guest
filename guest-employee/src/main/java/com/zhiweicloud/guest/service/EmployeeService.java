@@ -52,13 +52,13 @@ public class EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
 
-    public LZResult<PaginationResult<Employee>> getAll(Employee employeeParam, Integer page, Integer rows) {
+    public LZResult<PaginationResult<Map>> getAll(Employee employeeParam, Integer page, Integer rows) {
         BasePagination<Employee> queryCondition = new BasePagination<>(employeeParam, new PageModel(page, rows));
 
         int total = employeeMapper.selectEmployeeTotal(employeeParam);
-        List<Employee> flightList = employeeMapper.selectEmployeeList(queryCondition);
-        PaginationResult<Employee> eqr = new PaginationResult<>(total, flightList);
-        LZResult<PaginationResult<Employee>> result = new LZResult<>(eqr);
+        List<Map> flightList = employeeMapper.selectEmployeeList(queryCondition);
+        PaginationResult<Map> eqr = new PaginationResult<>(total, flightList);
+        LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
         return result;
     }
 
