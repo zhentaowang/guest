@@ -11,10 +11,9 @@ spec:
     spec:
       containers:
         - name: institution-client
-          image: java:8-jre-alpine
-          command: ["java","-jar","/code/institution-client-1.0-SNAPSHOT.jar"]
+          image: tomcat:9.0
           volumeMounts:
-          - mountPath: "/code"
+          - mountPath: "/usr/local/tomcat/webapps"
             name: code
             subPath: guest/institution-client
           ports:

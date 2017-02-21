@@ -11,10 +11,9 @@ spec:
     spec:
       containers:
         - name: guest-employee
-          image: java:8-jre-alpine
-          command: ["java","-jar","/code/guest-employee-1.0-SNAPSHOT.jar"]
+          image: tomcat:9.0
           volumeMounts:
-          - mountPath: "/code"
+          - mountPath: "/usr/local/tomcat/webapps"
             name: code
             subPath: guest/guest-employee
           ports:
