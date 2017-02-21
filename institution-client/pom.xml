@@ -5,7 +5,7 @@
   <artifactId>institution-client</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>guest Maven Webapp</name>
+  <name>Institution Client</name>
   <url>http://maven.apache.org</url>
 
 

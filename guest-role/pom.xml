@@ -5,7 +5,7 @@
   <artifactId>guest-role</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>guest Maven Webapp</name>
+  <name>Guest Role</name>
   <url>http://maven.apache.org</url>
   <properties>
     <spring.version>4.2.5.RELEASE</spring.version>

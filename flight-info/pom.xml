@@ -5,7 +5,7 @@
   <artifactId>flight-info</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>guest Maven Webapp</name>
+  <name>Flight Info</name>
   <url>http://maven.apache.org</url>
 
   <properties>
