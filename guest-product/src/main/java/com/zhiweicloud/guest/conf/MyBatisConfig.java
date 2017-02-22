@@ -45,14 +45,14 @@ public class MyBatisConfig {
         druidSettings(druidDataSource);
         return druidDataSource;
     }
-
+    
     @Bean(name = "transactionManager")
     public DataSourceTransactionManager dataSourceTransactionManager(DruidDataSource dataSource){
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource);
         return dataSourceTransactionManager;
     }
-
+    
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer(){
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
@@ -60,7 +60,7 @@ public class MyBatisConfig {
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         return mapperScannerConfigurer;
     }
-
+    
     @Bean(name = "sqlSessionFactory")
     public SqlSessionFactoryBean sqlSessionFactoryBean(DruidDataSource dataSource,ResourceLoader resourceLoader,ResourcePatternResolver resourcePatternResolver) throws Exception{
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
@@ -70,7 +70,7 @@ public class MyBatisConfig {
         sqlSessionFactoryBean.setTypeAliasesPackage("com.zhiweicloud.guest.model");
         return sqlSessionFactoryBean;
     }
-
+    
     public void druidSettings(DruidDataSource druidDataSource) throws Exception{
         druidDataSource.setMaxActive(40);
         druidDataSource.setInitialSize(3);

@@ -22,26 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.zhiweicloud.guest.mapper;
+package com.zhiweicloud.guest.common;
 
-
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.ProductTypeAllocation;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
-
-import java.util.List;
-import java.util.Map;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.common.MySqlMapper;
 
 /**
- * @author zhangpengfei
- * @since 2016-12-26 22:17
+ * 继承自己的MyMapper
+ *
+ * @author liuzh
+ * @since 2015-09-06 21:53
  */
-public interface ProductTypeAllocationMapper extends MyMapper<ProductTypeAllocation> {
-
-    List<Dropdownlist> getServiceTypeDropdownList(Map<String, Object> param);
-    List<Dropdownlist> getProductCategoryDropdownList(Map<String, Object> param);
-    List<ProductTypeAllocation> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
-    int getListCount(Map<String, Object> map);
-
+public interface MyMapper<T> extends Mapper<T>, MySqlMapper<T> {
+    //TODO
+    //FIXME 特别注意，该接口不能被扫描到，否则会出错
 }
