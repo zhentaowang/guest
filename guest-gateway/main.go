@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -27,6 +28,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		var dat map[string]string
 		body, err := ioutil.ReadAll(resp.Body)
 		json.Unmarshal(body, &dat)
+		fmt.Println(dat)
 
 		// 将user_id添加到header中
 		r.Header.Add("User-Id", dat["user_id"])
@@ -35,6 +37,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	uri := r.RequestURI
 	serviceName := r.RequestURI[1 : strings.Index(uri[1:len(uri)], "/")+1]
+	fmt.Println(serviceName)
 	remote, err := url.Parse("http://" + serviceName)
 	if err != nil {
 		// panic(err)
