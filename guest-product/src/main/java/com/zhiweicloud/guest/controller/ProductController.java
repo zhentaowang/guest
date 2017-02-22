@@ -51,18 +51,19 @@ public class ProductController {
     /**
      * 产品配置管理 - 根据id查询
      *
-     * @param id
+     * @param productId
      * @return
      */
     @GET
     @Path(value = "viewEdit")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品配置 - 根据id查询 ", notes = "返回产品信息")
-    public String view(@QueryParam(value = "id") Long id,
-                       @QueryParam(value = "airportCode") String airportCode) {
+    public String viewEdit(@QueryParam(value = "productId") Long productId,
+                           @QueryParam(value = "userId") Long userId,
+                           @QueryParam(value = "airportCode") String airportCode) {
         LZResult<Product> result = new LZResult<>();
         try {
-            Product guestOrder = productService.getById(id, airportCode);
+            Product guestOrder = productService.getById(productId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(guestOrder);
