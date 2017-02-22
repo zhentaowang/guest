@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 )
 
 type handle struct {
@@ -17,20 +18,24 @@ type handle struct {
 func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 获取user_id
 	query := r.URL.Query()
-	resp, err := http.Get("http://airport.zhiweicloud.com/oauth/user/getUser?access_token=" + query["access_token"][0])
-	if err != nil {
-		log.Fatal(err)
+	if len(query["access_token"]) > 0 {
+		resp, err := http.Get("http://oauth-center/user/getUser?access_token=" + query["access_token"][0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var dat map[string]string
+		body, err := ioutil.ReadAll(resp.Body)
+		json.Unmarshal(body, &dat)
+
+		// 将user_id添加到header中
+		r.Header.Add("User-Id", dat["user_id"])
+		r.Header.Add("Client-Id", dat["client_id"])
 	}
-	defer resp.Body.Close()
-	var dat map[string]string
-	body, err := ioutil.ReadAll(resp.Body)
-	json.Unmarshal(body, &dat)
 
-	// 将user_id添加到header中
-	r.Header.Add("User-Id", dat["user_id"])
-	r.Header.Add("Client-Id", dat["client_id"])
-
-	remote, err := url.Parse("http://" + h.host)
+	uri := r.RequestURI
+	serviceName := r.RequestURI[1 : strings.Index(uri[1:len(uri)], "/")+1]
+	remote, err := url.Parse("http://" + serviceName)
 	if err != nil {
 		// panic(err)
 	}
