@@ -65,11 +65,16 @@ public class ProductService {
     public LZResult<PaginationResult<Product>> getAll(String airportCode, Integer page, Integer rows) {
         Product productParam = new Product();
         productParam.setAirportCode(airportCode);
+        productParam.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
         int total = productMapper.selectCount(productParam);
 
-        List<Product> productList = productMapper.getProductList(airportCode,page,rows);
+        List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,page*rows);
         PaginationResult<Product> eqr = new PaginationResult<>(total, productList);
         LZResult<PaginationResult<Product>> result = new LZResult<>(eqr);
         return result;
+    }
+
+    public Product getById(Long productId, String airportCode) {
+        return productMapper.queryByIdAndAirCode(productId, airportCode);
     }
 }

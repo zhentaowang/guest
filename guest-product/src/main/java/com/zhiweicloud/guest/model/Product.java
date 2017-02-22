@@ -32,7 +32,6 @@ public class Product extends BaseEntity{
     private String serviceTypeIds;
 
     @Transient
-    @ApiModelProperty(value="产品编号",name="productNo")
     private String productNo;
 
     /**

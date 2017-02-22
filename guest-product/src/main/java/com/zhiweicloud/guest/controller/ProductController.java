@@ -8,9 +8,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Product;
 import com.zhiweicloud.guest.service.ProductService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +46,34 @@ public class ProductController {
         LZResult<PaginationResult<Product>> result = productService.getAll(airportCode, page, rows);
         return JSON.toJSONString(result);
 
+    }
+
+    /**
+     * 产品配置管理 - 根据id查询
+     *
+     * @param id
+     * @return
+     */
+    @GET
+    @Path(value = "viewEdit")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "产品配置 - 根据id查询 ", notes = "返回产品信息")
+    public String view(@QueryParam(value = "id") Long id,
+                       @QueryParam(value = "airportCode") String airportCode) {
+        LZResult<Product> result = new LZResult<>();
+        try {
+            Product guestOrder = productService.getById(id, airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(guestOrder);
+            return JSON.toJSONString(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 
     /**

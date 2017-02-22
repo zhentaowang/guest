@@ -30,9 +30,10 @@ import com.zhiweicloud.guest.model.Product;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Created by zhangpengfei on 2016/12/26.
+ * Created by zhengyiyin on 2017/2/22.
  */
 public interface ProductMapper extends MyMapper<Product> {
 
@@ -40,5 +41,11 @@ public interface ProductMapper extends MyMapper<Product> {
 
     int deleteProduct(Product productParam);
 
-    List<Product> getProductList(@Param("airportCode")String airportCode,@Param("page") int page,@Param("rows") int rows);
+    /**
+     * 根据主键id和机场编码获取单条记录详情
+     * @return
+     */
+    Product queryByIdAndAirCode(@Param("productId") Long productId,@Param("airportCode") String airportCode);
+
+    List<Product> getProductList(@Param("airportCode")String airportCode,@Param("begin") int begin,@Param("end") int end);
 }
