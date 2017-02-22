@@ -26,22 +26,26 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.ProductTypeAllocation;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
+import com.zhiweicloud.guest.model.Product;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author zhangpengfei
- * @since 2016-12-26 22:17
+ * Created by zhengyiyin on 2017/2/22.
  */
-public interface ProductTypeAllocationMapper extends MyMapper<ProductTypeAllocation> {
+public interface ProductMapper extends MyMapper<Product> {
 
-    List<Dropdownlist> getServiceTypeDropdownList(Map<String, Object> param);
-    List<Dropdownlist> getProductCategoryDropdownList(Map<String, Object> param);
-    List<ProductTypeAllocation> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
-    int getListCount(Map<String, Object> map);
+    int updateProduct(Product productParam);
 
+    int deleteProduct(Product productParam);
+
+    /**
+     * 根据主键id和机场编码获取单条记录详情
+     * @return
+     */
+    Product queryByIdAndAirCode(@Param("productId") Long productId,@Param("airportCode") String airportCode);
+
+    List<Product> getProductList(@Param("airportCode")String airportCode,@Param("begin") int begin,@Param("end") int end);
 }
