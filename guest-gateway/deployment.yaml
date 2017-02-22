@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: guest-gateway
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: guest-gateway
+    spec:
+      containers:
+        - name: guest-gateway
+          image: golang:1.8
+          command: ["go", "run", "src/main.go"]
+          volumeMounts:
+          - mountPath: "/go/src"
+            name: code
+            subPath: guest/guest-gateway
+          ports:
+            - containerPort: 8888
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guest-gateway
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8888
+    protocol: TCP
+  selector:
+    app: guest-gateway
