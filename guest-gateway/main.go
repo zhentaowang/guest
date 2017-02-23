@@ -36,7 +36,13 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uri := r.RequestURI
+	fmt.Println(uri)
+	if strings.Index(uri[1:len(uri)], "/") <= 1 {
+		return
+	}
+
 	serviceName := r.RequestURI[1 : strings.Index(uri[1:len(uri)], "/")+1]
+
 	fmt.Println(serviceName)
 	remote, err := url.Parse("http://" + serviceName)
 	if err != nil {
