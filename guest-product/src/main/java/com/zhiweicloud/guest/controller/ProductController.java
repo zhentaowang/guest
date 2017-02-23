@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Created by zhengyiyin on 2017/2/22.
@@ -110,13 +111,14 @@ public class ProductController {
     @POST
     @Path(value = "deleteProduct")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "产品管理 - 删除", notes = "返回响应结果")
+    @ApiOperation(value = "产品管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     public String deleteProduct(
-            @QueryParam(value = "productId") Long productId,
+            @QueryParam(value = "airportCode") String airportCode,
             @QueryParam(value = "userId") Long userId,
-            @QueryParam(value = "airportCode") String airportCode) {
+            @RequestBody RequsetParams<Long> params) {
         try {
-            productService.deleteById(productId,userId,airportCode);
+            List<Long> ids = params.getData();
+            productService.deleteById(ids,userId,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete product by productId error", e);

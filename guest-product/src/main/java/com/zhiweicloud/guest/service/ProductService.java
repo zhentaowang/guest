@@ -5,8 +5,6 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.ProductMapper;
 import com.zhiweicloud.guest.model.Product;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
-import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,26 +31,32 @@ public class ProductService {
             product.setUpdateTime(new Date());
             productMapper.updateProduct(product);
         } else {
+            product.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            product.setCreateTime(new Date());
             productMapper.insert(product);
         }
 
     }
 
     /**
-     * 逻辑删除产品，单条删除
-     * @param productId
+     * 逻辑删除产品
+     * @param ids
      * @param userId
      * @param airportCode
      * @throws Exception
      */
     //@TODO: userId 类型要改
-    public void deleteById(Long productId, Long userId ,String airportCode) throws Exception {
+    public void deleteById(List<Long> ids, Long userId ,String airportCode) throws Exception {
         Product tempProduct = new Product();
-        tempProduct.setProductId(productId);
         tempProduct.setAirportCode(airportCode);
         tempProduct.setIsDeleted(Constant.MARK_AS_DELETED);
-//        tempProduct.setUpdateUser(userId);
-        productMapper.deleteProduct(tempProduct);
+        //          tempProduct.setUpdateUser(userId);
+        for(Long productId : ids){
+            tempProduct.setProductId(productId);
+            productMapper.deleteProduct(tempProduct);
+        }
+
+
     }
 
     /**

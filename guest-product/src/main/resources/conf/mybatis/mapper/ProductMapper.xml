@@ -58,6 +58,7 @@
       product
     WHERE
       airport_code = #{airportCode} AND is_deleted = 0
-      limit #{begin}, #{end}
+    ORDER BY create_time DESC  limit #{begin}, #{end}
+
   </select>
 </mapper>
