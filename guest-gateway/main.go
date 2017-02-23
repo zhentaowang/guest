@@ -20,7 +20,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 获取user_id
 	query := r.URL.Query()
 	if len(query["access_token"]) > 0 {
-		resp, err := http.Get("http://oauth-center/user/getUser?access_token=" + query["access_token"][0])
+		resp, err := http.Get("http://oauth-center/oauth/user/getUser?access_token=" + query["access_token"][0])
 		if err != nil {
 			log.Fatal(err)
 		}
