@@ -52,7 +52,7 @@
     values(#{employeeId},#{roleId},#{airportCode})
   </insert>
 
-  <insert id="insertByExists">
+  <insert id="insertEmployeeRoleByExists">
     INSERT INTO sys_user_role (user_id,role_id,airport_code)
     SELECT #{employeeId},#{roleId},#{airportCode}
     FROM dual
@@ -62,7 +62,7 @@
   </insert>
 
   <update id="deleteRoles" parameterType="map">
-    update sys_user_role set is_deleted = 1 where menu_id not in (${roleIds})  and airport_code = #{airportCode} and user_id = #{employeeId}
+    update sys_user_role set is_deleted = 1 where role_id not in (${roleIds})  and airport_code = #{airportCode} and user_id = #{employeeId}
   </update>
 
 
