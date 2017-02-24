@@ -1,7 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "description" : "角色调试接口",
+    "description" : "菜单角色调试接口",
     "version" : "v1",
     "title" : "Guest Role",
     "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
@@ -14,44 +14,78 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "localhost:8080",
+  "host" : "192.168.1.126:8080",
   "tags" : [ {
-    "name" : "SysRole"
+    "name" : "菜单管理"
+  }, {
+    "name" : "角色管理"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/guest-role/assignMenuToRole" : {
+    "/addMenu" : {
       "post" : {
-        "tags" : [ "SysRole" ],
-        "summary" : "角色管理 - 给角色分配菜单",
+        "tags" : [ "菜单管理" ],
+        "summary" : "菜单管理 - 新增/修改",
         "description" : "返回成功还是失败",
-        "operationId" : "assignMenuToRole",
-        "produces" : [ "application/json;charset=utf8" ],
+        "operationId" : "addMenu",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf-8" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "sysRole",
+          "description" : "sysMenu",
           "required" : true,
           "schema" : {
-            "$ref" : "#/definitions/全局统一接受参数SysRoleParam"
+            "$ref" : "#/definitions/全局统一接受参数SysMenu"
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/响应结果"
+              "type" : "string"
             }
           }
         }
       }
     },
-    "/guest-role/delete" : {
+    "/deleteMenus" : {
       "post" : {
-        "tags" : [ "SysRole" ],
+        "tags" : [ "菜单管理" ],
+        "summary" : "菜单管理 - 删除",
+        "description" : "返回响应结果",
+        "operationId" : "deleteMenus",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Long"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/deleteRoles" : {
+      "post" : {
+        "tags" : [ "角色管理" ],
         "summary" : "角色管理 - 删除",
         "description" : "返回响应结果",
-        "operationId" : "delete",
+        "operationId" : "deleteRoles",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
           "in" : "body",
@@ -76,37 +110,39 @@
         }
       }
     },
-    "/guest-role/getMenuByUserId" : {
+    "/getMenuByRoleId" : {
       "get" : {
-        "tags" : [ "SysRole" ],
-        "summary" : "菜单管理 - 查询所有菜单",
+        "tags" : [ "菜单管理" ],
+        "summary" : "菜单管理 - 查询当前角色有哪些菜单",
         "description" : "返回成功还是失败",
-        "operationId" : "getMenuByUserId",
-        "produces" : [ "application/json;charset=utf8" ],
+        "operationId" : "getMenuByRoleId",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf-8" ],
         "parameters" : [ {
           "name" : "airportCode",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "access_token",
+          "name" : "roleId",
           "in" : "query",
           "required" : false,
-          "type" : "string"
+          "type" : "integer",
+          "format" : "int64"
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/响应结果"
+              "type" : "string"
             }
           }
         }
       }
     },
-    "/guest-role/list" : {
+    "/list" : {
       "get" : {
-        "tags" : [ "SysRole" ],
+        "tags" : [ "角色管理" ],
         "summary" : "角色列表 - 分页查询",
         "description" : "返回分页结果",
         "operationId" : "list",
@@ -138,17 +174,53 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "successful operation",
+            "description" : "请求成功",
             "schema" : {
-              "type" : "string"
+              "$ref" : "#/definitions/SysRole"
             }
+          },
+          "400" : {
+            "description" : "参数错误"
+          },
+          "405" : {
+            "description" : "请求方式不对"
           }
         }
       }
     },
-    "/guest-role/saveOrUpdate" : {
+    "/menuTree" : {
+      "get" : {
+        "tags" : [ "菜单管理" ],
+        "summary" : "菜单管理 - 菜单树",
+        "description" : "返回成功还是失败",
+        "operationId" : "menuTree",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf-8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "请求成功",
+            "schema" : {
+              "$ref" : "#/definitions/SysMenu"
+            }
+          },
+          "400" : {
+            "description" : "参数错误"
+          },
+          "405" : {
+            "description" : "请求方式不对"
+          }
+        }
+      }
+    },
+    "/saveOrUpdate" : {
       "post" : {
-        "tags" : [ "SysRole" ],
+        "tags" : [ "角色管理" ],
         "summary" : "角色管理 - 新增/修改",
         "description" : "返回成功还是失败",
         "operationId" : "save",
@@ -167,21 +239,21 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/响应结果"
+              "type" : "string"
             }
           }
         }
       }
     },
-    "/guest-role/view" : {
+    "/view" : {
       "get" : {
-        "tags" : [ "SysRole" ],
+        "tags" : [ "角色管理" ],
         "summary" : "角色管理- 根据id查询员工 ",
         "description" : "返回合同详情",
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "id",
+          "name" : "roleId",
           "in" : "query",
           "required" : false,
           "type" : "integer",
@@ -201,18 +273,54 @@
           }
         }
       }
+    },
+    "/viewMenu" : {
+      "get" : {
+        "tags" : [ "菜单管理" ],
+        "summary" : "菜单管理 - 查询菜单详情 ",
+        "description" : "返回查询菜单详情",
+        "operationId" : "viewMenu",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "menuId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "menuId",
+          "in" : "query",
+          "description" : "员工id",
+          "required" : true,
+          "type" : "Long"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场编号",
+          "required" : true,
+          "type" : "String"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
-    "SysRole" : {
+    "SysMenu" : {
       "type" : "object",
-      "required" : [ "airportCode", "id", "name" ],
+      "required" : [ "airportCode", "name" ],
       "properties" : {
-        "id" : {
-          "type" : "integer",
-          "format" : "int64",
-          "description" : "主键自增id"
-        },
         "createTime" : {
           "type" : "string",
           "format" : "date-time",
@@ -232,34 +340,109 @@
           "type" : "string",
           "description" : "机场code"
         },
+        "createUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "创建人"
+        },
+        "updateUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "修改人"
+        },
+        "menuId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "菜单id"
+        },
+        "pid" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "父id"
+        },
         "name" : {
           "type" : "string",
-          "description" : "角色名称"
+          "description" : "菜单名称"
+        },
+        "url" : {
+          "type" : "string",
+          "description" : "菜单链接地址"
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "菜单类型"
+        },
+        "position" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "菜单排序号"
+        },
+        "children" : {
+          "type" : "array",
+          "description" : "子菜单",
+          "items" : {
+            "$ref" : "#/definitions/SysMenu"
+          }
         }
       },
-      "description" : "sys_role"
+      "description" : "sys_menu"
     },
-    "sysRoleParam" : {
+    "SysRole" : {
       "type" : "object",
-      "required" : [ "id", "sysMenu" ],
+      "required" : [ "airportCode", "name" ],
       "properties" : {
-        "id" : {
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "createUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "创建人"
+        },
+        "updateUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "修改人"
+        },
+        "roleId" : {
           "type" : "integer",
           "format" : "int64",
           "description" : "角色id"
         },
-        "sysMenu" : {
-          "type" : "array",
-          "description" : "菜单对象",
-          "items" : {
-            "$ref" : "#/definitions/sysRoleParam"
-          }
+        "name" : {
+          "type" : "string",
+          "description" : "角色名称"
         },
-        "airportCode" : {
-          "type" : "string"
+        "description" : {
+          "type" : "string",
+          "description" : "角色描述"
+        },
+        "menuIdList" : {
+          "type" : "array",
+          "description" : "菜单id集合",
+          "items" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
         }
       },
-      "description" : "用于接收前台参数"
+      "description" : "sys_role"
     },
     "全局统一接受参数Long" : {
       "type" : "object",
@@ -270,6 +453,19 @@
           "items" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "全局统一接受参数SysMenu" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/SysMenu"
           }
         }
       },
@@ -287,38 +483,6 @@
         }
       },
       "description" : "全局统一接受参数"
-    },
-    "全局统一接受参数SysRoleParam" : {
-      "type" : "object",
-      "properties" : {
-        "data" : {
-          "type" : "array",
-          "description" : "数据",
-          "items" : {
-            "$ref" : "#/definitions/sysRoleParam"
-          }
-        }
-      },
-      "description" : "全局统一接受参数"
-    },
-    "响应结果" : {
-      "type" : "object",
-      "required" : [ "msg", "status" ],
-      "properties" : {
-        "status" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "响应状态码"
-        },
-        "msg" : {
-          "type" : "string",
-          "description" : "响应消息"
-        },
-        "data" : {
-          "type" : "object",
-          "description" : "响应数据"
-        }
-      }
     }
   }
 }

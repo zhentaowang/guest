@@ -28,6 +28,7 @@ package com.zhiweicloud.guest.mapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -37,15 +38,19 @@ import java.util.Map;
  * @since 2016-12-21 22:17
  */
 public interface EmployeeMapper extends tk.mybatis.mapper.common.Mapper<Employee>, tk.mybatis.mapper.common.MySqlMapper<Employee> {
-    Employee complexSqlQuery(Long id);
-
     List<Dropdownlist> getEmployeeDropdownList(String airportCode);
 
     int selectEmployeeTotal(Employee employeeParam);
 
-    //List<Employee> selectEmployeeList(BasePagination<Employee> queryCondition);
-
     List<Map> selectEmployeeList(BasePagination<Employee> queryCondition);
 
-    Employee selectByIdAndAirportCode(Map map);
+    List<Map> selectByIdAndAirportCode(@Param("employeeId") Long employeeId, @Param("airportCode") String airportCode );
+
+    void addEmployeeAndRoleRelate(@Param("employeeId") Long employeeId, @Param("roleId") Long roleId,@Param("airportCode") String airportCode );
+
+    void insertEmployeeRoleByExists(@Param("employeeId") Long employeeId, @Param("roleId") Long roleId,@Param("airportCode") String airportCode );
+
+    void deleteRoles(@Param("employeeId") Long employeeId, @Param("roleIds") String roleIds,@Param("airportCode") String airportCode);
+
+    List<Map> getRoleListByUserId(@Param("employeeId") Long employeeId, @Param("airportCode") String airportCode);
 }

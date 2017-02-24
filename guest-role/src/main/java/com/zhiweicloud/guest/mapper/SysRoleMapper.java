@@ -29,6 +29,7 @@ import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.SysRole;
 import com.zhiweicloud.guest.model.SysRoleParam;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,25 @@ public interface SysRoleMapper extends tk.mybatis.mapper.common.Mapper<SysRole>,
 
     List<SysRole> selectSysRoleList(BasePagination<SysRole> queryCondition);
 
-    SysRole selectByIdAndAirportCode(Map map);
-
-    void assignMenuToRole(Map<String,Object> map);
+    /**
+     * 查询角色详情
+     * @return
+     */
+    SysRole selectByIdAndAirportCode(@Param("roleId") Long roleId,@Param("airportCode") String airportCode);
 
     List<Long> getMenuIdByUserId(Map map);
+
+    /**
+     * 查询哪些角色不能删除
+     * @param map
+     * @return
+     */
+    int roleInUse(Map<String, Object> map);
+
+    /**
+     * 查询角色名称
+     * @param map
+     * @return
+     */
+    String selectRoleNameByIdAndAirportCode(Map<String, Object> map);
 }

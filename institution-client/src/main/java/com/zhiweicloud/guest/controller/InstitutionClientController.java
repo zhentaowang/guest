@@ -115,23 +115,19 @@ public class InstitutionClientController {
 
 
     /**
-     * 机构客户管理 - 根据id查询员工
-     * @param id
+     * 机构客户管理 - 根据id查询协议客户管理
+     * @param institutionClientId
      * @return
      */
     @GET
     @Path(value = "view")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "机构客户管理 - 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
-    /*@ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    })*/
+    @ApiOperation(value = "机构客户管理 - 根据id查询协议客户管理 ", notes = "返回协议客户管理详情", httpMethod = "GET", produces = "application/json")
     public String view(
-            @QueryParam(value = "id") Long id,
+            @QueryParam(value = "institutionClientId") Long institutionClientId,
             @QueryParam(value = "airportCode") String airportCode) {
         try {
-            InstitutionClient institutionClient = institutionClientService.getById(id,airportCode);
+            InstitutionClient institutionClient = institutionClientService.getById(institutionClientId,airportCode);
             return JSON.toJSONString(new LZResult<>(institutionClient));
         }catch (Exception e){
             e.printStackTrace();

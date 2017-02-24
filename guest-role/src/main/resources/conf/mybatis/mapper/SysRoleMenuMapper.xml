@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="resources.conf.mybatis.mapper.SysRoleMenuMapper">
+<mapper namespace="com.zhiweicloud.guest.mapper.SysRoleMenuMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.SysRoleMenu">
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="menu_id" jdbcType="BIGINT" property="menuId" />
   </resultMap>
-  <insert id="insert" parameterType="com.zhiweicloud.guest.model.SysRoleMenu">
-    insert into sys_role_menu (role_id, menu_id)
-    values (#{roleId,jdbcType=BIGINT}, #{menuId,jdbcType=BIGINT})
+
+
+
+  <insert id="insertByExists">
+    INSERT INTO sys_role_menu (role_id,menu_id,airport_code)
+    SELECT #{roleId},#{menuId},#{airportCode}
+    FROM dual
+    WHERE not exists (
+      select * from sys_role_menu where role_id = #{roleId} and menu_id = #{menuId} and airport_code = #{airportCode} and is_deleted = 0
+    )
   </insert>
-  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.SysRoleMenu">
-    insert into sys_role_menu
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="roleId != null">
-        role_id,
-      </if>
-      <if test="menuId != null">
-        menu_id,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="roleId != null">
-        #{roleId,jdbcType=BIGINT},
-      </if>
-      <if test="menuId != null">
-        #{menuId,jdbcType=BIGINT},
-      </if>
-    </trim>
-  </insert>
+
+  <update id="deleteMenus" parameterType="map">
+    update sys_role_menu set is_deleted = 1 where menu_id not in (${menuIds})  and airport_code = #{airportCode} and role_id = #{roleId}
+  </update>
 </mapper>

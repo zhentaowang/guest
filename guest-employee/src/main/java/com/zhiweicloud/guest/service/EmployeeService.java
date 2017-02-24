@@ -24,8 +24,6 @@
 
 package com.zhiweicloud.guest.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -38,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,33 +59,40 @@ public class EmployeeService {
         return result;
     }
 
-    public Employee getById(Long id, String airportCode) {
-        Map map = new HashMap();
-        map.put("id", id);
-        map.put("airportCode", airportCode);
-        return employeeMapper.selectByIdAndAirportCode(map);
+    public List<Map> getById(Long employeeId, String airportCode) {
+        return employeeMapper.selectByIdAndAirportCode(employeeId,airportCode);
     }
 
     public void saveOrUpdate(Employee employee) {
         try {
-            if (employee.getId() != null) {
+            if (employee.getIsExist() != null && employee.getIsExist() == 1) { //isExist == 1 修改
                 Example example = new Example(Employee.class);
-                String sql = "id = " + employee.getId() + " and airport_code = '" + employee.getAirportCode() + "'";
+                String sql = "employee_id = " + employee.getEmployeeId() + " and airport_code = '" + employee.getAirportCode() + "'";
                 example.createCriteria().andCondition(sql);
                 employeeMapper.updateByExampleSelective(employee, example);
-            } else {
-                Map<String, Object> p = new HashMap<>();
-                p.put("grant_type", "password");
-                p.put("client_id", employee.getAirportCode());
-                p.put("client_secret", employee.getPassword());
-                p.put("username", employee.getName());
-                p.put("password", employee.getPassword());
-                p.put("password_confirmation", employee.getPassword());
 
-                String result = HttpClientUtil.httpPostRequest("http://airport.zhiweicloud.com/oauth/auth/register", p);
-                JSONObject oauth = JSON.parseObject(result);
-                employee.setId(oauth.getLong("user_id"));
+                /**
+                 * 更新角色和菜单的关联关系：
+                 * 1：insertByExists。有就更新，没有就插入
+                 * 2：删除，用not in 来删除
+                 *   update ${tableName} set is_deleted = 1 where id not in (${ids})  and airport_code = #{airportCode} and order_id = #{orderId}
+                 */
+                if(employee.getRoleIdList() != null && employee.getRoleIdList().size() > 0){
+                    for(int i = 0; i < employee.getRoleIdList().size();i++){
+                        employeeMapper.insertEmployeeRoleByExists(employee.getEmployeeId(),employee.getRoleIdList().get(i),employee.getAirportCode());
+                    }
+                    //删除
+                    employeeMapper.deleteRoles(employee.getEmployeeId(),ListUtil.List2String(employee.getRoleIdList()),employee.getAirportCode());
+                }
+
+            } else if(employee.getIsExist() != null && employee.getIsExist() == 0) { //isExist == 1 新增
                 employeeMapper.insertSelective(employee);
+                //同时去做用户和role的关联关系 :即：去sys_user_role表中新增一条记录
+                if(employee.getRoleIdList() != null && employee.getRoleIdList().size() > 0){
+                    for(int i = 0; i < employee.getRoleIdList().size();i++){
+                        employeeMapper.addEmployeeAndRoleRelate(employee.getEmployeeId(),employee.getRoleIdList().get(i),employee.getAirportCode());
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,7 +102,7 @@ public class EmployeeService {
     public void deleteById(List<Long> ids, String airportCode) {
         for (int i = 0; i < ids.size(); i++) {
             Employee temp = new Employee();
-            temp.setId(ids.get(i));
+            temp.setEmployeeId(ids.get(i));
             temp.setIsDeleted(Constant.MARK_AS_DELETED);
             temp.setAirportCode(airportCode);
             employeeMapper.updateByPrimaryKeySelective(temp);
@@ -108,5 +112,9 @@ public class EmployeeService {
 
     public List<Dropdownlist> queryEmployeeDropdownList(String airportCode) {
         return employeeMapper.getEmployeeDropdownList(airportCode);
+    }
+
+    public List<Map> getRoleListByUserId(Long employeeId, String airportCode) {
+        return employeeMapper.getRoleListByUserId(employeeId,airportCode);
     }
 }

@@ -33,7 +33,6 @@ import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -65,21 +64,18 @@ public class InstitutionClientService {
         return result;
     }
 
-    public InstitutionClient getById(Long id,String airportCode) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-        map.put("airportCode", airportCode);
-        return institutionClientMapper.viewByIdAndAirCode(map);
+    public InstitutionClient getById(Long institutionClientId,String airportCode) {
+        return institutionClientMapper.viewByIdAndAirCode(institutionClientId,airportCode);
     }
 
     public void saveOrUpdate(InstitutionClient institutionClient) {
-        if (institutionClient.getId() != null) {
+        if (institutionClient.getInstitutionClientId() != null) {
             Example example = new Example(InstitutionClient.class);
-            String sql = "id = " + institutionClient.getId() + " and airport_code = '" + institutionClient.getAirportCode() + "'";
+            String sql = "institution_client_id = " + institutionClient.getInstitutionClientId() + " and airport_code = '" + institutionClient.getAirportCode() + "'";
             example.createCriteria().andCondition(sql);
             institutionClientMapper.updateByExample(institutionClient,example);
         } else {
-            institutionClientMapper.insert(institutionClient);
+            institutionClientMapper.insertSelective(institutionClient);
         }
     }
 
@@ -87,11 +83,7 @@ public class InstitutionClientService {
 
     public void deleteById(List<Long> ids,String airportCode) {
         for(int i = 0; i< ids.size();i++){
-            InstitutionClient temp = new InstitutionClient();
-            temp.setId(ids.get(i));
-            temp.setIsDeleted(Constant.MARK_AS_DELETED);
-            temp.setAirportCode(airportCode);
-            institutionClientMapper.updateByPrimaryKeySelective(temp);
+            institutionClientMapper.markAsDeleted(ids.get(i),airportCode);
         }
     }
 

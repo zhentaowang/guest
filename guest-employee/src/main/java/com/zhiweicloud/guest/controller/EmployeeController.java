@@ -25,7 +25,6 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -38,13 +37,9 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -70,13 +65,19 @@ public class EmployeeController {
     @Path("list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = Employee.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    })
     public String list(
-            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
             @QueryParam(value = "airportCode") String airportCode) {
-
         try {
             Employee employeeParam = new Employee();
             employeeParam.setName(name);
@@ -104,53 +105,98 @@ public class EmployeeController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult save(@ApiParam(value = "employee", required = true) @RequestBody RequsetParams<Employee> param) {
+    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param) {
+        LZResult<String> result = new LZResult<>();
         try {
             Employee employee = null;
             if (!CollectionUtils.isEmpty(param.getData())) {
                 employee = param.getData().get(0);
             }
             if (employee == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
             }
             employeeService.saveOrUpdate(employee);
 
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
         }
+        return JSON.toJSONString(result);
     }
 
 
     /**
      * 员工管理 - 根据id查询员工
      *
-     * @param id
+     * @param employeeId
      * @return
      */
     @GET
     @Path("view")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "员工id", dataType = "Long", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = Employee.class)
     })
     public String view(
-            @QueryParam("id") Long id,
+            @QueryParam("employeeId") Long employeeId,
             @QueryParam("airportCode") String airportCode) {
+        LZResult<List<Map>> result = new LZResult<>();
         try {
-            Employee employee = employeeService.getById(id,airportCode);
-            return JSON.toJSONString(new LZResult<>(employee));
+            List<Map> employee = employeeService.getById(employeeId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(employee);
+            return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
-            LZResult<Employee> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
             return JSON.toJSONString(new LZResult<>(result));
         }
+    }
+
+    /**
+     * 员工管理 - 根据用户id获取角色列表
+     *
+     * @param employeeId
+     * @return
+     */
+    @GET
+    @Path("getRoleByUserId")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "员工管理 - 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = Long.class)
+    })
+    public String getRoleByUserId(
+            @QueryParam("employeeId") Long employeeId,
+            @QueryParam("airportCode") String airportCode) {
+        LZResult<List<Map>> result = new LZResult<>();
+        try {
+            List<Map> employee = employeeService.getRoleListByUserId(employeeId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(employee);
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -192,9 +238,20 @@ public class EmployeeController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "系统中用到员工信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public LZResult<List<Dropdownlist>> queryEmployeeDropdownList(@QueryParam("airportCode") String airportCode) {
-        List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode);
-        return new LZResult<List<Dropdownlist>>(list);
+    public String queryEmployeeDropdownList(@QueryParam("airportCode") String airportCode) {
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+        try {
+            List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 
 

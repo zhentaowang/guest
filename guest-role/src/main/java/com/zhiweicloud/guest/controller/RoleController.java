@@ -34,6 +34,7 @@ import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.SysMenu;
 import com.zhiweicloud.guest.model.SysRole;
 import com.zhiweicloud.guest.model.SysRoleParam;
+import com.zhiweicloud.guest.service.SysMenuService;
 import com.zhiweicloud.guest.service.SysRoleService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ import java.util.List;
  */
 @Component
 @Path("/")
-@Api(value="角色管理",description="", tags={"SysRole"})
+@Api(value="角色管理",description="", tags={"角色管理"})
 public class RoleController {
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
@@ -68,12 +69,11 @@ public class RoleController {
     @Path(value ="list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "角色列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    /*@ApiImplicitParams(
-            {
-            @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "name", value = "姓名", dataType = "String", required = false, paramType = "query")})*/
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = SysRole.class)
+    })
     public String list(
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
@@ -98,28 +98,37 @@ public class RoleController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "sysRole", required = true) @RequestBody RequsetParams<SysRole> params){
+    public String save(@ApiParam(value = "sysRole", required = true) RequsetParams<SysRole> params){
+        LZResult<String> result = new LZResult<>();
         try{
             SysRole sysRole = null;
             if(!CollectionUtils.isEmpty(params.getData())){
                 sysRole = params.getData().get(0);
             }
 
-            if (sysRole == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            if (sysRole == null || sysRole.getName() == null || sysRole.getName().equals("")) {
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
+            }else{
+                sysRoleService.saveOrUpdate(sysRole);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(null);
             }
-            sysRoleService.saveOrUpdate(sysRole);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
         }
+        return JSON.toJSONString(result);
     }
 
 
     /**
      * 角色管理 - 根据id查询员工
-     * @param id
+     * @param roleId airportCode
      * @return
      */
     @GET
@@ -128,10 +137,21 @@ public class RoleController {
     @ApiOperation(value = "角色管理- 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
 
     public String view(
-            @QueryParam(value = "id") Long id,
+            @QueryParam(value = "roleId") Long roleId,
             @QueryParam(value = "airportCode") String airportCode) {
-        SysRole sysRole = sysRoleService.getById(id,airportCode);
-        return JSON.toJSONString(new LZResult<SysRole>(sysRole));
+        LZResult<SysRole> result = new LZResult<>();
+        try {
+            SysRole sysRole = sysRoleService.getById(roleId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(sysRole);
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -144,81 +164,33 @@ public class RoleController {
      * @return
      */
     @POST
-    @Path(value = "delete")
+    @Path(value = "deleteRoles")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "角色管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public String delete(
+    public String deleteRoles(
             @RequestBody RequsetParams<Long> params,
             @QueryParam(value = "airportCode") String airportCode) {
+        LZResult<String> result = new LZResult<>();
         try {
             List<Long> ids = params.getData();
-            sysRoleService.deleteById(ids,airportCode);
-            return JSON.toJSONString(LXResult.success());
-        } catch (Exception e) {
-            logger.error("delete SysRole by ids error", e);
-            return JSON.toJSONString(LXResult.error());
-        }
-    }
-
-    /**
-     * 角色管理 - 给角色分配菜单
-     * @param params
-     * @return
-     */
-    @POST
-    @Path(value="assignMenuToRole")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value="角色管理 - 给角色分配菜单", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult assignMenuToRole(@ApiParam(value = "sysRole", required = true) @RequestBody RequsetParams<SysRoleParam> params){
-        try{
-            SysRoleParam sysRoleParam = null;
-            if(!CollectionUtils.isEmpty(params.getData())){
-                sysRoleParam = params.getData().get(0);
+            String roleName = sysRoleService.deleteById(ids, airportCode);
+            if(roleName != null && roleName.length() > 0){
+                roleName = roleName + " 角色已经被用户引用了，不能删除！";
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(roleName);
             }
-
-            if (sysRoleParam == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
-            }
-            sysRoleService.assignMenuToRole(sysRoleParam);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
-        }
-    }
-
-    /**
-     * 菜单管理 - 查询所有菜单
-     * @param
-     * @return
-     */
-    @GET
-    @Path(value="getMenuByUserId")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value="菜单管理 - 查询所有菜单", notes ="返回成功还是失败",httpMethod ="GET", produces="application/json")
-    /*@ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "access_token", value = "Access_Token", dataType = "String", required = true, paramType = "query")
-    })*/
-    public LZResult<List<SysMenu>> getMenuByUserId( HttpServletRequest request,
-            @QueryParam(value = "airportCode") String airportCode,
-            @QueryParam(value = "access_token") String access_token){
-        try{
-            //@TODO:权限过滤
-//            String userIdStr = (String)request.getSession().getAttribute("userId");
-
-            List<SysMenu> result = sysRoleService.getMenuByUserId(Long.valueOf(40),airportCode);
-            return new LZResult<>(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            LZResult<List<SysMenu>> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return result;
         }
+        return JSON.toJSONString(result);
     }
+
+
 
 
 

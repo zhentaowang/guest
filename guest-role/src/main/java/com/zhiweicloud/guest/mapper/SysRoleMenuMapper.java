@@ -25,29 +25,18 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.InstitutionClient;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
-import org.apache.ibatis.annotations.Param;
+import com.zhiweicloud.guest.model.SysRoleMenu;
 
-import java.util.List;
 import java.util.Map;
 
+
 /**
- * InstitutionClientMapper.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2016-12-26 15:45:36 Created By zhangpengfei
+ * @author zhangpengfei
+ * @since 2016-12-21 22:17
  */
-public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
-    List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
+public interface SysRoleMenuMapper extends tk.mybatis.mapper.common.Mapper<SysRoleMenu>, tk.mybatis.mapper.common.MySqlMapper<SysRoleMenu> {
 
-    List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
+    void insertByExists(SysRoleMenu sysRoleMenu);
 
-    InstitutionClient viewByIdAndAirCode(@Param("institutionClientId") Long institutionClientId,@Param("airportCode") String airportCode);
-
-    Integer getListByConiditionCount(InstitutionClient queryCondition);
-
-    void markAsDeleted(@Param("institutionClientId")Long institutionClientId, @Param("airportCode")String airportCode);
+    void deleteMenus(Map map);
 }

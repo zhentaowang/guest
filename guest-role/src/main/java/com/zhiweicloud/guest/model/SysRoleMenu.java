@@ -19,13 +19,11 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 2017-02-06 14:53:27 Created By zhangpengfei
 */
 @ApiModel(value="SysRoleMenu",description="sys_role_menu")
-public class SysRoleMenu {
+public class SysRoleMenu extends BaseEntity{
     @ApiModelProperty(value="角色id",name="roleId", required=true)
-    @NotEmpty
     private Long roleId;
 
     @ApiModelProperty(value="菜单id",name="menuId", required=true)
-    @NotEmpty
     private Long menuId;
 
     /**

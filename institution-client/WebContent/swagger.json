@@ -3,7 +3,7 @@
   "info" : {
     "description" : "机构接口调试",
     "version" : "v1",
-    "title" : "Guest Employee",
+    "title" : "InstitutionClient",
     "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
     "contact" : {
       "name" : "Luo Jing",
@@ -14,7 +14,7 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "localhost:8080",
+  "host" : "192.168.1.126:8082",
   "tags" : [ {
     "name" : "InstitutionClientModel"
   }, {
@@ -22,7 +22,7 @@
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/institution-client/delete" : {
+    "/delete" : {
       "post" : {
         "tags" : [ "InstitutionClientModel" ],
         "summary" : "机构客户管理 - 删除",
@@ -53,7 +53,7 @@
         }
       }
     },
-    "/institution-client/list" : {
+    "/list" : {
       "get" : {
         "tags" : [ "InstitutionClientModel" ],
         "summary" : "机构客户管理 - 分页查询",
@@ -105,7 +105,7 @@
         }
       }
     },
-    "/institution-client/queryInstitutionClientDropdownList" : {
+    "/queryInstitutionClientDropdownList" : {
       "get" : {
         "tags" : [ "common:公共接口" ],
         "summary" : "系统中用到机构客户信息下来框，只包含id，和value的对象",
@@ -156,7 +156,7 @@
         }
       }
     },
-    "/institution-client/saveOrUpdate" : {
+    "/saveOrUpdate" : {
       "post" : {
         "tags" : [ "InstitutionClientModel" ],
         "summary" : "机构客户管理 - 新增/修改",
@@ -183,15 +183,15 @@
         }
       }
     },
-    "/institution-client/view" : {
+    "/view" : {
       "get" : {
         "tags" : [ "InstitutionClientModel" ],
-        "summary" : "机构客户管理 - 根据id查询员工 ",
-        "description" : "返回合同详情",
+        "summary" : "机构客户管理 - 根据id查询协议客户管理 ",
+        "description" : "返回协议客户管理详情",
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "id",
+          "name" : "institutionClientId",
           "in" : "query",
           "required" : false,
           "type" : "integer",
@@ -216,12 +216,41 @@
   "definitions" : {
     "InstitutionClient" : {
       "type" : "object",
-      "required" : [ "airportCode", "id", "name" ],
+      "required" : [ "airportCode", "name" ],
       "properties" : {
-        "id" : {
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "createUser" : {
           "type" : "integer",
           "format" : "int64",
-          "description" : "主键自增id"
+          "description" : "创建人"
+        },
+        "updateUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "修改人"
+        },
+        "institutionClientId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "机构客户id"
         },
         "no" : {
           "type" : "string",
@@ -242,25 +271,6 @@
         "remark" : {
           "type" : "string",
           "description" : "备注"
-        },
-        "createTime" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "创建时间"
-        },
-        "updateTime" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "修改时间"
-        },
-        "isDeleted" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "是否删除：默认为0，0：不删除，1：删除"
-        },
-        "airportCode" : {
-          "type" : "string",
-          "description" : "机场code"
         }
       },
       "description" : "institution_client"

@@ -9,6 +9,11 @@ package com.zhiweicloud.guest.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+import java.util.List;
+
 /**
  * Employee.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
@@ -17,6 +22,14 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "Employee", description = "employee")
 public class Employee extends BaseEntity {
+    @ApiModelProperty(value = "employeeId", name = "employeeId")
+    @Id
+    @GeneratedValue(
+            generator = "JDBC"
+    )
+    private Long employeeId;
+
+
     @ApiModelProperty(value = "账号", name = "account")
     private String account;
 
@@ -28,6 +41,14 @@ public class Employee extends BaseEntity {
 
     @ApiModelProperty(value = "性别：0：男，1：女", name = "sex")
     private Short sex;
+
+    @Transient
+    @ApiModelProperty(value="角色id集合",name="roleIdList")
+    private List<Long> roleIdList;
+
+    @Transient
+    @ApiModelProperty(value="判断新增的记录是否存在：0：新增，1：修改",name="isExist")
+    private Integer isExist;
 
     /**
      * 账号
@@ -93,5 +114,27 @@ public class Employee extends BaseEntity {
         this.sex = sex;
     }
 
+    public Long getEmployeeId() {
+        return employeeId;
+    }
 
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public List<Long> getRoleIdList() {
+        return roleIdList;
+    }
+
+    public void setRoleIdList(List<Long> roleIdList) {
+        this.roleIdList = roleIdList;
+    }
+
+    public Integer getIsExist() {
+        return isExist;
+    }
+
+    public void setIsExist(Integer isExist) {
+        this.isExist = isExist;
+    }
 }
