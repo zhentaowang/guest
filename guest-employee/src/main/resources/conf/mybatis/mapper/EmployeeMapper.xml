@@ -13,7 +13,7 @@
   </resultMap>
 
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="employee_id" jdbcType="BIGINT" property="id" />
     <result column="value" jdbcType="VARCHAR" property="value" />
   </resultMap>
 
@@ -41,7 +41,7 @@
 
 
   <select id="selectByIdAndAirportCode" parameterType="map" resultType="map">
-    select concat(e.airport_code,lpad(e.employee_id,3,'0')) AS account,e.name,e.password,e.sex
+    select e.account,e.name,e.password,e.sex
      from employee e
     where e.is_deleted = 0 and e.airport_code = #{airportCode} and e.employee_id = #{employeeId}
 
