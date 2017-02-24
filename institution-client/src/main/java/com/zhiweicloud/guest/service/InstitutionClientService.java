@@ -73,7 +73,7 @@ public class InstitutionClientService {
             Example example = new Example(InstitutionClient.class);
             String sql = "institution_client_id = " + institutionClient.getInstitutionClientId() + " and airport_code = '" + institutionClient.getAirportCode() + "'";
             example.createCriteria().andCondition(sql);
-            institutionClientMapper.updateByExample(institutionClient,example);
+            institutionClientMapper.updateByExampleSelective(institutionClient,example);
         } else {
             institutionClientMapper.insertSelective(institutionClient);
         }
