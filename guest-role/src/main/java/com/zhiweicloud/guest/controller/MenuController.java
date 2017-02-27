@@ -25,6 +25,7 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.HttpClientUtil;
@@ -262,13 +263,16 @@ public class MenuController {
     @Path(value="getMenuByUserId")
     @Produces("application/json;charset=utf8")
     public LZResult<List<SysMenu>> getMenuByUserId( HttpServletRequest request,
-                                                    @QueryParam(value = "airportCode") String airportCode,
                                                     @QueryParam(value = "access_token") String access_token){
         try{
             //@TODO:权限过滤
 //            String userIdStr = (String)request.getSession().getAttribute("userId");
-
-            List<SysMenu> result = sysMenuService.getMenuByUserId(Long.valueOf(40),airportCode);
+            //String userIdAndAirportCode = HttpClientUtil.httpGetRequest("http://airport.zhiweicloud.com/oauth/user/getUser?access_token=" + access_token);
+            //JSONObject oauth = JSON.parseObject(userIdAndAirportCode);
+            String user_id = request.getHeader("user_id");
+            String airporeCode = request.getHeader("client_id");
+            System.out.println("===user_id:" + user_id +" ==airporeCode" + airporeCode) ;
+            List<SysMenu> result = sysMenuService.getMenuByUserId(Long.valueOf(user_id),airporeCode);
             return new LZResult<>(result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -279,6 +283,8 @@ public class MenuController {
             return result;
         }
     }
+
+
 
 
 
