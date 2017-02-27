@@ -62,7 +62,7 @@
 
 
   <select id="roleInUse" resultType="int" parameterType="map">
-    select count(id) from sys_user_role where is_deleted = 0 and airport_code = #{airportCode} and role_id = #{roleId}
+    select count(user_role_id) from sys_user_role where is_deleted = 0 and airport_code = #{airportCode} and role_id = #{roleId}
   </select>
 
   <select id="selectRoleNameByIdAndAirportCode" resultType="string" parameterType="map">
