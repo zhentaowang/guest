@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: guest-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: guest-service
+    spec:
+      containers:
+        - name: guest-service
+          image: java:8-jre-alpine
+          command: ["java","-jar","/code/guest-service-1.0.jar"]
+          volumeMounts:
+          - mountPath: "/code"
+            name: code
+            subPath: guest/guest-service
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guest-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: guest-service

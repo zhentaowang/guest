@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.ServiceTypeAllocationMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.ServiceTypeAllocation">
+    <id column="service_type_allocation_id" jdbcType="BIGINT" property="serviceTypeAllocationId" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <result column="category_no" jdbcType="VARCHAR" property="categoryNo" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+  </resultMap>
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+  <id column="id" jdbcType="BIGINT" property="id" />
+  <result column="value" jdbcType="VARCHAR" property="value" />
+</resultMap>
+
+  <sql id="Base_Column_List">
+    service_type_allocation_id, airport_code, category_no, category, type, description, create_user, update_user,create_time, update_time, is_deleted
+  </sql>
+
+  <select id="getServiceTypeDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">
+    select service_type_allocation_id as id,type as value from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR} and category = #{category,jdbcType=VARCHAR} and is_deleted = 0
+  </select>
+
+  <select id="getServiceCategoryDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">
+    select category as value,service_type_allocation_id as id from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by category_no
+  </select>
+
+  <select id="getServiceMenuList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select service_type_allocation_id, category from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by category_no
+  </select>
+
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    SELECT service_type_allocation_id, category_no, category, type, description from service_type_allocation where airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
+    order by service_type_allocation_id desc
+    LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getListCount" parameterType="map" resultType="int">
+    SELECT count(type_id) from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
+</mapper>
