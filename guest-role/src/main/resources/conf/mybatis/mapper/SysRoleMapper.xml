@@ -11,18 +11,13 @@
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
   </resultMap>
 
-  <select id="complexSqlQuery" parameterType="long" resultMap="BaseResultMap">
-    SELECT  * from sys_role where id = #{id}
-  </select>
-
-
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="role_id" jdbcType="BIGINT" property="id" />
     <result column="value" jdbcType="VARCHAR" property="value" />
   </resultMap>
 
   <select id="getSysRoleDropdownList" resultMap="DropdownlistMap" parameterType="string">
-    select id,name as value from sys_role where is_deleted = 0 and airport_code = #{airportCode}
+    select role_id as id,name as value from sys_role where is_deleted = 0 and airport_code = #{airportCode}
   </select>
 
 
