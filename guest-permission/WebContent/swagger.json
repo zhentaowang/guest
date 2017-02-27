@@ -1,0 +1,347 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "列表权限调试接口",
+    "version" : "v1",
+    "title" : "Guest Permission",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "WANG Zhen-tao",
+      "email" : "wangzhentao@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "192.168.1.130:8081",
+  "tags" : [ {
+    "name" : "permission"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/get-user-permission" : {
+      "post" : {
+        "tags" : [ "permission" ],
+        "summary" : "获取用户权限 - 按钮权限验证",
+        "description" : "返回权限验证结果",
+        "operationId" : "getUserPermission",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数String"
+          }
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "用户id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "40"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/list" : {
+      "get" : {
+        "tags" : [ "permission" ],
+        "summary" : "角色权限列表 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "roleId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "起始页",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "1"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "description" : "每页显示数目",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "10"
+        }, {
+          "name" : "roleId",
+          "in" : "query",
+          "description" : "角色id",
+          "required" : false,
+          "type" : "Long",
+          "default" : "1"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/save-or-update" : {
+      "post" : {
+        "tags" : [ "permission" ],
+        "summary" : "权限管理 - 新增/修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "save",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "permission",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Permission"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/update-role-permission" : {
+      "post" : {
+        "tags" : [ "permission" ],
+        "summary" : "角色权限修改:包括添加和修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "updateRolePermission",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "permission",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Permission"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/view" : {
+      "get" : {
+        "tags" : [ "permission" ],
+        "summary" : "权限详情 - 根据permissionId查询",
+        "description" : "返回权限详情",
+        "operationId" : "view",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "permissionId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "permissionId",
+          "in" : "query",
+          "description" : "权限id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "16"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Permission" : {
+      "type" : "object",
+      "required" : [ "airportCode", "permissionId" ],
+      "properties" : {
+        "createTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "创建时间"
+        },
+        "updateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "修改时间"
+        },
+        "isDeleted" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否删除：默认为0，0：不删除，1：删除"
+        },
+        "airportCode" : {
+          "type" : "string",
+          "description" : "机场code"
+        },
+        "createUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "创建人"
+        },
+        "updateUser" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "修改人"
+        },
+        "permissionId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "url" : {
+          "type" : "string",
+          "description" : "接口url"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "权限名称"
+        },
+        "rolePermissionId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "角色权限Id"
+        },
+        "roleId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "角色Id"
+        }
+      },
+      "description" : "permission"
+    },
+    "全局统一接受参数Permission" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/Permission"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "全局统一接受参数String" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "响应结果" : {
+      "type" : "object",
+      "required" : [ "msg", "status" ],
+      "properties" : {
+        "status" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "响应状态码"
+        },
+        "msg" : {
+          "type" : "string",
+          "description" : "响应消息"
+        },
+        "data" : {
+          "type" : "object",
+          "description" : "响应数据"
+        }
+      }
+    }
+  }
+}
