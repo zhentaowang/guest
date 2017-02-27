@@ -43,6 +43,6 @@
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
-    SELECT count(type_id) from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR}
+    SELECT count(service_type_allocation_id) from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR}
   </select>
 </mapper>
