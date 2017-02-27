@@ -14,7 +14,7 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "192.168.1.130:8081",
+  "host" : "192.168.1.130:8080",
   "tags" : [ {
     "name" : "permission"
   } ],
