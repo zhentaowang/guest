@@ -60,7 +60,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		body, _ = ioutil.ReadAll(resp.Body)
 		json.Unmarshal(body, &permission)
 		if !permission[dat["url"]] {
-			println("没有权限")
+			println(dat["url"] + ":没有权限")
 			return
 		}
 
