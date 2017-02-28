@@ -65,4 +65,6 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
      * @return
      */
     String selectRoleNameByIdAndAirportCode(@Param("roleId") Long roleId,@Param("airportCode") String airportCode);
+
+    void updateCustomColumn(SysRole sysRole);
 }

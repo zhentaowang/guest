@@ -68,4 +68,23 @@
   <select id="selectRoleNameByIdAndAirportCode" resultType="string" parameterType="map">
     select name from sys_role where is_deleted = 0 and airport_code = #{airportCode} and role_id = #{roleId}
   </select>
+
+
+  <update id="updateCustomColumn" parameterType="com.zhiweicloud.guest.model.SysRole">
+    update sys_role
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      update_time = now()
+    </set>
+    where role_id = #{roleId} and airport_code = #{airportCode}
+  </update>
+
 </mapper>

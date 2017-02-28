@@ -79,10 +79,7 @@ public class SysRoleService {
 
     public void saveOrUpdate(SysRole sysRole) {
         if (sysRole.getRoleId() != null) {
-            Example example = new Example(SysRole.class);
-            String sql = "role_id = " + sysRole.getRoleId() + " and airport_code = '" + sysRole.getAirportCode() + "'";
-            example.createCriteria().andCondition(sql);
-            sysRoleMapper.updateByExampleSelective(sysRole, example);//更新角色本身的字段，name和description
+            sysRoleMapper.updateCustomColumn(sysRole);//更新角色本身的字段，name和description
             /**
              * 更新角色和菜单的关联关系：
              * 1：insertByExists。有就更新，没有就插入

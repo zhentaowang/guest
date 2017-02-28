@@ -14,7 +14,7 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "192.168.1.126:8080",
+  "host" : "localhost:8080",
   "tags" : [ {
     "name" : "菜单管理"
   }, {
@@ -304,6 +304,10 @@
         "securityContext" : {
           "$ref" : "#/definitions/SecurityContext"
         },
+        "date" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
         "headers" : {
           "type" : "object",
           "additionalProperties" : {
@@ -313,12 +317,17 @@
             }
           }
         },
-        "date" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
         "request" : {
           "$ref" : "#/definitions/Request"
+        },
+        "entityStream" : {
+          "$ref" : "#/definitions/InputStream"
+        },
+        "mediaType" : {
+          "$ref" : "#/definitions/MediaType"
+        },
+        "uriInfo" : {
+          "$ref" : "#/definitions/UriInfo"
         },
         "propertyNames" : {
           "type" : "array",
@@ -326,20 +335,11 @@
             "type" : "string"
           }
         },
-        "uriInfo" : {
-          "$ref" : "#/definitions/UriInfo"
-        },
-        "mediaType" : {
-          "$ref" : "#/definitions/MediaType"
-        },
         "cookies" : {
           "type" : "object",
           "additionalProperties" : {
             "$ref" : "#/definitions/Cookie"
           }
-        },
-        "entityStream" : {
-          "$ref" : "#/definitions/InputStream"
         },
         "acceptableLanguages" : {
           "type" : "array",
@@ -453,11 +453,11 @@
             "type" : "string"
           }
         },
-        "wildcardType" : {
+        "wildcardSubtype" : {
           "type" : "boolean",
           "default" : false
         },
-        "wildcardSubtype" : {
+        "wildcardType" : {
           "type" : "boolean",
           "default" : false
         }
@@ -499,15 +499,15 @@
     "SecurityContext" : {
       "type" : "object",
       "properties" : {
+        "authenticationScheme" : {
+          "type" : "string"
+        },
         "userPrincipal" : {
           "$ref" : "#/definitions/Principal"
         },
         "secure" : {
           "type" : "boolean",
           "default" : false
-        },
-        "authenticationScheme" : {
-          "type" : "string"
         }
       }
     },
@@ -651,35 +651,6 @@
         "path" : {
           "type" : "string"
         },
-        "pathSegments" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/PathSegment"
-          }
-        },
-        "matchedURIs" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string"
-          }
-        },
-        "requestUri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "baseUri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "queryParameters" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
         "baseUriBuilder" : {
           "$ref" : "#/definitions/UriBuilder"
         },
@@ -692,10 +663,13 @@
             }
           }
         },
-        "matchedResources" : {
-          "type" : "array",
-          "items" : {
-            "type" : "object"
+        "queryParameters" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         },
         "absolutePathBuilder" : {
@@ -703,6 +677,32 @@
         },
         "requestUriBuilder" : {
           "$ref" : "#/definitions/UriBuilder"
+        },
+        "matchedResources" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        },
+        "requestUri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "pathSegments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PathSegment"
+          }
+        },
+        "baseUri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "matchedURIs" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
         }
       }
     },
