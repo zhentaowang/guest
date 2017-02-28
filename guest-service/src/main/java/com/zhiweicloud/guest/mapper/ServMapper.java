@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public interface ServMapper extends MyMapper<Serv> {
     Serv selectById(Map<String, Object> map);
+    void insertBySelective(Serv serv);
     Long selectProductByServiceId(Map<String, Object> map);
     List<Serv> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);

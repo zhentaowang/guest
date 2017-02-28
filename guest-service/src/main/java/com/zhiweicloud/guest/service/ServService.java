@@ -112,7 +112,7 @@ public class ServService {
             serv.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             serv.setCreateTime(new Date());
             serv.setUpdateTime(new Date());
-            servMapper.insert(serv);
+            servMapper.insertBySelective(serv);
         }
     }
 

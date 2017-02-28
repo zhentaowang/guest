@@ -92,4 +92,66 @@
     select serv_id,name as value from serv where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{id,jdbcType=BIGINT} and is_deleted = 0
   </select>
 
+  <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.Serv">
+    insert into serv
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        airport_code,
+      </if>
+      <if test="serviceTypeAllocationId != null">
+        service_type_allocation_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="serviceDetail != null">
+        service_detail,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceTypeAllocationId != null">
+        #{serviceTypeAllocationId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceDetail != null">
+        #{serviceDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+
 </mapper>
