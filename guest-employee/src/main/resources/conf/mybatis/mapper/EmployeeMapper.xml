@@ -88,8 +88,8 @@
       <if test="createUser != null">
         create_user,
       </if>
-      <if test="updateUser != null">
-        update_user,
+      <if test="airportCode != null">
+        airport_code
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -107,6 +107,9 @@
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>
