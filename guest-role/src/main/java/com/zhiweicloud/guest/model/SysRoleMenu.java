@@ -26,6 +26,7 @@ public class SysRoleMenu extends BaseEntity{
     @ApiModelProperty(value="菜单id",name="menuId", required=true)
     private Long menuId;
 
+
     /**
      * 角色id
      * @return role_id 角色id

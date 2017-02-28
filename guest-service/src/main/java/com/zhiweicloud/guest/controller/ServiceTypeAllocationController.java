@@ -18,6 +18,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +50,11 @@ public class ServiceTypeAllocationController {
             @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")
             })
     public LZResult<PaginationResult<ServiceTypeAllocation>> list(
-            @QueryParam(value = "airportCode") String airportCode,
             @QueryParam(value = "page") Integer page,
-            @QueryParam(value = "rows") Integer rows){
+            @QueryParam(value = "rows") Integer rows,
+            @Context final HttpHeaders headers){
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         LZResult<PaginationResult<ServiceTypeAllocation>> result  = serviceTypeAllocationService.getAll(param,page,rows);
         return result;
@@ -59,7 +62,6 @@ public class ServiceTypeAllocationController {
 
     /**
      * 服务类型配置 - 服务大类下拉框 数据
-     * @param airportCode
      * @return
      */
     @GET
@@ -69,9 +71,10 @@ public class ServiceTypeAllocationController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
     })
-    public LZResult<List<ServiceTypeAllocation>> getServiceMenuList(@QueryParam(value = "airportCode") String airportCode
+    public LZResult<List<ServiceTypeAllocation>> getServiceMenuList(@Context final HttpHeaders headers
     ) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         List<ServiceTypeAllocation> serviceMenuList = serviceTypeAllocationService.getServiceMenuList(param);
         return new LZResult<>(serviceMenuList);
@@ -79,7 +82,6 @@ public class ServiceTypeAllocationController {
 
     /**
      * 服务类型配置 - 服务大类下拉框 数据
-     * @param airportCode
      * @return
      */
     @GET
@@ -89,9 +91,10 @@ public class ServiceTypeAllocationController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
     })
-    public LZResult<List<Dropdownlist>> getServiceCategoryDropdownList(@QueryParam(value = "airportCode") String airportCode
+    public LZResult<List<Dropdownlist>> getServiceCategoryDropdownList(@Context final HttpHeaders headers
     ) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         List<Dropdownlist> serviceCategoryList = serviceTypeAllocationService.getServiceCategoryDropdownList(param);
         return new LZResult<List<Dropdownlist>>(serviceCategoryList);
@@ -99,7 +102,6 @@ public class ServiceTypeAllocationController {
 
     /**
      * 服务类型配置 - 根据category查询
-     * @param airportCode
      * @param category
      * @return
      */
@@ -111,10 +113,11 @@ public class ServiceTypeAllocationController {
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "category", value = "服务大类", dataType = "String", defaultValue = "VIP", required = true, paramType = "query")
     })
-    public LZResult<List<Dropdownlist>> getServiceTypeDropdownList(@QueryParam(value = "airportCode") String airportCode,
+    public LZResult<List<Dropdownlist>> getServiceTypeDropdownList(@Context final HttpHeaders headers,
                                @QueryParam(value = "category") String category
     ) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("category",category);
         List<Dropdownlist> serviceTypeList = serviceTypeAllocationService.getServiceTypeDropdownList(param);
@@ -123,7 +126,6 @@ public class ServiceTypeAllocationController {
 
     /**
      * 服务类型配置 - 根据id查询
-     * @param airportCode
      * @param id
      * @return
      */
@@ -135,10 +137,11 @@ public class ServiceTypeAllocationController {
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "id", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
     })
-    public LZResult<List<Dropdownlist>> getServiceNameDropdownList(@QueryParam(value = "airportCode") String airportCode,
+    public LZResult<List<Dropdownlist>> getServiceNameDropdownList(@Context final HttpHeaders headers,
                                                          @QueryParam(value = "id") Long id
     ) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("id",id);
         List<Dropdownlist> serviceNameList = serviceTypeAllocationService.getServiceNameDropdownList(param);

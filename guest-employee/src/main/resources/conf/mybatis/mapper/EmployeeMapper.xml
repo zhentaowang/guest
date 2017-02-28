@@ -5,7 +5,6 @@
     <id column="employee_id" jdbcType="BIGINT" property="employeeId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="account" jdbcType="VARCHAR" property="account" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="sex" jdbcType="SMALLINT" property="sex" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -31,7 +30,7 @@
   </select>
 
   <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
-    select employee_id,e.account,e.name,e.password,e.sex from employee e
+    select employee_id,e.account,e.name,e.sex from employee e
     where e.is_deleted = 0 and e.airport_code = #{criteria.airportCode}
     <if test="criteria.name != null ">
       and e.name like concat('%',#{criteria.name},'%')
@@ -41,7 +40,7 @@
 
 
   <select id="selectByIdAndAirportCode" parameterType="map" resultType="map">
-    select e.account,e.name,e.password,e.sex
+    select e.account,e.name,e.sex
      from employee e
     where e.is_deleted = 0 and e.airport_code = #{airportCode} and e.employee_id = #{employeeId}
 
@@ -70,4 +69,45 @@
     select role_id as roleId from sys_user_role where user_id = #{employeeId} and airport_code = #{airportCode} and is_deleted = 0
 
   </select>
+
+  <insert id="insertSelectiveCustom" parameterType="com.zhiweicloud.guest.model.Employee">
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=SMALLINT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
 </mapper>

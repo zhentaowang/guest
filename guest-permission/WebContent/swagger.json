@@ -1,33 +1,31 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "description" : "机构接口调试",
+    "description" : "列表权限调试接口",
     "version" : "v1",
-    "title" : "InstitutionClient",
+    "title" : "Guest Permission",
     "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
     "contact" : {
-      "name" : "Luo Jing",
-      "email" : "luojing@zhiweicloud.com"
+      "name" : "WANG Zhen-tao",
+      "email" : "wangzhentao@zhiweicloud.com"
     },
     "license" : {
       "name" : "Apache 2.0",
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "192.168.1.126:8082",
+  "host" : "192.168.1.130:8080",
   "tags" : [ {
-    "name" : "InstitutionClientModel"
-  }, {
-    "name" : "common:公共接口"
+    "name" : "permission"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/delete" : {
+    "/get-user-permission" : {
       "post" : {
-        "tags" : [ "InstitutionClientModel" ],
-        "summary" : "机构客户管理 - 删除",
-        "description" : "返回响应结果",
-        "operationId" : "delete",
+        "tags" : [ "permission" ],
+        "summary" : "获取用户权限 - 按钮权限验证",
+        "description" : "返回权限验证结果",
+        "operationId" : "getUserPermission",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
@@ -35,14 +33,34 @@
           "name" : "body",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/全局统一接受参数Long"
+            "$ref" : "#/definitions/全局统一接受参数String"
           }
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "用户id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "40"
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/响应结果"
+              "type" : "string"
             }
           }
         }
@@ -50,8 +68,8 @@
     },
     "/list" : {
       "get" : {
-        "tags" : [ "InstitutionClientModel" ],
-        "summary" : "机构客户管理 - 分页查询",
+        "tags" : [ "permission" ],
+        "summary" : "角色权限列表 - 分页查询",
         "description" : "返回分页结果",
         "operationId" : "list",
         "produces" : [ "application/json;charset=utf8" ],
@@ -60,97 +78,62 @@
           "in" : "query",
           "required" : false,
           "type" : "integer",
-          "default" : 1,
           "format" : "int32"
         }, {
           "name" : "rows",
           "in" : "query",
           "required" : false,
           "type" : "integer",
-          "default" : 10,
           "format" : "int32"
         }, {
-          "name" : "no",
+          "name" : "roleId",
           "in" : "query",
           "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "name",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "type",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "请求成功",
-            "schema" : {
-              "$ref" : "#/definitions/InstitutionClient"
-            }
-          },
-          "400" : {
-            "description" : "参数错误"
-          },
-          "405" : {
-            "description" : "请求方式不对"
-          }
-        }
-      }
-    },
-    "/queryInstitutionClientDropdownList" : {
-      "get" : {
-        "tags" : [ "common:公共接口" ],
-        "summary" : "系统中用到机构客户信息下来框，只包含id，和value的对象",
-        "description" : "根据数据字典的分类名称获取详情数据,下拉",
-        "operationId" : "queryInstitutionClientDropdownList",
-        "produces" : [ "application/json;charset=utf-8" ],
-        "parameters" : [ {
-          "name" : "name",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "no",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "name",
-          "in" : "query",
-          "description" : "模糊查询name",
-          "required" : false,
-          "type" : "String"
-        }, {
-          "name" : "no",
-          "in" : "query",
-          "description" : "模糊查询编号",
-          "required" : false,
-          "type" : "String"
+          "type" : "integer",
+          "format" : "int64"
         }, {
           "name" : "airportCode",
           "in" : "query",
-          "description" : "机场编号",
+          "description" : "机场code",
           "required" : true,
-          "type" : "String"
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "起始页",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "1"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "description" : "每页显示数目",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "10"
+        }, {
+          "name" : "roleId",
+          "in" : "query",
+          "description" : "角色id",
+          "required" : false,
+          "type" : "Long",
+          "default" : "1"
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/响应结果"
+              "type" : "string"
             }
           }
         }
       }
     },
-    "/saveOrUpdate" : {
+    "/save-or-update" : {
       "post" : {
-        "tags" : [ "InstitutionClientModel" ],
-        "summary" : "机构客户管理 - 新增/修改",
+        "tags" : [ "permission" ],
+        "summary" : "权限管理 - 新增/修改",
         "description" : "返回成功还是失败",
         "operationId" : "save",
         "consumes" : [ "application/json" ],
@@ -158,10 +141,10 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "institutionClient",
+          "description" : "permission",
           "required" : true,
           "schema" : {
-            "$ref" : "#/definitions/全局统一接受参数InstitutionClient"
+            "$ref" : "#/definitions/全局统一接受参数Permission"
           }
         } ],
         "responses" : {
@@ -174,19 +157,60 @@
         }
       }
     },
+    "/update-role-permission" : {
+      "post" : {
+        "tags" : [ "permission" ],
+        "summary" : "角色权限修改:包括添加和修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "updateRolePermission",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "permission",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Permission"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
     "/view" : {
       "get" : {
-        "tags" : [ "InstitutionClientModel" ],
-        "summary" : "机构客户管理 - 根据id查询协议客户管理 ",
-        "description" : "返回协议客户管理详情",
+        "tags" : [ "permission" ],
+        "summary" : "权限详情 - 根据permissionId查询",
+        "description" : "返回权限详情",
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "institutionClientId",
+          "name" : "permissionId",
           "in" : "query",
           "required" : false,
           "type" : "integer",
           "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "permissionId",
+          "in" : "query",
+          "description" : "权限id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "16"
         } ],
         "responses" : {
           "200" : {
@@ -200,9 +224,9 @@
     }
   },
   "definitions" : {
-    "InstitutionClient" : {
+    "Permission" : {
       "type" : "object",
-      "required" : [ "airportCode", "name" ],
+      "required" : [ "airportCode", "permissionId" ],
       "properties" : {
         "createTime" : {
           "type" : "string",
@@ -233,56 +257,53 @@
           "format" : "int64",
           "description" : "修改人"
         },
-        "institutionClientId" : {
+        "permissionId" : {
           "type" : "integer",
           "format" : "int64",
-          "description" : "机构客户id"
+          "description" : "主键自增id"
         },
-        "no" : {
+        "url" : {
           "type" : "string",
-          "description" : "机构客户编号"
+          "description" : "接口url"
         },
         "name" : {
           "type" : "string",
-          "description" : "机构客户名称"
+          "description" : "权限名称"
         },
-        "type" : {
-          "type" : "string",
-          "description" : "机构客户类型"
+        "rolePermissionId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "角色权限Id"
         },
-        "employeeId" : {
-          "type" : "string",
-          "description" : "跟进人名称"
-        },
-        "remark" : {
-          "type" : "string",
-          "description" : "备注"
+        "roleId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "角色Id"
         }
       },
-      "description" : "institution_client"
+      "description" : "permission"
     },
-    "全局统一接受参数InstitutionClient" : {
+    "全局统一接受参数Permission" : {
       "type" : "object",
       "properties" : {
         "data" : {
           "type" : "array",
           "description" : "数据",
           "items" : {
-            "$ref" : "#/definitions/InstitutionClient"
+            "$ref" : "#/definitions/Permission"
           }
         }
       },
       "description" : "全局统一接受参数"
     },
-    "全局统一接受参数Long" : {
+    "全局统一接受参数String" : {
       "type" : "object",
       "properties" : {
         "data" : {
           "type" : "array",
           "description" : "数据",
           "items" : {
-            "type" : "integer",
-            "format" : "int64"
+            "type" : "string"
           }
         }
       },
@@ -305,8 +326,7 @@
           "type" : "object",
           "description" : "响应数据"
         }
-      },
-      "description" : "响应结果"
+      }
     }
   }
 }

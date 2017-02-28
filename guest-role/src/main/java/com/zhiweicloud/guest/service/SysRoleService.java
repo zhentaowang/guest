@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,10 +79,7 @@ public class SysRoleService {
 
     public void saveOrUpdate(SysRole sysRole) {
         if (sysRole.getRoleId() != null) {
-            Example example = new Example(SysRole.class);
-            String sql = "role_id = " + sysRole.getRoleId() + " and airport_code = '" + sysRole.getAirportCode() + "'";
-            example.createCriteria().andCondition(sql);
-            sysRoleMapper.updateByExampleSelective(sysRole, example);//更新角色本身的字段，name和description
+            sysRoleMapper.updateCustomColumn(sysRole);//更新角色本身的字段，name和description
             /**
              * 更新角色和菜单的关联关系：
              * 1：insertByExists。有就更新，没有就插入
@@ -120,21 +118,20 @@ public class SysRoleService {
         }
     }
 
-    public String deleteById(List<Long> ids,String airportCode) {
+    public String deleteById(List<Long> ids,Long deleteUser,String airportCode) {
         StringBuffer inUseRoleName = new StringBuffer();
         for (int i = 0; i < ids.size(); i++) {
-            Map<String,Object> map = new HashMap();
-            map.put("roleId",ids.get(i));
-            map.put("airportCode",airportCode);
-            int count = sysRoleMapper.roleInUse(map);
+            int count = sysRoleMapper.roleInUse(ids.get(i),airportCode);
             if(count > 0 ){
-                inUseRoleName.append(sysRoleMapper.selectRoleNameByIdAndAirportCode(map));
+                inUseRoleName.append(sysRoleMapper.selectRoleNameByIdAndAirportCode(ids.get(i),airportCode));
                 inUseRoleName.append(",");
             }else{
                 SysRole temp = new SysRole();
                 temp.setRoleId(ids.get(i));
                 temp.setIsDeleted(Constant.MARK_AS_DELETED);
                 temp.setAirportCode(airportCode);
+                temp.setUpdateUser(deleteUser);
+                temp.setUpdateTime(new Date());
                 sysRoleMapper.updateByPrimaryKeySelective(temp);
             }
         }

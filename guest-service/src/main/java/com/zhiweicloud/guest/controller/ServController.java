@@ -16,13 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -49,11 +49,12 @@ public class ServController {
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")})
-    public String list( @QueryParam(value = "airportCode") String airportCode,
-                        @QueryParam(value = "page") Integer page,
+    public String list( @QueryParam(value = "page") Integer page,
                         @QueryParam(value = "rows") Integer rows,
-                        @QueryParam(value = "typeId") Long typeId) {
+                        @QueryParam(value = "typeId") Long typeId,
+                        @Context final HttpHeaders headers) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("typeId", typeId);
         LZResult<PaginationResult<JSONObject>> result  = servService.getAll(param,page,rows);
@@ -71,17 +72,19 @@ public class ServController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="服务管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "service", required = true) @RequestBody String params){
+    @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
+    public LXResult save(@ApiParam(value = "service", required = true) @RequestBody String params,
+                         @Context final HttpHeaders headers){
         try{
             Serv serv = new Serv();
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param= JSON.parseObject(params).getJSONArray("data");
             JSONObject param00 = JSON.parseObject(param.get(0).toString());
             serv.setServId(param00.getLong("servId"));
-            serv.setAirportCode(param00.getString("airportCode"));
+            serv.setAirportCode(airportCode);
             serv.setName(param00.getString("name"));
             serv.setServiceTypeAllocationId(param00.getLong("serviceTypeAllocationId"));
             param00.remove("servId");
-            param00.remove("airportCode");
             param00.remove("name");
             param00.remove("serviceTypeAllocationId");
             serv.setServiceDetail(param00.toJSONString());
@@ -127,7 +130,6 @@ public class ServController {
 
     /**
      * 服务管理 - 根据id查询
-     * @param airportCode
      * @param servId
      * @return
      */
@@ -139,10 +141,10 @@ public class ServController {
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "servId", value = "服务id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
     })
-    public String view(@QueryParam(value = "airportCode") String airportCode,
-                               @QueryParam(value = "servId") Long servId
-                               ) {
+    public String view(@Context final HttpHeaders headers,
+                               @QueryParam(value = "servId") Long servId) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("servId",servId);
         Serv serv = servService.getById(param);
@@ -156,7 +158,6 @@ public class ServController {
 
     /**
      * 服务管理 - 删除
-     * @param airportCode
      * @param params ids
      * @return
      */
@@ -165,12 +166,12 @@ public class ServController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "服务管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public String delete(
             @RequestBody RequsetParams<Long> params,
-            @QueryParam(value = "airportCode") String airportCode) {
+            @Context final HttpHeaders headers) {
         try {
             List<Long> ids = params.getData();
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
 //            for(int i = 0; i < ids.size(); i++){
 //                if(servService.selectProductByServiceId(ids.get(i),airportCode) == true){
 //                    return JSON.toJSONString(LXResult.build(4996, "该服务被产品引用，不能被删除"));

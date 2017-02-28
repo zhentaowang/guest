@@ -14,7 +14,7 @@
       "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "192.168.1.126:8080",
+  "host" : "localhost:8080",
   "tags" : [ {
     "name" : "菜单管理"
   }, {
@@ -58,11 +58,6 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "in" : "body",
           "name" : "body",
           "required" : false,
@@ -94,11 +89,6 @@
           "schema" : {
             "$ref" : "#/definitions/全局统一接受参数Long"
           }
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -119,11 +109,6 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json;charset=utf-8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "roleId",
           "in" : "query",
           "required" : false,
@@ -166,11 +151,6 @@
           "in" : "query",
           "required" : false,
           "type" : "string"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -196,12 +176,6 @@
         "operationId" : "menuTree",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json;charset=utf-8" ],
-        "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "请求成功",
@@ -258,11 +232,6 @@
           "required" : false,
           "type" : "integer",
           "format" : "int64"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -288,10 +257,12 @@
           "type" : "integer",
           "format" : "int64"
         }, {
-          "name" : "airportCode",
-          "in" : "query",
+          "in" : "body",
+          "name" : "body",
           "required" : false,
-          "type" : "string"
+          "schema" : {
+            "$ref" : "#/definitions/ContainerRequestContext"
+          }
         }, {
           "name" : "menuId",
           "in" : "query",
@@ -317,6 +288,229 @@
     }
   },
   "definitions" : {
+    "ContainerRequestContext" : {
+      "type" : "object",
+      "properties" : {
+        "length" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "language" : {
+          "$ref" : "#/definitions/Locale"
+        },
+        "method" : {
+          "type" : "string"
+        },
+        "securityContext" : {
+          "$ref" : "#/definitions/SecurityContext"
+        },
+        "date" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "headers" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "request" : {
+          "$ref" : "#/definitions/Request"
+        },
+        "entityStream" : {
+          "$ref" : "#/definitions/InputStream"
+        },
+        "mediaType" : {
+          "$ref" : "#/definitions/MediaType"
+        },
+        "uriInfo" : {
+          "$ref" : "#/definitions/UriInfo"
+        },
+        "propertyNames" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "cookies" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "$ref" : "#/definitions/Cookie"
+          }
+        },
+        "acceptableLanguages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Locale"
+          }
+        },
+        "acceptableMediaTypes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/MediaType"
+          }
+        }
+      }
+    },
+    "Cookie" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "version" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "path" : {
+          "type" : "string"
+        },
+        "domain" : {
+          "type" : "string"
+        }
+      }
+    },
+    "InputStream" : {
+      "type" : "object"
+    },
+    "Locale" : {
+      "type" : "object",
+      "properties" : {
+        "country" : {
+          "type" : "string"
+        },
+        "displayCountry" : {
+          "type" : "string"
+        },
+        "displayLanguage" : {
+          "type" : "string"
+        },
+        "displayName" : {
+          "type" : "string"
+        },
+        "displayScript" : {
+          "type" : "string"
+        },
+        "displayVariant" : {
+          "type" : "string"
+        },
+        "extensionKeys" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "iso3Country" : {
+          "type" : "string"
+        },
+        "iso3Language" : {
+          "type" : "string"
+        },
+        "language" : {
+          "type" : "string"
+        },
+        "script" : {
+          "type" : "string"
+        },
+        "unicodeLocaleAttributes" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "unicodeLocaleKeys" : {
+          "type" : "array",
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "variant" : {
+          "type" : "string"
+        }
+      }
+    },
+    "MediaType" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        },
+        "subtype" : {
+          "type" : "string"
+        },
+        "parameters" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        },
+        "wildcardSubtype" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "wildcardType" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
+    "PathSegment" : {
+      "type" : "object",
+      "properties" : {
+        "path" : {
+          "type" : "string"
+        },
+        "matrixParameters" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "Principal" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Request" : {
+      "type" : "object",
+      "properties" : {
+        "method" : {
+          "type" : "string"
+        }
+      }
+    },
+    "SecurityContext" : {
+      "type" : "object",
+      "properties" : {
+        "authenticationScheme" : {
+          "type" : "string"
+        },
+        "userPrincipal" : {
+          "$ref" : "#/definitions/Principal"
+        },
+        "secure" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      }
+    },
     "SysMenu" : {
       "type" : "object",
       "required" : [ "airportCode", "name" ],
@@ -443,6 +637,74 @@
         }
       },
       "description" : "sys_role"
+    },
+    "UriBuilder" : {
+      "type" : "object"
+    },
+    "UriInfo" : {
+      "type" : "object",
+      "properties" : {
+        "absolutePath" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "path" : {
+          "type" : "string"
+        },
+        "baseUriBuilder" : {
+          "$ref" : "#/definitions/UriBuilder"
+        },
+        "pathParameters" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "queryParameters" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "absolutePathBuilder" : {
+          "$ref" : "#/definitions/UriBuilder"
+        },
+        "requestUriBuilder" : {
+          "$ref" : "#/definitions/UriBuilder"
+        },
+        "matchedResources" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        },
+        "requestUri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "pathSegments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PathSegment"
+          }
+        },
+        "baseUri" : {
+          "type" : "string",
+          "format" : "uri"
+        },
+        "matchedURIs" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
     },
     "全局统一接受参数Long" : {
       "type" : "object",

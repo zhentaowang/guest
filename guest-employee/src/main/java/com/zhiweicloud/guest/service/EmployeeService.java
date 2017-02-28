@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public class EmployeeService {
                 }
 
             } else if(employee.getIsExist() != null && employee.getIsExist() == 0) { //isExist == 1 新增
-                employeeMapper.insertSelective(employee);
+                employeeMapper.insertSelectiveCustom(employee);
                 //同时去做用户和role的关联关系 :即：去sys_user_role表中新增一条记录
                 if(employee.getRoleIdList() != null && employee.getRoleIdList().size() > 0){
                     for(int i = 0; i < employee.getRoleIdList().size();i++){
@@ -99,12 +100,14 @@ public class EmployeeService {
         }
     }
 
-    public void deleteById(List<Long> ids, String airportCode) {
+    public void deleteById(List<Long> ids,Long deleteUser, String airportCode) {
         for (int i = 0; i < ids.size(); i++) {
             Employee temp = new Employee();
             temp.setEmployeeId(ids.get(i));
             temp.setIsDeleted(Constant.MARK_AS_DELETED);
             temp.setAirportCode(airportCode);
+            temp.setUpdateUser(deleteUser);
+            temp.setUpdateTime(new Date());
             employeeMapper.updateByPrimaryKeySelective(temp);
         }
     }

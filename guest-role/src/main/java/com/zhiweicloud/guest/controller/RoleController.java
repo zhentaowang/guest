@@ -25,16 +25,11 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.SysMenu;
 import com.zhiweicloud.guest.model.SysRole;
-import com.zhiweicloud.guest.model.SysRoleParam;
-import com.zhiweicloud.guest.service.SysMenuService;
 import com.zhiweicloud.guest.service.SysRoleService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -45,9 +40,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -78,13 +76,24 @@ public class RoleController {
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
-            @QueryParam(value="airportCode") String airportCode) {
-        SysRole SysRoleParam = new SysRole();
-        SysRoleParam.setName(name);
-        SysRoleParam.setAirportCode(airportCode);
+            ContainerRequestContext request) {
+        try {
+            SysRole SysRoleParam = new SysRole();
+            SysRoleParam.setName(name);
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
+            logger.info("airportCode=" + airportCode);
+            SysRoleParam.setAirportCode(airportCode);
 
-        LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
-        return JSON.toJSONString(result);
+            LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
+            return JSON.toJSONString(result);
+        }catch(Exception e){
+            e.printStackTrace();
+            LZResult result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return  JSON.toJSONString(result);
+        }
     }
 
     /**
@@ -98,9 +107,12 @@ public class RoleController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public String save(@ApiParam(value = "sysRole", required = true) RequsetParams<SysRole> params){
+    public String save(@ApiParam(value = "sysRole", required = true) RequsetParams<SysRole> params,@Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
         try{
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+
             SysRole sysRole = null;
             if(!CollectionUtils.isEmpty(params.getData())){
                 sysRole = params.getData().get(0);
@@ -111,6 +123,14 @@ public class RoleController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             }else{
+                sysRole.setAirportCode(airportCode);
+                if(sysRole.getRoleId() != null){
+                    sysRole.setUpdateUser(userId);
+                    sysRole.setUpdateTime(new Date());
+                }else{
+                    sysRole.setCreateUser(userId);
+                    sysRole.setCreateTime(new Date());
+                }
                 sysRoleService.saveOrUpdate(sysRole);
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
@@ -138,9 +158,10 @@ public class RoleController {
 
     public String view(
             @QueryParam(value = "roleId") Long roleId,
-            @QueryParam(value = "airportCode") String airportCode) {
+            ContainerRequestContext request) {
         LZResult<SysRole> result = new LZResult<>();
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             SysRole sysRole = sysRoleService.getById(roleId,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -157,10 +178,10 @@ public class RoleController {
     /**
      * 角色管理 - 删除
      * {
-        "data": [
-        6,7,8
-        ]
-    }
+     "data": [
+     6,7,8
+     ]
+     }
      * @return
      */
     @POST
@@ -169,14 +190,19 @@ public class RoleController {
     @ApiOperation(value = "角色管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public String deleteRoles(
-            @RequestBody RequsetParams<Long> params,
-            @QueryParam(value = "airportCode") String airportCode) {
+            @RequestBody RequsetParams<Long> params,@Context final HttpHeaders headers) {
         LZResult<String> result = new LZResult<>();
         try {
             List<Long> ids = params.getData();
-            String roleName = sysRoleService.deleteById(ids, airportCode);
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String roleName = sysRoleService.deleteById(ids, userId,airportCode);
             if(roleName != null && roleName.length() > 0){
                 roleName = roleName + " 角色已经被用户引用了，不能删除！";
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(roleName);
+            }else{
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
                 result.setData(roleName);

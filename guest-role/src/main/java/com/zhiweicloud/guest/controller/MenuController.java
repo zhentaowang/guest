@@ -39,10 +39,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.*;
+import java.security.Provider;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +70,6 @@ public class MenuController {
     /**
      * 菜单管理 - 菜单树
      * 需要判断name是否重复
-     * @param airportCode
      * @return
      */
     @GET
@@ -78,20 +82,10 @@ public class MenuController {
             @ApiResponse(code = 405, message = "请求方式不对"),
             @ApiResponse(code = 200, message = "请求成功",response = SysMenu.class)
     })
-    public String menuTree(@QueryParam(value = "airportCode") String airportCode){
+    public String menuTree(ContainerRequestContext request){
         LZResult<List<SysMenu>> result = new LZResult<>();
         try{
-            Map map = new HashMap();
-
-            map.put("airportCode","LJG");
-            map.put("userId",40);
-
-            String objectStr = "{\"data\":[\"menuTree\"]}";
-
-            map.put("body",objectStr);
-
-            HttpClientUtil.httpPostRequest("http://192.168.1.130:8081/get-user-permission?userId=40&airportCode=LJG",map);
-
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             List<SysMenu> list =  sysMenuService.queryAllMenus(airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -116,9 +110,13 @@ public class MenuController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="菜单管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public String addMenu(@ApiParam(value = "sysMenu", required = true) RequsetParams<SysMenu> params){
+    public String addMenu(@ApiParam(value = "sysMenu", required = true) RequsetParams<SysMenu> params,
+                          @Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
         try{
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             SysMenu sysMenu = null;
             if(!CollectionUtils.isEmpty(params.getData())){
                 sysMenu = params.getData().get(0);
@@ -129,6 +127,14 @@ public class MenuController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             }else{
+                sysMenu.setAirportCode(airportCode);
+                if(sysMenu.getMenuId() != null){
+                    sysMenu.setUpdateUser(userId);
+                    sysMenu.setUpdateTime(new Date());
+                }else{
+                    sysMenu.setCreateUser(userId);
+                    sysMenu.setCreateTime(new Date());
+                }
                 sysMenuService.saveOrUpdate(sysMenu);
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
@@ -160,10 +166,12 @@ public class MenuController {
     @ApiOperation(value = "菜单管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public String deleteMenus(
-            @QueryParam("airportCode") String airportCode,
-            @RequestBody RequsetParams<Long> params) {
+            @RequestBody RequsetParams<Long> params,
+            @Context final HttpHeaders headers
+           ) {
         LZResult<String> result = new LZResult<>();
         try {
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
             String menuName = sysMenuService.deleteById(ids, airportCode);
             if(menuName != null && menuName.length() > 0){
@@ -200,9 +208,10 @@ public class MenuController {
     })
     public String viewMenu(
             @QueryParam(value = "menuId") Long menuId,
-            @QueryParam(value = "airportCode") String airportCode) {
+            @RequestHeader ContainerRequestContext request) {
         LZResult<SysMenu> result = new LZResult<>();
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             SysMenu sysMenu = sysMenuService.getMenuInstanceByUserId(menuId,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -228,7 +237,6 @@ public class MenuController {
     /**
      * 菜单管理 - 查询当前角色有哪些菜单
      * 需要判断name是否重复
-     * @param airportCode
      * @return
      */
     @GET
@@ -237,10 +245,11 @@ public class MenuController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="菜单管理 - 查询当前角色有哪些菜单", notes ="返回成功还是失败",httpMethod ="GET", produces="application/json")
     public String getMenuByRoleId(
-            @QueryParam(value = "airportCode") String airportCode,
+            ContainerRequestContext request,
             @QueryParam(value = "roleId") Long roleId){
         LZResult<List<SysMenu>> result = new LZResult<>();
         try{
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             List<SysMenu> list =  sysMenuService.queryMenuListByRoleId(airportCode,roleId);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -262,17 +271,11 @@ public class MenuController {
     @GET
     @Path(value="getMenuByUserId")
     @Produces("application/json;charset=utf8")
-    public LZResult<List<SysMenu>> getMenuByUserId( HttpServletRequest request,
-                                                    @QueryParam(value = "access_token") String access_token){
+    public LZResult<List<SysMenu>> getMenuByUserId(ContainerRequestContext request){
         try{
-            //@TODO:权限过滤
-//            String userIdStr = (String)request.getSession().getAttribute("userId");
-            //String userIdAndAirportCode = HttpClientUtil.httpGetRequest("http://airport.zhiweicloud.com/oauth/user/getUser?access_token=" + access_token);
-            //JSONObject oauth = JSON.parseObject(userIdAndAirportCode);
-            String user_id = request.getHeader("user_id");
-            String airporeCode = request.getHeader("client_id");
-            System.out.println("===user_id:" + user_id +" ==airporeCode" + airporeCode) ;
-            List<SysMenu> result = sysMenuService.getMenuByUserId(Long.valueOf(user_id),airporeCode);
+            Long user_id = Long.valueOf(request.getHeaders().getFirst("user-id").toString());
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
+            List<SysMenu> result = sysMenuService.getMenuByUserId(Long.valueOf(user_id),airportCode);
             return new LZResult<>(result);
         } catch (Exception e) {
             e.printStackTrace();

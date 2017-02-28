@@ -81,9 +81,9 @@ public class InstitutionClientService {
 
 
 
-    public void deleteById(List<Long> ids,String airportCode) {
+    public void deleteById(List<Long> ids,Long deleteUser,String airportCode) {
         for(int i = 0; i< ids.size();i++){
-            institutionClientMapper.markAsDeleted(ids.get(i),airportCode);
+            institutionClientMapper.markAsDeleted(ids.get(i),deleteUser,airportCode);
         }
     }
 

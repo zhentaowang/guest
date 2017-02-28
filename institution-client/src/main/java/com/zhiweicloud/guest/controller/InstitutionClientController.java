@@ -43,7 +43,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,20 +69,37 @@ public class InstitutionClientController {
     @Path(value ="list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "机构客户管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = InstitutionClient.class)
+    })
     public String list(
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "no") String no,
             @QueryParam(value = "name") String name,
             @QueryParam(value = "type") String type,
-            @QueryParam(value="airportCode") String airportCode) {
-        InstitutionClient param = new InstitutionClient();
-        param.setNo(no);
-        param.setName(name);
-        param.setType(type);
-        param.setAirportCode(airportCode);
-        LZResult<PaginationResult<InstitutionClient>> result  = institutionClientService.getAll(param,page,rows);
-        return JSON.toJSONString(result);
+            ContainerRequestContext request) {
+
+        try {
+            InstitutionClient param = new InstitutionClient();
+            param.setNo(no);
+            param.setName(name);
+            param.setType(type);
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
+            param.setAirportCode(airportCode);
+            LZResult<PaginationResult<InstitutionClient>> result  = institutionClientService.getAll(param,page,rows);
+            return JSON.toJSONString(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return  JSON.toJSONString(result);
+        }
+
     }
 
     /**
@@ -90,9 +111,11 @@ public class InstitutionClientController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="机构客户管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "institutionClient", required = true) @RequestBody RequsetParams<InstitutionClient> params){
+    public LXResult save(@ApiParam(value = "institutionClient", required = true) @RequestBody RequsetParams<InstitutionClient> params,@Context final HttpHeaders headers){
         try{
             InstitutionClient institutionClient = null;
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             if(!CollectionUtils.isEmpty(params.getData())){
                 institutionClient = params.getData().get(0);
             }
@@ -105,6 +128,15 @@ public class InstitutionClientController {
                     || institutionClient.getType() == null || "".equals(institutionClient.getType())) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
+            institutionClient.setAirportCode(airportCode);
+            if(institutionClient.getInstitutionClientId() != null){
+                institutionClient.setUpdateUser(userId);
+                institutionClient.setUpdateTime(new Date());
+            }else{
+                institutionClient.setCreateUser(userId);
+                institutionClient.setCreateTime(new Date());
+            }
+
             institutionClientService.saveOrUpdate(institutionClient);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
@@ -125,8 +157,9 @@ public class InstitutionClientController {
     @ApiOperation(value = "机构客户管理 - 根据id查询协议客户管理 ", notes = "返回协议客户管理详情", httpMethod = "GET", produces = "application/json")
     public String view(
             @QueryParam(value = "institutionClientId") Long institutionClientId,
-            @QueryParam(value = "airportCode") String airportCode) {
+            ContainerRequestContext request) {
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             InstitutionClient institutionClient = institutionClientService.getById(institutionClientId,airportCode);
             return JSON.toJSONString(new LZResult<>(institutionClient));
         }catch (Exception e){
@@ -156,10 +189,13 @@ public class InstitutionClientController {
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public LXResult delete(
             @RequestBody RequsetParams<Long> params,
-            @QueryParam(value = "airportCode") String airportCode) {
+            @Context final HttpHeaders headers) {
         try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
-            institutionClientService.deleteById(ids,airportCode);
+            institutionClientService.deleteById(ids,userId,airportCode);
             return LXResult.success();
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);
@@ -181,9 +217,10 @@ public class InstitutionClientController {
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
     public LZResult<List<Dropdownlist>> queryInstitutionClientDropdownList(
-            @QueryParam(value = "airportCode") String airportCode,
+            ContainerRequestContext request,
             @QueryParam(value = "name") String name,
             @QueryParam(value = "no") String no) {
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
         List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode,name,no);
         return new LZResult<>(list);
     }
