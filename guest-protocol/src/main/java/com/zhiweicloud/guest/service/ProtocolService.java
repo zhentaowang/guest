@@ -58,10 +58,10 @@ public class ProtocolService {
      * @param protocol
      */
     public void saveOrUpdate(Protocol protocol) {
-        if (protocol.getId() != null) {
+        if (protocol.getProtocolId() != null) {
             Map<String,Object> params = new HashMap<>();
             params.put("airportCode",protocol.getAirportCode());
-            params.put("protocolId",protocol.getId());
+            params.put("protocolId",protocol.getProtocolId());
 
             //协议修改
             protocolMapper.updateByIdAndAirportCode(protocol);
@@ -71,19 +71,19 @@ public class ProtocolService {
             if(protocol.getAuthorizerList() != null){
                 for(int i = 0; i < protocol.getAuthorizerList().size(); i++){
                     Authorizer authorizer = protocol.getAuthorizerList().get(i);
-                    if(authorizer.getId() != null){
+                    if(authorizer.getProtocolId() != null){
                         authorizer.setAirportCode(protocol.getAirportCode());
-                        authorizer.setProtocolId(protocol.getId());
-                        ids.append(authorizer.getId()+",");
+                        authorizer.setProtocolId(protocol.getProtocolId());
+                        ids.append(authorizer.getProtocolId()+",");
                         authorizerMapper.updateByIdAndAirportCode(authorizer);
                     }else{
                         authorizer.setCreateTime(new Date());
-                        authorizer.setProtocolId(protocol.getId());
+                        authorizer.setProtocolId(protocol.getProtocolId());
                         authorizer.setUpdateTime(new Date());
                         authorizer.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                         authorizer.setAirportCode(protocol.getAirportCode());
                         authorizerMapper.insertSelective(authorizer);
-                        ids.append(authorizer.getId()+",");
+                        ids.append(authorizer.getProtocolId()+",");
                     }
                 }
                 if(ids.length() != 0){
@@ -146,7 +146,7 @@ public class ProtocolService {
                 for(int i = 0; i < protocol.getAuthorizerList().size(); i++){
                     Authorizer p = protocol.getAuthorizerList().get(i);
                     p.setCreateTime(new Date());
-                    p.setProtocolId(protocol.getId());
+                    p.setProtocolId(protocol.getProtocolId());
                     p.setUpdateTime(new Date());
                     p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                     p.setAirportCode(protocol.getAirportCode());
@@ -160,7 +160,7 @@ public class ProtocolService {
                     for(int i = 0; i < protocol.getProtocolServList().get(j).getProtocolServList().size(); i++){
                         ProtocolServ p = protocol.getProtocolServList().get(j).getProtocolServList().get(i);
                         p.setCreateTime(new Date());
-                        p.setProtocolId(protocol.getId());
+                        p.setProtocolId(protocol.getProtocolId());
                         p.setUpdateTime(new Date());
                         p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                         p.setAirportCode(protocol.getAirportCode());
@@ -217,7 +217,7 @@ public class ProtocolService {
 
             //删除一条协议
             Protocol protocol = new Protocol();
-            protocol.setId(ids.get(i));
+            protocol.setProtocolId(ids.get(i));
             protocol.setIsDeleted(Constant.MARK_AS_DELETED);
             protocol.setAirportCode(airportCode);
             protocolMapper.updateByIdAndAirportCode(protocol);
@@ -225,14 +225,14 @@ public class ProtocolService {
             //删除该协议对应的所有授权人
             Authorizer authorizer = new Authorizer();
             authorizer.setAirportCode(protocol.getAirportCode());
-            authorizer.setProtocolId(protocol.getId());
+            authorizer.setProtocolId(protocol.getProtocolId());
             authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
             authorizerMapper.updateByIdAndAirportCode(authorizer);
 
             //删除该协议对应的所有协议服务
             ProtocolServ protocolServ = new ProtocolServ();
             protocolServ.setAirportCode(protocol.getAirportCode());
-            protocolServ.setProtocolId(protocol.getId());
+            protocolServ.setProtocolId(protocol.getProtocolId());
             protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
             protocolServMapper.updateByIdAndAirportCode(protocolServ);
 
@@ -248,7 +248,7 @@ public class ProtocolService {
         Map<String,Object> params = new HashMap<>();
         params.put("protocolName",protocol.getName());
         params.put("airportCode",protocol.getAirportCode());
-        params.put("id",protocol.getId());
+        params.put("id",protocol.getProtocolId());
         Long count = protocolMapper.selectByName(params);
         if(count > 0){//count大于0，说明该名称已存在
             return true;
