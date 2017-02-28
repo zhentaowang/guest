@@ -25,9 +25,9 @@
 package com.zhiweicloud.guest.mapper;
 
 
+import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.SysRole;
-import com.zhiweicloud.guest.model.SysRoleParam;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
 
@@ -38,7 +38,8 @@ import java.util.Map;
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-public interface SysRoleMapper extends tk.mybatis.mapper.common.Mapper<SysRole>, tk.mybatis.mapper.common.MySqlMapper<SysRole> {
+//public interface SysRoleMapper extends tk.mybatis.mapper.common.Mapper<SysRole>, tk.mybatis.mapper.common.MySqlMapper<SysRole> {
+public interface SysRoleMapper extends MyMapper<SysRole> {
     List<Dropdownlist> getSysRoleDropdownList(String airportCode);
 
     int selectSysRoleTotal(SysRole sysRoleParam);
