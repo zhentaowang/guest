@@ -5,7 +5,6 @@
     <id column="employee_id" jdbcType="BIGINT" property="employeeId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="account" jdbcType="VARCHAR" property="account" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="sex" jdbcType="SMALLINT" property="sex" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -31,7 +30,7 @@
   </select>
 
   <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
-    select employee_id,e.account,e.name,e.password,e.sex from employee e
+    select employee_id,e.account,e.name,e.sex from employee e
     where e.is_deleted = 0 and e.airport_code = #{criteria.airportCode}
     <if test="criteria.name != null ">
       and e.name like concat('%',#{criteria.name},'%')
@@ -41,7 +40,7 @@
 
 
   <select id="selectByIdAndAirportCode" parameterType="map" resultType="map">
-    select e.account,e.name,e.password,e.sex
+    select e.account,e.name,e.sex
      from employee e
     where e.is_deleted = 0 and e.airport_code = #{airportCode} and e.employee_id = #{employeeId}
 

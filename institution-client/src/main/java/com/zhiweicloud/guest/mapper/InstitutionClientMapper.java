@@ -49,5 +49,5 @@ public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
 
     Integer getListByConiditionCount(InstitutionClient queryCondition);
 
-    void markAsDeleted(@Param("institutionClientId")Long institutionClientId, @Param("airportCode")String airportCode);
+    void markAsDeleted(@Param("institutionClientId")Long institutionClientId,@Param("deleteUser")Long deleteUser, @Param("airportCode")String airportCode);
 }

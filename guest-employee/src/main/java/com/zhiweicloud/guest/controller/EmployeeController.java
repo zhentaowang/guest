@@ -42,7 +42,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -77,8 +81,9 @@ public class EmployeeController {
             @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
-            @QueryParam(value = "airportCode") String airportCode) {
+            ContainerRequestContext request) {
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             Employee employeeParam = new Employee();
             employeeParam.setName(name);
             employeeParam.setAirportCode(airportCode);
@@ -105,9 +110,12 @@ public class EmployeeController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param) {
+    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param,@Context final HttpHeaders headers) {
         LZResult<String> result = new LZResult<>();
         try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             Employee employee = null;
             if (!CollectionUtils.isEmpty(param.getData())) {
                 employee = param.getData().get(0);
@@ -116,12 +124,20 @@ public class EmployeeController {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
+            }else{
+                employee.setAirportCode(airportCode);
+                if(employee.getEmployeeId() != null){
+                    employee.setUpdateUser(userId);
+                    employee.setUpdateTime(new Date());
+                }else{
+                    employee.setCreateUser(userId);
+                    employee.setCreateTime(new Date());
+                }
+                employeeService.saveOrUpdate(employee);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(null);
             }
-            employeeService.saveOrUpdate(employee);
-
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
@@ -149,9 +165,10 @@ public class EmployeeController {
     })
     public String view(
             @QueryParam("employeeId") Long employeeId,
-            @QueryParam("airportCode") String airportCode) {
+            ContainerRequestContext request) {
         LZResult<List<Map>> result = new LZResult<>();
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             List<Map> employee = employeeService.getById(employeeId,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -183,9 +200,10 @@ public class EmployeeController {
     })
     public String getRoleByUserId(
             @QueryParam("employeeId") Long employeeId,
-            @QueryParam("airportCode") String airportCode) {
+            ContainerRequestContext request) {
         LZResult<List<Map>> result = new LZResult<>();
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             List<Map> employee = employeeService.getRoleListByUserId(employeeId,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -216,11 +234,13 @@ public class EmployeeController {
     @ApiOperation(value = "员工管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public String delete(
-            @QueryParam("airportCode") String airportCode,
+            @Context final HttpHeaders headers,
             @RequestBody RequsetParams<Long> params) {
         try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
-            employeeService.deleteById(ids, airportCode);
+            employeeService.deleteById(ids, userId,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);
@@ -238,9 +258,10 @@ public class EmployeeController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "系统中用到员工信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public String queryEmployeeDropdownList(@QueryParam("airportCode") String airportCode) {
+    public String queryEmployeeDropdownList(ContainerRequestContext request) {
         LZResult<List<Dropdownlist>> result = new LZResult<>();
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
