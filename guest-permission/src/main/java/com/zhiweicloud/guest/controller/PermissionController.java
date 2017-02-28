@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -58,12 +59,12 @@ public class PermissionController {
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "roleId", value = "角色id", dataType = "Long", defaultValue = "1", required = false, paramType = "query")})
-    public String list( @Context final HttpHeaders headers,
+    public String list( ContainerRequestContext requestContext,
                         @QueryParam(value = "page") Integer page,
                         @QueryParam(value = "rows") Integer rows,
                         @QueryParam(value = "roleId") Long roleId) {
         Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        String airportCode = requestContext.getHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("roleId",roleId);
         LZResult<PaginationResult<Permission>> result  = permissionService.getAll(param,page,rows);
@@ -144,11 +145,11 @@ public class PermissionController {
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "permissionId", value = "权限id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
     })
-    public String view(@Context final HttpHeaders headers,
+    public String view( ContainerRequestContext requestContext,
                                @QueryParam(value = "permissionId") Long permissionId
                                ) {
         Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        String airportCode = requestContext.getHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("permissionId",permissionId);
         Permission permission = permissionService.getById(param);

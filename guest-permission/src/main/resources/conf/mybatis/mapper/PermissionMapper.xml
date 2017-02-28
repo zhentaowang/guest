@@ -37,7 +37,6 @@
     where r.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and r.is_deleted = 0
     and  r.role_id= #{criteria.roleId,jdbcType=BIGINT}
     order by p.permission_id desc
-    LIMIT #{page.startPageNo},#{page.pCount}
   </select>
   <select id="getListCountByRole" parameterType="map" resultType="int">
     select count(p.permission_id) as num from role_permission as r left join
