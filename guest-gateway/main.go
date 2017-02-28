@@ -30,6 +30,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if len(query["access_token"]) > 0 {
 		// 验证access_token的正确性
 		resp, err := http.Get("http://oauth-center/oauth/user/getUser?access_token=" + query["access_token"][0])
+		// resp, err := http.Get("http://airport.zhiweicloud.com/oauth/user/getUser?access_token=" + query["access_token"][0])
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -52,6 +53,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		paramString, _ := json.Marshal(dat)
 
 		resp, err = http.Post("http://guest-permission/get-user-permission", "application/json", bytes.NewReader(paramString))
+		// resp, err = http.Post("http://localhost:8080/get-user-permission", "application/json", bytes.NewReader(paramString))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -59,6 +61,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		var permission map[string]bool
 		body, _ = ioutil.ReadAll(resp.Body)
 		json.Unmarshal(body, &permission)
+		fmt.Println(permission)
 		if !permission[dat["url"]] {
 			println(dat["url"] + ":没有权限")
 			return
@@ -73,6 +76,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	remote, err := url.Parse("http://" + serviceName)
+	// remote, err := url.Parse("http://localhost:8080")
 	if err != nil {
 		// panic(err)
 	}
