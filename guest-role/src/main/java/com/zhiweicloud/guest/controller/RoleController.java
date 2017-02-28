@@ -80,6 +80,7 @@ public class RoleController {
         SysRole SysRoleParam = new SysRole();
         SysRoleParam.setName(name);
         String airportCode = request.getHeaders().getFirst("client-id").toString();
+        logger.info("airportCode=" + airportCode);
         SysRoleParam.setAirportCode(airportCode);
 
         LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
