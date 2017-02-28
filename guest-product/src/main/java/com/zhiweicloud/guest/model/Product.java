@@ -6,11 +6,16 @@
 */
 package com.zhiweicloud.guest.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import javax.persistence.GeneratedValue;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.List;
 
 
 /**
@@ -23,16 +28,19 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class Product extends BaseEntity{
     @ApiModelProperty(value="产品id",name="productId", required=true)
     @NotEmpty
+    @GeneratedValue(generator = "JDBC")
     private Long productId;
 
     @ApiModelProperty(value="产品名称",name="productName")
     private String productName;
 
-    @ApiModelProperty(value="包含服务的id",name="serviceTypeIds")
-    private String serviceTypeIds;
 
     @Transient
     private String productNo;
+
+    @Transient
+    private List<Long> serviceTypeIds;
+
 
     /**
      * 产品id
@@ -67,22 +75,6 @@ public class Product extends BaseEntity{
     }
 
     /**
-     * 包含服务的id
-     * @return service_type_ids 包含服务的id
-     */
-    public String getServiceTypeIds() {
-        return serviceTypeIds;
-    }
-
-    /**
-     * 包含服务的id
-     * @param serviceTypeIds 包含服务的id
-     */
-    public void setServiceTypeIds(String serviceTypeIds) {
-        this.serviceTypeIds = serviceTypeIds;
-    }
-
-    /**
      *
      * @return
      */
@@ -97,4 +89,13 @@ public class Product extends BaseEntity{
     public void setProductNo(String productNo) {
         this.productNo = productNo;
     }
+
+    public List<Long> getServiceTypeIds() {
+        return serviceTypeIds;
+    }
+
+    public void setServiceTypeIds(List<Long> serviceTypeIds) {
+        this.serviceTypeIds = serviceTypeIds;
+    }
+
 }

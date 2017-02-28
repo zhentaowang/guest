@@ -233,7 +233,7 @@
                             <schemes>
                                 <scheme>http</scheme>
                             </schemes>
-                            <host>192.168.1.145:8080</host>
+                            <host>localhost:8080</host>
                             <!--<basePath>/guest-employee</basePath>-->
                             <info>
                                 <title>Guest Role</title>
@@ -281,7 +281,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
+           <!-- <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.3.5</version>
@@ -296,7 +296,7 @@
                     <verbose>true</verbose>
                     <overwrite>true</overwrite>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 </project>

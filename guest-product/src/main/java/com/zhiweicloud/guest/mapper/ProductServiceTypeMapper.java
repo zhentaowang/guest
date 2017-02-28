@@ -26,37 +26,41 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Product;
+import com.zhiweicloud.guest.model.ProductServiceType;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+
 /**
  * Created by zhengyiyin on 2017/2/22.
  */
-public interface ProductMapper extends MyMapper<Product> {
-
-    int updateProduct(Product productParam);
+public interface ProductServiceTypeMapper extends MyMapper<ProductServiceType> {
 
     /**
-     * 删除产品
+     * 新增服务
      * @param productParam
      * @return
      */
-    int deleteProduct(Product productParam);
+    int insertProductServiceType(ProductServiceType productParam);
 
     /**
-     * 根据主键id和机场编码获取单条记录详情
-     * @return
-     */
-    Product queryByIdAndAirCode(@Param("productId") Long productId,@Param("airportCode") String airportCode);
-
-    /**
-     * 产品列表，分页显示
+     * 删除没有选中的服务，非id
+     * @param productId
      * @param airportCode
-     * @param begin
-     * @param end
+     * @param updateUser
+     * @param serviceTypeIds
      * @return
      */
-    List<Product> getProductList(@Param("airportCode")String airportCode,@Param("begin") int begin,@Param("end") int end);
+    int deleteProductServiceType(@Param("productId") Long productId, @Param("airportCode") String airportCode,
+                                 @Param("updateUser") Long updateUser, @Param("serviceTypeIds") String serviceTypeIds);
+
+    /**
+     * 根据产品id&机场编号获取 服务id列表
+     * @param productId
+     * @param airportCode
+     * @return
+     */
+    List<Long> queryProductServiceTypes(@Param("productId") Long productId, @Param("airportCode") String airportCode);
+
 }

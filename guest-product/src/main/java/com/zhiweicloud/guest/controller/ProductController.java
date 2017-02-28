@@ -18,6 +18,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -38,12 +41,11 @@ public class ProductController {
     @Path(value = "list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品列表 - 分页查询", notes = "返回分页结果")
-    public String list(
+    public String list(ContainerRequestContext request,
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
-            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-            @QueryParam(value = "userId") Long userId,
-            @QueryParam(value="airportCode") String airportCode) {
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows) {
         //@TODO:根据userId 查页面权限
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
         LZResult<PaginationResult<Product>> result = productService.getAll(airportCode, page, rows);
         return JSON.toJSONString(result);
 
@@ -59,11 +61,12 @@ public class ProductController {
     @Path(value = "viewEdit")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品配置 - 根据id查询 ", notes = "返回产品信息")
-    public String viewEdit(@QueryParam(value = "productId") Long productId,
-                           @QueryParam(value = "userId") Long userId,
-                           @QueryParam(value = "airportCode") String airportCode) {
+    public String viewEdit(ContainerRequestContext request,
+                           @QueryParam(value = "productId") Long productId) {
         LZResult<Product> result = new LZResult<>();
         try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
+
             Product guestOrder = productService.getById(productId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
@@ -90,7 +93,8 @@ public class ProductController {
     @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败")
     public LXResult addProduct(
             @ApiParam(value = "product", required = true)
-            @RequestBody RequsetParams<Product> params){
+            @RequestBody RequsetParams<Product> params,
+            @Context final HttpHeaders headers){
         try{
             Product product = null;
             if(!CollectionUtils.isEmpty(params.getData())){
@@ -100,7 +104,11 @@ public class ProductController {
             if (product == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            productService.saveOrUpdate(product);
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            product.setAirportCode(airportCode);
+
+            productService.saveOrUpdate(product, userId);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,11 +120,11 @@ public class ProductController {
     @Path(value = "deleteProduct")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    public String deleteProduct(
-            @QueryParam(value = "airportCode") String airportCode,
-            @QueryParam(value = "userId") Long userId,
+    public String deleteProduct(@Context final HttpHeaders headers,
             @RequestBody RequsetParams<Long> params) {
         try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
+            String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
             List<Long> ids = params.getData();
             productService.deleteById(ids,userId,airportCode);
             return JSON.toJSONString(LXResult.success());

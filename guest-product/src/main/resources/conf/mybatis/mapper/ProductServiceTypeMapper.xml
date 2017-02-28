@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.ProductServiceTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.ProductServiceType">
+    <id column="product_service_type_id" jdbcType="BIGINT" property="productServiceTypeId" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="service_type_id" jdbcType="BIGINT" property="serviceTypeId" />
+
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    product_service_type_id, product_id, service_type_id
+  </sql>
+
+
+  <insert id="insertProductServiceType" parameterType="com.zhiweicloud.guest.model.ProductServiceType">
+
+    INSERT INTO product_service_type (product_id, service_type_id, airport_code, create_time, create_user,is_deleted)
+    SELECT #{productId},#{serviceTypeId},#{airportCode},#{createTime},#{createUser},0
+    FROM dual
+    WHERE not exists (
+      select * from product_service_type where product_id = #{productId} and service_type_id = #{serviceTypeId} and airport_code = #{airportCode} and is_deleted = 0
+    )
+  </insert>
+
+  <update id="deleteProductServiceType">
+    update
+      product_service_type
+    SET
+      is_deleted = 1, update_time = NOW()
+      <if test="updateUser != null and ''!= updateUser">
+        ,update_user = #{updateUser}
+      </if>
+    where
+      product_id = #{productId} and is_deleted = 0 and airport_code = #{airportCode}
+    <if test="serviceTypeIds != null and '' != serviceTypeIds">
+      and service_type_id not in ( ${serviceTypeIds} )
+    </if>
+  </update>
+
+  <select id="queryProductServiceTypes" resultType="Long">
+    SELECT
+      service_type_id
+    FROM
+      product_service_type
+    WHERE
+      product_id = #{productId} AND airport_code = #{airportCode} AND is_deleted = 0
+  </select>
+
+
+</mapper>

@@ -4,13 +4,13 @@
   <resultMap id="productResultMap" type="com.zhiweicloud.guest.model.Product">
     <id column="product_id" jdbcType="BIGINT" property="productId" />
     <result column="product_name" jdbcType="VARCHAR" property="productName" />
-    <result column="service_type_ids" jdbcType="VARCHAR" property="serviceTypeIds" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <!-- 表里没有该列 仅用于显示 -->
     <result column="product_no" jdbcType="VARCHAR" property="productNo" />
   </resultMap>
 
@@ -25,26 +25,23 @@
     <if test="productName != null and ''!= productName">
       product_name = #{productName},
     </if>
-    <if test="serviceTypeIds != null and ''!= serviceTypeIds">
-      service_type_ids = #{serviceTypeIds},
-    </if>
-    update_time = NOW(),update_user = #{updateUser}
+      update_time = NOW(), update_user = #{updateUser}
     WHERE
-    product_id = #{productId} AND airport_code = #{airportCode}
+      product_id = #{productId} AND airport_code = #{airportCode}
   </update>
 
   <update id="deleteProduct" parameterType="com.zhiweicloud.guest.model.Product">
     UPDATE
-    product
+      product
     SET
-      is_deleted = #{isDeleted},update_time = NOW(),update_user = #{updateUser}
+      is_deleted = 1, update_time = NOW(), update_user = #{updateUser}
     WHERE
       product_id = #{productId} AND airport_code = #{airportCode}
   </update>
 
   <select id="queryByIdAndAirCode" resultMap="productResultMap">
     SELECT
-      <include refid="Base_Column_List"/>, service_type_ids
+      <include refid="Base_Column_List"/>
     FROM
       product
     WHERE
