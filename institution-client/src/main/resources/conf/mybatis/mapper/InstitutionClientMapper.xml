@@ -96,7 +96,7 @@
   </select>
 
   <update id="markAsDeleted">
-    UPDATE institution_client set is_deleted = 1
+    UPDATE institution_client set is_deleted = 1,update_time = now(),update_user = #{deleteUser}
     where institution_client_id = #{institutionClientId}
     and airport_code = #{airportCode}
 

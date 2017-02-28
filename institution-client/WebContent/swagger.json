@@ -37,11 +37,6 @@
           "schema" : {
             "$ref" : "#/definitions/全局统一接受参数Long"
           }
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -89,18 +84,19 @@
           "in" : "query",
           "required" : false,
           "type" : "string"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
-            "description" : "successful operation",
+            "description" : "请求成功",
             "schema" : {
-              "type" : "string"
+              "$ref" : "#/definitions/InstitutionClient"
             }
+          },
+          "400" : {
+            "description" : "参数错误"
+          },
+          "405" : {
+            "description" : "请求方式不对"
           }
         }
       }
@@ -113,11 +109,6 @@
         "operationId" : "queryInstitutionClientDropdownList",
         "produces" : [ "application/json;charset=utf-8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "name",
           "in" : "query",
           "required" : false,
@@ -196,11 +187,6 @@
           "required" : false,
           "type" : "integer",
           "format" : "int64"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {

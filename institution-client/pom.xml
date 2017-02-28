@@ -230,7 +230,7 @@
               <schemes>
                 <scheme>http</scheme>
               </schemes>
-              <host>192.168.1.126:8082</host>
+              <host>localhost:8080</host>
               <!--<basePath>/guest-employee</basePath>-->
               <info>
                 <title>InstitutionClient</title>
