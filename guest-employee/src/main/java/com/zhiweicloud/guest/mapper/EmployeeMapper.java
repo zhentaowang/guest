@@ -53,4 +53,6 @@ public interface EmployeeMapper extends tk.mybatis.mapper.common.Mapper<Employee
     void deleteRoles(@Param("employeeId") Long employeeId, @Param("roleIds") String roleIds,@Param("airportCode") String airportCode);
 
     List<Map> getRoleListByUserId(@Param("employeeId") Long employeeId, @Param("airportCode") String airportCode);
+
+    void insertSelectiveCustom(Employee employee);
 }

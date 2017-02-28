@@ -87,7 +87,7 @@ public class EmployeeService {
                 }
 
             } else if(employee.getIsExist() != null && employee.getIsExist() == 0) { //isExist == 1 新增
-                employeeMapper.insertSelective(employee);
+                employeeMapper.insertSelectiveCustom(employee);
                 //同时去做用户和role的关联关系 :即：去sys_user_role表中新增一条记录
                 if(employee.getRoleIdList() != null && employee.getRoleIdList().size() > 0){
                     for(int i = 0; i < employee.getRoleIdList().size();i++){
