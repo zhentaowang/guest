@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Serv.java
@@ -164,14 +162,13 @@ public class PermissionController {
             @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Long", defaultValue = "40", required = true, paramType = "query")
     })
     public String getUserPermission(
-            @RequestBody RequsetParams<String> params,
-            @QueryParam(value = "airportCode") String airportCode,
-            @QueryParam(value = "userId") Long userId) {
+            String params) {
         try {
-            List<String> urls = params.getData();
-            Map<String,Object> param = new HashMap();
-            param.put("airportCode",airportCode);
-            param.put("userId",userId);
+            JSONObject paramJSON = JSON.parseObject(params);
+            List<String> urls = Arrays.asList(paramJSON.getString("url"));
+            HashMap param = new HashMap();
+            param.put("airportCode", paramJSON.getString("client_id"));
+            param.put("userId", paramJSON.getLong("user_id"));
             return JSON.toJSONString(permissionService.getUserPermission(urls,param));
         } catch (Exception e) {
             logger.error("get permission by urls error", e);
