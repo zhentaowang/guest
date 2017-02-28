@@ -77,14 +77,23 @@ public class RoleController {
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
             ContainerRequestContext request) {
-        SysRole SysRoleParam = new SysRole();
-        SysRoleParam.setName(name);
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
-        logger.info("airportCode=" + airportCode);
-        SysRoleParam.setAirportCode(airportCode);
+        try {
+            SysRole SysRoleParam = new SysRole();
+            SysRoleParam.setName(name);
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
+            logger.info("airportCode=" + airportCode);
+            SysRoleParam.setAirportCode(airportCode);
 
-        LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
-        return JSON.toJSONString(result);
+            LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
+            return JSON.toJSONString(result);
+        }catch(Exception e){
+            e.printStackTrace();
+            LZResult result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return  JSON.toJSONString(result);
+        }
     }
 
     /**
