@@ -36,9 +36,6 @@ public class Employee extends BaseEntity {
     @ApiModelProperty(value = "用户名", name = "name", required = true)
     private String name;
 
-    @ApiModelProperty(value = "密码", name = "password", required = true)
-    private String password;
-
     @ApiModelProperty(value = "性别：0：男，1：女", name = "sex")
     private Short sex;
 
@@ -82,21 +79,6 @@ public class Employee extends BaseEntity {
         this.name = name;
     }
 
-    /**
-     * 密码
-     * @return password 密码
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * 密码
-     * @param password 密码
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     /**
      * 性别：0：男，1：女

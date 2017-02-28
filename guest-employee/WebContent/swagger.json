@@ -31,11 +31,6 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "in" : "body",
           "name" : "body",
           "required" : false,
@@ -66,11 +61,6 @@
           "required" : false,
           "type" : "integer",
           "format" : "int64"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -117,11 +107,6 @@
         }, {
           "name" : "airportCode",
           "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
           "description" : "机场编号",
           "required" : true,
           "type" : "String"
@@ -149,12 +134,6 @@
         "description" : "根据数据字典的分类名称获取详情数据,下拉",
         "operationId" : "queryEmployeeDropdownList",
         "produces" : [ "application/json;charset=utf8" ],
-        "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -205,11 +184,6 @@
           "required" : false,
           "type" : "integer",
           "format" : "int64"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -231,7 +205,7 @@
   "definitions" : {
     "Employee" : {
       "type" : "object",
-      "required" : [ "airportCode", "name", "password" ],
+      "required" : [ "airportCode", "name" ],
       "properties" : {
         "createTime" : {
           "type" : "string",
@@ -274,10 +248,6 @@
         "name" : {
           "type" : "string",
           "description" : "用户名"
-        },
-        "password" : {
-          "type" : "string",
-          "description" : "密码"
         },
         "sex" : {
           "type" : "integer",

@@ -5,7 +5,7 @@
   <artifactId>guest-role</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
-  <name>Guest Employee</name>
+  <name>Guest Role</name>
   <url>http://maven.apache.org</url>
 
   <properties>
