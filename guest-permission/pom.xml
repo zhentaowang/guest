@@ -4,8 +4,8 @@
   <groupId>com.zhiweicloud</groupId>
   <artifactId>guest-permission</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>guest Maven Webapp</name>
+  <version>1.0</version>
+  <name>Guest Permission</name>
   <url>http://maven.apache.org</url>
   <properties>
     <spring.version>4.2.5.RELEASE</spring.version>

@@ -100,8 +100,8 @@ public class ProtocolController {
                     || protocol.getType() == null || protocol.getStartTime() == null || protocol.getEndTime() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            if(protocol.getId() != null && protocolService.selectOrderByProtocolId(protocol.getId(),protocol.getAirportCode()) == true){//协议修改
-                if(authorizerService.selectByProtocolId(protocol.getId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
+            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
+                if(authorizerService.selectByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
                     return LXResult.build(4999, "该协议被订单引用，协议下预约人不能被删除");
                 }
             }

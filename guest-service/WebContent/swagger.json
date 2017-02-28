@@ -37,11 +37,6 @@
           "schema" : {
             "$ref" : "#/definitions/全局统一接受参数Long"
           }
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -61,11 +56,6 @@
         "operationId" : "list",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "page",
           "in" : "query",
           "required" : false,
@@ -159,11 +149,6 @@
         "parameters" : [ {
           "name" : "airportCode",
           "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
           "description" : "机场code",
           "required" : true,
           "type" : "String",
@@ -189,11 +174,6 @@
         "parameters" : [ {
           "name" : "airportCode",
           "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "airportCode",
-          "in" : "query",
           "description" : "机场code",
           "required" : true,
           "type" : "String",
@@ -217,11 +197,6 @@
         "operationId" : "getServiceNameDropdownList",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "id",
           "in" : "query",
           "required" : false,
@@ -260,11 +235,6 @@
         "operationId" : "list",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "page",
           "in" : "query",
           "required" : false,
@@ -316,11 +286,6 @@
         "operationId" : "getServiceTypeDropdownList",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "category",
           "in" : "query",
           "required" : false,
@@ -358,11 +323,6 @@
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "servId",
           "in" : "query",
           "required" : false,
@@ -426,8 +386,7 @@
           "type" : "object",
           "description" : "响应数据"
         }
-      },
-      "description" : "响应结果"
+      }
     }
   }
 }

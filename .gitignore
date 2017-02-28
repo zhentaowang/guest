@@ -3,6 +3,7 @@ target/
 api/
 *.iml
 webapp/
+src/main/resources/generatorConfig.xml
 
 *.class
 

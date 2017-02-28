@@ -36,11 +36,6 @@
             "$ref" : "#/definitions/全局统一接受参数String"
           }
         }, {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "userId",
           "in" : "query",
           "required" : false,
@@ -79,11 +74,6 @@
         "operationId" : "list",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "page",
           "in" : "query",
           "required" : false,
@@ -202,11 +192,6 @@
         "operationId" : "view",
         "produces" : [ "application/json;charset=utf8" ],
         "parameters" : [ {
-          "name" : "airportCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "permissionId",
           "in" : "query",
           "required" : false,

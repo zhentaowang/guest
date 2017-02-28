@@ -18,7 +18,7 @@
             <property name="suppressAllComments" value="false" />
         </commentGenerator>-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://rm-bp16g8z8690uc47lyo.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
+			connectionURL="jdbc:mysql://rm-bp1741c4qix10l3czo.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
 			password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
 		<javaModelGenerator targetPackage="com.zhiweicloud.guest.model" targetProject="src/main/java" />
@@ -29,58 +29,15 @@
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="authorizer" enableCountByExample="false"
+		<table schema="" tableName="protocol_product_service" enableCountByExample="false"
 				enableUpdateByExample="false" enableDeleteByExample="false"
 				enableSelectByExample="false" selectByExampleQueryId="false">
-				<!--<ignoreColumn column="create_user"/>
-			<ignoreColumn column="update_user"/>
-			<ignoreColumn column="create_date"/>
-			<ignoreColumn column="update_date"/>
+			<ignoreColumn column="update_time"/>
+			<ignoreColumn column="create_time"/>
 			<ignoreColumn column="is_deleted"/>
-			<ignoreColumn column="is_enabled"/>-->
+			<ignoreColumn column="airport_code"/>
+			<ignoreColumn column="create_user"/>
+			<ignoreColumn column="update_user"/>
 		</table>
-		<!--<table schema="" tableName="price" enableCountByExample="false"-->
-			   <!--enableUpdateByExample="false" enableDeleteByExample="false"-->
-			   <!--enableSelectByExample="false" selectByExampleQueryId="false">-->
-			<!--&lt;!&ndash;<ignoreColumn column="create_user"/>-->
-        <!--<ignoreColumn column="update_user"/>-->
-        <!--<ignoreColumn column="create_date"/>-->
-        <!--<ignoreColumn column="update_date"/>-->
-        <!--<ignoreColumn column="is_deleted"/>-->
-        <!--<ignoreColumn column="is_enabled"/>&ndash;&gt;-->
-		<!--</table>-->
-		<!--<table schema="" tableName="protocol" enableCountByExample="false"-->
-			   <!--enableUpdateByExample="false" enableDeleteByExample="false"-->
-			   <!--enableSelectByExample="false" selectByExampleQueryId="false">-->
-			<!--&lt;!&ndash;<ignoreColumn column="create_user"/>-->
-        <!--<ignoreColumn column="update_user"/>-->
-        <!--<ignoreColumn column="create_date"/>-->
-        <!--<ignoreColumn column="update_date"/>-->
-        <!--<ignoreColumn column="is_deleted"/>-->
-        <!--<ignoreColumn column="is_enabled"/>&ndash;&gt;-->
-		<!--</table>-->
-		<table schema="" tableName="protocol_serv" enableCountByExample="false"
-			   enableUpdateByExample="false" enableDeleteByExample="false"
-			   enableSelectByExample="false" selectByExampleQueryId="false">
-			<!--<ignoreColumn column="create_user"/>
-        <ignoreColumn column="update_user"/>
-        <ignoreColumn column="create_date"/>
-        <ignoreColumn column="update_date"/>
-        <ignoreColumn column="is_deleted"/>
-        <ignoreColumn column="is_enabled"/>-->
-		</table>
-		<!--<table schema="" tableName="serv" enableCountByExample="false"-->
-			   <!--enableUpdateByExample="false" enableDeleteByExample="false"-->
-			   <!--enableSelectByExample="false" selectByExampleQueryId="false">-->
-			<!--&lt;!&ndash;<ignoreColumn column="create_user"/>-->
-        <!--<ignoreColumn column="update_user"/>-->
-        <!--<ignoreColumn column="create_date"/>-->
-        <!--<ignoreColumn column="update_date"/>-->
-        <!--<ignoreColumn column="is_deleted"/>-->
-        <!--<ignoreColumn column="is_enabled"/>&ndash;&gt;-->
-		<!--</table>-->
-
-
 	</context>
 </generatorConfiguration>
-	

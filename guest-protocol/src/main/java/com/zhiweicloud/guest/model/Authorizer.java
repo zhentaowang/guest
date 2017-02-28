@@ -8,6 +8,10 @@ package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * Authorizer.java
@@ -17,6 +21,13 @@ import io.swagger.annotations.ApiModelProperty;
 */
 @ApiModel(value="Authorizer",description="authorizer")
 public class Authorizer extends BaseEntity{
+
+    @ApiModelProperty(value="主键自增id",name="authorizerId", required=true)
+    @NotEmpty
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long authorizerId;
+
     @ApiModelProperty(value="协议id",name="protocolId")
     private Long protocolId;
 
@@ -28,6 +39,14 @@ public class Authorizer extends BaseEntity{
 
     @ApiModelProperty(value="电话",name="telephone")
     private String telephone;
+
+    public Long getAuthorizerId() {
+        return authorizerId;
+    }
+
+    public void setAuthorizerId(Long authorizerId) {
+        this.authorizerId = authorizerId;
+    }
 
     /**
      * 协议id
