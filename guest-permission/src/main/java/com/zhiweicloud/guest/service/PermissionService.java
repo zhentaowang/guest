@@ -55,15 +55,15 @@ public class PermissionService {
      * @param permission
      */
     public void saveOrUpdate(Permission permission) {
-//        if (permission.getPermissionId() != null) {
-//            permissionMapper.updateByIdAndAirportCode(permission);
-//
-//        } else {
-//            permission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-//            permission.setCreateTime(new Date());
-//            permission.setUpdateTime(new Date());
-//            permissionMapper.insertSelective(permission);
-//        }
+        if (permission.getPermissionId() != null) {
+            permissionMapper.updateByIdAndAirportCode(permission);
+
+        } else {
+            permission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            permission.setCreateTime(new Date());
+            permission.setUpdateTime(new Date());
+            permissionMapper.insertSelective(permission);
+        }
     }
 
     /**
@@ -88,7 +88,7 @@ public class PermissionService {
                     rolePermission.setCreateTime(new Date());
                     rolePermission.setUpdateTime(new Date());
                     rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-                    rolePermissionMapper.insertSelective(rolePermission);
+                    rolePermissionMapper.insertBySelective(rolePermission);
                     ids.append(rolePermission.getRolePermissionId()+",");
                 }
             }

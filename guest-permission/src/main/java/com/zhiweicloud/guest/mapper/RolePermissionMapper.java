@@ -13,4 +13,5 @@ import java.util.Map;
  */
 public interface RolePermissionMapper extends MyMapper<RolePermission> {
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
+    void insertBySelective(RolePermission rolePermission);
 }

@@ -12,4 +12,29 @@
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update role_permission set is_deleted = 1 where role_permission_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and role_id = #{roleId,jdbcType=BIGINT}
   </select>
+  <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.RolePermission">
+    insert into role_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rolePermissionId != null">
+        role_permission_id,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="rolePermissionId != null">
+        #{rolePermissionId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
 </mapper>

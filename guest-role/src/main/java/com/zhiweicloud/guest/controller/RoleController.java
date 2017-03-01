@@ -73,7 +73,7 @@ public class RoleController {
             @ApiResponse(code = 200, message = "请求成功",response = SysRole.class)
     })
     public String list(
-            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "name") String name,
             ContainerRequestContext request) {

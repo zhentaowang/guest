@@ -38,8 +38,7 @@ import java.util.Map;
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-//public interface SysRoleMapper extends tk.mybatis.mapper.common.Mapper<SysRole>, tk.mybatis.mapper.common.MySqlMapper<SysRole> {
-public interface SysRoleMapper extends MyMapper<SysRole> {
+public interface SysRoleMapper{
     List<Dropdownlist> getSysRoleDropdownList(String airportCode);
 
     int selectSysRoleTotal(SysRole sysRoleParam);
@@ -51,8 +50,6 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
      * @return
      */
     SysRole selectByIdAndAirportCode(@Param("roleId") Long roleId,@Param("airportCode") String airportCode);
-
-    List<Long> getMenuIdByUserId(Map map);
 
     /**
      * 查询哪些角色不能删除
@@ -67,4 +64,8 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
     String selectRoleNameByIdAndAirportCode(@Param("roleId") Long roleId,@Param("airportCode") String airportCode);
 
     void updateCustomColumn(SysRole sysRole);
+
+    void insertSelective(SysRole sysRole);
+
+    void updateByPrimaryKeySelective(SysRole temp);
 }
