@@ -2,30 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.SysRoleMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.SysRole">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
   </resultMap>
 
-  <select id="complexSqlQuery" parameterType="long" resultMap="BaseResultMap">
-    SELECT  * from sys_role where id = #{id}
-  </select>
-
-
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="role_id" jdbcType="BIGINT" property="id" />
     <result column="value" jdbcType="VARCHAR" property="value" />
   </resultMap>
 
   <select id="getSysRoleDropdownList" resultMap="DropdownlistMap" parameterType="string">
-    select id,name as value from sys_role where is_deleted = 0 and airport_code = #{airportCode}
+    select role_id as id,name as value from sys_role where is_deleted = 0 and airport_code = #{airportCode}
   </select>
 
 
   <select id="selectSysRoleTotal" parameterType="com.zhiweicloud.guest.model.SysRole" resultType="int">
-    select count(id) from sys_role r
+    select count(role_id) from sys_role r
     where r.is_deleted = 0 and r.airport_code = #{airportCode}
     <if test="name != null ">
       and r.name like  like concat('%',#{name},'%')
@@ -33,18 +30,18 @@
   </select>
 
   <select id="selectSysRoleList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    select r.id,r.name from sys_role r
+    select r.role_id,r.name,r.description from sys_role r
     where r.is_deleted = 0 and r.airport_code = #{criteria.airportCode}
     <if test="criteria.name != null ">
-      and r.name like  like concat('%',#{criteria.name},'%')
+      and r.name like concat('%',#{criteria.name},'%')
     </if>
-    order by r.id desc
+    order by r.role_id desc
   </select>
 
 
-  <select id="selectByIdAndAirportCode" parameterType="map" resultType="com.zhiweicloud.guest.model.SysRole">
-   select r.id,r.name from sys_role r
-    where r.is_deleted = 0 and r.airport_code = #{airportCode} and r.id = #{id}
+  <select id="selectByIdAndAirportCode" parameterType="map" resultMap="BaseResultMap">
+   select r.role_id,r.name,r.description from sys_role r
+    where r.is_deleted = 0 and r.airport_code = #{airportCode} and r.role_id = #{roleId}
 
   </select>
 
@@ -62,4 +59,32 @@
     and srm.airport_code = #{airportCode} and sur.airport_code = #{airportCode}
     order by srm.menu_id
   </select>
+
+
+  <select id="roleInUse" resultType="int" parameterType="map">
+    select count(user_role_id) from sys_user_role where is_deleted = 0 and airport_code = #{airportCode} and role_id = #{roleId}
+  </select>
+
+  <select id="selectRoleNameByIdAndAirportCode" resultType="string" parameterType="map">
+    select name from sys_role where is_deleted = 0 and airport_code = #{airportCode} and role_id = #{roleId}
+  </select>
+
+
+  <update id="updateCustomColumn" parameterType="com.zhiweicloud.guest.model.SysRole">
+    update sys_role
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      update_time = now()
+    </set>
+    where role_id = #{roleId} and airport_code = #{airportCode}
+  </update>
+
 </mapper>

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.InstitutionClientMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.InstitutionClient">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="VARCHAR" property="type" />
@@ -17,7 +17,7 @@
   </sql>
 
   <resultMap id="BaseResultMapPage" type="com.zhiweicloud.guest.model.InstitutionClient">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="VARCHAR" property="type" />
@@ -32,9 +32,9 @@
 
   <select id="getListByConiditionCount" parameterType="com.zhiweicloud.guest.model.InstitutionClient" resultType="int">
     SELECT
-    count(i.id)
+    count(i.institution_client_id)
     FROM
-    v_institution_client i left join employee e on i.employee_id = e.id
+    v_institution_client i left join employee e on i.employee_id = e.employee_id
     where i.is_deleted = 0
     <if test="no != null and !no.trim().equals('')" >
       and i.no like concat('%',#{no},'%')
@@ -55,7 +55,7 @@
     SELECT
     i.*,e.name as employee_name
     FROM
-    v_institution_client i left join employee e on i.employee_id = e.id
+    v_institution_client i left join employee e on i.employee_id = e.employee_id
     where i.is_deleted = 0
     <if test="criteria.no != null and !criteria.no.trim().equals('')" >
       and i.no like concat('%',#{criteria.no},'%')
@@ -69,18 +69,18 @@
     <if test="criteria.airportCode != null and !criteria.airportCode.trim().equals('')" >
       and i.airport_code = #{criteria.airportCode}
     </if>
-    order by  i.id desc
+    order by  i.institution_client_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.DropdownlistExt">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="institution_client_id" jdbcType="BIGINT" property="id" />
     <result column="value" jdbcType="VARCHAR" property="value" />
     <result column="no" jdbcType="VARCHAR" property="no" />
   </resultMap>
 
   <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="map">
-    select id,name as value,no from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
+    select institution_client_id,name as value,no from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
     <if test="name != null and !name.trim().equals('')" >
       and name like concat('%',#{name},'%')
     </if>
@@ -91,7 +91,15 @@
 
 
   <select id="viewByIdAndAirCode" parameterType="map" resultMap="BaseResultMapPage">
-    select ic.id, ic.no, ic.name, ic.type, ic.employee_id, ic.remark,ic.airport_code,e.name as employee_name from  institution_client ic
-    inner join employee e on ic.employee_id = e.id where ic.id = #{id} and ic.airport_code = #{airportCode}
+    select ic.institution_client_id, ic.no, ic.name, ic.type, ic.employee_id, ic.remark,ic.airport_code,e.name as employee_name from  institution_client ic
+    inner join employee e on ic.employee_id = e.employee_id where ic.institution_client_id = #{institutionClientId} and ic.airport_code = #{airportCode}
   </select>
+
+  <update id="markAsDeleted">
+    UPDATE institution_client set is_deleted = 1,update_time = now(),update_user = #{deleteUser}
+    where institution_client_id = #{institutionClientId}
+    and airport_code = #{airportCode}
+
+  </update>
+
 </mapper>

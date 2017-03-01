@@ -9,6 +9,11 @@ package com.zhiweicloud.guest.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+import java.util.List;
+
 /**
  * Employee.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
@@ -17,17 +22,30 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "Employee", description = "employee")
 public class Employee extends BaseEntity {
+    @ApiModelProperty(value = "employeeId", name = "employeeId")
+    @Id
+    @GeneratedValue(
+            generator = "JDBC"
+    )
+    private Long employeeId;
+
+
     @ApiModelProperty(value = "账号", name = "account")
     private String account;
 
     @ApiModelProperty(value = "用户名", name = "name", required = true)
     private String name;
 
-    @ApiModelProperty(value = "密码", name = "password", required = true)
-    private String password;
-
     @ApiModelProperty(value = "性别：0：男，1：女", name = "sex")
     private Short sex;
+
+    @Transient
+    @ApiModelProperty(value="角色id集合",name="roleIdList")
+    private List<Long> roleIdList;
+
+    @Transient
+    @ApiModelProperty(value="判断新增的记录是否存在：0：新增，1：修改",name="isExist")
+    private Integer isExist;
 
     /**
      * 账号
@@ -61,21 +79,6 @@ public class Employee extends BaseEntity {
         this.name = name;
     }
 
-    /**
-     * 密码
-     * @return password 密码
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * 密码
-     * @param password 密码
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     /**
      * 性别：0：男，1：女
@@ -93,5 +96,27 @@ public class Employee extends BaseEntity {
         this.sex = sex;
     }
 
+    public Long getEmployeeId() {
+        return employeeId;
+    }
 
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public List<Long> getRoleIdList() {
+        return roleIdList;
+    }
+
+    public void setRoleIdList(List<Long> roleIdList) {
+        this.roleIdList = roleIdList;
+    }
+
+    public Integer getIsExist() {
+        return isExist;
+    }
+
+    public void setIsExist(Integer isExist) {
+        this.isExist = isExist;
+    }
 }

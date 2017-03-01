@@ -4,9 +4,10 @@
   <groupId>com.zhiweicloud</groupId>
   <artifactId>guest-role</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Guest Role</name>
   <url>http://maven.apache.org</url>
+
   <properties>
     <spring.version>4.2.5.RELEASE</spring.version>
     <jersey.version>2.23.1</jersey.version>
@@ -26,7 +27,7 @@
     <java.version>1.8</java.version>
     <pagehelper.version>4.1.1</pagehelper.version>
     <mapper.version>3.3.6</mapper.version>
-    <util.version>1.2</util.version>
+    <util.version>1.3</util.version>
     <cors.filter.version>1.3.2</cors.filter.version>
     <swagger.version>1.5.9</swagger.version>
     <springfox.version>2.2.2</springfox.version>
@@ -223,6 +224,7 @@
             <apiSource>
               <springmvc>false</springmvc>
               <locations>
+                <location>com.zhiweicloud.guest.controller.MenuController</location>
                 <location>com.zhiweicloud.guest.controller.RoleController</location>
               </locations>
               <schemes>
@@ -233,7 +235,7 @@
               <info>
                 <title>Guest Role</title>
                 <version>v1</version>
-                <description>角色调试接口</description>
+                <description>菜单角色调试接口</description>
                 <termsOfService>
                   http://www.github.com/kongchen/swagger-maven-plugin
                 </termsOfService>
@@ -276,6 +278,22 @@
           </dependency>
         </dependencies>
       </plugin>
+      <!-- <plugin>
+        <groupId>org.mybatis.generator</groupId>
+        <artifactId>mybatis-generator-maven-plugin</artifactId>
+        <version>1.3.5</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.project.common.util</groupId>
+            <artifactId>MyCommentGeneraotr</artifactId>
+            <version>1.0.RELEASE</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <verbose>true</verbose>
+          <overwrite>true</overwrite>
+        </configuration>
+      </plugin> -->
     </plugins>
   </build>
 </project>

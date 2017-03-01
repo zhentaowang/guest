@@ -29,15 +29,15 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.SysMenuMapper;
 import com.zhiweicloud.guest.mapper.SysRoleMapper;
+import com.zhiweicloud.guest.mapper.SysRoleMenuMapper;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,10 @@ public class SysRoleService {
     @Autowired
     private SysMenuMapper sysMenuMapper;
 
+    @Autowired
+    private SysRoleMenuMapper sysRoleMenuMapper;
+
+
 
     public LZResult<PaginationResult<SysRole>> getAll(SysRole sysRoleParam, Integer page, Integer rows) {
         
@@ -69,32 +73,69 @@ public class SysRoleService {
         return result;
     }
 
-    public SysRole getById(Long id,String airportCode) {
-        Map map = new HashMap();
-        map.put("id",id);
-        map.put("airportCode",airportCode);
-        return sysRoleMapper.selectByIdAndAirportCode(map);
+    public SysRole getById(Long roleId,String airportCode) {
+        return sysRoleMapper.selectByIdAndAirportCode(roleId,airportCode);
     }
 
     public void saveOrUpdate(SysRole sysRole) {
-        if (sysRole.getId() != null) {
-            Example example = new Example(SysRole.class);
-            String sql = "id = " + sysRole.getId() + " and airport_code = '" + sysRole.getAirportCode() + "'";
-            example.createCriteria().andCondition(sql);
-            sysRoleMapper.updateByExampleSelective(sysRole, example);
+        if (sysRole.getRoleId() != null) {
+            sysRoleMapper.updateCustomColumn(sysRole);//更新角色本身的字段，name和description
+            /**
+             * 更新角色和菜单的关联关系：
+             * 1：insertByExists。有就更新，没有就插入
+             * 2：删除，用not in 来删除
+             *   update ${tableName} set is_deleted = 1 where id not in (${ids})  and airport_code = #{airportCode} and order_id = #{orderId}
+             */
+            if(sysRole.getMenuIdList() != null && sysRole.getMenuIdList().size() > 0){
+                for(int i = 0; i < sysRole.getMenuIdList().size();i++){
+                    SysRoleMenu sysRoleMenu = new SysRoleMenu();
+                    sysRoleMenu.setRoleId(sysRole.getRoleId());
+                    sysRoleMenu.setMenuId(sysRole.getMenuIdList().get(i));
+                    sysRoleMenu.setAirportCode(sysRole.getAirportCode());
+                    sysRoleMenuMapper.insertByExists(sysRoleMenu);
+                }
+                //删除
+                Map<String,Object> map = new HashMap<>();
+                map.put("roleId",sysRole.getRoleId());
+                map.put("menuIds",ListUtil.List2String(sysRole.getMenuIdList()));
+                map.put("airportCode",sysRole.getAirportCode());
+                sysRoleMenuMapper.deleteMenus(map);
+            }
+
+
         } else {
-            sysRoleMapper.insert(sysRole);
+            sysRoleMapper.insertSelective(sysRole);
+            //同时去做role和菜单的关联关系 :即：去sys_role_menu表中新增一条记录
+            if(sysRole.getMenuIdList() != null && sysRole.getMenuIdList().size() > 0){
+                for(int i = 0; i < sysRole.getMenuIdList().size();i++){
+                    SysRoleMenu sysRoleMenu = new SysRoleMenu();
+                    sysRoleMenu.setRoleId(sysRole.getRoleId());
+                    sysRoleMenu.setMenuId(sysRole.getMenuIdList().get(i));
+                    sysRoleMenu.setAirportCode(sysRole.getAirportCode());
+                    sysRoleMenuMapper.insertSelective(sysRoleMenu);
+                }
+            }
         }
     }
 
-    public void deleteById(List<Long> ids,String airportCode) {
-        for(int i = 0; i< ids.size();i++){
-            SysRole temp = new SysRole();
-            temp.setId(ids.get(i));
-            temp.setIsDeleted(Constant.MARK_AS_DELETED);
-            temp.setAirportCode(airportCode);
-            sysRoleMapper.updateByPrimaryKeySelective(temp);
+    public String deleteById(List<Long> ids,Long deleteUser,String airportCode) {
+        StringBuffer inUseRoleName = new StringBuffer();
+        for (int i = 0; i < ids.size(); i++) {
+            int count = sysRoleMapper.roleInUse(ids.get(i),airportCode);
+            if(count > 0 ){
+                inUseRoleName.append(sysRoleMapper.selectRoleNameByIdAndAirportCode(ids.get(i),airportCode));
+                inUseRoleName.append(",");
+            }else{
+                SysRole temp = new SysRole();
+                temp.setRoleId(ids.get(i));
+                temp.setIsDeleted(Constant.MARK_AS_DELETED);
+                temp.setAirportCode(airportCode);
+                temp.setUpdateUser(deleteUser);
+                temp.setUpdateTime(new Date());
+                sysRoleMapper.updateByPrimaryKeySelective(temp);
+            }
         }
+        return inUseRoleName.toString();
     }
 
 
@@ -102,77 +143,4 @@ public class SysRoleService {
         return sysRoleMapper.getSysRoleDropdownList(airportCode);
     }
 
-    public void assignMenuToRole(SysRoleParam sysRoleParam) {
-        List<SysMenuParam> menuIds = sysRoleParam.getSysMenuList();
-        Map<String,Object> map = new HashMap();
-        map.put("roleId",sysRoleParam.getId());
-        map.put("airportCode",sysRoleParam.getAirportCode());
-
-        for(int i = 0; i < menuIds.size();i++){
-            map.put("menuId",menuIds.get(i).getId());
-            sysRoleMapper.assignMenuToRole(map);
-        }
-    }
-
-    /**
-     * 查询所有的菜单
-     * @return
-     */
-    public List<SysMenu> queryAllMenus() {
-       //return this.queryAllNodeListMenus(0L);
-        return null;
-    }
-
-    /**
-     * 查询所有的菜单
-     * @return
-     */
-    public List<SysMenu> getMenuByUserId(Long userId,String airportCode) {
-        Map<String,Object> map = new HashMap();
-        map.put("userId",userId);
-        map.put("airportCode",airportCode);
-        //List<Long> userIdList =  sysRoleMapper.getMenuIdByUserId(map);
-        List<SysMenu> menuList = this.queryAllNodeListMenus(0L,userId,airportCode);
-        return menuList;
-    }
-
-    /**
-     * 查询所有的子节点
-     */
-    private List<SysMenu> queryAllNodeListMenus(Long pid,Long userId,String airportCode) {
-        List<SysMenu> list = this.querySubNodeMenusList(pid,userId,airportCode);//查询parentId=0的，那么就是从根节点开始查询了,即：查询所有节点
-        for(SysMenu deal:list){
-            recursionMenus(deal,userId,airportCode);
-        }
-        return list;
-    }
-
-    /**
-     * 递归树
-     * @param tree
-     */
-    private void recursionMenus(SysMenu tree,Long userId,String airportCode){
-        try {
-            List<SysMenu> subList = this.querySubNodeMenusList(tree.getId(),userId,airportCode);
-            if(subList != null && subList.size() > 0){
-                tree.setChildren(subList);
-                for(SysMenu sub:subList){
-                    recursionMenus(sub,userId,airportCode);
-                }
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 根据父id查询子对象
-     */
-    private List<SysMenu> querySubNodeMenusList(Long parentId,Long userId,String airportCode) {
-        Map<String,Object> map = new HashMap();
-        map.put("parentId",parentId);
-        map.put("airportCode",airportCode);
-        map.put("userId",userId);
-        return sysMenuMapper.getChildMenusByParentId(map);
-    }
 }

@@ -24,6 +24,12 @@ import java.util.List;
 */
 @ApiModel(value="SysMenu",description="sys_menu")
 public class SysMenu extends BaseEntity{
+
+    @ApiModelProperty(value="菜单id",name="menuId")
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long menuId;
+
     @ApiModelProperty(value="父id",name="pid")
     private Long pid;
 
@@ -36,6 +42,9 @@ public class SysMenu extends BaseEntity{
 
     @ApiModelProperty(value="菜单类型",name="type")
     private String type;
+
+    @ApiModelProperty(value="菜单排序号",name="position")
+    private Integer position;
 
     @ApiModelProperty(value="子菜单",name="children")
     @Transient
@@ -111,5 +120,21 @@ public class SysMenu extends BaseEntity{
 
     public void setChildren(List<SysMenu> children) {
         this.children = children;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

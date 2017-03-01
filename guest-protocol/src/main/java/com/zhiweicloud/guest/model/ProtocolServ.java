@@ -8,7 +8,10 @@ package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +24,13 @@ import java.util.List;
 */
 @ApiModel(value="ProtocolServ",description="protocol_serv")
 public class ProtocolServ extends BaseEntity{
+
+    @ApiModelProperty(value="主键自增id",name="id", required=true)
+    @NotEmpty
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long id;
+
     @ApiModelProperty(value="协议id",name="protocolId")
     private Long protocolId;
 
@@ -65,6 +75,14 @@ public class ProtocolServ extends BaseEntity{
     @Transient
     @ApiModelProperty(value = "协议服务",name="protocolServList")
     private List<ProtocolServ> protocolServList;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /**
      * 服务名称

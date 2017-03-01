@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: guest-permission
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: guest-permission
+    spec:
+      containers:
+        - name: guest-permission
+          image: tomcat:9.0
+          volumeMounts:
+          - mountPath: "/usr/local/tomcat/webapps"
+            name: code
+            subPath: guest/guest-permission
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guest-permission
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: guest-permission

@@ -9,7 +9,10 @@ package com.zhiweicloud.guest.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +25,13 @@ import java.util.List;
 */
 @ApiModel(value="Protocol",description="protocol")
 public class Protocol extends BaseEntity{
+
+    @ApiModelProperty(value="主键自增id",name="protocolId", required=true)
+    @NotEmpty
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long protocolId;
+
     @ApiModelProperty(value="机构客户id",name="institutionClientId")
     private Long institutionClientId;
 
@@ -79,6 +89,14 @@ public class Protocol extends BaseEntity{
     @Transient
     @ApiModelProperty(value="服务类型",name="serviceType")
     private String serviceType;
+
+    public Long getProtocolId() {
+        return protocolId;
+    }
+
+    public void setProtocolId(Long protocolId) {
+        this.protocolId = protocolId;
+    }
 
     /**
      * 服务名称

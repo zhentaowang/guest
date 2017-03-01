@@ -1,0 +1,392 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "服务调试接口",
+    "version" : "v1",
+    "title" : "Guest Service",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "Wang Zhen Tao",
+      "email" : "wangzhentao@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "192.168.1.130:8080",
+  "tags" : [ {
+    "name" : "service"
+  }, {
+    "name" : "serviceTypeAllocation"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/delete" : {
+      "post" : {
+        "tags" : [ "service" ],
+        "summary" : "服务管理 - 删除",
+        "description" : "返回响应结果",
+        "operationId" : "delete",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Long"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/list" : {
+      "get" : {
+        "tags" : [ "service" ],
+        "summary" : "服务管理 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "typeId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "起始页",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "1"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "description" : "每页显示数目",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "10"
+        }, {
+          "name" : "typeId",
+          "in" : "query",
+          "description" : "服务类型配置id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "1"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/save-or-update" : {
+      "post" : {
+        "tags" : [ "service" ],
+        "summary" : "服务管理 - 新增/修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "save",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "service",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/service-category-dropdown-list" : {
+      "get" : {
+        "tags" : [ "serviceTypeAllocation" ],
+        "summary" : "服务类型配置 - 服务大类下拉框 数据 ",
+        "description" : "返回服务大类列表",
+        "operationId" : "getServiceCategoryDropdownList",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/service-menu-list" : {
+      "get" : {
+        "tags" : [ "serviceTypeAllocation" ],
+        "summary" : "服务类型配置 - 服务菜单 数据 ",
+        "description" : "返回服务菜单列表",
+        "operationId" : "getServiceMenuList",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/service-name-dropdown-list" : {
+      "get" : {
+        "tags" : [ "serviceTypeAllocation" ],
+        "summary" : "服务类型配置 - 根据id查询 ",
+        "description" : "返回服务名称列表",
+        "operationId" : "getServiceNameDropdownList",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "服务类型配置id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "1"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/service-type-allocation-list" : {
+      "get" : {
+        "tags" : [ "serviceTypeAllocation" ],
+        "summary" : "服务类型配置 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "起始页",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "1"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "description" : "每页显示数目",
+          "required" : true,
+          "type" : "Integer",
+          "default" : "10"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/service-type-dropdown-list" : {
+      "get" : {
+        "tags" : [ "serviceTypeAllocation" ],
+        "summary" : "服务类型配置 - 根据category查询 ",
+        "description" : "返回服务类别列表",
+        "operationId" : "getServiceTypeDropdownList",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "category",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "category",
+          "in" : "query",
+          "description" : "服务大类",
+          "required" : true,
+          "type" : "String",
+          "default" : "VIP"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/view" : {
+      "get" : {
+        "tags" : [ "service" ],
+        "summary" : "服务 - 根据id查询 ",
+        "description" : "返回服务详情",
+        "operationId" : "view",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "servId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "description" : "机场code",
+          "required" : true,
+          "type" : "String",
+          "default" : "LJG"
+        }, {
+          "name" : "servId",
+          "in" : "query",
+          "description" : "服务id",
+          "required" : true,
+          "type" : "Long",
+          "default" : "16"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "全局统一接受参数Long" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    },
+    "响应结果" : {
+      "type" : "object",
+      "required" : [ "msg", "status" ],
+      "properties" : {
+        "status" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "响应状态码"
+        },
+        "msg" : {
+          "type" : "string",
+          "description" : "响应消息"
+        },
+        "data" : {
+          "type" : "object",
+          "description" : "响应数据"
+        }
+      }
+    }
+  }
+}

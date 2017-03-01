@@ -18,7 +18,7 @@
             <property name="suppressAllComments" value="false" />
         </commentGenerator>-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
+			connectionURL="jdbc:mysql://rm-bp1741c4qix10l3czo.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
 			password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
 		<javaModelGenerator targetPackage="com.zhiweicloud.guest.model.temp" targetProject="src/main/java" />

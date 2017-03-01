@@ -2,19 +2,49 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.SysMenuMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.SysMenu">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="menu_id" jdbcType="BIGINT" property="menuId" />
     <result column="pid" jdbcType="BIGINT" property="pid" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="position" jdbcType="INTEGER" property="position" />
   </resultMap>
 
-  <select id="getChildMenusByParentId" resultMap="BaseResultMap" parameterType="map">
-    select * from sys_menu where pid = #{parentId} and id in (
-      select distinct(menu_id) from sys_role_menu srm left join sys_user_role sur
+  <select id="getChildMenusByParentIdByUserId" resultMap="BaseResultMap" parameterType="map">
+    select * from sys_menu where pid = #{parentId} and menu_id in (
+      select distinct(menu_id) from sys_role_menu srm inner join sys_user_role sur
       on srm.role_id = sur.role_id and sur.user_id = #{userId}
       and srm.is_deleted = 0 and sur.is_deleted = 0
       order by srm.menu_id
     )
+  </select>
+
+
+  <select id="selectMenuInstanceByIdAndAirportCode" parameterType="map" resultMap="BaseResultMap">
+    select m.menu_id,m.pid,m.name,m.url,m.type,m.position from sys_menu m
+    where m.is_deleted = 0 and m.airport_code = #{airportCode} and menu_id = #{menuId}
+  </select>
+
+  <select id="getChildNodesByParentId" resultMap="BaseResultMap" parameterType="map">
+    select * from sys_menu where pid = #{parentId} and is_deleted = 0 order by position
+  </select>
+
+
+  <select id="menuInUse" resultType="int" parameterType="map">
+    select count(id) from sys_role_menu where is_deleted = 0 and airport_code = #{airportCode} and menu_id = #{menuId}
+  </select>
+
+
+  <select id="selectMenuNameByIdAndAirportCode" resultType="string" parameterType="map">
+    select name from sys_menu where is_deleted = 0 and airport_code = #{airportCode} and menu_id = #{menuId}
+  </select>
+
+
+  <select id="getChildMenusByParentIdByRole" resultMap="BaseResultMap" parameterType="map">
+    SELECT vrm.menu_id,vrm.pid,vrm.name,vrm.url,vrm.type,vrm.position from v_role_menu vrm
+    where vrm.pid = #{parentId}
+    and vrm.role_id = #{roleId}
+    and vrm.airport_code = #{airportCode}
+    order by vrm.position
   </select>
 </mapper>

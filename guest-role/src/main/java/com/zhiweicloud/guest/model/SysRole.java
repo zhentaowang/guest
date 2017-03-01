@@ -10,7 +10,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.List;
 
 /**
  * SysRole.java
@@ -20,9 +24,21 @@ import org.hibernate.validator.constraints.NotEmpty;
 */
 @ApiModel(value="SysRole",description="sys_role")
 public class SysRole extends BaseEntity{
+    @ApiModelProperty(value="角色id",name="roleId")
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long roleId;
+
     @ApiModelProperty(value="角色名称",name="name", required=true)
-    @NotEmpty
     private String name;
+
+    @ApiModelProperty(value="角色描述",name="description")
+    private String description;
+
+    @Transient
+    @ApiModelProperty(value="菜单id集合",name="menuIdList")
+    private List<Long> menuIdList;
+
 
     /**
      * 角色名称
@@ -38,5 +54,29 @@ public class SysRole extends BaseEntity{
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Long> getMenuIdList() {
+        return menuIdList;
+    }
+
+    public void setMenuIdList(List<Long> menuIdList) {
+        this.menuIdList = menuIdList;
     }
 }

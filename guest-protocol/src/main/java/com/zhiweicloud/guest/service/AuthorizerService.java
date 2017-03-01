@@ -51,7 +51,7 @@ public class AuthorizerService {
      * @param authorizer
      */
     public void saveOrUpdate(Authorizer authorizer) {
-        if (authorizer.getId() != null) {
+        if (authorizer.getAuthorizerId() != null) {
             authorizerMapper.updateByIdAndAirportCode(authorizer);
         } else {
             authorizer.setCreateTime(new Date());
@@ -70,7 +70,7 @@ public class AuthorizerService {
         for(int i = 0; i< ids.size();i++){
             Authorizer authorizer = new Authorizer();
             authorizer.setAirportCode(airportCode);
-            authorizer.setId(ids.get(i));
+            authorizer.setAuthorizerId(ids.get(i));
             authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
             authorizerMapper.updateByIdAndAirportCode(authorizer);
         }

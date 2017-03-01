@@ -29,6 +29,7 @@ import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,9 @@ public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
 
     List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
 
-    InstitutionClient viewByIdAndAirCode(Map<String, Object> map);
+    InstitutionClient viewByIdAndAirCode(@Param("institutionClientId") Long institutionClientId,@Param("airportCode") String airportCode);
 
     Integer getListByConiditionCount(InstitutionClient queryCondition);
+
+    void markAsDeleted(@Param("institutionClientId")Long institutionClientId,@Param("deleteUser")Long deleteUser, @Param("airportCode")String airportCode);
 }
