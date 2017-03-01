@@ -109,7 +109,7 @@ public class SysRoleService {
                     sysRoleMenu.setMenuId(sysRole.getMenuIdList().get(i));
                     sysRoleMenu.setAirportCode(sysRole.getAirportCode());
                     sysRoleMenu.setCreateUser(sysRole.getCreateUser());
-                    sysRoleMenuMapper.insertByExists(sysRoleMenu);
+                    sysRoleMenuMapper.insertSelective(sysRoleMenu);
                 }
             }
         }
