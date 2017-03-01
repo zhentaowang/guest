@@ -12,7 +12,7 @@
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update role_permission set is_deleted = 1 where role_permission_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and role_id = #{roleId,jdbcType=BIGINT}
   </select>
-  <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.test.RolePermission">
+  <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.RolePermission">
     insert into role_permission
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="rolePermissionId != null">

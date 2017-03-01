@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by zhengyiyin on 2017/2/22.
  */
-public interface ProductServiceTypeMapper extends MyMapper<ProductServiceType> {
+public interface ProductServiceTypeMapper{
 
     /**
      * 新增服务
