@@ -125,12 +125,12 @@ public class EmployeeController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             }else{
-                employee.setAirportCode(airportCode);
+                //employee.setAirportCode(airportCode);
                 if(employee.getEmployeeId() != null){
-                    employee.setUpdateUser(userId);
+                    //employee.setUpdateUser(userId);
                     employee.setUpdateTime(new Date());
                 }else{
-                    employee.setCreateUser(userId);
+                   // employee.setCreateUser(userId);
                     employee.setCreateTime(new Date());
                 }
                 employeeService.saveOrUpdate(employee);

@@ -4,6 +4,7 @@ api/
 *.iml
 webapp/
 src/main/resources/generatorConfig.xml
+*/swagger.json
 
 *.class
 

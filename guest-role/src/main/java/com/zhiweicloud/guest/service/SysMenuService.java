@@ -187,11 +187,8 @@ public class SysMenuService {
     ///////////////////////////////////////
     public void saveOrUpdate(SysMenu sysMenu) {
         if (sysMenu.getMenuId() != null) {
-            Example example = new Example(SysMenu.class);
-            String sql = "menu_id = " + sysMenu.getMenuId() + " and airport_code = '" + sysMenu.getAirportCode() + "'";
-            example.createCriteria().andCondition(sql);
             sysMenu.setUpdateTime(new Date());
-            sysMenuMapper.updateByExampleSelective(sysMenu, example);
+            sysMenuMapper.updateByPrimaryKeySelective(sysMenu);
         } else {
             sysMenu.setCreateTime(new Date());
             sysMenuMapper.insertSelective(sysMenu);

@@ -26,7 +26,6 @@ package com.zhiweicloud.guest.service;
 
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -34,7 +33,6 @@ import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +58,7 @@ public class InstitutionClientService {
         List<InstitutionClient> institutionClientList = institutionClientMapper.getListByConidition(queryCondition);
 
         PaginationResult<InstitutionClient> eqr = new PaginationResult<>(count, institutionClientList);
-        LZResult<PaginationResult<InstitutionClient>> result = new LZResult<PaginationResult<InstitutionClient>>(eqr);
+        LZResult<PaginationResult<InstitutionClient>> result = new LZResult<>(eqr);
         return result;
     }
 
@@ -70,10 +68,7 @@ public class InstitutionClientService {
 
     public void saveOrUpdate(InstitutionClient institutionClient) {
         if (institutionClient.getInstitutionClientId() != null) {
-            Example example = new Example(InstitutionClient.class);
-            String sql = "institution_client_id = " + institutionClient.getInstitutionClientId() + " and airport_code = '" + institutionClient.getAirportCode() + "'";
-            example.createCriteria().andCondition(sql);
-            institutionClientMapper.updateByExampleSelective(institutionClient,example);
+            institutionClientMapper.updateByPrimaryKeySelective(institutionClient);
         } else {
             institutionClientMapper.insertSelective(institutionClient);
         }
