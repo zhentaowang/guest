@@ -27,6 +27,7 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.model.SysMenu;
 import org.apache.ibatis.annotations.Param;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ import java.util.Map;
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-public interface SysMenuMapper extends tk.mybatis.mapper.common.Mapper<SysMenu>, tk.mybatis.mapper.common.MySqlMapper<SysMenu> {
+public interface SysMenuMapper{
     List<SysMenu> getChildMenusByParentIdByUserId(@Param("parentId") Long parentId,@Param("airportCode") String airportCode,@Param("userId") Long userId);
 
     List<SysMenu> getChildNodesByParentId(@Param("parentId") Long parentId,@Param("airportCode") String airportCode);
@@ -47,4 +48,8 @@ public interface SysMenuMapper extends tk.mybatis.mapper.common.Mapper<SysMenu>,
     List<SysMenu> getChildMenusByParentIdByRole(@Param("parentId") Long parentId,@Param("airportCode") String airportCode,@Param("roleId") Long roleId);
 
     SysMenu selectMenuInstanceByIdAndAirportCode(@Param("menuId") Long menuId,@Param("airportCode") String airportCode);
+
+    void insertSelective(SysMenu sysMenu);
+
+    void updateByPrimaryKeySelective(SysMenu sysMenu);
 }

@@ -34,7 +34,7 @@ import java.util.Map;
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-public interface SysRoleMenuMapper extends tk.mybatis.mapper.common.Mapper<SysRoleMenu>, tk.mybatis.mapper.common.MySqlMapper<SysRoleMenu> {
+public interface SysRoleMenuMapper {
 
     void insertByExists(SysRoleMenu sysRoleMenu);
 
