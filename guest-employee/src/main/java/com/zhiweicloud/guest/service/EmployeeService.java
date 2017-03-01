@@ -67,10 +67,7 @@ public class EmployeeService {
     public void saveOrUpdate(Employee employee) {
         try {
             if (employee.getIsExist() != null && employee.getIsExist() == 1) { //isExist == 1 修改
-                Example example = new Example(Employee.class);
-                String sql = "employee_id = " + employee.getEmployeeId() + " and airport_code = '" + employee.getAirportCode() + "'";
-                example.createCriteria().andCondition(sql);
-                employeeMapper.updateByExampleSelective(employee, example);
+                employeeMapper.updateByPrimaryKeySelective(employee);
 
                 /**
                  * 更新角色和菜单的关联关系：

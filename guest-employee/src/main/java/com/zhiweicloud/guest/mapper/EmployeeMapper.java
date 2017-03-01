@@ -37,7 +37,7 @@ import java.util.Map;
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-public interface EmployeeMapper extends tk.mybatis.mapper.common.Mapper<Employee>, tk.mybatis.mapper.common.MySqlMapper<Employee> {
+public interface EmployeeMapper{
     List<Dropdownlist> getEmployeeDropdownList(String airportCode);
 
     int selectEmployeeTotal(Employee employeeParam);
@@ -55,4 +55,6 @@ public interface EmployeeMapper extends tk.mybatis.mapper.common.Mapper<Employee
     List<Map> getRoleListByUserId(@Param("employeeId") Long employeeId, @Param("airportCode") String airportCode);
 
     void insertSelectiveCustom(Employee employee);
+
+    void updateByPrimaryKeySelective(Employee employee);
 }
