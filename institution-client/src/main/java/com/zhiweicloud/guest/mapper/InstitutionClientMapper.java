@@ -25,11 +25,11 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,7 @@ import java.util.Map;
  * https://www.zhiweicloud.com
  * 2016-12-26 15:45:36 Created By zhangpengfei
  */
-public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
+public interface InstitutionClientMapper{
     List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
 
     List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
@@ -50,4 +50,8 @@ public interface InstitutionClientMapper extends MyMapper<InstitutionClient> {
     Integer getListByConiditionCount(InstitutionClient queryCondition);
 
     void markAsDeleted(@Param("institutionClientId")Long institutionClientId,@Param("deleteUser")Long deleteUser, @Param("airportCode")String airportCode);
+
+    void updateByPrimaryKeySelective(InstitutionClient institutionClient);
+
+    void insertSelective(InstitutionClient institutionClient);
 }
