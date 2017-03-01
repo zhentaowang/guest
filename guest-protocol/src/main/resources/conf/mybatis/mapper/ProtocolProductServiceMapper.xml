@@ -16,6 +16,9 @@
     protocol_product_service_id, airport_code, service_type_allocation_id, protocol_product_id, service_id, pricing_rule, is_pricing,
     is_prioritized, is_availabled
   </sql>
+  <select id="deleteByIdAndAirportCode" parameterType="map">
+    update protocol_product_service set is_deleted = 1 where protocol_product_id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
   <update id="updateByIdAndAirportCode" parameterType="com.zhiweicloud.guest.model.ProtocolProductService">
     <!--
       WARNING - @mbggenerated

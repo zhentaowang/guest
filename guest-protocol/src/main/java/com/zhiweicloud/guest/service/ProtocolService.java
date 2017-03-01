@@ -125,22 +125,31 @@ public class ProtocolService {
                             ProtocolProductService protocolProductService = protocolProduct.getProtocolProductServiceList().get(j);
                             if (protocolProductService.getProtocolProductServiceId() != null){
                                 protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductService);
+                            }else{
+                                protocolProductService.setProtocolProductId(protocolProduct.getProtocolProductId());
+                                protocolProductService.setCreateTime(new Date());
+                                protocolProductService.setUpdateTime(new Date());
+                                protocolProductService.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                                protocolProductServiceMapper.insertSelective(protocolProductService);
                             }
                         }
                     }
                 }
                 if(ids00.length() != 0){
                     params.put("ids00",ids00.substring(0,ids00.length() - 1));
-                    protocolServMapper.deleteByIdAndAirportCode(params);
+                    protocolProductMapper.deleteByIdAndAirportCode(params);
+                    protocolProductServiceMapper.deleteByIdAndAirportCode(params);
                 }
                 else{
                     params.put("ids00",ids00.append(0));
-                    protocolServMapper.deleteByIdAndAirportCode(params);
+                    protocolProductMapper.deleteByIdAndAirportCode(params);
+                    protocolProductServiceMapper.deleteByIdAndAirportCode(params);
                 }
             }
             else{
                 params.put("ids00",ids00.append(0));
-                protocolServMapper.deleteByIdAndAirportCode(params);
+                protocolProductMapper.deleteByIdAndAirportCode(params);
+                protocolProductServiceMapper.deleteByIdAndAirportCode(params);
             }
         } else {
 
@@ -176,7 +185,6 @@ public class ProtocolService {
                         ProtocolProductService p = protocol.getProtocolProductList().get(j).getProtocolProductServiceList().get(i);
                         p.setProtocolProductId(pp.getProtocolProductId());
                         p.setCreateTime(new Date());
-                        p.setProtocolProductId(protocol.getProtocolProductList().get(j).getProtocolProductId());
                         p.setUpdateTime(new Date());
                         p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                         protocolProductServiceMapper.insertSelective(p);

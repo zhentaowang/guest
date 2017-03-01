@@ -9,10 +9,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.Authorizer;
-import com.zhiweicloud.guest.model.Protocol;
-import com.zhiweicloud.guest.model.ProtocolProduct;
-import com.zhiweicloud.guest.model.ProtocolProductService;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.AuthorizerService;
 import com.zhiweicloud.guest.service.ProtocolService;
 import io.swagger.annotations.*;
@@ -142,19 +139,37 @@ public class ProtocolController {
                     protocolProductService.setIsPricing(protocolProductService00.getBoolean("isPricing"));
                     protocolProductService.setIsPrioritized(protocolProductService00.getBoolean("isPrioritized"));
                     protocolProductService.setIsAvailabled(protocolProductService00.getBoolean("isAvailabled"));
+                    protocolProductService00.remove("protocolProductServiceId");
+                    protocolProductService00.remove("airportCode");
+                    protocolProductService00.remove("serviceTypeAllocationId");
+                    protocolProductService00.remove("serviceId");
+                    protocolProductService00.remove("isPricing");
+                    protocolProductService00.remove("isPrioritized");
+                    protocolProductService00.remove("isAvailabled");
+                    protocolProductService.setPricingRule(protocolProductService00.toJSONString());
+                    Set keys = protocolProductService00.keySet();
+                    Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductService.getServiceTypeAllocationId());
+                    if(keys.size() != protocolProductFieldName.size()){
+                        return LXResult.build(4995, "传输数据字段错误");
+                    }else{
+                        if(protocolProductFieldName != null){
+                            for(int k = 0; k < keys.size(); k++){
+                                if(!protocolProductFieldName.containsKey(keys.toArray()[k])){
+                                    return LXResult.build(4995, "传输数据字段错误");
+                                }else{
+                                    if(protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()){
+                                        return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                                    }
+                                }
+                            }
+                        }
+                    }
                     protocolProductServices.add(protocolProductService);
                 }
                 protocolProduct.setProtocolProductServiceList(protocolProductServices);
                 protocolProducts.add(protocolProduct);
             }
             protocol.setProtocolProductList(protocolProducts);
-
-//            param00.remove("servId");
-//            param00.remove("name");
-//            param00.remove("institutionClientId");
-//            protocol.setServiceDetail(param00.toJSONString());
-//            Set keys = param00.keySet();
-//            Map<String,Object> serviceFieldName = ServiceDetail.getServiceFieldName(protocol.getServiceTypeAllocationId());
 
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());

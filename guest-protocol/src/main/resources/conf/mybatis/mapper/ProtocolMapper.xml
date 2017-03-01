@@ -152,14 +152,10 @@
   </select>
 
   <select id="selectById" parameterType="map" resultMap="BaseResultMapPage">
-   select  pi.*,a.authorizer_id as authorizer_id,a.name as authorizer_name,a.cellphone,a.telephone from
-    (
-    SELECT
-  p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
-  FROM
-  v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
+   SELECT p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
+  FROM v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
   where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.protocol_id = #{id,jdbcType=BIGINT}
-  ) as pi left join (select * from authorizer where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as a on pi.protocol_id = a.protocol_id
+  and i.airport_code = #{airportCode,jdbcType=VARCHAR} and i.protocol_id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">

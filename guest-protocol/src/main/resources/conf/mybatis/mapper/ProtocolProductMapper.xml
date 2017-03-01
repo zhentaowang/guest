@@ -10,6 +10,9 @@
   <sql id="Base_Column_List">
     protocol_product_id, protocol_id, product_id, product_desc
   </sql>
+  <select id="deleteByIdAndAirportCode" parameterType="map">
+    update protocol_product set is_deleted = 1 where protocol_product_id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
+  </select>
   <update id="updateByIdAndAirportCode" parameterType="com.zhiweicloud.guest.model.ProtocolProduct">
     <!--
       WARNING - @mbggenerated
