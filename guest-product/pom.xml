@@ -236,7 +236,7 @@
                             <host>localhost:8080</host>
                             <!--<basePath>/guest-employee</basePath>-->
                             <info>
-                                <title>Guest Role</title>
+                                <title>Guest Product</title>
                                 <version>v1</version>
                                 <description>产品管理调试接口</description>
                                 <termsOfService>
