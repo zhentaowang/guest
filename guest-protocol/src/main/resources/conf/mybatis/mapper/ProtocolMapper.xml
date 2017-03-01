@@ -2,14 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.ProtocolMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Protocol">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="protocol_id" jdbcType="BIGINT" property="protocolId" />
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
     <result column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
-    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="reservation_num" jdbcType="VARCHAR" property="reservationNum" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endTime" />
     <result column="clear_form" jdbcType="SMALLINT" property="clearForm" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,32 +19,19 @@
   </resultMap>
 
   <resultMap id="BaseResultMapPage" type="com.zhiweicloud.guest.model.Protocol">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="protocol_id" jdbcType="BIGINT" property="protocolId" />
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
-    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="reservation_num" jdbcType="VARCHAR" property="reservationNum" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endTime" />
     <result column="clear_form" jdbcType="SMALLINT" property="clearForm" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
     <result column="institution_client_name" jdbcType="VARCHAR" property="institutionClientName" />
     <result column="institution_client_type" jdbcType="VARCHAR" property="institutionClientType" />
     <result column="institution_client_no" jdbcType="VARCHAR" property="institutionClientNo" />
-    <collection property="authorizerList" ofType="com.zhiweicloud.guest.model.Authorizer">
-      <id column="authorizer_id" property="id" />
-      <result column="authorizer_name" property="name" />
-      <result column="cellphone" property="cellphone" />
-      <result column="telephone" property="telephone" />
-    </collection >
-    <collection property="protocolServList" ofType="com.zhiweicloud.guest.model.ProtocolServ">
-      <id column="protocolServ_id" property="id" />
-      <result column="price" property="price" />
-      <result column="description" property="description" />
-      <result column="service_name" property="serviceName" />
-      <result column="product_category" property="productCategory" />
-      <result column="service_type" property="serviceType" />
-    </collection >
   </resultMap>
 
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
@@ -52,31 +40,31 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, airport_code, institution_client_id, no, name, type, start_time, end_time, clear_form, 
+    protocol_id, airport_code, institution_client_id, no, name, type, reservation_num, start_date, end_date, clear_form,
     remark, create_time, update_time, is_deleted
   </sql>
 
   <select id="getProtocolDropdownList" parameterType="map" resultMap="DropdownlistMap">
-    select m.id,m.name as value from
-    (select vp.id,vp.name from
-    (select v.*,p.product_type_allocation_id from v_protocol as v left join protocol_serv as p on v.id = p.protocol_id
+    select m.protocol_id,m.name as value from
+    (select vp.protocol_id,vp.name from
+    (select v.*,p.id from v_protocol as v left join protocol_serv as p on v.protocol_id = p.protocol_id
     where v.airport_code = #{airportCode,jdbcType=VARCHAR} and v.is_deleted = 0 and p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
-    and p.product_type_allocation_id in (select id from product_type_allocation where product_category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    and p.id in (select service_type_allocation_id from service_type_allocation where category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
     and is_deleted = 0)) as vp
-    group by vp.id) as m
+    group by vp.protocol_id) as m
     <if test="name != null and !name.trim().equals('')">
       where m.name like concat('%',#{name},'%')
     </if>
   </select>
 
   <select id="getProtocolNoDropdownList" parameterType="map" resultMap="DropdownlistMap">
-    select m.id,m.no as value from
-    (select vp.id,vp.no from
-    (select v.*,p.product_type_allocation_id from v_protocol as v left join protocol_serv as p on v.id = p.protocol_id
+    select m.protocol_id,m.no as value from
+    (select vp.protocol_id,vp.no from
+    (select v.*,p.id from v_protocol as v left join protocol_serv as p on v.protocol_id = p.protocol_id
     where v.airport_code = #{airportCode,jdbcType=VARCHAR} and v.is_deleted = 0 and p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
-    and p.product_type_allocation_id in (select id from product_type_allocation where product_category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    and p.id in (select service_type_allocation_id from service_type_allocation where category = #{type,jdbcType=VARCHAR} and airport_code = #{airportCode,jdbcType=VARCHAR}
     and is_deleted = 0)) as vp
-    group by vp.id) as m
+    group by vp.protocol_id) as m
     <if test="no != null and !no.trim().equals('')" >
       where m.no like concat('%',#{no},'%')
     </if>
@@ -98,11 +86,14 @@
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
       </if>
-      <if test="startTime != null">
-        start_time = #{startTime,jdbcType=TIMESTAMP},
+      <if test="reservationNum != null">
+        reservation_num = #{reservationNum,jdbcType=VARCHAR},
       </if>
-      <if test="endTime != null">
-        end_time = #{endTime,jdbcType=TIMESTAMP},
+      <if test="startDate != null">
+        start_date = #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate,jdbcType=TIMESTAMP},
       </if>
       <if test="clearForm != null">
         clear_form = #{clearForm,jdbcType=VARCHAR},
@@ -115,14 +106,14 @@
       </if>
       update_time = CURRENT_TIMESTAMP
     </set>
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and id = #{id,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
   </update>
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
     SELECT
     p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
     FROM
-    v_protocol p left join v_institution_client i on p.institution_client_id = i.id
+    v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
     <if test="criteria.institutionClientName != null and !criteria.institutionClientName.trim().equals('')" >
       and i.name like concat('%',#{criteria.institutionClientName},'%')
@@ -139,15 +130,15 @@
     <if test="criteria.no != null and !criteria.no.trim().equals('')" >
       and p.no like concat('%',#{criteria.no},'%')
     </if>
-    order by p.id desc
+    order by p.protocol_id desc
   LIMIT #{page.startPageNo},#{page.pCount}
 </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
     SELECT
-    count(p.id) as num
+    count(p.protocol_id) as num
     FROM
-    protocol p left join institution_client i on p.institution_client_id = i.id
+    protocol p left join institution_client i on p.institution_client_id = i.institution_client_id
     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
     <if test="institutionClientName != null and !institutionClientName.trim().equals('')" >
       and i.name like concat('%',#{institutionClientName},'%')
@@ -161,20 +152,20 @@
   </select>
 
   <select id="selectById" parameterType="map" resultMap="BaseResultMapPage">
-   select  pi.*,a.id as authorizer_id,a.name as authorizer_name,a.cellphone,a.telephone from
+   select  pi.*,a.authorizer_id as authorizer_id,a.name as authorizer_name,a.cellphone,a.telephone from
     (
     SELECT
   p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
   FROM
-  v_protocol p left join v_institution_client i on p.institution_client_id = i.id
-  where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.id = #{id,jdbcType=BIGINT}
-  ) as pi left join (select * from authorizer where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as a on pi.id = a.protocol_id
+  v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
+  where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.protocol_id = #{id,jdbcType=BIGINT}
+  ) as pi left join (select * from authorizer where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as a on pi.protocol_id = a.protocol_id
   </select>
 
   <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT count(id) from protocol where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{protocolName,jdbcType=VARCHAR}
+    SELECT count(protocol_id) from protocol where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{protocolName,jdbcType=VARCHAR}
     <if test="id != null">
-      and id != #{id,jdbcType=BIGINT}
+      and protocol_id != #{id,jdbcType=BIGINT}
     </if>
   </select>
 

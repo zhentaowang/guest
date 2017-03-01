@@ -2,12 +2,17 @@ package com.zhiweicloud.guest.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.model.Authorizer;
 import com.zhiweicloud.guest.model.Protocol;
+import com.zhiweicloud.guest.model.ProtocolProduct;
+import com.zhiweicloud.guest.model.ProtocolProductService;
 import com.zhiweicloud.guest.service.AuthorizerService;
 import com.zhiweicloud.guest.service.ProtocolService;
 import io.swagger.annotations.*;
@@ -19,10 +24,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Protocol.java
@@ -86,25 +91,83 @@ public class ProtocolController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="协议管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "protocol", required = true) @RequestBody RequsetParams<Protocol> params){
+    public LXResult save(@ApiParam(value = "protocol", required = true) @RequestBody String params,
+                         @Context final HttpHeaders headers){
         try{
-            Protocol protocol = null;
-            if(!CollectionUtils.isEmpty(params.getData())){
-                protocol = params.getData().get(0);
+            Protocol protocol = new Protocol();
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            JSONArray param= JSON.parseObject(params).getJSONArray("data");
+            JSONObject param00 = JSON.parseObject(param.get(0).toString());
+            protocol.setProtocolId(param00.getLong("protocolId"));
+            protocol.setAirportCode(param00.getString("airportCode"));
+            protocol.setInstitutionClientId(param00.getLong("institutionClientId"));
+            protocol.setName(param00.getString("name"));
+            protocol.setType(param00.getInteger("type"));
+            protocol.setReservationNum(param00.getString("reservationNum"));
+            protocol.setStartDate(param00.getDate("startDate"));
+            protocol.setEndDate(param00.getDate("endDate"));
+            protocol.setClearForm(param00.getShort("clearForm"));
+            protocol.setRemark(param00.getString("remark"));
+            JSONArray authorizerList = param00.getJSONArray("authorizer");
+            List<Authorizer> authorizers = new ArrayList<>();
+            for(int i = 0; i < authorizerList.size(); i++){
+                JSONObject authorizer00 = JSON.parseObject(authorizerList.get(i).toString());
+                Authorizer authorizer = new Authorizer();
+                authorizer.setAuthorizerId(authorizer00.getLong("authorizerId"));
+                authorizer.setAirportCode(authorizer00.getString("airportCode"));
+                authorizer.setName(authorizer00.getString("name"));
+                authorizer.setCellphone(authorizer00.getString("cellphone"));
+                authorizer.setTelephone(authorizer00.getString("telephone"));
+                authorizers.add(authorizer);
             }
+            protocol.setAuthorizerList(authorizers);
+            JSONArray protocolProductList = param00.getJSONArray("protocolProduct");
+            List<ProtocolProduct> protocolProducts = new ArrayList<>();
+            for(int i = 0; i < protocolProductList.size(); i++){
+                JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
+                ProtocolProduct protocolProduct = new ProtocolProduct();
+                protocolProduct.setProtocolProductId(protocolProduct00.getLong("protocolProductId"));
+                protocolProduct.setAirportCode(protocolProduct00.getString("airportCode"));
+                protocolProduct.setProductId(protocolProduct00.getLong("productId"));
+                protocolProduct.setProductDesc(protocolProduct00.getString("productDesc"));
+                JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
+                List<ProtocolProductService> protocolProductServices = new ArrayList<>();
+                for(int j = 0; j < protocolProductServiceList.size(); j++){
+                    JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
+                    ProtocolProductService protocolProductService = new ProtocolProductService();
+                    protocolProductService.setProtocolProductServiceId(protocolProductService00.getLong("protocolProductServiceId"));
+                    protocolProductService.setAirportCode(protocolProductService00.getString("airportCode"));
+                    protocolProductService.setServiceTypeAllocationId(protocolProductService00.getLong("serviceTypeAllocationId"));
+                    protocolProductService.setServiceId(protocolProductService00.getLong("serviceId"));
+                    protocolProductService.setIsPricing(protocolProductService00.getBoolean("isPricing"));
+                    protocolProductService.setIsPrioritized(protocolProductService00.getBoolean("isPrioritized"));
+                    protocolProductService.setIsAvailabled(protocolProductService00.getBoolean("isAvailabled"));
+                    protocolProductServices.add(protocolProductService);
+                }
+                protocolProduct.setProtocolProductServiceList(protocolProductServices);
+                protocolProducts.add(protocolProduct);
+            }
+            protocol.setProtocolProductList(protocolProducts);
+
+//            param00.remove("servId");
+//            param00.remove("name");
+//            param00.remove("institutionClientId");
+//            protocol.setServiceDetail(param00.toJSONString());
+//            Set keys = param00.keySet();
+//            Map<String,Object> serviceFieldName = ServiceDetail.getServiceFieldName(protocol.getServiceTypeAllocationId());
 
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
             if (protocol.getName() == null || protocol.getClearForm() == null || protocol.getInstitutionClientId() == null
-                    || protocol.getType() == null || protocol.getStartTime() == null || protocol.getEndTime() == null) {
+                    || protocol.getType() == null || protocol.getStartDate() == null || protocol.getEndDate() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
-                if(authorizerService.selectByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
-                    return LXResult.build(4999, "该协议被订单引用，协议下预约人不能被删除");
-                }
-            }
+//            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
+//                if(authorizerService.selectByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
+//                    return LXResult.build(4999, "该协议被订单引用，协议下预约人不能被删除");
+//                }
+//            }
             if(protocolService.selectByName(protocol) == true){
                 return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
             }

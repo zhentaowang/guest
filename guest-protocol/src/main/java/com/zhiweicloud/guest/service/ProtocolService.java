@@ -4,13 +4,8 @@ package com.zhiweicloud.guest.service;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.mapper.AuthorizerMapper;
-import com.zhiweicloud.guest.mapper.ProtocolMapper;
-import com.zhiweicloud.guest.mapper.ProtocolServMapper;
-import com.zhiweicloud.guest.model.Authorizer;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Protocol;
-import com.zhiweicloud.guest.model.ProtocolServ;
+import com.zhiweicloud.guest.mapper.*;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +22,24 @@ import java.util.Map;
 @Service
 public class ProtocolService {
 
-    @Autowired
-    private ProtocolMapper protocolMapper;
+    private final ProtocolMapper protocolMapper;
+
+    private final AuthorizerMapper authorizerMapper;
+
+    private final ProtocolProductMapper protocolProductMapper;
+
+    private final ProtocolProductServiceMapper protocolProductServiceMapper;
+
+    private final ProtocolServMapper protocolServMapper;
 
     @Autowired
-    private AuthorizerMapper authorizerMapper;
-
-    @Autowired
-    private ProtocolServMapper protocolServMapper;
+    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper, ProtocolServMapper protocolServMapper) {
+        this.protocolMapper = protocolMapper;
+        this.authorizerMapper = authorizerMapper;
+        this.protocolProductMapper = protocolProductMapper;
+        this.protocolProductServiceMapper = protocolProductServiceMapper;
+        this.protocolServMapper = protocolServMapper;
+    }
 
     /**
      * 分页获取协议列表
@@ -49,8 +54,7 @@ public class ProtocolService {
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
         List<Protocol> protocolList = protocolMapper.getListByConidition(queryCondition);
         PaginationResult<Protocol> eqr = new PaginationResult<>(count, protocolList);
-        LZResult<PaginationResult<Protocol>> result = new LZResult<>(eqr);
-        return result;
+        return new LZResult<>(eqr);
     }
 
     /**
@@ -71,10 +75,10 @@ public class ProtocolService {
             if(protocol.getAuthorizerList() != null){
                 for(int i = 0; i < protocol.getAuthorizerList().size(); i++){
                     Authorizer authorizer = protocol.getAuthorizerList().get(i);
-                    if(authorizer.getProtocolId() != null){
+                    if(authorizer.getAuthorizerId() != null){
                         authorizer.setAirportCode(protocol.getAirportCode());
                         authorizer.setProtocolId(protocol.getProtocolId());
-                        ids.append(authorizer.getProtocolId()+",");
+                        ids.append(authorizer.getProtocolId()).append(",");
                         authorizerMapper.updateByIdAndAirportCode(authorizer);
                     }else{
                         authorizer.setCreateTime(new Date());
@@ -100,46 +104,51 @@ public class ProtocolService {
                 authorizerMapper.deleteByIdAndAirportCode(params);
             }
 
-//            //协议服务修改
-//            StringBuffer ids00 = new StringBuffer();
-//            if(protocol.getProtocolServList() != null){
-//                for(int i = 0; i < protocol.getProtocolServList().size(); i++){
-//                    ProtocolServ protocolServ = protocol.getProtocolServList().get(i);
-//                    if (protocolServ.getId() != null){
-//                        protocolServ.setAirportCode(protocol.getAirportCode());
-//                        protocolServ.setProtocolId(protocol.getId());
-//                        ids00.append(protocolServ.getId()+",");
-//                        protocolServMapper.updateByIdAndAirportCode(protocolServ);
-//                    }else{
-//                        protocolServ.setCreateTime(new Date());
-//                        protocolServ.setProtocolId(protocol.getId());
-//                        protocolServ.setUpdateTime(new Date());
-//                        protocolServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-//                        protocolServ.setAirportCode(protocol.getAirportCode());
-//                        protocolServMapper.insertSelective(protocolServ);
-//                        ids00.append(protocolServ.getId()+",");
-//                    }
-//                }
-//                if(ids00.length() != 0){
-//                    params.put("ids00",ids00.substring(0,ids00.length() - 1));
-//                    protocolServMapper.deleteByIdAndAirportCode(params);
-//                }
-//                else{
-//                    params.put("ids00",ids00.append(0));
-//                    protocolServMapper.deleteByIdAndAirportCode(params);
-//                }
-//            }
-//            else{
-//                params.put("ids00",ids00.append(0));
-//                protocolServMapper.deleteByIdAndAirportCode(params);
-//            }
+            //协议产品修改
+            StringBuffer ids00 = new StringBuffer();
+            if(protocol.getProtocolProductList() != null){
+                for(int i = 0; i < protocol.getProtocolProductList().size(); i++){
+                    ProtocolProduct protocolProduct = protocol.getProtocolProductList().get(i);
+                    if (protocolProduct.getProtocolProductId() != null){
+                        ids00.append(protocolProduct.getProtocolProductId()+",");
+                        protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
+                    }else{
+                        protocolProduct.setProtocolId(protocol.getProtocolId());
+                        protocolProduct.setCreateTime(new Date());
+                        protocolProduct.setUpdateTime(new Date());
+                        protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                        protocolProductMapper.insertSelective(protocolProduct);
+                        ids00.append(protocolProduct.getProtocolProductId()+",");
+                    }
+                    if(protocolProduct.getProtocolProductServiceList() != null){
+                        for(int j = 0; j < protocolProduct.getProtocolProductServiceList().size(); j++ ){
+                            ProtocolProductService protocolProductService = protocolProduct.getProtocolProductServiceList().get(j);
+                            if (protocolProductService.getProtocolProductServiceId() != null){
+                                protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductService);
+                            }
+                        }
+                    }
+                }
+                if(ids00.length() != 0){
+                    params.put("ids00",ids00.substring(0,ids00.length() - 1));
+                    protocolServMapper.deleteByIdAndAirportCode(params);
+                }
+                else{
+                    params.put("ids00",ids00.append(0));
+                    protocolServMapper.deleteByIdAndAirportCode(params);
+                }
+            }
+            else{
+                params.put("ids00",ids00.append(0));
+                protocolServMapper.deleteByIdAndAirportCode(params);
+            }
         } else {
 
             //协议添加
             protocol.setCreateTime(new Date());
             protocol.setUpdateTime(new Date());
             protocol.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-            protocolMapper.insert(protocol);
+            protocolMapper.insertSelective(protocol);
 
             //授权人添加
             if(protocol.getAuthorizerList() != null){
@@ -150,21 +159,27 @@ public class ProtocolService {
                     p.setUpdateTime(new Date());
                     p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                     p.setAirportCode(protocol.getAirportCode());
-                    authorizerMapper.insert(p);
+                    authorizerMapper.insertSelective(p);
                 }
             }
 
-            //协议服务添加
-            if(protocol.getProtocolServList() != null){
-                for(int j = 0; j < protocol.getProtocolServList().size(); j++){
-                    for(int i = 0; i < protocol.getProtocolServList().get(j).getProtocolServList().size(); i++){
-                        ProtocolServ p = protocol.getProtocolServList().get(j).getProtocolServList().get(i);
+            //协议产品添加
+            if(protocol.getProtocolProductList() != null){
+                for(int j = 0; j < protocol.getProtocolProductList().size(); j++){
+                    ProtocolProduct pp = protocol.getProtocolProductList().get(j);
+                    pp.setProtocolId(protocol.getProtocolId());
+                    pp.setCreateTime(new Date());
+                    pp.setUpdateTime(new Date());
+                    pp.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                    protocolProductMapper.insertSelective(pp);
+                    for(int i = 0; i < protocol.getProtocolProductList().get(j).getProtocolProductServiceList().size(); i++){
+                        ProtocolProductService p = protocol.getProtocolProductList().get(j).getProtocolProductServiceList().get(i);
+                        p.setProtocolProductId(pp.getProtocolProductId());
                         p.setCreateTime(new Date());
-                        p.setProtocolId(protocol.getProtocolId());
+                        p.setProtocolProductId(protocol.getProtocolProductList().get(j).getProtocolProductId());
                         p.setUpdateTime(new Date());
                         p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-                        p.setAirportCode(protocol.getAirportCode());
-                        protocolServMapper.insertSelective(p);
+                        protocolProductServiceMapper.insertSelective(p);
                     }
                 }
             }

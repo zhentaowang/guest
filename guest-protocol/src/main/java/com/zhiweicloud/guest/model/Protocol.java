@@ -54,20 +54,23 @@ public class Protocol extends BaseEntity{
     private String name;
 
     @ApiModelProperty(value="协议类型",name="type")
-    private String type;
+    private Integer type;
 
-    @ApiModelProperty(value="开始时间",name="startTime")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    private Date startTime;
+    @ApiModelProperty(value="预约号",name="reservationNum")
+    private String reservationNum;
 
-    @ApiModelProperty(value="结束时间",name="endTime")
+    @ApiModelProperty(value="开始日期",name="startDate")
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    private Date endTime;
+    private Date startDate;
+
+    @ApiModelProperty(value="结束日期",name="endDate")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    private Date endDate;
 
     @ApiModelProperty(value="结算方式，0：预付，1：月结，2：包量，3：接待",name="clearForm")
     private Short clearForm;
 
-    @ApiModelProperty(value="备注",name="remark")
+    @ApiModelProperty(value="协议说明",name="remark")
     private String remark;
 
     @Transient
@@ -75,20 +78,16 @@ public class Protocol extends BaseEntity{
     private List<Authorizer> authorizerList;
 
     @Transient
-    @ApiModelProperty(value = "协议服务",name="protocolServ")
-    private List<ProtocolServ> protocolServList;
+    @ApiModelProperty(value = "协议产品",name="protocolProduct")
+    private List<ProtocolProduct> protocolProductList;
 
-    @Transient
-    @ApiModelProperty(value="服务名称",name="serviceName")
-    private String serviceName;
+    public String getReservationNum() {
+        return reservationNum;
+    }
 
-    @Transient
-    @ApiModelProperty(value="产品品类",name="productCategory")
-    private String productCategory;
-
-    @Transient
-    @ApiModelProperty(value="服务类型",name="serviceType")
-    private String serviceType;
+    public void setReservationNum(String reservationNum) {
+        this.reservationNum = reservationNum;
+    }
 
     public Long getProtocolId() {
         return protocolId;
@@ -98,60 +97,12 @@ public class Protocol extends BaseEntity{
         this.protocolId = protocolId;
     }
 
-    /**
-     * 服务名称
-     * @return serviceName 服务名称
-     */
-    public String getServiceName() {
-        return serviceName;
+    public List<ProtocolProduct> getProtocolProductList() {
+        return protocolProductList;
     }
 
-    /**
-     * 服务名称
-     * @param serviceName 服务名称
-     */
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    /**
-     * 产品品类
-     * @return product_category 产品品类
-     */
-    public String getProductCategory() {
-        return productCategory;
-    }
-
-    /**
-     * 产品品类
-     * @param productCategory 产品品类
-     */
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
-    }
-
-    /**
-     * 服务类型
-     * @return service_type 服务类型
-     */
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    /**
-     * 服务类型
-     * @param serviceType 服务类型
-     */
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-
-    public List<ProtocolServ> getProtocolServList() {
-        return protocolServList;
-    }
-
-    public void setProtocolServList(List<ProtocolServ> protocolServList) {
-        this.protocolServList = protocolServList;
+    public void setProtocolProductList(List<ProtocolProduct> protocolProductList) {
+        this.protocolProductList = protocolProductList;
     }
 
     public List<Authorizer> getAuthorizerList() {
@@ -262,7 +213,7 @@ public class Protocol extends BaseEntity{
      * 协议类型
      * @return type 协议类型
      */
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
@@ -270,40 +221,40 @@ public class Protocol extends BaseEntity{
      * 协议类型
      * @param type 协议类型
      */
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
     /**
      * 开始时间
-     * @return start_time 开始时间
+     * @return startDate 开始日期
      */
-    public Date getStartTime() {
-        return startTime;
+    public Date getStartDate() {
+        return startDate;
     }
 
     /**
      * 开始时间
-     * @param startTime 开始时间
+     * @param startDate 开始日期
      */
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     /**
      * 结束时间
-     * @return end_time 结束时间
+     * @return endDate 结束日期
      */
-    public Date getEndTime() {
-        return endTime;
+    public Date getEndDate() {
+        return endDate;
     }
 
     /**
      * 结束时间
-     * @param endTime 结束时间
+     * @param endDate 结束日期
      */
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     /**

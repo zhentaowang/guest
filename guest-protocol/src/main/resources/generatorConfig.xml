@@ -29,7 +29,7 @@
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="protocol_product_service" enableCountByExample="false"
+		<table schema="" tableName="protocol_product" enableCountByExample="false"
 				enableUpdateByExample="false" enableDeleteByExample="false"
 				enableSelectByExample="false" selectByExampleQueryId="false">
 			<ignoreColumn column="update_time"/>

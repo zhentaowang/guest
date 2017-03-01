@@ -41,11 +41,11 @@
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
     select
-    pss.id,pss.protocol_id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
+    pss.id,pss.protocol_id,p.airport_code,p.category,p.type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
     from (
         select ps.*,s.name
              from protocol_serv as ps
-        left join serv s on ps.service_id = s.id
+        left join serv s on ps.service_id = s.serv_id
         where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
         <if test="criteria.protocolId != null" >
              and ps.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
@@ -55,7 +55,7 @@
       </if>
         and s.is_deleted = 0 and ps.is_deleted = 0
     ) as pss
-    left join product_type_allocation p on pss.product_type_allocation_id = p.id
+    left join service_type_allocation p on pss.product_type_allocation_id = p.service_type_allocation_id
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
       <if test="criteria.productTypeAllocationId != null" >
           and pss.product_type_allocation_id = #{criteria.productTypeAllocationId,jdbcType=BIGINT}
@@ -69,11 +69,11 @@
 
     <select id="getProtocolServType" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
         select
-        pss.id,pss.service_id,pss.protocol_id,pss.product_type_allocation_id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
+        pss.id,pss.service_id,pss.protocol_id,pss.product_type_allocation_id,p.airport_code,p.category,p.type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
         from (
         select ps.*,s.name
         from protocol_serv as ps
-        left join serv s on ps.service_id = s.id
+        left join serv s on ps.service_id = s.serv_id
         where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
         <if test="criteria.protocolId != null" >
             and ps.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
@@ -83,9 +83,9 @@
         </if>
         and s.is_deleted = 0 and ps.is_deleted = 0
         ) as pss
-        left join product_type_allocation p on pss.product_type_allocation_id = p.id
+        left join service_type_allocation p on pss.product_type_allocation_id = p.service_type_allocation_id
         where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
-        group by p.product_category,p.service_type,pss.description
+        group by p.category,p.type,pss.description
         order by pss.id desc
         LIMIT #{page.startPageNo},#{page.pCount}
     </select>
@@ -93,11 +93,11 @@
     <select id="getTypeCount" parameterType="map" resultType="int">
         select count(mm.id) from(
         select
-        pss.id,pss.service_id,pss.protocol_id,p.airport_code,p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
+        pss.id,pss.service_id,pss.protocol_id,p.airport_code,p.category,p.type,pss.name as service_name,pss.price,pss.description,pss.over_staff_unit_price,pss.free_retinue_num
         from (
         select ps.*,s.name
         from protocol_serv as ps
-        left join serv s on ps.service_id = s.id
+        left join serv s on ps.service_id = s.serv_id
         where s.airport_code = #{airportCode,jdbcType=VARCHAR}
         <if test="protocolId != null" >
             and ps.protocol_id = #{protocolId,jdbcType=BIGINT}
@@ -107,9 +107,9 @@
         </if>
         and s.is_deleted = 0 and ps.is_deleted = 0
         ) as pss
-        left join product_type_allocation p on pss.product_type_allocation_id = p.id
+        left join service_type_allocation p on pss.product_type_allocation_id = p.service_type_allocation_id
         where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
-        group by p.product_category,p.service_type,pss.description) as mm
+        group by p.category,p.type,pss.description) as mm
     </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
@@ -118,7 +118,7 @@
     from (
         select ps.*,s.name
         from protocol_serv as ps
-        left join serv s on ps.service_id = s.id
+        left join serv s on ps.service_id = s.serv_id
         where s.airport_code = #{airportCode,jdbcType=VARCHAR}
         <if test="protocolId != null">
             and ps.protocol_id = #{protocolId,jdbcType=BIGINT}
@@ -128,7 +128,7 @@
       </if>
         and s.is_deleted = 0
     ) as pss
-    left join product_type_allocation p on pss.product_type_allocation_id = p.id
+    left join service_type_allocation p on pss.product_type_allocation_id = p.service_type_allocation_id
     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
       <if test="productTypeAllocationId != null" >
           and pss.product_type_allocation_id = #{productTypeAllocationId,jdbcType=BIGINT}
@@ -173,16 +173,16 @@
 
     <select id="selectById" parameterType="map" resultMap="BaseResultMapPage">
         select
-        p.product_category,p.service_type,pss.name as service_name,pss.price,pss.description,pss.protocol_id,pss.over_staff_unit_price,pss.free_retinue_num
+        p.category,p.type,pss.name as service_name,pss.price,pss.description,pss.protocol_id,pss.over_staff_unit_price,pss.free_retinue_num
         from (
         select ps.*,s.name
         from protocol_serv as ps
-        left join serv s on ps.service_id = s.id
+        left join serv s on ps.service_id = s.serv_id
         where s.airport_code = #{airportCode,jdbcType=VARCHAR}
         and ps.id = #{id,jdbcType=BIGINT}
         and s.is_deleted = 0 and ps.is_deleted = 0
         ) as pss
-        left join product_type_allocation p on pss.product_type_allocation_id = p.id
+        left join service_type_allocation p on pss.product_type_allocation_id = p.service_type_allocation_id
         where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
     </select>
 

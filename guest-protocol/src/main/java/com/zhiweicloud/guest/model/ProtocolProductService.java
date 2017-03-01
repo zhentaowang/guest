@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 2017-02-27 21:06:37 Created By wzt
 */
 @ApiModel(value="ProtocolProductService",description="protocol_product_service")
-public class ProtocolProductService {
+public class ProtocolProductService extends BaseEntity{
     @ApiModelProperty(value="主键自增Id",name="protocolProductServiceId", required=true)
     @NotEmpty
     private Long protocolProductServiceId;
@@ -26,11 +26,14 @@ public class ProtocolProductService {
     @ApiModelProperty(value="协议产品Id",name="protocolProductId")
     private Long protocolProductId;
 
+    @ApiModelProperty(value="服务类型配置Id",name="serviceTypeAllocationId")
+    private Long serviceTypeAllocationId;
+
     @ApiModelProperty(value="服务Id",name="serviceId")
     private Long serviceId;
 
-    @ApiModelProperty(value="",name="pricingRule")
-    private Object pricingRule;
+    @ApiModelProperty(value="计价规则",name="pricingRule")
+    private String pricingRule;
 
     @ApiModelProperty(value="是否计价：0，计价；1，不计价",name="isPricing")
     private Boolean isPricing;
@@ -73,6 +76,14 @@ public class ProtocolProductService {
         this.protocolProductId = protocolProductId;
     }
 
+    public Long getServiceTypeAllocationId() {
+        return serviceTypeAllocationId;
+    }
+
+    public void setServiceTypeAllocationId(Long serviceTypeAllocationId) {
+        this.serviceTypeAllocationId = serviceTypeAllocationId;
+    }
+
     /**
      * 服务Id
      * @return service_id 服务Id
@@ -93,7 +104,7 @@ public class ProtocolProductService {
      * 
      * @return pricing_rule 
      */
-    public Object getPricingRule() {
+    public String getPricingRule() {
         return pricingRule;
     }
 
@@ -101,7 +112,7 @@ public class ProtocolProductService {
      * 
      * @param pricingRule 
      */
-    public void setPricingRule(Object pricingRule) {
+    public void setPricingRule(String pricingRule) {
         this.pricingRule = pricingRule;
     }
 

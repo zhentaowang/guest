@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.AuthorizerMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Authorizer">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="authorizer_id" jdbcType="BIGINT" property="authorizerId" />
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
     <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -14,7 +14,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, airport_code, protocol_id, name, cellphone, telephone, create_time, update_time, 
+    authorizer_id, airport_code, protocol_id, name, cellphone, telephone, create_time, update_time,
     is_deleted
   </sql>
 
@@ -43,25 +43,25 @@
     <if test="protocolId != null">
       and protocol_id = #{protocolId,jdbcType=BIGINT}
     </if>
-    <if test="id != null">
-      and id = #{id,jdbcType=BIGINT}
+    <if test="authorizerId != null">
+      and authorizer_id = #{authorizerId,jdbcType=BIGINT}
     </if>
   </update>
 
   <select id="getListByConidition" parameterType="map" resultMap="BaseResultMap">
     SELECT
-    id,name,cellphone,telephone
+    authorizer_id,name,cellphone,telephone
     FROM authorizer
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="protocolId != null" >
       and protocol_id = #{protocolId,jdbcType=BIGINT}
     </if>
-    order by id desc
+    order by authorizer_id desc
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
     SELECT
-    count(id)
+    count(authorizer_id)
     FROM authorizer
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="protocolId != null" >
@@ -73,10 +73,10 @@
     SELECT
     name,cellphone,telephone
     FROM authorizer
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and authorizer_id = #{id,jdbcType=BIGINT} and is_deleted = 0
   </select>
 
   <select id="deleteByIdAndAirportCode" parameterType="map">
-    update authorizer set is_deleted = 1 where id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
+    update authorizer set is_deleted = 1 where authorizer_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
   </select>
 </mapper>
