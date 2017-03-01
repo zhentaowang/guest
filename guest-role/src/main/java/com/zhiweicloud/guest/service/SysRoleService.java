@@ -53,9 +53,6 @@ public class SysRoleService {
 
 
     @Autowired
-    private SysMenuMapper sysMenuMapper;
-
-    @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;
 
 
@@ -112,7 +109,7 @@ public class SysRoleService {
                     sysRoleMenu.setMenuId(sysRole.getMenuIdList().get(i));
                     sysRoleMenu.setAirportCode(sysRole.getAirportCode());
                     sysRoleMenu.setCreateUser(sysRole.getCreateUser());
-                    sysRoleMenuMapper.insertSelective(sysRoleMenu);
+                    sysRoleMenuMapper.insertByExists(sysRoleMenu);
                 }
             }
         }
