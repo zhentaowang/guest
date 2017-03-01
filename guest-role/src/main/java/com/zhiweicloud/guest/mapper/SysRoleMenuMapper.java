@@ -39,4 +39,6 @@ public interface SysRoleMenuMapper {
     void insertByExists(SysRoleMenu sysRoleMenu);
 
     void deleteMenus(Map map);
+
+    void insertSelective(SysRoleMenu sysRoleMenu);
 }

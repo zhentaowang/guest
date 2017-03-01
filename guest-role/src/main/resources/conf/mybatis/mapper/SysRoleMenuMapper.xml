@@ -17,6 +17,11 @@
     )
   </insert>
 
+  <insert id="insertSelective">
+    INSERT INTO sys_role_menu (role_id,menu_id,airport_code,create_user)
+    values( #{roleId},#{menuId},#{airportCode},#{createUser})
+  </insert>
+
   <update id="deleteMenus" parameterType="map">
     update sys_role_menu set is_deleted = 1 where menu_id not in (${menuIds})  and airport_code = #{airportCode} and role_id = #{roleId}
   </update>

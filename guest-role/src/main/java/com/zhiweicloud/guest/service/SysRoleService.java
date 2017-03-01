@@ -111,6 +111,7 @@ public class SysRoleService {
                     sysRoleMenu.setRoleId(sysRole.getRoleId());
                     sysRoleMenu.setMenuId(sysRole.getMenuIdList().get(i));
                     sysRoleMenu.setAirportCode(sysRole.getAirportCode());
+                    sysRoleMenu.setCreateUser(sysRole.getCreateUser());
                     sysRoleMenuMapper.insertSelective(sysRoleMenu);
                 }
             }
