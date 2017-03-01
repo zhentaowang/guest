@@ -101,7 +101,7 @@
         update_user = #{updateUser,jdbcType=BIGINT},
       </if>
     </set>
-    where role_id = #{roleId,jdbcType=BIGINT} and airportCode = #{airportCode,jdbcType=VARCHAR}
+    where role_id = #{roleId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
