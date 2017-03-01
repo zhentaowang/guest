@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
@@ -46,7 +47,14 @@ public class ProductController {
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows) {
         //@TODO:根据userId 查页面权限
         String airportCode = request.getHeaders().getFirst("client-id").toString();
-        LZResult<PaginationResult<Product>> result = productService.getAll(airportCode, page, rows);
+        LZResult<PaginationResult<Product>> result = new LZResult<>();
+        if(StringUtils.isEmpty(airportCode)){
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
+        result = productService.getAll(airportCode, page, rows);
         return JSON.toJSONString(result);
 
     }
@@ -66,12 +74,17 @@ public class ProductController {
         LZResult<Product> result = new LZResult<>();
         try {
             String airportCode = request.getHeaders().getFirst("client-id").toString();
-
+            if(StringUtils.isEmpty(airportCode)){
+                result.setMsg(LZStatus.ERROR.display());
+                result.setStatus(LZStatus.ERROR.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
+            }
             Product guestOrder = productService.getById(productId, airportCode);
+
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(guestOrder);
-            return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());

@@ -50,7 +50,7 @@ public class ProductService {
             product.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             product.setCreateTime(new Date());
             product.setCreateUser(userId);
-            productMapper.insert(product);
+            productMapper.insertProduct(product);
         }
 
         //@TODO:修改user类型
@@ -105,11 +105,8 @@ public class ProductService {
      * @return
      */
     public LZResult<PaginationResult<Product>> getAll(String airportCode, Integer page, Integer rows) {
-        Product productParam = new Product();
-        productParam.setAirportCode(airportCode);
-        productParam.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-        int total = productMapper.selectCount(productParam);
 
+        int total = productMapper.getListCount(airportCode);
         List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,page*rows);
         PaginationResult<Product> eqr = new PaginationResult<>(total, productList);
         LZResult<PaginationResult<Product>> result = new LZResult<>(eqr);
@@ -126,7 +123,9 @@ public class ProductService {
     public Product getById(Long productId, String airportCode) {
         List<Long> tempList = productServiceTypeMapper.queryProductServiceTypes(productId,airportCode);
         Product product = productMapper.queryByIdAndAirCode(productId, airportCode);
-        product.setServiceTypeIds(tempList);
+        if(product != null){
+            product.setServiceTypeIds(tempList);
+        }
         return product;
     }
 }

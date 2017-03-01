@@ -18,6 +18,13 @@
     product_id, concat('P',lpad(product_id,3,0)) AS product_no, product_name
   </sql>
 
+  <insert id="insertProduct" parameterType="com.zhiweicloud.guest.model.Product">
+    insert into
+      product ( airport_code, product_name,is_deleted, create_time, create_user,update_time, update_user)
+    values
+      ( #{airportCode}, #{productName},0, NOW(), #{createUser}, #{updateTime}, #{updateUser})
+  </insert>
+
   <update id="updateProduct" parameterType="com.zhiweicloud.guest.model.Product">
     UPDATE
       product
@@ -57,5 +64,14 @@
       airport_code = #{airportCode} AND is_deleted = 0
     ORDER BY create_time DESC  limit #{begin}, #{end}
 
+  </select>
+
+  <select id="getListCount" parameterType="String" resultType="int">
+    SELECT
+      count(product_id) as num
+    FROM
+      product
+    WHERE
+      airport_code = #{airportCode} AND is_deleted = 0
   </select>
 </mapper>

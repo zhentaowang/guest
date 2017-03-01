@@ -25,7 +25,6 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Product;
 import org.apache.ibatis.annotations.Param;
 
@@ -34,8 +33,20 @@ import java.util.List;
 /**
  * Created by zhengyiyin on 2017/2/22.
  */
-public interface ProductMapper extends MyMapper<Product> {
+public interface ProductMapper{
 
+    /**
+     * 新增产品
+     * @param productParam
+     * @return
+     */
+    int insertProduct(Product productParam);
+
+    /**
+     * 修改产品
+     * @param productParam
+     * @return
+     */
     int updateProduct(Product productParam);
 
     /**
@@ -59,4 +70,11 @@ public interface ProductMapper extends MyMapper<Product> {
      * @return
      */
     List<Product> getProductList(@Param("airportCode")String airportCode,@Param("begin") int begin,@Param("end") int end);
+
+    /**
+     * 产品数量
+     * @param airportCode
+     * @return
+     */
+    int getListCount(@Param("airportCode") String airportCode);
 }
