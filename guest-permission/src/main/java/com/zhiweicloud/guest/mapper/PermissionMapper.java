@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by wzt on 2016/12/26.
  */
-public interface PermissionMapper extends MyMapper<Permission> {
+public interface PermissionMapper {
     Permission selectById(Map<String, Object> map);
     List<Permission> getUserPermission(Map<String, Object> map);
     List<Permission> getListByConidition(BasePagination<Map<String, Object>> queryCondition);

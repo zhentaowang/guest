@@ -13,8 +13,14 @@
     update role_permission set is_deleted = 1 where role_permission_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and role_id = #{roleId,jdbcType=BIGINT}
   </select>
   <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.RolePermission">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="rolePermissionId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into role_permission
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        airport_code,
+      </if>
       <if test="rolePermissionId != null">
         role_permission_id,
       </if>
@@ -24,8 +30,26 @@
       <if test="permissionId != null">
         permission_id,
       </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR},
+      </if>
       <if test="rolePermissionId != null">
         #{rolePermissionId,jdbcType=BIGINT},
       </if>
@@ -34,6 +58,21 @@
       </if>
       <if test="permissionId != null">
         #{permissionId,jdbcType=BIGINT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=SMALLINT},
       </if>
     </trim>
   </insert>

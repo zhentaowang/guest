@@ -62,7 +62,7 @@ public class PermissionService {
             permission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             permission.setCreateTime(new Date());
             permission.setUpdateTime(new Date());
-            permissionMapper.insertSelective(permission);
+//            permissionMapper.insertSelective(permission);
         }
     }
 
