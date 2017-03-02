@@ -6,6 +6,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.ServMapper;
+import com.zhiweicloud.guest.model.ProtocolProductDetail;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -48,6 +49,15 @@ public class ServService {
             result.put("serviceTypeAllocationId",servList.get(i).getServiceTypeAllocationId());
             result.put("name",servList.get(i).getName());
             result.put("no",servList.get(i).getNo());
+            if(param.get("typeId") != null){
+                Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(Long.parseLong(param.get("typeId").toString()));
+                if(protocolProductFieldName != null){
+                    result.putAll(protocolProductFieldName);
+                }
+                result.put("isPricing",0);
+                result.put("isPrioritized",0);
+                result.put("isAvailabled",0);
+            }
             servJson.add(result);
         }
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, servJson);
