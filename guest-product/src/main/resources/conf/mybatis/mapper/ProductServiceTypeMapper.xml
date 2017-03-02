@@ -5,7 +5,8 @@
     <id column="product_service_type_id" jdbcType="BIGINT" property="productServiceTypeId" />
     <result column="product_id" jdbcType="BIGINT" property="productId" />
     <result column="service_type_id" jdbcType="BIGINT" property="serviceTypeId" />
-
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
@@ -54,5 +55,20 @@
       product_id = #{productId} AND airport_code = #{airportCode} AND is_deleted = 0
   </select>
 
+  <select id="getServiceMenuList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select p.service_type_id, s.category from product_service_type as p
+    left join (select service_type_allocation_id, category from service_type_allocation
+    where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}) as s
+    on p.service_type_id = s.service_type_allocation_id
+    where p.is_deleted = 0 and p.product_id = #{productId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR} group by s.category
+  </select>
+
+  <select id="getServiceTypeDropdownList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select p.service_type_id, s.type from product_service_type as p
+    left join (select service_type_allocation_id, type from service_type_allocation
+    where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}) as s
+    on p.service_type_id = s.service_type_allocation_id
+    where p.is_deleted = 0 and p.product_id = #{productId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
 
 </mapper>

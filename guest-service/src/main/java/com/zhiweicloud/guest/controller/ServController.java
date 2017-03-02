@@ -45,7 +45,6 @@ public class ServController {
     @ApiOperation(value = "服务管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")})
@@ -183,6 +182,38 @@ public class ServController {
             logger.error("delete serv by ids error", e);
             return JSON.toJSONString(LXResult.error());
         }
+    }
+
+    /**
+     * 服务管理 - 根据服务类型配置id和产品id查询服务详情
+     * @param page 起始页
+     * @param rows 每页显示数目
+     * @param typeId 服务类型配置id
+     * @param productId 产品id
+     * @return
+     */
+    @GET
+    @Path("get-service-list-by-type-and-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "服务管理 - 根据服务类型配置id和产品id查询服务详情", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "productId", value = "产品id", dataType = "Long", defaultValue = "39", required = true, paramType = "query")})
+    public String list( @QueryParam(value = "page") Integer page,
+                        @QueryParam(value = "rows") Integer rows,
+                        @QueryParam(value = "typeId") Long typeId,
+                        @QueryParam(value = "productId") Long productId,
+                        @Context final HttpHeaders headers) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        param.put("typeId", typeId);
+        param.put("productId", productId);
+        LZResult<PaginationResult<JSONObject>> result  = servService.getServiceListByTypeId(param,page,rows);
+        return JSON.toJSONString(result);
     }
 
 }

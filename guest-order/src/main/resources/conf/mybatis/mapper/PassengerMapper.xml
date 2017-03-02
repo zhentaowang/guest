@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.PassengerMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Passenger">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="passenger_id" jdbcType="BIGINT" property="passengerId" />
     <result column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="phone" jdbcType="BIGINT" property="phone" />
@@ -15,16 +15,203 @@
     <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
     <result column="card_type" jdbcType="SMALLINT" property="cardType" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
-    <result column="ariport_id" jdbcType="BIGINT" property="ariportId" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, order_id, name, phone, identity_card, work_unit, vip_card, sit_no, cabin_no, 
-    ticket_no, card_no, card_type, expire_time, create_time, update_time, is_deleted, 
-    ariport_id
+    passenger_id, order_id, name, phone, identity_card, work_unit, vip_card, sit_no, 
+    cabin_no, ticket_no, card_no, card_type, expire_time, create_user, update_user
   </sql>
 
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.Passenger">
+    insert into passenger
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="passengerId != null">
+        passenger_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="identityCard != null">
+        identity_card,
+      </if>
+      <if test="workUnit != null">
+        work_unit,
+      </if>
+      <if test="vipCard != null">
+        vip_card,
+      </if>
+      <if test="sitNo != null">
+        sit_no,
+      </if>
+      <if test="cabinNo != null">
+        cabin_no,
+      </if>
+      <if test="ticketNo != null">
+        ticket_no,
+      </if>
+      <if test="cardNo != null">
+        card_no,
+      </if>
+      <if test="cardType != null">
+        card_type,
+      </if>
+      <if test="expireTime != null">
+        expire_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="passengerId != null">
+        #{passengerId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="identityCard != null">
+        #{identityCard,jdbcType=VARCHAR},
+      </if>
+      <if test="workUnit != null">
+        #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="vipCard != null">
+        #{vipCard,jdbcType=VARCHAR},
+      </if>
+      <if test="sitNo != null">
+        #{sitNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cabinNo != null">
+        #{cabinNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketNo != null">
+        #{ticketNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNo != null">
+        #{cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cardType != null">
+        #{cardType,jdbcType=SMALLINT},
+      </if>
+      <if test="expireTime != null">
+        #{expireTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
 
+  <update id="updateByPassengerIdAndAirportCodeKeySelective" parameterType="com.zhiweicloud.guest.model.Passenger">
+    update passenger
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=BIGINT},
+      </if>
+      <if test="identityCard != null">
+        identity_card = #{identityCard,jdbcType=VARCHAR},
+      </if>
+      <if test="workUnit != null">
+        work_unit = #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="vipCard != null">
+        vip_card = #{vipCard,jdbcType=VARCHAR},
+      </if>
+      <if test="sitNo != null">
+        sit_no = #{sitNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cabinNo != null">
+        cabin_no = #{cabinNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketNo != null">
+        ticket_no = #{ticketNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cardNo != null">
+        card_no = #{cardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cardType != null">
+        card_type = #{cardType,jdbcType=SMALLINT},
+      </if>
+      <if test="expireTime != null">
+        expire_time = #{expireTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where passenger_id = #{passengerId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+  </update>
+
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from passenger
+    where passenger_id = #{passengerId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from passenger
+    where passenger_id = #{passengerId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.Passenger">
+    insert into passenger (passenger_id, order_id, name, 
+      phone, identity_card, work_unit, 
+      vip_card, sit_no, cabin_no, 
+      ticket_no, card_no, card_type, 
+      expire_time, create_user, update_user
+      )
+    values (#{passengerId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=BIGINT}, #{identityCard,jdbcType=VARCHAR}, #{workUnit,jdbcType=VARCHAR}, 
+      #{vipCard,jdbcType=VARCHAR}, #{sitNo,jdbcType=VARCHAR}, #{cabinNo,jdbcType=VARCHAR}, 
+      #{ticketNo,jdbcType=VARCHAR}, #{cardNo,jdbcType=VARCHAR}, #{cardType,jdbcType=SMALLINT}, 
+      #{expireTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}
+      )
+  </insert>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Passenger">
+    update passenger
+    set order_id = #{orderId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=BIGINT},
+      identity_card = #{identityCard,jdbcType=VARCHAR},
+      work_unit = #{workUnit,jdbcType=VARCHAR},
+      vip_card = #{vipCard,jdbcType=VARCHAR},
+      sit_no = #{sitNo,jdbcType=VARCHAR},
+      cabin_no = #{cabinNo,jdbcType=VARCHAR},
+      ticket_no = #{ticketNo,jdbcType=VARCHAR},
+      card_no = #{cardNo,jdbcType=VARCHAR},
+      card_type = #{cardType,jdbcType=SMALLINT},
+      expire_time = #{expireTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=BIGINT},
+      update_user = #{updateUser,jdbcType=BIGINT}
+    where passenger_id = #{passengerId,jdbcType=BIGINT}
+  </update>-->
 </mapper>

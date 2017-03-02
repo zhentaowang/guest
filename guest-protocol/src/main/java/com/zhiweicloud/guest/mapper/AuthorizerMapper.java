@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public interface AuthorizerMapper extends MyMapper<Authorizer> {
     Authorizer selectById(Map<String, Object> map);
+    List<Authorizer> selectByProtocolId(Map<String, Object> map);
     List<Authorizer> getListByConidition(Map<String, Object> map);
     Integer getListCount(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Authorizer authorizer);

@@ -2,70 +2,72 @@
  * Flight.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-01-17 11:34:33 Created By zhangpengfei
- */
+ * 2017-02-27 11:59:56 Created By zhangpengfei
+*/
 package com.zhiweicloud.guest.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
-import javax.persistence.Transient;
-
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.Date;
 
 /**
  * Flight.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-01-17 11:34:33 Created By zhangpengfei
- */
+ * 2017-02-27 11:59:56 Created By zhangpengfei
+*/
 @ApiModel(value="Flight",description="flight")
 public class Flight extends BaseEntity{
+    @ApiModelProperty(value="主键自增id",name="flightId", required=true)
+    @NotEmpty
+    private Long flightId;
+
     @ApiModelProperty(value="订单id",name="orderId", required=true)
     @NotEmpty
     private Long orderId;
 
-    @ApiModelProperty(value="航班日期",name="flightDate",hidden = true)
-    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd") //这里一定要加上时区，否则时间会少一天:比如数据库是　2017-01-18 查出来会是：2017-01-17　
+    @ApiModelProperty(value="航班日期",name="flightDate")
     private Date flightDate;
-
-    @Transient
-    @ApiModelProperty(value = "航班日期", name = "flightDate")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String strFlightDate;
 
     @ApiModelProperty(value="航班号",name="flightNo")
     private String flightNo;
 
-    @ApiModelProperty(value="航段",name="flightSegment")
-    private String flightSegment;
+    @ApiModelProperty(value="出发地三字码",name="flightDepcode")
+    private String flightDepcode;
 
-    @ApiModelProperty(value="停机位",name="flightPosition")
+    @ApiModelProperty(value="目的地三字码",name="flightArrcode")
+    private String flightArrcode;
+
+    @ApiModelProperty(value="出发城市名",name="flightDep")
+    private String flightDep;
+
+    @ApiModelProperty(value="到达城市名",name="flightArr")
+    private String flightArr;
+
+    @ApiModelProperty(value="出发机场名",name="flightDepAirport")
+    private String flightDepAirport;
+
+    @ApiModelProperty(value="到达机场名",name="flightArrAirport")
+    private String flightArrAirport;
+
+    @ApiModelProperty(value="机号",name="planNo")
+    private String planNo;
+
+    @ApiModelProperty(value="机位",name="flightPosition")
     private String flightPosition;
 
-    @ApiModelProperty(value="计划起飞时间",name="planTakeOffTime",hidden = true)
-    @JsonFormat(timezone="GMT+8",pattern = "HH:mm:ss")
+    @ApiModelProperty(value="国际国内：国外：0，国内：1",name="boardInOut")
+    private Short boardInOut;
+
+    @ApiModelProperty(value="计划起飞时间",name="planTakeOffTime")
     private Date planTakeOffTime;
 
-    @Transient
-    @ApiModelProperty(value = "计划起飞时间", name = "planTakeOffTime")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonFormat(timezone="GMT+8",pattern = "hh:mm:ss")
-    private String strPlanTakeOffTime;
-
-    @ApiModelProperty(value="计划降落时间",name="planLandingTime",hidden = true)
-    @JsonFormat(timezone="GMT+8",pattern = "hh:mm:ss")
+    @ApiModelProperty(value="计划降落时间",name="planLandingTime")
     private Date planLandingTime;
 
-    @Transient
-    @ApiModelProperty(value = "计划降落时间", name = "planLandingTime")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonFormat(timezone="GMT+8",pattern = "HH:mm:ss")
-    private String strPlanLandingTime;
-
-    @ApiModelProperty(value="出港：0，进港：1",name="isInOrOut")
+    @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
     private Short isInOrOut;
 
     @ApiModelProperty(value="登机口",name="boardingPort")
@@ -74,32 +76,26 @@ public class Flight extends BaseEntity{
     @ApiModelProperty(value="远机位：0，近机位：1",name="isNearOrFar")
     private Short isNearOrFar;
 
-    @Transient
-    @ApiModelProperty(value="服务人次",name="serverPersonNum")
-    private String serverPersonNum;
-
-
-    @ApiModelProperty(value="机号",name="planNo")
-    private String planNo;
-
-    /*@ApiModelProperty(value="服务时间",name="serverTime",hidden = true)
-    @JsonFormat(timezone="GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value="服务时间",name="serverTime")
     private Date serverTime;
 
-    @Transient
-    @ApiModelProperty(value = "服务时间", name = "serverTime")
-    private String strServerTime;*/
 
-    @Transient
-    @ApiModelProperty(value = "起飞时段,0:上午 6:00-12:00,1:下午 12：00-18：00,2:晚上 18：00-24：00", name = "takeOffTimeFlag" )
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer takeOffTimeFlag;
+    /**
+     * 主键自增id
+     * @return flight_id 主键自增id
+     */
+    public Long getFlightId() {
+        return flightId;
+    }
 
+    /**
+     * 主键自增id
+     * @param flightId 主键自增id
+     */
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
 
-    @Transient
-    @ApiModelProperty(value = "降落时段,0:上午 6:00-12:00,1:下午 12：00-18：00,2:晚上 18：00-24：00", name = "landingTimeFlag")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer landingTimeFlag;
     /**
      * 订单id
      * @return order_id 订单id
@@ -149,35 +145,147 @@ public class Flight extends BaseEntity{
     }
 
     /**
-     * 航段
-     * @return flight_segment 航段
+     * 出发地三字码
+     * @return flight_depcode 出发地三字码
      */
-    public String getFlightSegment() {
-        return flightSegment;
+    public String getFlightDepcode() {
+        return flightDepcode;
     }
 
     /**
-     * 航段
-     * @param flightSegment 航段
+     * 出发地三字码
+     * @param flightDepcode 出发地三字码
      */
-    public void setFlightSegment(String flightSegment) {
-        this.flightSegment = flightSegment;
+    public void setFlightDepcode(String flightDepcode) {
+        this.flightDepcode = flightDepcode;
     }
 
     /**
-     * 停机位
-     * @return flight_position 停机位
+     * 目的地三字码
+     * @return flight_arrcode 目的地三字码
+     */
+    public String getFlightArrcode() {
+        return flightArrcode;
+    }
+
+    /**
+     * 目的地三字码
+     * @param flightArrcode 目的地三字码
+     */
+    public void setFlightArrcode(String flightArrcode) {
+        this.flightArrcode = flightArrcode;
+    }
+
+    /**
+     * 出发城市名
+     * @return flight_dep 出发城市名
+     */
+    public String getFlightDep() {
+        return flightDep;
+    }
+
+    /**
+     * 出发城市名
+     * @param flightDep 出发城市名
+     */
+    public void setFlightDep(String flightDep) {
+        this.flightDep = flightDep;
+    }
+
+    /**
+     * 到达城市名
+     * @return flight_arr 到达城市名
+     */
+    public String getFlightArr() {
+        return flightArr;
+    }
+
+    /**
+     * 到达城市名
+     * @param flightArr 到达城市名
+     */
+    public void setFlightArr(String flightArr) {
+        this.flightArr = flightArr;
+    }
+
+    /**
+     * 出发机场名
+     * @return flight_dep_airport 出发机场名
+     */
+    public String getFlightDepAirport() {
+        return flightDepAirport;
+    }
+
+    /**
+     * 出发机场名
+     * @param flightDepAirport 出发机场名
+     */
+    public void setFlightDepAirport(String flightDepAirport) {
+        this.flightDepAirport = flightDepAirport;
+    }
+
+    /**
+     * 到达机场名
+     * @return flight_arr_airport 到达机场名
+     */
+    public String getFlightArrAirport() {
+        return flightArrAirport;
+    }
+
+    /**
+     * 到达机场名
+     * @param flightArrAirport 到达机场名
+     */
+    public void setFlightArrAirport(String flightArrAirport) {
+        this.flightArrAirport = flightArrAirport;
+    }
+
+    /**
+     * 机号
+     * @return plan_no 机号
+     */
+    public String getPlanNo() {
+        return planNo;
+    }
+
+    /**
+     * 机号
+     * @param planNo 机号
+     */
+    public void setPlanNo(String planNo) {
+        this.planNo = planNo;
+    }
+
+    /**
+     * 机位
+     * @return flight_position 机位
      */
     public String getFlightPosition() {
         return flightPosition;
     }
 
     /**
-     * 停机位
-     * @param flightPosition 停机位
+     * 机位
+     * @param flightPosition 机位
      */
     public void setFlightPosition(String flightPosition) {
         this.flightPosition = flightPosition;
+    }
+
+    /**
+     * 国际国内：国外：0，国内：1
+     * @return board_in_out 国际国内：国外：0，国内：1
+     */
+    public Short getBoardInOut() {
+        return boardInOut;
+    }
+
+    /**
+     * 国际国内：国外：0，国内：1
+     * @param boardInOut 国际国内：国外：0，国内：1
+     */
+    public void setBoardInOut(Short boardInOut) {
+        this.boardInOut = boardInOut;
     }
 
     /**
@@ -260,59 +368,20 @@ public class Flight extends BaseEntity{
         this.isNearOrFar = isNearOrFar;
     }
 
-    public String getStrFlightDate() {
-        return strFlightDate;
+    /**
+     * 服务时间
+     * @return server_time 服务时间
+     */
+    public Date getServerTime() {
+        return serverTime;
     }
 
-    public void setStrFlightDate(String strFlightDate) {
-        this.strFlightDate = strFlightDate;
+    /**
+     * 服务时间
+     * @param serverTime 服务时间
+     */
+    public void setServerTime(Date serverTime) {
+        this.serverTime = serverTime;
     }
 
-    public String getStrPlanTakeOffTime() {
-        return strPlanTakeOffTime;
-    }
-
-    public void setStrPlanTakeOffTime(String strPlanTakeOffTime) {
-        this.strPlanTakeOffTime = strPlanTakeOffTime;
-    }
-
-    public String getStrPlanLandingTime() {
-        return strPlanLandingTime;
-    }
-
-    public void setStrPlanLandingTime(String strPlanLandingTime) {
-        this.strPlanLandingTime = strPlanLandingTime;
-    }
-
-    public String getPlanNo() {
-        return planNo;
-    }
-
-    public void setPlanNo(String planNo) {
-        this.planNo = planNo;
-    }
-
-    public Integer getTakeOffTimeFlag() {
-        return takeOffTimeFlag;
-    }
-
-    public void setTakeOffTimeFlag(Integer takeOffTimeFlag) {
-        this.takeOffTimeFlag = takeOffTimeFlag;
-    }
-
-    public Integer getLandingTimeFlag() {
-        return landingTimeFlag;
-    }
-
-    public void setLandingTimeFlag(Integer landingTimeFlag) {
-        this.landingTimeFlag = landingTimeFlag;
-    }
-
-    public String getServerPersonNum() {
-        return serverPersonNum;
-    }
-
-    public void setServerPersonNum(String serverPersonNum) {
-        this.serverPersonNum = serverPersonNum;
-    }
 }

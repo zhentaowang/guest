@@ -1,12 +1,14 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Product;
+import com.zhiweicloud.guest.model.ProductServiceType;
 import com.zhiweicloud.guest.service.ProductService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -23,7 +25,9 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhengyiyin on 2017/2/22.
@@ -146,6 +150,29 @@ public class ProductController {
             return JSON.toJSONString(LXResult.error());
         }
     }
+
+    /**
+     * 产品管理 - 根据产品id查询服务类别树
+     * @param productId
+     * @return
+     */
+    @GET
+    @Path("get-service-type-tree-by-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "产品管理 - 根据产品id查询服务类别树 ", notes = "返回服务类别树", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productId", value = "产品id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
+    })
+    public String view(@Context final HttpHeaders headers,
+                                                   @QueryParam(value = "productId") Long productId) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        param.put("productId",productId);
+        List<ProductServiceType> serviceMenuList = productService.getServiceMenuList(param);
+        return JSON.toJSONString(new LZResult<>(serviceMenuList));
+    }
+
 
 
 

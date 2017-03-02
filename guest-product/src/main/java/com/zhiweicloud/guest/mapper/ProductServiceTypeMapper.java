@@ -26,10 +26,12 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.common.MyMapper;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.ProductServiceType;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -62,5 +64,8 @@ public interface ProductServiceTypeMapper{
      * @return
      */
     List<Long> queryProductServiceTypes(@Param("productId") Long productId, @Param("airportCode") String airportCode);
+
+    List<ProductServiceType> getServiceMenuList(Map<String, Object> param);
+    List<ProductServiceType> getServiceTypeDropdownList(Map<String, Object> param);
 
 }

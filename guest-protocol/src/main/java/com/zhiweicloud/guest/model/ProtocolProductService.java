@@ -9,7 +9,11 @@ package com.zhiweicloud.guest.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.List;
 
 /**
  * ProtocolProductService.java
@@ -43,6 +47,81 @@ public class ProtocolProductService extends BaseEntity{
 
     @ApiModelProperty(value="是否可用：0，可用；1，不可用",name="isAvailabled")
     private Boolean isAvailabled;
+
+    @Transient
+    @ApiModelProperty(value="服务大类",name="category")
+    private String category;
+
+    @Transient
+    @ApiModelProperty(value="服务类别",name="type")
+    private String type;
+
+    @Transient
+    @ApiModelProperty(value="服务编号",name="no")
+    private String no;
+
+    @Transient
+    @ApiModelProperty(value="服务名称",name="name")
+    private String name;
+
+    @Transient
+    @ApiModelProperty(value = "服务类别列表",name="serviceTypeList")
+    private List<ProtocolProductService> serviceTypeList;
+
+    public List<ProtocolProductService> getServiceTypeList() {
+        return serviceTypeList;
+    }
+    public void setServiceTypeList(List<ProtocolProductService> serviceTypeList) {
+        this.serviceTypeList = serviceTypeList;
+    }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * 服务大类
+     * @return category 服务大类
+     */
+    public String getCategory() {
+        return category;
+    }
+
+    /**
+     * 服务大类
+     * @param category 服务大类
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    /**
+     * 服务类别
+     * @return type 服务类别
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 服务类别
+     * @param type 服务类别
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * 主键自增Id

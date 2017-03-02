@@ -6,6 +6,7 @@ import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.ListUtil;
 import com.zhiweicloud.guest.mapper.ProductMapper;
 import com.zhiweicloud.guest.mapper.ProductServiceTypeMapper;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Product;
 import com.zhiweicloud.guest.model.ProductServiceType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -127,5 +130,19 @@ public class ProductService {
             product.setServiceTypeIds(tempList);
         }
         return product;
+    }
+
+    /**
+     * 获取服务类型树
+     * @param param
+     * @return List<ProductServiceType>
+     */
+    public List<ProductServiceType> getServiceMenuList(Map<String,Object> param){
+        List<ProductServiceType> result = productServiceTypeMapper.getServiceMenuList(param);
+        for(int i = 0; i < result.size(); i++){
+            List<ProductServiceType> out = productServiceTypeMapper.getServiceTypeDropdownList(param);
+            result.get(i).setServiceTypeList(out);
+        }
+        return result;
     }
 }

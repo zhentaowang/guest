@@ -43,6 +43,54 @@ public class Serv extends BaseEntity{
     @ApiModelProperty(value="服务详情",name="ServiceDetail")
     private String serviceDetail;
 
+    @Transient
+    @ApiModelProperty(value="计价规则",name="pricingRule")
+    private String pricingRule;
+
+    @Transient
+    @ApiModelProperty(value="是否计价：0，计价；1，不计价",name="isPricing")
+    private Boolean isPricing;
+
+    @Transient
+    @ApiModelProperty(value="是否优先：0，优先使用；1，不优先",name="isPrioritized")
+    private Boolean isPrioritized;
+
+    @Transient
+    @ApiModelProperty(value="是否可用：0，可用；1，不可用",name="isAvailabled")
+    private Boolean isAvailabled;
+
+    public String getPricingRule() {
+        return pricingRule;
+    }
+
+    public void setPricingRule(String pricingRule) {
+        this.pricingRule = pricingRule;
+    }
+
+    public Boolean getPricing() {
+        return isPricing;
+    }
+
+    public void setPricing(Boolean pricing) {
+        isPricing = pricing;
+    }
+
+    public Boolean getPrioritized() {
+        return isPrioritized;
+    }
+
+    public void setPrioritized(Boolean prioritized) {
+        isPrioritized = prioritized;
+    }
+
+    public Boolean getAvailabled() {
+        return isAvailabled;
+    }
+
+    public void setAvailabled(Boolean availabled) {
+        isAvailabled = availabled;
+    }
+
     /**
      * 服务编号
      * @return no 服务编号

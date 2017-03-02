@@ -9,8 +9,8 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="reservation_num" jdbcType="VARCHAR" property="reservationNum" />
     <result column="type" jdbcType="SMALLINT" property="type" />
-    <result column="start_date" jdbcType="TIMESTAMP" property="startTime" />
-    <result column="end_date" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
     <result column="clear_form" jdbcType="SMALLINT" property="clearForm" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -24,8 +24,8 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="SMALLINT" property="type" />
     <result column="reservation_num" jdbcType="VARCHAR" property="reservationNum" />
-    <result column="start_date" jdbcType="TIMESTAMP" property="startTime" />
-    <result column="end_date" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
     <result column="clear_form" jdbcType="SMALLINT" property="clearForm" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
@@ -151,15 +151,11 @@
     </if>
   </select>
 
-  <select id="selectById" parameterType="map" resultMap="BaseResultMapPage">
-   select  pi.*,a.authorizer_id as authorizer_id,a.name as authorizer_name,a.cellphone,a.telephone from
-    (
-    SELECT
-  p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
-  FROM
-  v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
-  where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.protocol_id = #{id,jdbcType=BIGINT}
-  ) as pi left join (select * from authorizer where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as a on pi.protocol_id = a.protocol_id
+  <select id="selectById" parameterType="map" resultMap="BaseResultMap">
+   SELECT p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
+  FROM v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
+  where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.protocol_id = #{protocolId,jdbcType=BIGINT} and p.is_deleted = 0
+  and i.airport_code = #{airportCode,jdbcType=VARCHAR} and i.is_deleted = 0
   </select>
 
   <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">

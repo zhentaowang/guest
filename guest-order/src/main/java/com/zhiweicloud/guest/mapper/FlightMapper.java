@@ -25,7 +25,6 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 
@@ -34,10 +33,14 @@ import java.util.List;
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface FlightMapper extends MyMapper<Flight> {
+public interface FlightMapper{
 
 
     int selectFlightTotal(Flight flight);
 
     List<Flight> selectFlightList(BasePagination<Flight> queryCondition);
+
+    void updateByFlithIdAndAirportCodeSelective(Flight flight);
+
+    void insertSelective(Flight flight);
 }

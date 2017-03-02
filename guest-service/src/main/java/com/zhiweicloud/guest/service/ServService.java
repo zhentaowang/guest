@@ -6,6 +6,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.ServMapper;
+import com.zhiweicloud.guest.model.ProtocolProductDetail;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -129,5 +130,42 @@ public class ServService {
             serv.setIsDeleted(Constant.MARK_AS_DELETED);
             servMapper.updateByIdAndAirportCode(serv);
         }
+    }
+
+    /**
+     * 根据服务类型配置id和产品id查询服务详情
+     * @param param
+     * @param page
+     * @param rows
+     * @return PaginationResult<JSONObject>
+     */
+    public LZResult<PaginationResult<JSONObject>> getServiceListByTypeId(Map<String,Object> param, Integer page, Integer rows) {
+
+        int count = servMapper.getServListCount(param);
+
+        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        List<Serv> serviceList = servMapper.getServListByTypeId(queryCondition);
+        List<JSONObject> servJson = new ArrayList<>();
+        for(int i = 0; i < serviceList.size(); i++){
+            JSONObject result = new JSONObject();
+            result.put("servId",serviceList.get(i).getServId());
+            result.put("airportCode",serviceList.get(i).getAirportCode());
+            result.put("serviceTypeAllocationId",serviceList.get(i).getServiceTypeAllocationId());
+            result.put("name",serviceList.get(i).getName());
+            result.put("no",serviceList.get(i).getNo());
+            if(param.get("typeId") != null){
+                Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(Long.parseLong(param.get("typeId").toString()));
+                if(protocolProductFieldName != null){
+                    result.putAll(protocolProductFieldName);
+                }
+                result.put("isPricing",0);
+                result.put("isPrioritized",0);
+                result.put("isAvailabled",0);
+            }
+            servJson.add(result);
+        }
+        PaginationResult<JSONObject> eqr = new PaginationResult<>(count, servJson);
+        LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
+        return result;
     }
 }

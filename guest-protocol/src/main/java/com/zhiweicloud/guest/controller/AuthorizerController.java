@@ -93,7 +93,7 @@ public class AuthorizerController {
     /**
      * 授权人管理 - 根据id查询
      * @param airportCode
-     * @param id
+     * @param authorizerId
      * @return
      */
     @GET
@@ -102,14 +102,14 @@ public class AuthorizerController {
     @ApiOperation(value = "授权人管理 - 根据id查询 ", notes = "返回授权人详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "授权人id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+            @ApiImplicitParam(name = "authorizerId", value = "授权人id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
     })
     public String view(@QueryParam(value = "airportCode") String airportCode,
-                                     @QueryParam(value = "id") Long id
+                                     @QueryParam(value = "authorizerId") Long authorizerId
     ) {
         Map<String,Object> param = new HashMap();
         param.put("airportCode",airportCode);
-        param.put("id",id);
+        param.put("authorizerId",authorizerId);
         Authorizer authorizer = authorizerService.getById(param);
         return JSON.toJSONString(new LZResult<>(authorizer));
     }

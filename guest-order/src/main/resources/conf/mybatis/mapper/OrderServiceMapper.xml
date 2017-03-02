@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.OrderServiceMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderService">
+    <id column="order_service_id" jdbcType="BIGINT" property="orderServiceId" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    order_service_id, order_id, service_detail, create_user, update_user
+  </sql>
+
+  <update id="updateByOrderServiceIdAndAirportCodeKeySelective" parameterType="com.zhiweicloud.guest.model.OrderService">
+    update order_service
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceDetail != null">
+        service_detail = #{serviceDetail,jdbcType=OTHER},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where order_service_id = #{orderServiceId,jdbcType=BIGINT} and airport_code={airportCode,jdbcType=VARCHAR}
+  </update>
+
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.OrderService">
+    insert into order_service
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderServiceId != null">
+        order_service_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="serviceDetail != null">
+        service_detail,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderServiceId != null">
+        #{orderServiceId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceDetail != null">
+        #{serviceDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from order_service
+    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from order_service
+    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.OrderService">
+    insert into order_service (order_service_id, order_id, service_detail, 
+      create_user, update_user)
+    values (#{orderServiceId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{serviceDetail,jdbcType=OTHER}, 
+      #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.OrderService">
+    update order_service
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceDetail != null">
+        service_detail = #{serviceDetail,jdbcType=OTHER},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.OrderService">
+    update order_service
+    set order_id = #{orderId,jdbcType=BIGINT},
+      service_detail = #{serviceDetail,jdbcType=OTHER},
+      create_user = #{createUser,jdbcType=BIGINT},
+      update_user = #{updateUser,jdbcType=BIGINT}
+    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
+  </update>-->
+</mapper>
