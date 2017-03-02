@@ -11,8 +11,9 @@ import java.util.Map;
 /**
  * Created by wzt on 2017/1/4.
  */
-public interface ProtocolProductMapper extends MyMapper<ProtocolProduct> {
+public interface ProtocolProductMapper {
     List<ProtocolProduct> selectByProtocolId(Map<String, Object> map);
     Integer updateByIdAndAirportCode(ProtocolProduct protocolProduct);
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
+    void insertBySelective(ProtocolProduct protocolProduct);
 }

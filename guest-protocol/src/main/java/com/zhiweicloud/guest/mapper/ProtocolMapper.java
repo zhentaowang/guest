@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by wzt on 2016/12/30.
  */
-public interface ProtocolMapper extends MyMapper<Protocol> {
+public interface ProtocolMapper {
     List<Dropdownlist> getProtocolDropdownList(Map<String, Object> map);
     List<Dropdownlist> getProtocolNoDropdownList(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Protocol protocol);
@@ -21,4 +21,5 @@ public interface ProtocolMapper extends MyMapper<Protocol> {
     Protocol selectById(Map<String, Object> map);
     Long selectByName(Map<String, Object> map);
     Long selectOrderByProtocolId(Map<String, Object> map);
+    void insertBySelective(Protocol protocol);
 }

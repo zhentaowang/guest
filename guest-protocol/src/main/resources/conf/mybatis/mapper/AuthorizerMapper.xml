@@ -84,4 +84,81 @@
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update authorizer set is_deleted = 1 where authorizer_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
   </select>
+
+  <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.Authorizer">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="authorizerId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into authorizer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        airport_code,
+      </if>
+      <if test="authorizerId != null">
+        authorizer_id,
+      </if>
+      <if test="protocolId != null">
+        protocol_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="cellphone != null">
+        cellphone,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR},
+      </if>
+      <if test="authorizerId != null">
+        #{authorizerId,jdbcType=BIGINT},
+      </if>
+      <if test="protocolId != null">
+        #{protocolId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphone != null">
+        #{cellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+      #{createUser,jdbcType=BIGINT},
+    </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
 </mapper>
