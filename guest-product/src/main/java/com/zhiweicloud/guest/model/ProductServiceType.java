@@ -11,7 +11,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.List;
 
 /**
  * ProductServiceType.java
@@ -32,6 +36,56 @@ public class ProductServiceType extends BaseEntity{
     @ApiModelProperty(value="服务分类id",name="serviceTypeId")
     private Long serviceTypeId;
 
+    @Transient
+    @ApiModelProperty(value="服务大类",name="category")
+    private String category;
+
+    @Transient
+    @ApiModelProperty(value="服务类别",name="type")
+    private String type;
+
+    @Transient
+    @ApiModelProperty(value = "服务类别列表",name="serviceTypeList")
+    private List<ProductServiceType> serviceTypeList;
+
+    public List<ProductServiceType> getServiceTypeList() {
+        return serviceTypeList;
+    }
+    public void setServiceTypeList(List<ProductServiceType> serviceTypeList) {
+        this.serviceTypeList = serviceTypeList;
+    }
+
+    /**
+     * 服务大类
+     * @return category 服务大类
+     */
+    public String getCategory() {
+        return category;
+    }
+
+    /**
+     * 服务大类
+     * @param category 服务大类
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    /**
+     * 服务类别
+     * @return type 服务类别
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 服务类别
+     * @param type 服务类别
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * 主键id
