@@ -35,7 +35,7 @@
   </resultMap>
 
   <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="protocol_id" jdbcType="BIGINT" property="id" />
     <result column="value" jdbcType="VARCHAR" property="value" />
   </resultMap>
 
@@ -275,4 +275,64 @@
       </if>
     </trim>
   </insert>
+
+  <!--       2017.2.24后修改               -->
+  <select id="queryProtocolList" resultMap="BaseResultMap">
+    SELECT
+    p.protocol_id,p.no,i.`name` AS institution_client_name,p.`name`,p.type
+    FROM
+    v_protocol p
+    LEFT JOIN
+    v_institution_client i on p.institution_client_id = i.institution_client_id
+    WHERE
+    p.airport_code = #{protocolParam.airportCode} AND p.is_deleted = 0
+    <if test="protocolParam.type != null" >
+      AND p.type = #{protocolParam.type}
+    </if>
+    <if test="protocolParam.institutionClientName != null and '' != protocolParam.institutionClientName.trim()" >
+      AND i.`name` LIKE concat('%',#{protocolParam.institutionClientName},'%')
+    </if>
+    <if test="protocolParam.name != null and !protocolParam.name.trim().equals('')" >
+      AND p.`name` LIKE concat('%',#{protocolParam.name},'%')
+    </if>
+    ORDER BY p.protocol_id DESC  LIMIT #{begin},#{end}
+  </select>
+
+  <select id="selectProtocolTotal" parameterType="com.zhiweicloud.guest.model.Protocol" resultType="int">
+    SELECT
+      count(protocol_id)
+    FROM
+      v_protocol p
+    LEFT JOIN
+      v_institution_client i on p.institution_client_id = i.institution_client_id
+    WHERE
+      p.airport_code = #{protocolParam.airportCode} AND p.is_deleted = 0
+    <if test="protocolParam.type != null" >
+      AND p.type = #{protocolParam.type}
+    </if>
+    <if test="protocolParam.institutionClientName != null and '' != protocolParam.institutionClientName.trim()" >
+      AND i.`name` LIKE concat('%',#{protocolParam.institutionClientName},'%')
+    </if>
+    <if test="protocolParam.name != null and '' != protocolParam.name.trim()" >
+      AND p.`name` LIKE concat('%',#{protocolParam.name},'%')
+    </if>
+  </select>
+
+  <select id="getProtocolNameDropdownList" resultMap="DropdownlistMap" parameterType="map">
+    SELECT
+      p.protocol_id,p.`name` AS `value`
+    FROM
+      v_protocol p
+    <if test="authorizerId != null" >
+      INNER JOIN authorizer a on p.protocol_id = a.protocol_id
+    </if>
+    WHERE p.is_deleted = 0 AND p.airport_code = #{airportCode}
+    <if test="name != null and !name.trim().equals('')" >
+      and p.`name` like concat('%',#{name},'%')
+    </if>
+    <if test="authorizerId != null" >
+      and a.authorizer_id = #{authorizerId}
+    </if>
+  </select>
+  
 </mapper>

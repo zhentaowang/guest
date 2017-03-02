@@ -7,6 +7,7 @@
 package com.zhiweicloud.guest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.zhiweicloud.guest.common.ProtocolTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -80,6 +81,22 @@ public class Protocol extends BaseEntity{
     @Transient
     @ApiModelProperty(value = "协议产品",name="protocolProduct")
     private List<ProtocolProduct> protocolProductList;
+
+    @Transient
+    @ApiModelProperty(value="协议类型名称",name="protocolTypeName")
+    private String protocolTypeName;
+
+    /**
+     * 返回协议类型名称
+     * @return
+     */
+    public String getProtocolTypeName(){
+        if(this.type == null){
+            return "";
+        }
+        String name = ProtocolTypeEnum.getTypeName(this.type);
+        return name;
+    }
 
     public String getReservationNum() {
         return reservationNum;

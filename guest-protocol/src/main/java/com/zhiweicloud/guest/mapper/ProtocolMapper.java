@@ -1,10 +1,10 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Protocol;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +22,25 @@ public interface ProtocolMapper {
     Long selectByName(Map<String, Object> map);
     Long selectOrderByProtocolId(Map<String, Object> map);
     void insertBySelective(Protocol protocol);
+
+    /**
+     * 协议列表 分页查询
+     * @param
+     * @return
+     */
+    List<Protocol> queryProtocolList(@Param("protocolParam") Protocol protocolParam, @Param("begin") int begin, @Param("end") int end);
+
+    /**
+     * 协议列表数量
+     * @param protocolParam
+     * @return
+     */
+    int selectProtocolTotal(@Param("protocolParam") Protocol protocolParam);
+
+    /**
+     * 协议名称模糊查询下拉框
+     * @param map
+     * @return
+     */
+    List<Dropdownlist> getProtocolNameDropdownList(Map<String, Object> map);
 }

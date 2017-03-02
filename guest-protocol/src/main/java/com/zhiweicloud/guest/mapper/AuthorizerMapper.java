@@ -1,8 +1,8 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Authorizer;
+import com.zhiweicloud.guest.model.Dropdownlist;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +18,11 @@ public interface AuthorizerMapper {
     Integer updateByIdAndAirportCode(Authorizer authorizer);
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
     void insertBySelective(Authorizer authorizer);
+
+    /**
+     * 协议预约人模糊查询下拉框
+     * @param map
+     * @return
+     */
+    List<Dropdownlist> getAuthorizerDropdownList(Map<String, Object> map);
 }

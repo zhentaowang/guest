@@ -1,7 +1,6 @@
 package com.zhiweicloud.guest.service;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -12,7 +11,10 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wzt on 2016/12/30.
@@ -28,12 +30,15 @@ public class ProtocolService {
 
     private final ProtocolProductServiceMapper protocolProductServiceMapper;
 
+    private final ProtocolServMapper protocolServMapper;
+
     @Autowired
-    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper) {
+    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper, ProtocolServMapper protocolServMapper) {
         this.protocolMapper = protocolMapper;
         this.authorizerMapper = authorizerMapper;
         this.protocolProductMapper = protocolProductMapper;
         this.protocolProductServiceMapper = protocolProductServiceMapper;
+        this.protocolServMapper = protocolServMapper;
     }
 
     /**
@@ -220,6 +225,42 @@ public class ProtocolService {
     }
 
     /**
+     * 删除协议及其关联的授权人和协议服务
+     * @param airportCode
+     * @param ids
+     */
+    public void deleteById(List<Long> ids,Long userId, String airportCode) {
+
+        for(int i = 0; i< ids.size();i++){
+
+            //删除一条协议
+            Protocol protocol = new Protocol();
+            protocol.setProtocolId(ids.get(i));
+            protocol.setIsDeleted(Constant.MARK_AS_DELETED);
+            protocol.setAirportCode(airportCode);
+            protocol.setUpdateUser(userId);
+            protocolMapper.updateByIdAndAirportCode(protocol);
+
+            //删除该协议对应的所有授权人
+            Authorizer authorizer = new Authorizer();
+            authorizer.setAirportCode(protocol.getAirportCode());
+            authorizer.setProtocolId(protocol.getProtocolId());
+            authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
+            authorizer.setUpdateUser(userId);
+            authorizerMapper.updateByIdAndAirportCode(authorizer);
+
+            //删除该协议对应的所有协议服务
+            ProtocolServ protocolServ = new ProtocolServ();
+            protocolServ.setAirportCode(protocol.getAirportCode());
+            protocolServ.setProtocolId(protocol.getProtocolId());
+            protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
+            protocolServ.setUpdateUser(userId);
+            protocolServMapper.updateByIdAndAirportCode(protocolServ);
+
+        }
+    }
+
+    /**
      * 协议名称查重
      * @param protocol
      * @return boolean
@@ -306,6 +347,34 @@ public class ProtocolService {
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, protocolProductServiceJson);
         LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
         return result;
+    }
+
+    /**
+     * 重写分页获取协议列表 2017.2.23
+     * @param protocolParam
+     * @param page
+     * @param rows
+     */
+    public LZResult<PaginationResult<Protocol>> getProtocolList(Protocol protocolParam, Integer page, Integer rows) {
+        int count = protocolMapper.selectProtocolTotal(protocolParam);
+        List<Protocol> protocolList = protocolMapper.queryProtocolList(protocolParam,(page-1)*rows, page*rows);
+        PaginationResult<Protocol> eqr = new PaginationResult<>(count, protocolList);
+        LZResult<PaginationResult<Protocol>> result = new LZResult<>(eqr);
+        return result;
+    }
+
+    /**
+     * 协议名称模糊查询下拉框
+     * @param airportCode
+     * @param name
+     * @return
+     */
+    public List<Dropdownlist> getProtocolNameDropdownList(String airportCode,String name,Long authorizerId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        map.put("name",name);
+        map.put("authorizerId",authorizerId);
+        return protocolMapper.getProtocolNameDropdownList(map);
     }
 
 }
