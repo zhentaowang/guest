@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.service;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -11,10 +12,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by wzt on 2016/12/30.
@@ -30,15 +28,12 @@ public class ProtocolService {
 
     private final ProtocolProductServiceMapper protocolProductServiceMapper;
 
-    private final ProtocolServMapper protocolServMapper;
-
     @Autowired
-    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper, ProtocolServMapper protocolServMapper) {
+    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper) {
         this.protocolMapper = protocolMapper;
         this.authorizerMapper = authorizerMapper;
         this.protocolProductMapper = protocolProductMapper;
         this.protocolProductServiceMapper = protocolProductServiceMapper;
-        this.protocolServMapper = protocolServMapper;
     }
 
     /**
@@ -62,7 +57,7 @@ public class ProtocolService {
                     if(authorizer.getAuthorizerId() != null){
                         authorizer.setAirportCode(protocol.getAirportCode());
                         authorizer.setProtocolId(protocol.getProtocolId());
-                        ids.append(authorizer.getProtocolId()).append(",");
+                        ids.append(authorizer.getAuthorizerId()).append(",");
                         authorizerMapper.updateByIdAndAirportCode(authorizer);
                     }else{
                         authorizer.setCreateTime(new Date());
@@ -71,7 +66,7 @@ public class ProtocolService {
                         authorizer.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                         authorizer.setAirportCode(protocol.getAirportCode());
                         authorizerMapper.insertBySelective(authorizer);
-                        ids.append(authorizer.getProtocolId()+",");
+                        ids.append(authorizer.getAuthorizerId()+",");
                     }
                 }
                 if(ids.length() != 0){
@@ -250,12 +245,6 @@ public class ProtocolService {
             authorizerMapper.updateByIdAndAirportCode(authorizer);
 
             //删除该协议对应的所有协议服务
-            ProtocolServ protocolServ = new ProtocolServ();
-            protocolServ.setAirportCode(protocol.getAirportCode());
-            protocolServ.setProtocolId(protocol.getProtocolId());
-            protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
-            protocolServ.setUpdateUser(userId);
-            protocolServMapper.updateByIdAndAirportCode(protocolServ);
 
         }
     }

@@ -136,13 +136,6 @@ public class ProtocolController {
             }
             protocol.setProtocolProductList(protocolProducts);
 
-//            param00.remove("servId");
-//            param00.remove("name");
-//            param00.remove("institutionClientId");
-//            protocol.setServiceDetail(param00.toJSONString());
-//            Set keys = param00.keySet();
-//            Map<String,Object> serviceFieldName = ServiceDetail.getServiceFieldName(protocol.getServiceTypeAllocationId());
-
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
@@ -184,7 +177,7 @@ public class ProtocolController {
     ) {
         Map<String, Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode", airportCode);
+        param.put("airportCode", "LJG");
         param.put("protocolId", protocolId);
         Protocol protocol = protocolService.getById(param);
         return JSON.toJSONString(new LZResult<>(protocol));
@@ -213,7 +206,37 @@ public class ProtocolController {
         return JSON.toJSONString(new LZResult<>(serviceMenuList));
     }
 
-
+    /**
+     * 协议管理 - 根据服务类型配置id和协议产品id查询服务详情
+     * @param page 起始页
+     * @param rows 每页显示数目
+     * @param typeId 服务类型配置id
+     * @param protocolProductId 协议产品id
+     * @return
+     */
+    @GET
+    @Path("get-service-list-by-type-and-protocol-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 根据服务类型配置id和协议产品id查询服务详情", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")})
+    public String list( @QueryParam(value = "page") Integer page,
+                        @QueryParam(value = "rows") Integer rows,
+                        @QueryParam(value = "typeId") Long typeId,
+                        @QueryParam(value = "protocolProductId") Long protocolProductId,
+                        @Context final HttpHeaders headers) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode","LJG");
+        param.put("typeId", typeId);
+        param.put("protocolProductId", protocolProductId);
+        LZResult<PaginationResult<JSONObject>> result  = protocolService.getServiceListByTypeId(param,page,rows);
+        return JSON.toJSONString(result);
+    }
 
         /**
          * 重写协议列表，2017.2.23
