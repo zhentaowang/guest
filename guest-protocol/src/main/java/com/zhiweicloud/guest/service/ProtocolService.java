@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.service;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -10,11 +11,9 @@ import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by wzt on 2016/12/30.
@@ -30,15 +29,13 @@ public class ProtocolService {
 
     private final ProtocolProductServiceMapper protocolProductServiceMapper;
 
-    private final ProtocolServMapper protocolServMapper;
 
     @Autowired
-    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper, ProtocolServMapper protocolServMapper) {
+    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper) {
         this.protocolMapper = protocolMapper;
         this.authorizerMapper = authorizerMapper;
         this.protocolProductMapper = protocolProductMapper;
         this.protocolProductServiceMapper = protocolProductServiceMapper;
-        this.protocolServMapper = protocolServMapper;
     }
 
     /**
@@ -249,29 +246,42 @@ public class ProtocolService {
 
         for(int i = 0; i< ids.size();i++){
 
-            //删除一条协议
+            //根据协议id获取 协议产品列表
+            Map<String, Object> map = new HashMap<>();
+            map.put("protocolId",ids.get(i));
+            map.put("airportCode",airportCode);
+            List<ProtocolProduct> tempProtocolProductList = protocolProductMapper.selectByProtocolId(map);
+
+            if(!CollectionUtils.isEmpty(tempProtocolProductList)){
+                ProtocolProduct tempPro = new ProtocolProduct();
+                for(ProtocolProduct pro : tempProtocolProductList){
+                    //根据协议产品id删除关联的 协议产品服务
+                    protocolProductServiceMapper.deleteByProtocolProductId(userId,airportCode,pro.getProtocolProductId());
+
+                    //删除该协议产品
+                    tempPro.setProtocolProductId(pro.getProtocolProductId());
+                    tempPro.setIsDeleted(Constant.MARK_AS_DELETED);
+                    tempPro.setUpdateUser(userId);
+                    tempPro.setAirportCode(airportCode);
+                    protocolProductMapper.updateByIdAndAirportCode(tempPro);
+                }
+            }
+
+            //删除该协议对应的所有授权人
+            Authorizer authorizer = new Authorizer();
+            authorizer.setProtocolId(ids.get(i));
+            authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
+            authorizer.setAirportCode(airportCode);
+            authorizer.setUpdateUser(userId);
+            authorizerMapper.updateByIdAndAirportCode(authorizer);
+
+            //删除该协议
             Protocol protocol = new Protocol();
             protocol.setProtocolId(ids.get(i));
             protocol.setIsDeleted(Constant.MARK_AS_DELETED);
             protocol.setAirportCode(airportCode);
             protocol.setUpdateUser(userId);
             protocolMapper.updateByIdAndAirportCode(protocol);
-
-            //删除该协议对应的所有授权人
-            Authorizer authorizer = new Authorizer();
-            authorizer.setAirportCode(protocol.getAirportCode());
-            authorizer.setProtocolId(protocol.getProtocolId());
-            authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
-            authorizer.setUpdateUser(userId);
-            authorizerMapper.updateByIdAndAirportCode(authorizer);
-
-            //删除该协议对应的所有协议服务
-            ProtocolServ protocolServ = new ProtocolServ();
-            protocolServ.setAirportCode(protocol.getAirportCode());
-            protocolServ.setProtocolId(protocol.getProtocolId());
-            protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
-            protocolServ.setUpdateUser(userId);
-            protocolServMapper.updateByIdAndAirportCode(protocolServ);
 
         }
     }

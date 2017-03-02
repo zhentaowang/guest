@@ -90,4 +90,14 @@
     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{typeId,jdbcType=BIGINT} and p.is_deleted = 0
     and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
   </select>
+
+  <update id="deleteByProtocolProductId">
+    update protocol_product_service
+    SET is_deleted = 1, update_time = CURRENT_TIMESTAMP
+    <if test="updateUser != null">
+      ,update_user = #{updateUser}
+    </if>
+    WHERE airport_code = #{airportCode}
+    and protocol_product_id = #{protocolProductId}
+  </update>
 </mapper>
