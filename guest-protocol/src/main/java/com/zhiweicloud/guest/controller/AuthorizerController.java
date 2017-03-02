@@ -7,6 +7,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Authorizer;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.service.AuthorizerService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.List;
@@ -136,5 +138,24 @@ public class AuthorizerController {
             return JSON.toJSONString(LXResult.error());
         }
     }
+
+    /**
+     * 协议预约人模糊匹配下拉框
+     * @return
+     */
+    @GET
+    @Path(value = "getAuthorizerDropdownList")
+    @ApiOperation(value="订单中用到协议预约人下拉框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    public LZResult<List<Dropdownlist>> getAuthorizerDropdownList(
+            ContainerRequestContext request,
+            @QueryParam(value = "airportCode") String airportCode,
+            @QueryParam(value = "name") String name) {
+//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        List<Dropdownlist> list = authorizerService.getAuthorizerDropdownList(airportCode,name);
+        return new LZResult<>(list);
+    }
+
+
+
 }
 

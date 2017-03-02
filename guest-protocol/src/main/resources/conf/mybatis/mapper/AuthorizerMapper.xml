@@ -79,4 +79,19 @@
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update authorizer set is_deleted = 1 where authorizer_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
   </select>
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="authorizer_id" jdbcType="BIGINT" property="id" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getAuthorizerDropdownList" resultMap="DropdownlistMap" parameterType="map">
+    SELECT
+      authorizer_id,`name` AS `value`
+    FROM
+      authorizer WHERE is_deleted = 0 AND airport_code = #{airportCode}
+    <if test="name != null and !name.trim().equals('')" >
+      and `name` like concat('%',#{name},'%')
+    </if>
+  </select>
 </mapper>

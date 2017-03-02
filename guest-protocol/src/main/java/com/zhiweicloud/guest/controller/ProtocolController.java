@@ -8,22 +8,22 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.common.ProtocolTypeEnum;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.Authorizer;
-import com.zhiweicloud.guest.model.Protocol;
-import com.zhiweicloud.guest.model.ProtocolProduct;
-import com.zhiweicloud.guest.model.ProtocolProductService;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.AuthorizerService;
 import com.zhiweicloud.guest.service.ProtocolService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -227,12 +227,134 @@ public class ProtocolController {
                     return JSON.toJSONString(LXResult.build(4997, "该协议被订单引用，不能被删除"));
                 }
             }
-            protocolService.deleteById(ids,airportCode);
+//            protocolService.deleteById(ids,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete protocol by ids error", e);
             return JSON.toJSONString(LXResult.error());
         }
     }
+
+    /**
+     * 重写协议列表，2017.2.23
+     * @param page
+     * @param rows
+     * @param airportCode
+     * @param protocolType
+     * @param institutionClientName
+     * @param protocolName
+     * @return
+     */
+    @GET
+    @Path("protocolList")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 分页查询", notes = "返回分页结果")
+    public String protocolList(
+            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @QueryParam(value = "airportCode") String airportCode,
+            @QueryParam(value = "protocolType") Integer protocolType,
+            @QueryParam(value = "institutionClientName") String institutionClientName,
+            @QueryParam(value = "protocolName") String protocolName) {
+        Protocol protocolParam = new Protocol();
+        protocolParam.setAirportCode(airportCode);
+
+        protocolParam.setInstitutionClientName(institutionClientName);
+        protocolParam.setName(protocolName);
+        if(protocolType != null){
+            protocolParam.setType(protocolType);
+        }
+
+        LZResult<PaginationResult<Protocol>> result  = protocolService.getProtocolList(protocolParam,page,rows);
+        return JSON.toJSONString(result);
+    }
+
+    /**
+     * 协议类型下拉框
+     * @return
+     */
+    @GET
+    @Path("protocolTypeSelect")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 协议类型下拉框", notes = "返回协议类型")
+    public String getProtocolTypeSelect(){
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+        List<Dropdownlist> list = new ArrayList<Dropdownlist>();
+
+        for(ProtocolTypeEnum e : ProtocolTypeEnum.values()){
+            Dropdownlist dropdown = new Dropdownlist();
+            dropdown.setId(Long.valueOf(e.getTypeValue()));
+            dropdown.setValue(e.getTypeName());
+            list.add(dropdown);
+        }
+        result.setMsg(LZStatus.SUCCESS.display());
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setData(list);
+
+        return JSON.toJSONString(result);
+    }
+
+    /**
+     * 协议名称name模糊匹配下拉框
+     * 或者 根据authorizerId 获取协议下拉框
+     * @return
+     */
+    @GET
+    @Path(value = "getProtocolNameDropdownList")
+    @ApiOperation(value="系统中用到协议名称下拉框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    public LZResult<List<Dropdownlist>> getProtocolNameDropdownList(
+            ContainerRequestContext request,
+            @QueryParam(value = "airportCode") String airportCode,
+            @QueryParam(value = "name") String name,
+            @QueryParam(value = "authorizerId") Long authorizerId){
+//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(airportCode,name,authorizerId);
+        return new LZResult<>(list);
+    }
+
+
+    /**
+     * 重写协议管理 - 删除
+     * @param airportCode
+     * @param params ids
+     * @return
+     */
+    @POST
+    @Path("deleteProtocol")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public String deleteProtocol(
+            @RequestBody RequsetParams<Long> params,
+            @QueryParam(value = "airportCode") String airportCode) {
+        try {
+            List<Long> ids = params.getData();
+            Long userId = 0L;
+//          Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
+//          String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
+            boolean flame;
+
+            for(int i = 0; i < ids.size(); i++){
+                //调用order应用，根据协议id 查询有无订单关联
+                Map<String,Object> map = new HashMap<>();
+                map.put("protocolId",ids.get(i));
+                Properties p = new Properties();
+                p.load(ProtocolController.class.getClassLoader().getResourceAsStream("application.properties"));
+
+//                String temp = HttpClientUtil.httpGetRequest(p.getProperty("guest.client.queryInstitutionClientDropdownList"), map);
+//                System.out.println(temp);
+//                byte[] b = temp.getBytes("ISO-8859-1");
+            }
+            protocolService.deleteById(ids,userId,airportCode);
+            return JSON.toJSONString(LXResult.success());
+        } catch (Exception e) {
+            logger.error("delete protocol by ids error", e);
+            return JSON.toJSONString(LXResult.error());
+        }
+    }
+
+
+
 
 }

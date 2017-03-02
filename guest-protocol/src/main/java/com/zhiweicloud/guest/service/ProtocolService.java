@@ -226,7 +226,7 @@ public class ProtocolService {
      * @param airportCode
      * @param ids
      */
-    public void deleteById(List<Long> ids,String airportCode) {
+    public void deleteById(List<Long> ids,Long userId, String airportCode) {
 
         for(int i = 0; i< ids.size();i++){
 
@@ -235,6 +235,7 @@ public class ProtocolService {
             protocol.setProtocolId(ids.get(i));
             protocol.setIsDeleted(Constant.MARK_AS_DELETED);
             protocol.setAirportCode(airportCode);
+            protocol.setUpdateUser(userId);
             protocolMapper.updateByIdAndAirportCode(protocol);
 
             //删除该协议对应的所有授权人
@@ -242,6 +243,7 @@ public class ProtocolService {
             authorizer.setAirportCode(protocol.getAirportCode());
             authorizer.setProtocolId(protocol.getProtocolId());
             authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
+            authorizer.setUpdateUser(userId);
             authorizerMapper.updateByIdAndAirportCode(authorizer);
 
             //删除该协议对应的所有协议服务
@@ -249,6 +251,7 @@ public class ProtocolService {
             protocolServ.setAirportCode(protocol.getAirportCode());
             protocolServ.setProtocolId(protocol.getProtocolId());
             protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
+            protocolServ.setUpdateUser(userId);
             protocolServMapper.updateByIdAndAirportCode(protocolServ);
 
         }
@@ -290,6 +293,34 @@ public class ProtocolService {
         else{
             return false;
         }
+    }
+
+    /**
+     * 重写分页获取协议列表 2017.2.23
+     * @param protocolParam
+     * @param page
+     * @param rows
+     */
+    public LZResult<PaginationResult<Protocol>> getProtocolList(Protocol protocolParam, Integer page, Integer rows) {
+        int count = protocolMapper.selectProtocolTotal(protocolParam);
+        List<Protocol> protocolList = protocolMapper.queryProtocolList(protocolParam,(page-1)*rows, page*rows);
+        PaginationResult<Protocol> eqr = new PaginationResult<>(count, protocolList);
+        LZResult<PaginationResult<Protocol>> result = new LZResult<>(eqr);
+        return result;
+    }
+
+    /**
+     * 协议名称模糊查询下拉框
+     * @param airportCode
+     * @param name
+     * @return
+     */
+    public List<Dropdownlist> getProtocolNameDropdownList(String airportCode,String name,Long authorizerId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        map.put("name",name);
+        map.put("authorizerId",authorizerId);
+        return protocolMapper.getProtocolNameDropdownList(map);
     }
 
 }

@@ -6,6 +6,7 @@ import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.AuthorizerMapper;
 import com.zhiweicloud.guest.mapper.ProtocolMapper;
 import com.zhiweicloud.guest.model.Authorizer;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,5 +87,18 @@ public class AuthorizerService {
         params.put("airportCode",airportCode);
         params.put("protocolId",protocolId);
         return authorizerMapper.getListCount(params);
+    }
+
+    /**
+     * 预约人模糊查询下拉框
+     * @param airportCode
+     * @param name
+     * @return
+     */
+    public List<Dropdownlist> getAuthorizerDropdownList(String airportCode, String name){
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        map.put("name",name);
+        return authorizerMapper.getAuthorizerDropdownList(map);
     }
 }
