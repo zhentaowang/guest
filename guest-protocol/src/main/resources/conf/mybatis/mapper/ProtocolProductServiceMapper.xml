@@ -7,6 +7,10 @@
     <result column="protocol_product_id" jdbcType="BIGINT" property="protocolProductId" />
     <result column="service_type_allocation_id" jdbcType="BIGINT" property="serviceTypeAllocationId" />
     <result column="service_id" jdbcType="BIGINT" property="serviceId" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="pricing_rule" jdbcType="OTHER" property="pricingRule" />
     <result column="is_pricing" jdbcType="BIT" property="isPricing" />
     <result column="is_prioritized" jdbcType="BIT" property="isPrioritized" />
@@ -16,6 +20,12 @@
     protocol_product_service_id, airport_code, service_type_allocation_id, protocol_product_id, service_id, pricing_rule, is_pricing,
     is_prioritized, is_availabled
   </sql>
+  <select id="selectByProtocolProductId" parameterType="map" resultMap="BaseResultMap">
+    SELECT protocol_product_service_id, airport_code, service_type_allocation_id, protocol_product_id, service_id, pricing_rule, is_pricing,
+    is_prioritized, is_availabled
+    FROM protocol_product_service
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update protocol_product_service set is_deleted = 1 where protocol_product_id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR}
   </select>
@@ -45,5 +55,39 @@
     </set>
     where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_service_id = #{protocolProductServiceId,jdbcType=BIGINT}
   </update>
+  <select id="getServiceMenuList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select p.service_type_allocation_id, s.category from protocol_product_service as p
+    left join (select service_type_allocation_id, category from service_type_allocation
+    where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}) as s
+    on p.service_type_allocation_id = s.service_type_allocation_id
+    where p.is_deleted = 0 and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR} group by s.category
+  </select>
 
+  <select id="getServiceTypeDropdownList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select p.service_type_allocation_id, s.type from protocol_product_service as p
+    left join (select service_type_allocation_id, type from service_type_allocation
+    where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}) as s
+    on p.service_type_allocation_id = s.service_type_allocation_id
+    where p.is_deleted = 0 and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    select p.protocol_product_service_id, p.airport_code, s.no, s.name, p.pricing_rule, p.is_pricing, p.is_prioritized, p.is_availabled
+    from protocol_product_service as p left join
+    (select serv_id, no, name from v_serv
+    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{criteria.typeId,jdbcType=BIGINT} and is_deleted = 0) as s
+    on p.service_id = s.serv_id
+    where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{criteria.typeId,jdbcType=BIGINT} and p.is_deleted = 0
+     and p.protocol_product_id = #{criteria.protocolProductId,jdbcType=BIGINT}
+    LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getListCount" parameterType="map" resultType="int">
+     select count(s.serv_id)
+    from protocol_product_service as p left join
+    (select serv_id, no, name from v_serv
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{typeId,jdbcType=BIGINT} and is_deleted = 0) as s
+    on p.service_id = s.serv_id
+    where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{typeId,jdbcType=BIGINT} and p.is_deleted = 0
+    and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
+  </select>
 </mapper>

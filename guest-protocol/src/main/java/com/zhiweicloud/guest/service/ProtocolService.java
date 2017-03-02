@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.service;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -11,10 +12,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by wzt on 2016/12/30.
@@ -30,15 +28,12 @@ public class ProtocolService {
 
     private final ProtocolProductServiceMapper protocolProductServiceMapper;
 
-    private final ProtocolServMapper protocolServMapper;
-
     @Autowired
-    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper, ProtocolServMapper protocolServMapper) {
+    public ProtocolService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper, ProtocolProductServiceMapper protocolProductServiceMapper) {
         this.protocolMapper = protocolMapper;
         this.authorizerMapper = authorizerMapper;
         this.protocolProductMapper = protocolProductMapper;
         this.protocolProductServiceMapper = protocolProductServiceMapper;
-        this.protocolServMapper = protocolServMapper;
     }
 
     /**
@@ -199,7 +194,18 @@ public class ProtocolService {
      * @param param
      */
     public Protocol getById(Map<String,Object> param) {
-        return protocolMapper.selectById(param);
+        Protocol protocol = protocolMapper.selectById(param);
+        List<Authorizer> authorizerList = authorizerMapper.selectByProtocolId(param);
+        protocol.setAuthorizerList(authorizerList);
+        List<ProtocolProduct> protocolProductList = protocolProductMapper.selectByProtocolId(param);
+        for(int i = 0; i < protocolProductList.size(); i++){
+            ProtocolProduct protocolProduct = protocolProductList.get(i);
+            param.put("protocolProductId",protocolProduct.getProtocolProductId());
+            List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
+            protocolProduct.setProtocolProductServiceList(protocolProductServiceList);
+        }
+        protocol.setProtocolProductList(protocolProductList);
+        return protocol;
     }
 
     /**
@@ -227,39 +233,6 @@ public class ProtocolService {
         params.put("type",type);
         params.put("no",no);
         return protocolMapper.getProtocolNoDropdownList(params);
-    }
-
-    /**
-     * 删除协议及其关联的授权人和协议服务
-     * @param airportCode
-     * @param ids
-     */
-    public void deleteById(List<Long> ids,String airportCode) {
-
-        for(int i = 0; i< ids.size();i++){
-
-            //删除一条协议
-            Protocol protocol = new Protocol();
-            protocol.setProtocolId(ids.get(i));
-            protocol.setIsDeleted(Constant.MARK_AS_DELETED);
-            protocol.setAirportCode(airportCode);
-            protocolMapper.updateByIdAndAirportCode(protocol);
-
-            //删除该协议对应的所有授权人
-            Authorizer authorizer = new Authorizer();
-            authorizer.setAirportCode(protocol.getAirportCode());
-            authorizer.setProtocolId(protocol.getProtocolId());
-            authorizer.setIsDeleted(Constant.MARK_AS_DELETED);
-            authorizerMapper.updateByIdAndAirportCode(authorizer);
-
-            //删除该协议对应的所有协议服务
-            ProtocolServ protocolServ = new ProtocolServ();
-            protocolServ.setAirportCode(protocol.getAirportCode());
-            protocolServ.setProtocolId(protocol.getProtocolId());
-            protocolServ.setIsDeleted(Constant.MARK_AS_DELETED);
-            protocolServMapper.updateByIdAndAirportCode(protocolServ);
-
-        }
     }
 
     /**
@@ -298,6 +271,57 @@ public class ProtocolService {
         else{
             return false;
         }
+    }
+
+    /**
+     * 获取服务类型树
+     * @param param
+     * @return List<ProductServiceType>
+     */
+    public List<ProtocolProductService> getServiceMenuList(Map<String,Object> param){
+        List<ProtocolProductService> result = protocolProductServiceMapper.getServiceMenuList(param);
+        for(int i = 0; i < result.size(); i++){
+            List<ProtocolProductService> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
+            result.get(i).setServiceTypeList(out);
+        }
+        return result;
+    }
+
+    /**
+     * 根据服务类型配置id和协议产品id查询服务详情
+     * @param param
+     * @param page
+     * @param rows
+     * @return PaginationResult<JSONObject>
+     */
+    public LZResult<PaginationResult<JSONObject>> getServiceListByTypeId(Map<String,Object> param, Integer page, Integer rows) {
+
+        int count = protocolProductServiceMapper.getListCount(param);
+
+        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.getListByConidition(queryCondition);
+        List<JSONObject> protocolProductServiceJson = new ArrayList<>();
+        for(int i = 0; i < protocolProductServiceList.size(); i++){
+            JSONObject result = new JSONObject();
+            result.put("protocolProductServiceId",protocolProductServiceList.get(i).getProtocolProductServiceId());
+            result.put("airportCode",protocolProductServiceList.get(i).getAirportCode());
+            result.put("serviceTypeAllocationId",protocolProductServiceList.get(i).getServiceTypeAllocationId());
+            result.put("no",protocolProductServiceList.get(i).getNo());
+            result.put("name",protocolProductServiceList.get(i).getName());
+            if(param.get("typeId") != null){
+                Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(Long.parseLong(param.get("typeId").toString()));
+                if(protocolProductFieldName != null){
+                    result.putAll(protocolProductFieldName);
+                }
+                result.put("isPricing",protocolProductServiceList.get(i).getIsPricing());
+                result.put("isPrioritized",protocolProductServiceList.get(i).getIsPrioritized());
+                result.put("isAvailabled",protocolProductServiceList.get(i).getIsAvailabled());
+            }
+            protocolProductServiceJson.add(result);
+        }
+        PaginationResult<JSONObject> eqr = new PaginationResult<>(count, protocolProductServiceJson);
+        LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
+        return result;
     }
 
 }

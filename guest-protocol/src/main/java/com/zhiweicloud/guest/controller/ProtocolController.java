@@ -40,43 +40,6 @@ public class ProtocolController {
     @Autowired
     private ProtocolService protocolService;
 
-    @Autowired
-    private AuthorizerService authorizerService;
-
-    @GET
-    @Path("list")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "协议管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "institutionClientName", value = "机构客户名称", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "institutionClientNo", value = "机构客户编号", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "institutionClientType", value = "机构客户类型", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "name", value = "协议名称", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "no", value = "协议编号", dataType = "String", required = false, paramType = "query")})
-    public String list(
-            @QueryParam(value = "airportCode") String airportCode,
-            @QueryParam(value = "page") Integer page,
-            @QueryParam(value = "rows") Integer rows,
-            @QueryParam(value = "institutionClientName") String institutionClientName,
-            @QueryParam(value = "institutionClientNo") String institutionClientNo,
-            @QueryParam(value = "institutionClientType") String institutionClientType,
-            @QueryParam(value = "name") String name,
-            @QueryParam(value = "no") String no) {
-        Map<String,Object> param = new HashMap();
-        param.put("airportCode",airportCode);
-        param.put("institutionClientName",institutionClientName);
-        param.put("institutionClientNo",institutionClientNo);
-        param.put("institutionClientType",institutionClientType);
-        param.put("name",name);
-        param.put("no",no);
-        LZResult<PaginationResult<Protocol>> result  = protocolService.getAll(param,page,rows);
-        return JSON.toJSONString(result);
-    }
-
     /**
      * 协议管理 - 新增or更新
      * 需要判断name是否重复
@@ -196,8 +159,7 @@ public class ProtocolController {
 
     /**
      * 协议管理 - 根据id查询
-     * @param airportCode
-     * @param id
+     * @param protocolId
      * @return
      */
     @GET
@@ -205,49 +167,71 @@ public class ProtocolController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议 - 根据id查询 ", notes = "返回协议详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "协议id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+            @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", defaultValue = "188", required = true, paramType = "query")
     })
-    public String view(@QueryParam(value = "airportCode") String airportCode,
-                                   @QueryParam(value = "id") Long id
+    public String view(@Context final HttpHeaders headers,
+                                   @QueryParam(value = "protocolId") Long protocolId
     ) {
         Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
-        param.put("id",id);
-        Protocol protocolServ = protocolService.getById(param);
-        return JSON.toJSONString(new LZResult<>(protocolServ));
+        param.put("protocolId",protocolId);
+        Protocol protocol = protocolService.getById(param);
+        return JSON.toJSONString(new LZResult<>(protocol));
     }
 
     /**
-     * 协议管理 - 删除
-     * @param airportCode
-     * @param params ids
+     * 协议管理 - 根据协议产品id查询服务类别树
+     * @param protocolProductId
      * @return
      */
-    @POST
-    @Path("delete")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("get-service-type-tree-by-protocol-product-id")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "协议管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public String delete(
-            @RequestBody RequsetParams<Long> params,
-            @QueryParam(value = "airportCode") String airportCode) {
-        try {
-            List<Long> ids = params.getData();
-            boolean flame;
-            for(int i = 0; i < ids.size(); i++){
-                flame = protocolService.selectOrderByProtocolId(ids.get(i),airportCode);
-                if(flame == true){
-                    return JSON.toJSONString(LXResult.build(4997, "该协议被订单引用，不能被删除"));
-                }
-            }
-            protocolService.deleteById(ids,airportCode);
-            return JSON.toJSONString(LXResult.success());
-        } catch (Exception e) {
-            logger.error("delete protocol by ids error", e);
-            return JSON.toJSONString(LXResult.error());
-        }
+    @ApiOperation(value = "协议管理 - 根据协议产品id查询服务类别树 ", notes = "返回服务类别树", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
+    })
+    public String getServiceMenuList(@Context final HttpHeaders headers,
+                       @QueryParam(value = "protocolProductId") Long protocolProductId) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        param.put("protocolProductId",protocolProductId);
+        List<ProtocolProductService> serviceMenuList = protocolService.getServiceMenuList(param);
+        return JSON.toJSONString(new LZResult<>(serviceMenuList));
+    }
+
+    /**
+     * 协议管理 - 根据服务类型配置id和协议产品id查询服务详情
+     * @param page 起始页
+     * @param rows 每页显示数目
+     * @param typeId 服务类型配置id
+     * @param protocolProductId 协议产品id
+     * @return
+     */
+    @GET
+    @Path("get-service-list-by-type-and-protocol-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 根据服务类型配置id和协议产品id查询服务详情", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")})
+    public String list( @QueryParam(value = "page") Integer page,
+                        @QueryParam(value = "rows") Integer rows,
+                        @QueryParam(value = "typeId") Long typeId,
+                        @QueryParam(value = "protocolProductId") Long protocolProductId,
+                        @Context final HttpHeaders headers) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        param.put("typeId", typeId);
+        param.put("protocolProductId", protocolProductId);
+        LZResult<PaginationResult<JSONObject>> result  = protocolService.getServiceListByTypeId(param,page,rows);
+        return JSON.toJSONString(result);
     }
 
 }

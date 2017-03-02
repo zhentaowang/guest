@@ -70,10 +70,15 @@
   </select>
 
   <select id="selectById" parameterType="map" resultMap="BaseResultMap">
-    SELECT
-    name,cellphone,telephone
+    SELECT authorizer_id, airport_code, protocol_id, name, cellphone, telephone
     FROM authorizer
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and authorizer_id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and authorizer_id = #{authorizerId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
+
+  <select id="selectByProtocolId" parameterType="map" resultMap="BaseResultMap">
+    SELECT authorizer_id, airport_code, protocol_id, name, cellphone, telephone
+    FROM authorizer
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT} and is_deleted = 0
   </select>
 
   <select id="deleteByIdAndAirportCode" parameterType="map">

@@ -10,6 +10,16 @@
   <sql id="Base_Column_List">
     protocol_product_id, protocol_id, product_id, product_desc
   </sql>
+  <select id="selectById" parameterType="map" resultMap="BaseResultMap">
+    SELECT protocol_product_id, protocol_id, product_id, product_desc
+    FROM protocol_product
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
+  <select id="selectByProtocolId" parameterType="map" resultMap="BaseResultMap">
+    SELECT protocol_product_id, protocol_id, product_id, product_desc
+    FROM protocol_product
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update protocol_product set is_deleted = 1 where protocol_product_id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
   </select>
