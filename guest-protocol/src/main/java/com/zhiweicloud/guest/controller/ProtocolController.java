@@ -177,7 +177,7 @@ public class ProtocolController {
     ) {
         Map<String, Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode", "LJG");
+        param.put("airportCode", airportCode);
         param.put("protocolId", protocolId);
         Protocol protocol = protocolService.getById(param);
         return JSON.toJSONString(new LZResult<>(protocol));
@@ -231,7 +231,7 @@ public class ProtocolController {
                         @Context final HttpHeaders headers) {
         Map<String,Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode","LJG");
+        param.put("airportCode",airportCode);
         param.put("typeId", typeId);
         param.put("protocolProductId", protocolProductId);
         LZResult<PaginationResult<JSONObject>> result  = protocolService.getServiceListByTypeId(param,page,rows);
