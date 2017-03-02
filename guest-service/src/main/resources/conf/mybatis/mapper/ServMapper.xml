@@ -119,6 +119,9 @@
   </select>
 
   <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.Serv">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="servId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into serv
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="airportCode != null">

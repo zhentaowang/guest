@@ -25,7 +25,6 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.ServiceTypeAllocation;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -37,7 +36,7 @@ import java.util.Map;
  * @author zhangpengfei
  * @since 2016-12-26 22:17
  */
-public interface ServiceTypeAllocationMapper extends MyMapper<ServiceTypeAllocation> {
+public interface ServiceTypeAllocationMapper {
 
     List<Dropdownlist> getServiceTypeDropdownList(Map<String, Object> param);
     List<Dropdownlist> getServiceCategoryDropdownList(Map<String, Object> param);
