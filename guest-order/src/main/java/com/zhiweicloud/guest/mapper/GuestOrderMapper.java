@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface GuestOrderMapper extends MyMapper<GuestOrder> {
+public interface GuestOrderMapper{
     /**
      * 获取协议备注，协议客户名称，协议编号等信息
      *

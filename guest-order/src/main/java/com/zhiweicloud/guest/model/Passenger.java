@@ -2,62 +2,83 @@
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-27 20:19:25 Created By zhangpengfei
- */
+ * 2017-02-28 17:39:03 Created By zhangpengfei
+*/
 package com.zhiweicloud.guest.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Date;
 
 /**
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-27 20:19:25 Created By zhangpengfei
- */
-@ApiModel(value = "Passenger", description = "passenger")
-public class Passenger extends  BaseEntity{
-    @ApiModelProperty(value = "订单id", name = "orderId", required = true)
+ * 2017-02-28 17:39:03 Created By zhangpengfei
+*/
+@ApiModel(value="Passenger",description="passenger")
+public class Passenger extends BaseEntity{
+    @ApiModelProperty(value="主键自增id",name="passengerId", required=true)
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long passengerId;
+
+    @ApiModelProperty(value="订单id",name="orderId", required=true)
     @NotEmpty
     private Long orderId;
 
-    @ApiModelProperty(value = "旅客姓名", name = "name")
+    @ApiModelProperty(value="旅客姓名",name="name")
     private String name;
 
-    @ApiModelProperty(value = "联系方式", name = "phone")
+    @ApiModelProperty(value="联系方式",name="phone")
     private Long phone;
 
-    @ApiModelProperty(value = "身份证", name = "identityCard")
+    @ApiModelProperty(value="身份证",name="identityCard")
     private String identityCard;
 
-    @ApiModelProperty(value = "单位", name = "workUnit")
+    @ApiModelProperty(value="单位",name="workUnit")
     private String workUnit;
 
-    @ApiModelProperty(value = "贵宾卡", name = "vipCard")
+    @ApiModelProperty(value="贵宾卡",name="vipCard")
     private String vipCard;
 
-    @ApiModelProperty(value = "座位号", name = "sitNo")
+    @ApiModelProperty(value="座位号",name="sitNo")
     private String sitNo;
 
-    @ApiModelProperty(value = "舱位", name = "cabinNo")
+    @ApiModelProperty(value="舱位",name="cabinNo")
     private String cabinNo;
 
-    @ApiModelProperty(value = "客票号", name = "ticketNo")
+    @ApiModelProperty(value="客票号",name="ticketNo")
     private String ticketNo;
 
-    @ApiModelProperty(value = "卡号", name = "cardNo")
+    @ApiModelProperty(value="卡号",name="cardNo")
     private String cardNo;
 
-    @ApiModelProperty(value = "0：金卡，1：银卡", name = "cardType")
+    @ApiModelProperty(value="0：金卡，1：银卡",name="cardType")
     private Short cardType;
 
-    @ApiModelProperty(value = "有效期", name = "expireTime")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value="有效期",name="expireTime")
     private Date expireTime;
+
+    /**
+     * 主键自增id
+     * @return passenger_id 主键自增id
+     */
+    public Long getPassengerId() {
+        return passengerId;
+    }
+
+    /**
+     * 主键自增id
+     * @param passengerId 主键自增id
+     */
+    public void setPassengerId(Long passengerId) {
+        this.passengerId = passengerId;
+    }
 
     /**
      * 订单id

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.OrderInfoMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderInfo">
+    <id column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
+    <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
+    <result column="notice_person" jdbcType="VARCHAR" property="noticePerson" />
+    <result column="booking_way" jdbcType="SMALLINT" property="bookingWay" />
+    <result column="is_important" jdbcType="SMALLINT" property="isImportant" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="print_check" jdbcType="SMALLINT" property="printCheck" />
+    <result column="print_check_remark" jdbcType="VARCHAR" property="printCheckRemark" />
+    <result column="consign" jdbcType="SMALLINT" property="consign" />
+    <result column="consign_remark" jdbcType="VARCHAR" property="consignRemark" />
+    <result column="other_remark" jdbcType="VARCHAR" property="otherRemark" />
+    <result column="order_status" jdbcType="SMALLINT" property="orderStatus" />
+    <result column="order_type" jdbcType="SMALLINT" property="orderType" />
+    <result column="agent_person" jdbcType="BIGINT" property="agentPerson" />
+    <result column="server_card_no" jdbcType="VARCHAR" property="serverCardNo" />
+    <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+    <result column="cash" jdbcType="DECIMAL" property="cash" />
+    <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+    <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    order_id, customer_id, protocol_id, booking_person, notice_person, booking_way, is_important, 
+    product_id, print_check, print_check_remark, consign, consign_remark, other_remark, 
+    order_status, order_type, agent_person, server_card_no, vip_card, cash, sit_no, server_complete, 
+    create_user, update_user
+  </sql>
+
+  <update id="markChildRowsAsDeleted" parameterType="map">
+    update ${tableName} set is_deleted = 1 where ${idColumn} not in (${ids})  and airport_code = #{airportCode} and order_id = #{orderId}
+  </update>
+
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.OrderInfo">
+    insert into order_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="customerId != null">
+        customer_id,
+      </if>
+      <if test="protocolId != null">
+        protocol_id,
+      </if>
+      <if test="bookingPerson != null">
+        booking_person,
+      </if>
+      <if test="noticePerson != null">
+        notice_person,
+      </if>
+      <if test="bookingWay != null">
+        booking_way,
+      </if>
+      <if test="isImportant != null">
+        is_important,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="printCheck != null">
+        print_check,
+      </if>
+      <if test="printCheckRemark != null">
+        print_check_remark,
+      </if>
+      <if test="consign != null">
+        consign,
+      </if>
+      <if test="consignRemark != null">
+        consign_remark,
+      </if>
+      <if test="otherRemark != null">
+        other_remark,
+      </if>
+      <if test="orderStatus != null">
+        order_status,
+      </if>
+      <if test="orderType != null">
+        order_type,
+      </if>
+      <if test="agentPerson != null">
+        agent_person,
+      </if>
+      <if test="serverCardNo != null">
+        server_card_no,
+      </if>
+      <if test="vipCard != null">
+        vip_card,
+      </if>
+      <if test="cash != null">
+        cash,
+      </if>
+      <if test="sitNo != null">
+        sit_no,
+      </if>
+      <if test="serverComplete != null">
+        server_complete,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="customerId != null">
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="protocolId != null">
+        #{protocolId,jdbcType=BIGINT},
+      </if>
+      <if test="bookingPerson != null">
+        #{bookingPerson,jdbcType=BIGINT},
+      </if>
+      <if test="noticePerson != null">
+        #{noticePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="bookingWay != null">
+        #{bookingWay,jdbcType=SMALLINT},
+      </if>
+      <if test="isImportant != null">
+        #{isImportant,jdbcType=SMALLINT},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="printCheck != null">
+        #{printCheck,jdbcType=SMALLINT},
+      </if>
+      <if test="printCheckRemark != null">
+        #{printCheckRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="consign != null">
+        #{consign,jdbcType=SMALLINT},
+      </if>
+      <if test="consignRemark != null">
+        #{consignRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="otherRemark != null">
+        #{otherRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null">
+        #{orderStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="orderType != null">
+        #{orderType,jdbcType=SMALLINT},
+      </if>
+      <if test="agentPerson != null">
+        #{agentPerson,jdbcType=BIGINT},
+      </if>
+      <if test="serverCardNo != null">
+        #{serverCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="vipCard != null">
+        #{vipCard,jdbcType=VARCHAR},
+      </if>
+      <if test="cash != null">
+        #{cash,jdbcType=DECIMAL},
+      </if>
+      <if test="sitNo != null">
+        #{sitNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serverComplete != null">
+        #{serverComplete,jdbcType=SMALLINT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.OrderInfo">
+    update order_info
+    <set>
+      <if test="customerId != null">
+        customer_id = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="protocolId != null">
+        protocol_id = #{protocolId,jdbcType=BIGINT},
+      </if>
+      <if test="bookingPerson != null">
+        booking_person = #{bookingPerson,jdbcType=BIGINT},
+      </if>
+      <if test="noticePerson != null">
+        notice_person = #{noticePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="bookingWay != null">
+        booking_way = #{bookingWay,jdbcType=SMALLINT},
+      </if>
+      <if test="isImportant != null">
+        is_important = #{isImportant,jdbcType=SMALLINT},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="printCheck != null">
+        print_check = #{printCheck,jdbcType=SMALLINT},
+      </if>
+      <if test="printCheckRemark != null">
+        print_check_remark = #{printCheckRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="consign != null">
+        consign = #{consign,jdbcType=SMALLINT},
+      </if>
+      <if test="consignRemark != null">
+        consign_remark = #{consignRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="otherRemark != null">
+        other_remark = #{otherRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null">
+        order_status = #{orderStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="orderType != null">
+        order_type = #{orderType,jdbcType=SMALLINT},
+      </if>
+      <if test="agentPerson != null">
+        agent_person = #{agentPerson,jdbcType=BIGINT},
+      </if>
+      <if test="serverCardNo != null">
+        server_card_no = #{serverCardNo,jdbcType=VARCHAR},
+      </if>
+      <if test="vipCard != null">
+        vip_card = #{vipCard,jdbcType=VARCHAR},
+      </if>
+      <if test="cash != null">
+        cash = #{cash,jdbcType=DECIMAL},
+      </if>
+      <if test="sitNo != null">
+        sit_no = #{sitNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serverComplete != null">
+        server_complete = #{serverComplete,jdbcType=SMALLINT},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=BIGINT} and airport_code=#{airportCode,jdbcType=VARCHAR}
+  </update>
+
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from order_info
+    where order_id = #{orderId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from order_info
+    where order_id = #{orderId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.OrderInfo">
+    insert into order_info (order_id, customer_id, protocol_id, 
+      booking_person, notice_person, booking_way, 
+      is_important, product_id, print_check, 
+      print_check_remark, consign, consign_remark, 
+      other_remark, order_status, order_type, 
+      agent_person, server_card_no, vip_card, 
+      cash, sit_no, server_complete, 
+      create_user, update_user)
+    values (#{orderId,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{protocolId,jdbcType=BIGINT}, 
+      #{bookingPerson,jdbcType=BIGINT}, #{noticePerson,jdbcType=VARCHAR}, #{bookingWay,jdbcType=SMALLINT}, 
+      #{isImportant,jdbcType=SMALLINT}, #{productId,jdbcType=BIGINT}, #{printCheck,jdbcType=SMALLINT}, 
+      #{printCheckRemark,jdbcType=VARCHAR}, #{consign,jdbcType=SMALLINT}, #{consignRemark,jdbcType=VARCHAR}, 
+      #{otherRemark,jdbcType=VARCHAR}, #{orderStatus,jdbcType=SMALLINT}, #{orderType,jdbcType=SMALLINT}, 
+      #{agentPerson,jdbcType=BIGINT}, #{serverCardNo,jdbcType=VARCHAR}, #{vipCard,jdbcType=VARCHAR}, 
+      #{cash,jdbcType=DECIMAL}, #{sitNo,jdbcType=VARCHAR}, #{serverComplete,jdbcType=SMALLINT}, 
+      #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT})
+  </insert>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.OrderInfo">
+    update order_info
+    set customer_id = #{customerId,jdbcType=BIGINT},
+      protocol_id = #{protocolId,jdbcType=BIGINT},
+      booking_person = #{bookingPerson,jdbcType=BIGINT},
+      notice_person = #{noticePerson,jdbcType=VARCHAR},
+      booking_way = #{bookingWay,jdbcType=SMALLINT},
+      is_important = #{isImportant,jdbcType=SMALLINT},
+      product_id = #{productId,jdbcType=BIGINT},
+      print_check = #{printCheck,jdbcType=SMALLINT},
+      print_check_remark = #{printCheckRemark,jdbcType=VARCHAR},
+      consign = #{consign,jdbcType=SMALLINT},
+      consign_remark = #{consignRemark,jdbcType=VARCHAR},
+      other_remark = #{otherRemark,jdbcType=VARCHAR},
+      order_status = #{orderStatus,jdbcType=SMALLINT},
+      order_type = #{orderType,jdbcType=SMALLINT},
+      agent_person = #{agentPerson,jdbcType=BIGINT},
+      server_card_no = #{serverCardNo,jdbcType=VARCHAR},
+      vip_card = #{vipCard,jdbcType=VARCHAR},
+      cash = #{cash,jdbcType=DECIMAL},
+      sit_no = #{sitNo,jdbcType=VARCHAR},
+      server_complete = #{serverComplete,jdbcType=SMALLINT},
+      create_user = #{createUser,jdbcType=BIGINT},
+      update_user = #{updateUser,jdbcType=BIGINT}
+    where order_id = #{orderId,jdbcType=BIGINT}
+  </update>-->
+</mapper>

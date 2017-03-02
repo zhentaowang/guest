@@ -26,14 +26,24 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.OrderInfo;
+import org.apache.ibatis.annotations.Param;
+
 
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface PassengerMapper{
+public interface OrderInfoMapper{
 
-    void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
 
-    void insertSelective(Passenger p);
+    void markChildRowsAsDeleted(
+            @Param("orderId") Long orderId,
+            @Param("ids") String ids,
+            @Param("airportCode") String airportCode,
+            @Param("idColumn") String idColumn,
+            @Param("tableName")String tableName);
+
+    void insertSelective(OrderInfo orderInfo);
+
+    void updateByPrimaryKeySelective(OrderInfo orderInfo);
 }

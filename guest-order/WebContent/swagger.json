@@ -1,0 +1,370 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "订单调试接口",
+    "version" : "v1",
+    "title" : "Guest Order",
+    "termsOfService" : "http://www.github.com/kongchen/swagger-maven-plugin",
+    "contact" : {
+      "name" : "Luo Jing",
+      "email" : "luojing@zhiweicloud.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "localhost:8080",
+  "tags" : [ {
+    "name" : "订单管理"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/saveOrUpdate" : {
+      "post" : {
+        "tags" : [ "订单管理" ],
+        "summary" : "订单 - 新增/修改",
+        "description" : "返回成功还是失败",
+        "operationId" : "save",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf-8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "OrderInfo",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数OrderInfo"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Flight" : {
+      "type" : "object",
+      "required" : [ "flightId", "orderId" ],
+      "properties" : {
+        "flightId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "订单id"
+        },
+        "flightDate" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "航班日期"
+        },
+        "flightNo" : {
+          "type" : "string",
+          "description" : "航班号"
+        },
+        "flightDepcode" : {
+          "type" : "string",
+          "description" : "出发地三字码"
+        },
+        "flightArrcode" : {
+          "type" : "string",
+          "description" : "目的地三字码"
+        },
+        "flightDep" : {
+          "type" : "string",
+          "description" : "出发城市名"
+        },
+        "flightArr" : {
+          "type" : "string",
+          "description" : "到达城市名"
+        },
+        "flightDepAirport" : {
+          "type" : "string",
+          "description" : "出发机场名"
+        },
+        "flightArrAirport" : {
+          "type" : "string",
+          "description" : "到达机场名"
+        },
+        "planNo" : {
+          "type" : "string",
+          "description" : "机号"
+        },
+        "flightPosition" : {
+          "type" : "string",
+          "description" : "机位"
+        },
+        "boardInOut" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "国际国内：国外：0，国内：1"
+        },
+        "planTakeOffTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "计划起飞时间"
+        },
+        "planLandingTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "计划降落时间"
+        },
+        "isInOrOut" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "出港：0，进港1"
+        },
+        "boardingPort" : {
+          "type" : "string",
+          "description" : "登机口"
+        },
+        "isNearOrFar" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "远机位：0，近机位：1"
+        },
+        "serverTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "服务时间"
+        }
+      },
+      "description" : "flight"
+    },
+    "OrderInfo" : {
+      "type" : "object",
+      "required" : [ "orderId", "protocolId" ],
+      "properties" : {
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "customerId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "机构名称id"
+        },
+        "protocolId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "协议id"
+        },
+        "noticePerson" : {
+          "type" : "string",
+          "description" : "通知人"
+        },
+        "bookingWay" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "预约方式：0：电话，1：邮件，2：传真，3：短信，4：其他"
+        },
+        "isImportant" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "是否重要订单：0：重要，1：不重要"
+        },
+        "productId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "产品id"
+        },
+        "printCheck" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "代办登机牌 0:需要，1：不需要"
+        },
+        "printCheckRemark" : {
+          "type" : "string",
+          "description" : "座位要求: 靠窗 靠走道 不要安全门 前排 后排"
+        },
+        "consign" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "代办托运 说明"
+        },
+        "consignRemark" : {
+          "type" : "string",
+          "description" : "是否托运, 0:托运，1：不托运"
+        },
+        "otherRemark" : {
+          "type" : "string",
+          "description" : "服务说明"
+        },
+        "orderStatus" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "0:预约成功，1：消费,2 : 取消，3：使用，4：草稿"
+        },
+        "orderType" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "订单类型：0：预约订单，1：服务订单"
+        },
+        "agentPerson" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "安排代办人"
+        },
+        "serverCardNo" : {
+          "type" : "string",
+          "description" : "证件"
+        },
+        "vipCard" : {
+          "type" : "string",
+          "description" : "贵宾卡"
+        },
+        "cash" : {
+          "type" : "number",
+          "description" : "现金"
+        },
+        "sitNo" : {
+          "type" : "string",
+          "description" : "座位号"
+        },
+        "serverComplete" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "服务完成：0：是，1：否"
+        },
+        "serverPersonNum" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "服务人数"
+        },
+        "serviceList" : {
+          "type" : "array",
+          "description" : "订单详细服务",
+          "items" : {
+            "$ref" : "#/definitions/OrderService"
+          }
+        },
+        "passengerList" : {
+          "type" : "array",
+          "description" : "乘客信息",
+          "items" : {
+            "$ref" : "#/definitions/Passenger"
+          }
+        },
+        "changeOrderStatus" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "确认消费，仅仅用于前台标志 是用来更改订单的状态,确认：1"
+        },
+        "flight" : {
+          "description" : "航班信息",
+          "$ref" : "#/definitions/Flight"
+        }
+      },
+      "description" : "order_info"
+    },
+    "OrderService" : {
+      "type" : "object",
+      "required" : [ "orderId", "orderServiceId", "serviceDetail" ],
+      "properties" : {
+        "orderServiceId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "serviceDetail" : {
+          "type" : "string",
+          "description" : "主键自增id"
+        }
+      },
+      "description" : "order_service"
+    },
+    "Passenger" : {
+      "type" : "object",
+      "required" : [ "orderId", "passengerId" ],
+      "properties" : {
+        "passengerId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "主键自增id"
+        },
+        "orderId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "订单id"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "旅客姓名"
+        },
+        "phone" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "联系方式"
+        },
+        "identityCard" : {
+          "type" : "string",
+          "description" : "身份证"
+        },
+        "workUnit" : {
+          "type" : "string",
+          "description" : "单位"
+        },
+        "vipCard" : {
+          "type" : "string",
+          "description" : "贵宾卡"
+        },
+        "sitNo" : {
+          "type" : "string",
+          "description" : "座位号"
+        },
+        "cabinNo" : {
+          "type" : "string",
+          "description" : "舱位"
+        },
+        "ticketNo" : {
+          "type" : "string",
+          "description" : "客票号"
+        },
+        "cardNo" : {
+          "type" : "string",
+          "description" : "卡号"
+        },
+        "cardType" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "0：金卡，1：银卡"
+        },
+        "expireTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "有效期"
+        }
+      },
+      "description" : "passenger"
+    },
+    "全局统一接受参数OrderInfo" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "array",
+          "description" : "数据",
+          "items" : {
+            "$ref" : "#/definitions/OrderInfo"
+          }
+        }
+      },
+      "description" : "全局统一接受参数"
+    }
+  }
+}

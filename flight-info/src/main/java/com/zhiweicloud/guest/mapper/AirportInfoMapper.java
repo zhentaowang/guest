@@ -25,15 +25,29 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.SysMenu;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
- * Created by zhangpengfei on 2016/12/26.
+ * @author zhangpengfei
+ * @since 2016-12-21 22:17
  */
-public interface PassengerMapper{
+public interface SysMenuMapper{
+    List<SysMenu> getChildMenusByParentIdByUserId(@Param("parentId") Long parentId, @Param("airportCode") String airportCode, @Param("userId") Long userId);
 
-    void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
+    List<SysMenu> getChildNodesByParentId(@Param("parentId") Long parentId, @Param("airportCode") String airportCode);
 
-    void insertSelective(Passenger p);
+    int menuInUse(@Param("menuId") Long menuId, @Param("airportCode") String airportCode);
+
+    String selectMenuNameByIdAndAirportCode(@Param("menuId") Long menuId, @Param("airportCode") String airportCode);
+
+    List<SysMenu> getChildMenusByParentIdByRole(@Param("parentId") Long parentId, @Param("airportCode") String airportCode, @Param("roleId") Long roleId);
+
+    SysMenu selectMenuInstanceByIdAndAirportCode(@Param("menuId") Long menuId, @Param("airportCode") String airportCode);
+
+    void insertSelective(SysMenu sysMenu);
+
+    void updateByPrimaryKeySelective(SysMenu sysMenu);
 }

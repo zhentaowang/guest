@@ -25,14 +25,11 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.OrderCar;
-import com.zhiweicloud.guest.model.OrderCharge;
 
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface OrderChargeMapper extends MyMapper<OrderCharge> {
+public interface OrderChargeMapper{
 
 
 }

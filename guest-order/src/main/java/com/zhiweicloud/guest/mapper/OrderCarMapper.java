@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface OrderCarMapper extends MyMapper<OrderCar> {
+public interface OrderCarMapper{
 
 
     void insertByExists(Map<String, Object> map);

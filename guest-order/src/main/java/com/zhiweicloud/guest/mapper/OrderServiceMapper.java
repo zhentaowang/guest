@@ -25,15 +25,15 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.OrderService;
 
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface PassengerMapper{
+public interface OrderServiceMapper{
 
-    void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
 
-    void insertSelective(Passenger p);
+    void updateByOrderServiceIdAndAirportCodeKeySelective(OrderService os);
+
+    void insertSelective(OrderService os);
 }

@@ -2,101 +2,328 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.FlightMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Flight">
+    <id column="flight_id" jdbcType="BIGINT" property="flightId" />
     <result column="order_id" jdbcType="BIGINT" property="orderId" />
-    <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="flight_date" jdbcType="DATE" property="flightDate" />
     <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
-    <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
+    <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode" />
+    <result column="flight_arrcode" jdbcType="VARCHAR" property="flightArrcode" />
+    <result column="flight_dep" jdbcType="VARCHAR" property="flightDep" />
+    <result column="flight_arr" jdbcType="VARCHAR" property="flightArr" />
+    <result column="flight_dep_airport" jdbcType="VARCHAR" property="flightDepAirport" />
+    <result column="flight_arr_airport" jdbcType="VARCHAR" property="flightArrAirport" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
     <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+    <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
     <result column="plan_take_off_time" jdbcType="TIME" property="planTakeOffTime" />
     <result column="plan_landing_time" jdbcType="TIME" property="planLandingTime" />
     <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
     <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
     <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
     <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
-    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
-    <result column="server_person_num" jdbcType="VARCHAR" property="serverPersonNum"/>
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
   </resultMap>
+  <sql id="Base_Column_List">
+    flight_id, order_id, flight_date, flight_no, flight_depcode, flight_arrcode, flight_dep, 
+    flight_arr, flight_dep_airport, flight_arr_airport, plan_no, flight_position, board_in_out, 
+    plan_take_off_time, plan_landing_time, is_in_or_out, boarding_port, is_near_or_far, 
+    server_time, create_user, update_user
+  </sql>
 
-  <select id="selectFlightTotal" parameterType="com.zhiweicloud.guest.model.Flight" resultType="int">
-    select count(m.flight_no) from
-    (
-    select t.flight_no
-    from guest_order
-    inner  JOIN
-    (
-    select
-    f.order_id as orderIds,
-    f.* from flight f where f.is_deleted = 0 and f.airport_code = #{airportCode}
-    <if test="flightDate != null ">
-      and f.flight_date = date_format(#{flightDate},'%Y-%m-%d')
-    </if>
-    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 0">
-      and f.plan_take_off_time  between '06:00:00' and '12:00:00'
-    </if>
-    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 1">
-      and f.plan_take_off_time  between '12:00:00' and '18:00:00'
-    </if>
-    <if test="takeOffTimeFlag != null and takeOffTimeFlag == 2">
-      and f.plan_take_off_time  between '18:00:00' and '24:00:00'
-    </if>
-    <if test="landingTimeFlag != null and landingTimeFlag == 0">
-      and f.plan_landing_time  between '06:00:00' and '12:00:00'
-    </if>
-    <if test="landingTimeFlag != null and landingTimeFlag == 1">
-      and f.plan_landing_time  between '12:00:00' and '18:00:00'
-    </if>
-    <if test="landingTimeFlag != null and landingTimeFlag == 2">
-      and f.plan_landing_time  between '18:00:00' and '24:00:00'
-    </if>
-    <if test="flightNo != null and !''.equals(flightNo)">
-      and f.flight_no like concat('%',#{flightNo},'%')
-    </if>
-    <if test="isInOrOut != null and !''.equals(isInOrOut) and -1 != isInOrOut">
-      and f.is_in_or_out = #{isInOrOut}
-    </if>
-    ) t
-    on guest_order.id = t.order_id group by t.flight_no) m
+  <update id="updateByFlithIdAndAirportCodeSelective" parameterType="com.zhiweicloud.guest.model.Flight">
+    update flight
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="flightDate != null">
+        flight_date = #{flightDate,jdbcType=DATE},
+      </if>
+      <if test="flightNo != null">
+        flight_no = #{flightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDepcode != null">
+        flight_depcode = #{flightDepcode,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArrcode != null">
+        flight_arrcode = #{flightArrcode,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDep != null">
+        flight_dep = #{flightDep,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArr != null">
+        flight_arr = #{flightArr,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDepAirport != null">
+        flight_dep_airport = #{flightDepAirport,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArrAirport != null">
+        flight_arr_airport = #{flightArrAirport,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null">
+        plan_no = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightPosition != null">
+        flight_position = #{flightPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="boardInOut != null">
+        board_in_out = #{boardInOut,jdbcType=SMALLINT},
+      </if>
+      <if test="planTakeOffTime != null">
+        plan_take_off_time = #{planTakeOffTime,jdbcType=TIME},
+      </if>
+      <if test="planLandingTime != null">
+        plan_landing_time = #{planLandingTime,jdbcType=TIME},
+      </if>
+      <if test="isInOrOut != null">
+        is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
+      </if>
+      <if test="boardingPort != null">
+        boarding_port = #{boardingPort,jdbcType=VARCHAR},
+      </if>
+      <if test="isNearOrFar != null">
+        is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
+      </if>
+      <if test="serverTime != null">
+        server_time = #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code=#{airportCode,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from flight
+    where flight_id = #{flightId,jdbcType=BIGINT}
   </select>
-  <select id="selectFlightList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    select t.flight_no, sum(server_person_num) as server_person_num,t.*
-    from guest_order
-    inner  JOIN
-    (
-    select
-    f.order_id as orderIds,
-    f.* from flight f where f.is_deleted = 0 and f.airport_code = #{criteria.airportCode}
-    <if test="criteria.flightDate != null ">
-      and f.flight_date = date_format(#{criteria.flightDate},'%Y-%m-%d')
-    </if>
-    <if test="criteria.takeOffTimeFlag != null and criteria.takeOffTimeFlag == 0">
-      and f.plan_take_off_time  between '06:00:00' and '12:00:00'
-    </if>
-    <if test="criteria.takeOffTimeFlag != null and criteria.takeOffTimeFlag == 1">
-      and f.plan_take_off_time  between '12:00:00' and '18:00:00'
-    </if>
-    <if test="criteria.takeOffTimeFlag != null and criteria.takeOffTimeFlag == 2">
-      and f.plan_take_off_time  between '18:00:00' and '24:00:00'
-    </if>
-    <if test="criteria.landingTimeFlag != null and criteria.landingTimeFlag == 0">
-      and f.plan_landing_time  between '06:00:00' and '12:00:00'
-    </if>
-    <if test="criteria.landingTimeFlag != null and criteria.landingTimeFlag == 1">
-      and f.plan_landing_time  between '12:00:00' and '18:00:00'
-    </if>
-    <if test="criteria.landingTimeFlag != null and criteria.landingTimeFlag == 2">
-      and f.plan_landing_time  between '18:00:00' and '24:00:00'
-    </if>
-    <if test="criteria.flightNo != null and !''.equals(criteria.flightNo)">
-      and f.flight_no like concat('%',#{criteria.flightNo},'%')
-    </if>
-    <if test="criteria.isInOrOut != null and !''.equals(criteria.isInOrOut) and -1 != criteria.isInOrOut">
-      and f.is_in_or_out = #{criteria.isInOrOut}
-    </if>
-    ) t
-    on guest_order.id = t.order_id
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from flight
+    where flight_id = #{flightId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.Flight">
+    insert into flight (flight_id, order_id, flight_date, 
+      flight_no, flight_depcode, flight_arrcode, 
+      flight_dep, flight_arr, flight_dep_airport, 
+      flight_arr_airport, plan_no, flight_position, 
+      board_in_out, plan_take_off_time, plan_landing_time, 
+      is_in_or_out, boarding_port, is_near_or_far, 
+      server_time, create_user, update_user
+      )
+    values (#{flightId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{flightDate,jdbcType=DATE}, 
+      #{flightNo,jdbcType=VARCHAR}, #{flightDepcode,jdbcType=VARCHAR}, #{flightArrcode,jdbcType=VARCHAR}, 
+      #{flightDep,jdbcType=VARCHAR}, #{flightArr,jdbcType=VARCHAR}, #{flightDepAirport,jdbcType=VARCHAR}, 
+      #{flightArrAirport,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, #{flightPosition,jdbcType=VARCHAR}, 
+      #{boardInOut,jdbcType=SMALLINT}, #{planTakeOffTime,jdbcType=TIME}, #{planLandingTime,jdbcType=TIME}, 
+      #{isInOrOut,jdbcType=SMALLINT}, #{boardingPort,jdbcType=VARCHAR}, #{isNearOrFar,jdbcType=SMALLINT}, 
+      #{serverTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.Flight">
+    insert into flight
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="flightId != null">
+        flight_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="flightDate != null">
+        flight_date,
+      </if>
+      <if test="flightNo != null">
+        flight_no,
+      </if>
+      <if test="flightDepcode != null">
+        flight_depcode,
+      </if>
+      <if test="flightArrcode != null">
+        flight_arrcode,
+      </if>
+      <if test="flightDep != null">
+        flight_dep,
+      </if>
+      <if test="flightArr != null">
+        flight_arr,
+      </if>
+      <if test="flightDepAirport != null">
+        flight_dep_airport,
+      </if>
+      <if test="flightArrAirport != null">
+        flight_arr_airport,
+      </if>
+      <if test="planNo != null">
+        plan_no,
+      </if>
+      <if test="flightPosition != null">
+        flight_position,
+      </if>
+      <if test="boardInOut != null">
+        board_in_out,
+      </if>
+      <if test="planTakeOffTime != null">
+        plan_take_off_time,
+      </if>
+      <if test="planLandingTime != null">
+        plan_landing_time,
+      </if>
+      <if test="isInOrOut != null">
+        is_in_or_out,
+      </if>
+      <if test="boardingPort != null">
+        boarding_port,
+      </if>
+      <if test="isNearOrFar != null">
+        is_near_or_far,
+      </if>
+      <if test="serverTime != null">
+        server_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="flightId != null">
+        #{flightId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="flightDate != null">
+        #{flightDate,jdbcType=DATE},
+      </if>
+      <if test="flightNo != null">
+        #{flightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDepcode != null">
+        #{flightDepcode,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArrcode != null">
+        #{flightArrcode,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDep != null">
+        #{flightDep,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArr != null">
+        #{flightArr,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDepAirport != null">
+        #{flightDepAirport,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArrAirport != null">
+        #{flightArrAirport,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null">
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightPosition != null">
+        #{flightPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="boardInOut != null">
+        #{boardInOut,jdbcType=SMALLINT},
+      </if>
+      <if test="planTakeOffTime != null">
+        #{planTakeOffTime,jdbcType=TIME},
+      </if>
+      <if test="planLandingTime != null">
+        #{planLandingTime,jdbcType=TIME},
+      </if>
+      <if test="isInOrOut != null">
+        #{isInOrOut,jdbcType=SMALLINT},
+      </if>
+      <if test="boardingPort != null">
+        #{boardingPort,jdbcType=VARCHAR},
+      </if>
+      <if test="isNearOrFar != null">
+        #{isNearOrFar,jdbcType=SMALLINT},
+      </if>
+      <if test="serverTime != null">
+        #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Flight">
+    update flight
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="flightDate != null">
+        flight_date = #{flightDate,jdbcType=DATE},
+      </if>
+      <if test="flightNo != null">
+        flight_no = #{flightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDepcode != null">
+        flight_depcode = #{flightDepcode,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArrcode != null">
+        flight_arrcode = #{flightArrcode,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDep != null">
+        flight_dep = #{flightDep,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArr != null">
+        flight_arr = #{flightArr,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDepAirport != null">
+        flight_dep_airport = #{flightDepAirport,jdbcType=VARCHAR},
+      </if>
+      <if test="flightArrAirport != null">
+        flight_arr_airport = #{flightArrAirport,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null">
+        plan_no = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightPosition != null">
+        flight_position = #{flightPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="boardInOut != null">
+        board_in_out = #{boardInOut,jdbcType=SMALLINT},
+      </if>
+      <if test="planTakeOffTime != null">
+        plan_take_off_time = #{planTakeOffTime,jdbcType=TIME},
+      </if>
+      <if test="planLandingTime != null">
+        plan_landing_time = #{planLandingTime,jdbcType=TIME},
+      </if>
+      <if test="isInOrOut != null">
+        is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
+      </if>
+      <if test="boardingPort != null">
+        boarding_port = #{boardingPort,jdbcType=VARCHAR},
+      </if>
+      <if test="isNearOrFar != null">
+        is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
+      </if>
+      <if test="serverTime != null">
+        server_time = #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code=#{airportCode}
+  </update>
 
-    group by t.flight_no
-    limit #{page.startPageNo},#{page.pCount}
-
-  </select>
 </mapper>
