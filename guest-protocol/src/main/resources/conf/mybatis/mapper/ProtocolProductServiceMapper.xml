@@ -100,4 +100,99 @@
     WHERE airport_code = #{airportCode}
     and protocol_product_id = #{protocolProductId}
   </update>
+
+  <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.ProtocolProductService">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="protocolProductServiceId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into protocol_product_service
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        airport_code,
+      </if>
+      <if test="protocolProductServiceId != null">
+        protocol_product_service_id,
+      </if>
+      <if test="protocolProductId != null">
+        protocol_product_id,
+      </if>
+      <if test="serviceTypeAllocationId != null">
+        service_type_allocation_id,
+      </if>
+      <if test="serviceId != null">
+        service_id,
+      </if>
+      <if test="pricingRule != null">
+        pricing_rule,
+      </if>
+      <if test="isPricing != null">
+        is_pricing,
+      </if>
+      <if test="isPrioritized != null">
+        is_prioritized,
+      </if>
+      <if test="isAvailabled != null">
+        is_availabled,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolProductServiceId != null">
+        #{protocolProductServiceId,jdbcType=BIGINT},
+      </if>
+      <if test="protocolProductId != null">
+        #{protocolProductId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceTypeAllocationId != null">
+        #{serviceTypeAllocationId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceId != null">
+        #{serviceId,jdbcType=BIGINT},
+      </if>
+      <if test="pricingRule != null">
+        #{pricingRule,jdbcType=OTHER},
+      </if>
+      <if test="isPricing != null">
+        #{isPricing,jdbcType=BIT},
+      </if>
+      <if test="isPrioritized != null">
+        #{isPrioritized,jdbcType=BIT},
+      </if>
+      <if test="isAvailabled != null">
+        #{isAvailabled,jdbcType=BIT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
 </mapper>

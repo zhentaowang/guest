@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by wzt on 2016/12/26.
  */
-public interface RolePermissionMapper extends MyMapper<RolePermission> {
+public interface RolePermissionMapper {
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
     void insertBySelective(RolePermission rolePermission);
 }

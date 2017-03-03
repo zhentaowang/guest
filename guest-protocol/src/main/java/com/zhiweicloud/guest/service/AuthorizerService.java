@@ -58,7 +58,7 @@ public class AuthorizerService {
             authorizer.setCreateTime(new Date());
             authorizer.setUpdateTime(new Date());
             authorizer.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-            authorizerMapper.insert(authorizer);
+            authorizerMapper.insertBySelective(authorizer);
         }
     }
 
