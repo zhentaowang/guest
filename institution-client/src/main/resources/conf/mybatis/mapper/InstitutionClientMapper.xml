@@ -219,7 +219,7 @@
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
     </set>
-    where institution_client_id = #{institutionClientId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    where institution_client_id = #{institutionClientId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType = VARCHAR}
   </update>
 
 </mapper>
