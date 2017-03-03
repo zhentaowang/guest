@@ -107,10 +107,11 @@ public class ProductController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "产品管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult addProduct(
+    public String addProduct(
             @ApiParam(value = "product", required = true)
             @RequestBody RequsetParams<Product> params,
             @Context final HttpHeaders headers){
+        LZResult<String> result = new LZResult<>();
         try{
             Product product = null;
             if(!CollectionUtils.isEmpty(params.getData())){
@@ -118,17 +119,23 @@ public class ProductController {
             }
 
             if (product == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
             }
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             product.setAirportCode(airportCode);
 
             productService.saveOrUpdate(product, userId);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
         }
     }
 
