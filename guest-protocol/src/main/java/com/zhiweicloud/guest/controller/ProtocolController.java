@@ -57,54 +57,35 @@ public class ProtocolController {
     public LXResult save(@ApiParam(value = "protocol", required = true) @RequestBody String params,
                          @Context final HttpHeaders headers) {
         try {
-            Protocol protocol = new Protocol();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             JSONObject param00 = JSON.parseObject(param.get(0).toString());
-            protocol.setProtocolId(param00.getLong("protocolId"));
-            protocol.setAirportCode(airportCode);
-            protocol.setInstitutionClientId(param00.getLong("institutionClientId"));
-            protocol.setName(param00.getString("name"));
-            protocol.setType(param00.getInteger("type"));
-            protocol.setReservationNum(param00.getString("reservationNum"));
-            protocol.setStartDate(param00.getDate("startDate"));
-            protocol.setEndDate(param00.getDate("endDate"));
-            protocol.setClearForm(param00.getShort("clearForm"));
-            protocol.setRemark(param00.getString("remark"));
             JSONArray authorizerList = param00.getJSONArray("authorizer");
+            JSONArray protocolProductList = param00.getJSONArray("protocolProduct");
+            param00.remove("authorizer");
+            param00.remove("protocolProduct");
+            Protocol protocol = JSONObject.toJavaObject(param00,Protocol.class);
+            protocol.setAirportCode(airportCode);
             List<Authorizer> authorizers = new ArrayList<>();
             for (int i = 0; i < authorizerList.size(); i++) {
                 JSONObject authorizer00 = JSON.parseObject(authorizerList.get(i).toString());
-                Authorizer authorizer = new Authorizer();
-                authorizer.setAuthorizerId(authorizer00.getLong("authorizerId"));
+                Authorizer authorizer = JSONObject.toJavaObject(authorizer00,Authorizer.class);
                 authorizer.setAirportCode(protocol.getAirportCode());
-                authorizer.setName(authorizer00.getString("name"));
-                authorizer.setCellphone(authorizer00.getString("cellphone"));
-                authorizer.setTelephone(authorizer00.getString("telephone"));
                 authorizers.add(authorizer);
             }
             protocol.setAuthorizerList(authorizers);
-            JSONArray protocolProductList = param00.getJSONArray("protocolProduct");
             List<ProtocolProduct> protocolProducts = new ArrayList<>();
             for (int i = 0; i < protocolProductList.size(); i++) {
                 JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
-                ProtocolProduct protocolProduct = new ProtocolProduct();
-                protocolProduct.setProtocolProductId(protocolProduct00.getLong("protocolProductId"));
-                protocolProduct.setAirportCode(protocol.getAirportCode());
-                protocolProduct.setProductId(protocolProduct00.getLong("productId"));
-                protocolProduct.setProductDesc(protocolProduct00.getString("productDesc"));
                 JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
+                protocolProduct00.remove("protocolProductService");
+                ProtocolProduct protocolProduct = JSONObject.toJavaObject(protocolProduct00,ProtocolProduct.class);
+                protocolProduct.setAirportCode(protocol.getAirportCode());
                 List<ProtocolProductService> protocolProductServices = new ArrayList<>();
                 for (int j = 0; j < protocolProductServiceList.size(); j++) {
                     JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
-                    ProtocolProductService protocolProductService = new ProtocolProductService();
-                    protocolProductService.setProtocolProductServiceId(protocolProductService00.getLong("protocolProductServiceId"));
+                    ProtocolProductService protocolProductService = JSONObject.toJavaObject(protocolProductService00,ProtocolProductService.class);
                     protocolProductService.setAirportCode(protocol.getAirportCode());
-                    protocolProductService.setServiceTypeAllocationId(protocolProductService00.getLong("serviceTypeAllocationId"));
-                    protocolProductService.setServiceId(protocolProductService00.getLong("serviceId"));
-                    protocolProductService.setIsPricing(protocolProductService00.getBoolean("isPricing"));
-                    protocolProductService.setIsPrioritized(protocolProductService00.getBoolean("isPrioritized"));
-                    protocolProductService.setIsAvailabled(protocolProductService00.getBoolean("isAvailabled"));
                     protocolProductService00.remove("protocolProductServiceId");
                     protocolProductService00.remove("airportCode");
                     protocolProductService00.remove("serviceTypeAllocationId");
@@ -140,8 +121,7 @@ public class ProtocolController {
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            if (protocol.getName() == null || protocol.getClearForm() == null || protocol.getInstitutionClientId() == null
-                    || protocol.getType() == null || protocol.getStartDate() == null || protocol.getEndDate() == null) {
+            if (protocol.getName() == null || protocol.getInstitutionClientId() == null || protocol.getType() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
 //            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
@@ -195,7 +175,7 @@ public class ProtocolController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议管理 - 根据协议产品id查询服务类别树 ", notes = "返回服务类别树", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
+            @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
     })
     public String getServiceMenuList(@Context final HttpHeaders headers,
                                      @QueryParam(value = "protocolProductId") Long protocolProductId) {
@@ -204,6 +184,29 @@ public class ProtocolController {
         param.put("airportCode", airportCode);
         param.put("protocolProductId", protocolProductId);
         List<ProtocolProductService> serviceMenuList = protocolService.getServiceMenuList(param);
+        return JSON.toJSONString(new LZResult<>(serviceMenuList));
+    }
+
+    /**
+     * 协议管理 - 根据协议产品id查询服务类别
+     *
+     * @param protocolProductId
+     * @return
+     */
+    @GET
+    @Path("get-service-type-by-protocol-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 根据协议产品id查询服务类别 ", notes = "返回服务类别", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
+    })
+    public String getServiceTypeList(@Context final HttpHeaders headers,
+                                     @QueryParam(value = "protocolProductId") Long protocolProductId) {
+        Map<String, Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode", airportCode);
+        param.put("protocolProductId", protocolProductId);
+        List<ProtocolProductService> serviceMenuList = protocolService.getServiceTypeList(param);
         return JSON.toJSONString(new LZResult<>(serviceMenuList));
     }
 
@@ -236,6 +239,31 @@ public class ProtocolController {
         param.put("typeId", typeId);
         param.put("protocolProductId", protocolProductId);
         LZResult<PaginationResult<JSONObject>> result  = protocolService.getServiceListByTypeId(param,page,rows);
+        return JSON.toJSONString(result);
+    }
+
+    /**
+     * 协议管理 - 根据服务类型配置id和协议产品id查询服务下拉框
+     * @param typeId 服务类型配置id
+     * @param protocolProductId 协议产品id
+     * @return
+     */
+    @GET
+    @Path("get-service-box-by-type-and-protocol-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 根据服务类型配置id和协议产品id查询服务下拉框", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {       @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")})
+    public String getServiceDropDownBox(@QueryParam(value = "typeId") Long typeId,
+                        @QueryParam(value = "protocolProductId") Long protocolProductId,
+                        @Context final HttpHeaders headers) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        param.put("typeId", typeId);
+        param.put("protocolProductId", protocolProductId);
+        LZResult<List<ProtocolProductService>> result  = protocolService.getServiceDropDownBox(param);
         return JSON.toJSONString(result);
     }
 

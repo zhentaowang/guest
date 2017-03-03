@@ -20,6 +20,7 @@ public interface ProtocolProductServiceMapper extends MyMapper<ProtocolProductSe
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
     List<ProtocolProductService> getServiceMenuList(Map<String, Object> param);
     List<ProtocolProductService> getServiceTypeDropdownList(Map<String, Object> param);
+    List<ProtocolProductService> getServiceDropDownBoxByParam(Map<String, Object> param);
 
     /**
      * 根据协议产品id 删除协议产品服务

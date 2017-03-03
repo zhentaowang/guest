@@ -41,6 +41,14 @@ public class ProtocolProduct extends BaseEntity{
     private String productDesc;
 
     @Transient
+    @ApiModelProperty(value="产品名称",name="productName")
+    private String productName;
+
+    @Transient
+    @ApiModelProperty(value="产品编号",name="productNo")
+    private String productNo;
+
+    @Transient
     @ApiModelProperty(value = "授权人",name="protocolProductService")
     private List<ProtocolProductService> protocolProductServiceList;
 
@@ -50,6 +58,22 @@ public class ProtocolProduct extends BaseEntity{
 
     public void setProtocolProductServiceList(List<ProtocolProductService> protocolProductServiceList) {
         this.protocolProductServiceList = protocolProductServiceList;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     /**

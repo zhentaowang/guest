@@ -5,6 +5,9 @@
     <id column="protocol_id" jdbcType="BIGINT" property="protocolId" />
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
     <result column="institution_client_id" jdbcType="BIGINT" property="institutionClientId" />
+    <result column="institution_client_name" jdbcType="VARCHAR" property="institutionClientName" />
+    <result column="institution_client_type" jdbcType="VARCHAR" property="institutionClientType" />
+    <result column="institution_client_no" jdbcType="VARCHAR" property="institutionClientNo" />
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="reservation_num" jdbcType="VARCHAR" property="reservationNum" />
@@ -153,7 +156,7 @@
   </select>
 
   <select id="selectById" parameterType="map" resultMap="BaseResultMap">
-   SELECT p.protocol_id, p.airport_code, p.no, p.name, p.type, p.reservation_num, p.start_date, p.end_date, p.clear_form, p.remark,
+   SELECT p.protocol_id, p.airport_code, p.no, p.name, p.type, p.reservation_num, p.start_date, p.end_date, p.clear_form, p.remark,i.institution_client_id,
    i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
   FROM v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
   where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.protocol_id = #{protocolId,jdbcType=BIGINT} and p.is_deleted = 0

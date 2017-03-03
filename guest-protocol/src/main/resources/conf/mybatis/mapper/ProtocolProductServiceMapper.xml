@@ -68,7 +68,7 @@
     left join (select service_type_allocation_id, type from service_type_allocation
     where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}) as s
     on p.service_type_allocation_id = s.service_type_allocation_id
-    where p.is_deleted = 0 and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR}
+    where p.is_deleted = 0 and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR} group by p.service_type_allocation_id
   </select>
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select p.protocol_product_service_id, p.airport_code, s.no, s.name, p.pricing_rule, p.is_pricing, p.is_prioritized, p.is_availabled
@@ -79,6 +79,16 @@
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{criteria.typeId,jdbcType=BIGINT} and p.is_deleted = 0
      and p.protocol_product_id = #{criteria.protocolProductId,jdbcType=BIGINT}
     LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getServiceDropDownBoxByParam" parameterType="map" resultMap="BaseResultMap">
+    select p.protocol_product_service_id, s.name
+    from protocol_product_service as p left join
+    (select serv_id, no, name from v_serv
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{typeId,jdbcType=BIGINT} and is_deleted = 0) as s
+    on p.service_id = s.serv_id
+    where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{typeId,jdbcType=BIGINT} and p.is_deleted = 0
+    and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">

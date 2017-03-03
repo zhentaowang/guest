@@ -331,7 +331,7 @@ public class ProtocolService {
     /**
      * 获取服务类型树
      * @param param
-     * @return List<ProductServiceType>
+     * @return List<ProtocolProductService>
      */
     public List<ProtocolProductService> getServiceMenuList(Map<String,Object> param){
         List<ProtocolProductService> result = protocolProductServiceMapper.getServiceMenuList(param);
@@ -340,6 +340,16 @@ public class ProtocolService {
             result.get(i).setServiceTypeList(out);
         }
         return result;
+    }
+
+    /**
+     * 获取服务类型树
+     * @param param
+     * @return List<ProtocolProductService>
+     */
+    public List<ProtocolProductService> getServiceTypeList(Map<String,Object> param){
+        List<ProtocolProductService> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
+        return out;
     }
 
     /**
@@ -376,6 +386,17 @@ public class ProtocolService {
         }
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, protocolProductServiceJson);
         LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
+        return result;
+    }
+
+    /**
+     * 根据服务类型配置id和协议产品id查询服务下拉框
+     * @param param
+     * @return PaginationResult<JSONObject>
+     */
+    public LZResult<List<ProtocolProductService>> getServiceDropDownBox(Map<String,Object> param) {
+        List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.getServiceDropDownBoxByParam(param);
+        LZResult<List<ProtocolProductService>> result = new LZResult<>(protocolProductServiceList);
         return result;
     }
 
