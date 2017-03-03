@@ -18,7 +18,7 @@
             <property name="suppressAllComments" value="false" />
         </commentGenerator>-->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://rm-bp1k3z8741k8367xio.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
+			connectionURL="jdbc:mysql://rm-bp1741c4qix10l3czo.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
 			password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
 		<javaModelGenerator targetPackage="com.zhiweicloud.guest.model" targetProject="src/main/java" />
@@ -29,7 +29,7 @@
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="institution_client" enableCountByExample="false"
+		<table schema="" tableName="airport_info" enableCountByExample="false"
 				enableUpdateByExample="false" enableDeleteByExample="false"
 				enableSelectByExample="false" selectByExampleQueryId="false">
 				<!--<ignoreColumn column="create_user"/>

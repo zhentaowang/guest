@@ -1,18 +1,26 @@
 package com.zhiweicloud.guest.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.dragon.sign.DragonSignature;
+import com.zhiweicloud.guest.APIUtil.LZResult;
+import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.model.Dropdownlist;
+import com.zhiweicloud.guest.service.FlightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.ContainerRequestContext;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +33,8 @@ import java.util.Map;
 @Path("/")
 @Api(value = "航班信息", description = "航班信息desc ", tags = {"flight-info"})
 public class FlightInfoController {
+    @Autowired
+    private FlightService flightService;
 
     /**
      * 订单管理 - 根据id查询
@@ -73,6 +83,33 @@ public class FlightInfoController {
 
 
     }
+
+    /**
+     * 产品品类下拉框 数据
+     *
+     * @return
+     */
+    @GET
+    @Path("flightInfoDropdownList")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "航段下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
+    public String flightInfoDropdownList(@QueryParam(value = "airportNameOrCode") String airportNameOrCode) {
+        LZResult<List<Map<String,String>>> result = new LZResult<>();
+        try {
+            List<Map<String,String>> list = flightService.flightInfoDropdownList(airportNameOrCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+    }
+
+
 
 
 
