@@ -24,6 +24,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,32 +113,32 @@ public class ProductController {
             @RequestBody RequsetParams<Product> params,
             @Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
-        try{
+        try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             Product product = null;
-            if(!CollectionUtils.isEmpty(params.getData())){
+            if (!CollectionUtils.isEmpty(params.getData())) {
                 product = params.getData().get(0);
             }
-
             if (product == null) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
+            }else{
+                product.setAirportCode(airportCode);
+                productService.saveOrUpdate(product,userId);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(null);
             }
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            product.setAirportCode(airportCode);
-
-            productService.saveOrUpdate(product, userId);
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
-        JSON.toJSONString(result);
+        return JSON.toJSONString(result);
     }
 
     @POST
