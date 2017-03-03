@@ -387,7 +387,7 @@ public class ProtocolService {
      */
     public LZResult<PaginationResult<Protocol>> getProtocolList(Protocol protocolParam, Integer page, Integer rows) {
         int count = protocolMapper.selectProtocolTotal(protocolParam);
-        List<Protocol> protocolList = protocolMapper.queryProtocolList(protocolParam,(page-1)*rows, page*rows);
+        List<Protocol> protocolList = protocolMapper.queryProtocolList(protocolParam,(page-1)*rows, rows);
         PaginationResult<Protocol> eqr = new PaginationResult<>(count, protocolList);
         LZResult<PaginationResult<Protocol>> result = new LZResult<>(eqr);
         return result;

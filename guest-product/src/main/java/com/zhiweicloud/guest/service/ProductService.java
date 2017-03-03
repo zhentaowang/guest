@@ -110,7 +110,7 @@ public class ProductService {
     public LZResult<PaginationResult<Product>> getAll(String airportCode, Integer page, Integer rows) {
 
         int total = productMapper.getListCount(airportCode);
-        List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,page*rows);
+        List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,rows);
         PaginationResult<Product> eqr = new PaginationResult<>(total, productList);
         LZResult<PaginationResult<Product>> result = new LZResult<>(eqr);
         return result;
