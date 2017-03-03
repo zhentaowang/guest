@@ -1,7 +1,6 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -107,7 +106,7 @@ public class ProductController {
     @Path(value="addProduct")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
-    @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败")
+    @ApiOperation(value = "产品管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public LXResult addProduct(
             @ApiParam(value = "product", required = true)
             @RequestBody RequsetParams<Product> params,
