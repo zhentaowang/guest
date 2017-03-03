@@ -71,22 +71,31 @@ public class AuthorizerController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="授权人管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "authorizer", required = true) @RequestBody RequsetParams<Authorizer> params){
+    public String save(@ApiParam(value = "authorizer", required = true) @RequestBody RequsetParams<Authorizer> params){
+        LZResult<String> result = new LZResult<>();
         try{
             Authorizer authorizer = null;
             if(!CollectionUtils.isEmpty(params.getData())){
                 authorizer = params.getData().get(0);
             }
-
             if (authorizer == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
+            }else{
+                authorizerService.saveOrUpdate(authorizer);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(null);
+
             }
-            authorizerService.saveOrUpdate(authorizer);
-            return  LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
         }
+        return JSON.toJSONString(result);
     }
 
 
@@ -145,14 +154,27 @@ public class AuthorizerController {
      */
     @GET
     @Path(value = "getAuthorizerDropdownList")
+    @Produces("application/json;charset=utf-8")
     @ApiOperation(value="订单中用到协议预约人下拉框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
-    public LZResult<List<Dropdownlist>> getAuthorizerDropdownList(
+    public String getAuthorizerDropdownList(
             ContainerRequestContext request,
-            @QueryParam(value = "airportCode") String airportCode,
+            @QueryParam(value = "protocolId") Long protocolId,
             @QueryParam(value = "name") String name) {
-//        String airportCode = request.getHeaders().getFirst("client-id").toString();
-        List<Dropdownlist> list = authorizerService.getAuthorizerDropdownList(airportCode,name);
-        return new LZResult<>(list);
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+
+        try{
+            List<Dropdownlist> list = authorizerService.getAuthorizerDropdownList(airportCode, name, protocolId);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch(Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 
 

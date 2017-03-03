@@ -332,7 +332,6 @@ public class ProtocolController {
 
         /**
          * 重写协议管理 - 删除
-         * @param airportCode
          * @param params ids
          * @return
          */
@@ -343,14 +342,12 @@ public class ProtocolController {
         @ApiOperation(value = "协议管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
         @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
         public String deleteProtocol (
-                @RequestBody RequsetParams< Long > params,
-                @QueryParam(value = "airportCode") String airportCode){
+                @Context final HttpHeaders headers,
+                @RequestBody RequsetParams< Long > params){
             try {
                 List<Long> ids = params.getData();
-                Long userId = 0L;
-//          Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
-//          String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
-                boolean flame;
+                Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
+                String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
 
                 for (int i = 0; i < ids.size(); i++) {
                     //调用order应用，根据协议id 查询有无订单关联
@@ -358,7 +355,7 @@ public class ProtocolController {
                     map.put("protocolId", ids.get(i));
                     Properties p = new Properties();
                     p.load(ProtocolController.class.getClassLoader().getResourceAsStream("application.properties"));
-
+                //@TODO:调用订单接口判断有无被引用
 //                String temp = HttpClientUtil.httpGetRequest(p.getProperty("guest.client.queryInstitutionClientDropdownList"), map);
 //                System.out.println(temp);
 //                byte[] b = temp.getBytes("ISO-8859-1");
