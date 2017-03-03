@@ -309,10 +309,9 @@ public class ProtocolController {
         @Produces("application/json;charset=utf-8")
         public String getProtocolNameDropdownList (
                 ContainerRequestContext request,
-                @QueryParam(value = "airportCode") String airportCode,
                 @QueryParam(value = "name") String name,
                 @QueryParam(value = "authorizerId") Long authorizerId){
-//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
             LZResult<List<Dropdownlist>> result = new LZResult<>();
             try{
                 List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(airportCode, name, authorizerId);
