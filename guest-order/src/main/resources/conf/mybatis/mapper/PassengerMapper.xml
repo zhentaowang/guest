@@ -23,6 +23,7 @@
     cabin_no, ticket_no, card_no, card_type, expire_time, create_user, update_user
   </sql>
 
+
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.Passenger">
     insert into passenger
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -120,6 +121,18 @@
       </if>
     </trim>
   </insert>
+
+
+  <select id="getIdentityCardDropdownList" resultType="String" parameterType="map">
+    select DISTINCT identity_card from passenger
+    WHERE is_deleted = 0 AND airport_code = #{airportCode}
+    <if test="identityCard != null and !identityCard.trim().equals('')" >
+      and identity_card like concat('%',#{identityCard},'%')
+    </if>
+
+  </select>
+
+
 
   <update id="updateByPassengerIdAndAirportCodeKeySelective" parameterType="com.zhiweicloud.guest.model.Passenger">
     update passenger

@@ -25,13 +25,21 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.Passenger;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
 public interface PassengerMapper{
+
+    /**
+     * 订单列表，身份证号模糊匹配
+     * @return
+     */
+    List<String> getIdentityCardDropdownList(@Param("identityCard") String identityCard, @Param("airportCode") String airportCode);
 
     void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
 

@@ -111,7 +111,8 @@
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMapPage">
     SELECT
-    p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
+    p.protocol_id, p.airport_code, p.no, p.name, p.type, p.reservation_num, p.start_date, p.end_date, p.clear_form, p.remark,
+    i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
     FROM
     v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
@@ -152,7 +153,8 @@
   </select>
 
   <select id="selectById" parameterType="map" resultMap="BaseResultMap">
-   SELECT p.*,i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
+   SELECT p.protocol_id, p.airport_code, p.no, p.name, p.type, p.reservation_num, p.start_date, p.end_date, p.clear_form, p.remark,
+   i.name as institution_client_name,i.type as institution_client_type,i.no as institution_client_no
   FROM v_protocol p left join v_institution_client i on p.institution_client_id = i.institution_client_id
   where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.protocol_id = #{protocolId,jdbcType=BIGINT} and p.is_deleted = 0
   and i.airport_code = #{airportCode,jdbcType=VARCHAR} and i.is_deleted = 0

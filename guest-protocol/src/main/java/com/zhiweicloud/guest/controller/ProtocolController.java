@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -136,13 +137,6 @@ public class ProtocolController {
             }
             protocol.setProtocolProductList(protocolProducts);
 
-//            param00.remove("servId");
-//            param00.remove("name");
-//            param00.remove("institutionClientId");
-//            protocol.setServiceDetail(param00.toJSONString());
-//            Set keys = param00.keySet();
-//            Map<String,Object> serviceFieldName = ServiceDetail.getServiceFieldName(protocol.getServiceTypeAllocationId());
-
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
@@ -213,7 +207,37 @@ public class ProtocolController {
         return JSON.toJSONString(new LZResult<>(serviceMenuList));
     }
 
-
+    /**
+     * 协议管理 - 根据服务类型配置id和协议产品id查询服务详情
+     * @param page 起始页
+     * @param rows 每页显示数目
+     * @param typeId 服务类型配置id
+     * @param protocolProductId 协议产品id
+     * @return
+     */
+    @GET
+    @Path("get-service-list-by-type-and-protocol-product-id")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 根据服务类型配置id和协议产品id查询服务详情", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")})
+    public String list( @QueryParam(value = "page") Integer page,
+                        @QueryParam(value = "rows") Integer rows,
+                        @QueryParam(value = "typeId") Long typeId,
+                        @QueryParam(value = "protocolProductId") Long protocolProductId,
+                        @Context final HttpHeaders headers) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        param.put("typeId", typeId);
+        param.put("protocolProductId", protocolProductId);
+        LZResult<PaginationResult<JSONObject>> result  = protocolService.getServiceListByTypeId(param,page,rows);
+        return JSON.toJSONString(result);
+    }
 
         /**
          * 重写协议列表，2017.2.23
@@ -282,14 +306,27 @@ public class ProtocolController {
         @GET
         @Path(value = "getProtocolNameDropdownList")
         @ApiOperation(value = "系统中用到协议名称下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-        public LZResult<List<Dropdownlist>> getProtocolNameDropdownList (
+        @Produces("application/json;charset=utf-8")
+        public String getProtocolNameDropdownList (
                 ContainerRequestContext request,
                 @QueryParam(value = "airportCode") String airportCode,
                 @QueryParam(value = "name") String name,
                 @QueryParam(value = "authorizerId") Long authorizerId){
 //        String airportCode = request.getHeaders().getFirst("client-id").toString();
-            List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(airportCode, name, authorizerId);
-            return new LZResult<>(list);
+            LZResult<List<Dropdownlist>> result = new LZResult<>();
+            try{
+                List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(airportCode, name, authorizerId);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(list);
+            }catch(Exception e){
+                e.printStackTrace();
+                result.setMsg(LZStatus.ERROR.display());
+                result.setStatus(LZStatus.ERROR.value());
+                result.setData(null);
+            }
+            return JSON.toJSONString(result);
+
         }
 
 
