@@ -225,6 +225,7 @@
               <springmvc>false</springmvc>
               <locations>
                 <location>com.zhiweicloud.guest.controller.OrderInfoController</location>
+                <location>com.zhiweicloud.guest.controller.PassengerController</location>
               </locations>
               <schemes>
                 <scheme>http</scheme>
