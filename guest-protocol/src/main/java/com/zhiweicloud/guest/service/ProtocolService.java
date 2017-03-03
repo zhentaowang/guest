@@ -198,7 +198,9 @@ public class ProtocolService {
     public Protocol getById(Map<String,Object> param) {
         Protocol protocol = protocolMapper.selectById(param);
         List<Authorizer> authorizerList = authorizerMapper.selectByProtocolId(param);
-        protocol.setAuthorizerList(authorizerList);
+        if(authorizerList.size() != 0){
+            protocol.setAuthorizerList(authorizerList);
+        }
         List<ProtocolProduct> protocolProductList = protocolProductMapper.selectByProtocolId(param);
         for(int i = 0; i < protocolProductList.size(); i++){
             ProtocolProduct protocolProduct = protocolProductList.get(i);
@@ -206,7 +208,9 @@ public class ProtocolService {
             List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
             protocolProduct.setProtocolProductServiceList(protocolProductServiceList);
         }
-        protocol.setProtocolProductList(protocolProductList);
+        if(protocolProductList.size() != 0){
+            protocol.setProtocolProductList(protocolProductList);
+        }
         return protocol;
     }
 
