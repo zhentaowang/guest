@@ -31,7 +31,7 @@
 
 
   <select id="menuInUse" resultType="int" parameterType="map">
-    select count(id) from sys_role_menu where is_deleted = 0 and airport_code = #{airportCode} and menu_id = #{menuId}
+    select count(role_menu_id) from sys_role_menu where is_deleted = 0 and airport_code = #{airportCode} and menu_id = #{menuId}
   </select>
 
 
@@ -164,7 +164,7 @@
         update_user = #{updateUser,jdbcType=BIGINT},
       </if>
     </set>
-    where menu_id = #{menuId,jdbcType=BIGINT} and airport_code=#{airportCode}
+    where menu_id = #{menuId,jdbcType=BIGINT} and airport_code=#{airportCode,jdbcType=VARCHAR}
   </update>
 
 </mapper>

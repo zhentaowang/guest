@@ -21,23 +21,17 @@
 			connectionURL="jdbc:mysql://rm-bp1741c4qix10l3czo.mysql.rds.aliyuncs.com:3306/wyun_guest" userId="airport"
 			password="Wyun4test" />
 		<!-- 所生成的实体类的位置默认资源包src -->
-		<javaModelGenerator targetPackage="com.zhiweicloud.guest.model" targetProject="src/main/java" />
+		<javaModelGenerator targetPackage="com.zhiweicloud.guest.model.temp" targetProject="src/main/java" />
 			
 		<!-- 所生成的sqlMap的影射文件的位置,默认资源包src -->
-		<sqlMapGenerator targetPackage="resources.conf.mybatis.mapper" targetProject="src/main"/>
+		<sqlMapGenerator targetPackage="resources.conf.mybatis.mapper.temp" targetProject="src/main"/>
 		
 		<!-- 为哪些表生成代码 tableName:表名 schema:不用填写 -->
 		
 		
-		<table schema="" tableName="serv" enableCountByExample="false"
+		<table schema="" tableName="sys_role_menu" enableCountByExample="false"
 				enableUpdateByExample="false" enableDeleteByExample="false"
 				enableSelectByExample="false" selectByExampleQueryId="false">
-			<ignoreColumn column="create_time"/>
-			<ignoreColumn column="update_time"/>
-			<ignoreColumn column="is_deleted"/>
-			<ignoreColumn column="update_date"/>
-			<ignoreColumn column="airport_code"/>
-			<ignoreColumn column="id"/>
 		</table> 
 		
 		
