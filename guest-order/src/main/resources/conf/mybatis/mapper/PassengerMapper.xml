@@ -122,6 +122,7 @@
     </trim>
   </insert>
 
+
   <select id="getIdentityCardDropdownList" resultType="String" parameterType="map">
     select DISTINCT identity_card from passenger
     WHERE is_deleted = 0 AND airport_code = #{airportCode}
