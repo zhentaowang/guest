@@ -137,6 +137,7 @@ public class ProductController {
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
+        JSON.toJSONString(result);
     }
 
     @POST
