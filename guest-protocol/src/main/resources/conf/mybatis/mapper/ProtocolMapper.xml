@@ -279,7 +279,7 @@
   </insert>
 
   <!--       2017.2.24后修改               -->
-  <select id="queryProtocolList" resultMap="BaseResultMap">
+  <select id="queryProtocolList" resultMap="BaseResultMapPage">
     SELECT
     p.protocol_id,p.no,i.`name` AS institution_client_name,p.`name`,p.type
     FROM
