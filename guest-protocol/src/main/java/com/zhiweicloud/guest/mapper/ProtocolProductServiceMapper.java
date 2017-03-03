@@ -4,6 +4,7 @@ package com.zhiweicloud.guest.mapper;
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.ProtocolProductService;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,6 @@ public interface ProtocolProductServiceMapper extends MyMapper<ProtocolProductSe
      * @param protocolProductId
      * @return
      */
-    int deleteByProtocolProductId(@Param("updateUser")Long updateUser,@Param("airportCode") String airportCode,@Param("protocolProductId")Long protocolProductId);
+    int deleteByProtocolProductId(@Param("updateUser")Long updateUser, @Param("airportCode") String airportCode, @Param("protocolProductId")Long protocolProductId);
     void insertBySelective(ProtocolProductService protocolProductService);
 }
