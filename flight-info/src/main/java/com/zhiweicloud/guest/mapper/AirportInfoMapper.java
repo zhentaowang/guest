@@ -25,29 +25,19 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.model.SysMenu;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangpengfei
  * @since 2016-12-21 22:17
  */
-public interface SysMenuMapper{
-    List<SysMenu> getChildMenusByParentIdByUserId(@Param("parentId") Long parentId, @Param("airportCode") String airportCode, @Param("userId") Long userId);
+public interface AirportInfoMapper{
 
-    List<SysMenu> getChildNodesByParentId(@Param("parentId") Long parentId, @Param("airportCode") String airportCode);
+    List<Map<String,String>> queryFlightInfoDropdownList(@Param("airportNameOrCode") String airportNameOrCode);
 
-    int menuInUse(@Param("menuId") Long menuId, @Param("airportCode") String airportCode);
 
-    String selectMenuNameByIdAndAirportCode(@Param("menuId") Long menuId, @Param("airportCode") String airportCode);
-
-    List<SysMenu> getChildMenusByParentIdByRole(@Param("parentId") Long parentId, @Param("airportCode") String airportCode, @Param("roleId") Long roleId);
-
-    SysMenu selectMenuInstanceByIdAndAirportCode(@Param("menuId") Long menuId, @Param("airportCode") String airportCode);
-
-    void insertSelective(SysMenu sysMenu);
-
-    void updateByPrimaryKeySelective(SysMenu sysMenu);
+    void getCount();
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.AirportInfoMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.AirportInfo">
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="continent" jdbcType="VARCHAR" property="continent" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    <result column="continent_id" jdbcType="VARCHAR" property="continentId" />
+    <result column="country_id" jdbcType="VARCHAR" property="countryId" />
+    <result column="city_id" jdbcType="VARCHAR" property="cityId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="in_or_out" jdbcType="VARCHAR" property="inOrOut" />
+    <result column="sort" jdbcType="VARCHAR" property="sort" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <result column="FD_PINYIN" jdbcType="VARCHAR" property="fdPinyin" />
+  </resultMap>
+
+  <select id="queryFlightInfoDropdownList" resultType="map">
+    select CONCAT_WS('-',name,airport_code,city) as id,CONCAT_WS('-',name,airport_code) as value
+    from airport_info
+    <if test="airportNameOrCode != null ">
+      where name like concat('%',#{airportNameOrCode},'%') or airport_code like concat('%',#{airportNameOrCode},'%')
+    </if>
+  </select>
+
+
+</mapper>

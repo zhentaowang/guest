@@ -66,7 +66,7 @@ public class MyBatisConfig {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         //@TODO 后期如果有mapper，放开这个注释
-        //sqlSessionFactoryBean.setMapperLocations(resourcePatternResolver.getResources("classpath:conf/mybatis/mapper/*.xml"));
+        sqlSessionFactoryBean.setMapperLocations(resourcePatternResolver.getResources("classpath:conf/mybatis/mapper/*.xml"));
         sqlSessionFactoryBean.setConfigLocation(resourceLoader.getResource("classpath:mybatis.xml"));
         sqlSessionFactoryBean.setTypeAliasesPackage("com.zhiweicloud.guest.model");
         return sqlSessionFactoryBean;
