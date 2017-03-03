@@ -243,7 +243,6 @@ public class ProtocolController {
          * 重写协议列表，2017.2.23
          * @param page
          * @param rows
-         * @param airportCode
          * @param protocolType
          * @param institutionClientName
          * @param protocolName
@@ -256,11 +255,12 @@ public class ProtocolController {
         public String protocolList (
                 @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
                 @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-                @QueryParam(value = "airportCode") String airportCode,
                 @QueryParam(value = "protocolType") Integer protocolType,
                 @QueryParam(value = "institutionClientName") String institutionClientName,
-                @QueryParam(value = "protocolName") String protocolName){
+                @QueryParam(value = "protocolName") String protocolName,
+                @Context final HttpHeaders headers){
             Protocol protocolParam = new Protocol();
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             protocolParam.setAirportCode(airportCode);
 
             protocolParam.setInstitutionClientName(institutionClientName);
@@ -339,7 +339,6 @@ public class ProtocolController {
         @Consumes(MediaType.APPLICATION_JSON)
         @Produces("application/json;charset=utf8")
         @ApiOperation(value = "协议管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-        @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
         public String deleteProtocol (
                 @Context final HttpHeaders headers,
                 @RequestBody RequsetParams< Long > params){
