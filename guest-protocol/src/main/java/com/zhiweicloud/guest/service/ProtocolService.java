@@ -336,6 +336,7 @@ public class ProtocolService {
     public List<ProtocolProductService> getServiceMenuList(Map<String,Object> param){
         List<ProtocolProductService> result = protocolProductServiceMapper.getServiceMenuList(param);
         for(int i = 0; i < result.size(); i++){
+            param.put("category",result.get(i).getCategory());
             List<ProtocolProductService> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
             result.get(i).setServiceTypeList(out);
         }
@@ -343,7 +344,7 @@ public class ProtocolService {
     }
 
     /**
-     * 获取服务类型树
+     * 获取服务类别
      * @param param
      * @return List<ProtocolProductService>
      */
