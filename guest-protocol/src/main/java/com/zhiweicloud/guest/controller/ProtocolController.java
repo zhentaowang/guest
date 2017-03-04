@@ -204,7 +204,7 @@ public class ProtocolController {
                                      @QueryParam(value = "protocolProductId") Long protocolProductId) {
         Map<String, Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode", airportCode);
+        param.put("airportCode", "LJG");
         param.put("protocolProductId", protocolProductId);
         List<ProtocolProductService> serviceMenuList = protocolService.getServiceTypeList(param);
         return JSON.toJSONString(new LZResult<>(serviceMenuList));

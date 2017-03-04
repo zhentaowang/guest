@@ -66,7 +66,10 @@
   <select id="getServiceTypeDropdownList" parameterType="java.util.Map" resultMap="BaseResultMap">
     select p.service_type_allocation_id, s.type from protocol_product_service as p
     right join (select service_type_allocation_id, type from service_type_allocation
-    where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and category = #{category,jdbcType=VARCHAR}) as s
+    where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}
+    <if test="isPricing != null">
+      and category = #{category,jdbcType=VARCHAR}
+    </if>) as s
     on p.service_type_allocation_id = s.service_type_allocation_id
     where p.is_deleted = 0 and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and p.airport_code = #{airportCode,jdbcType=VARCHAR}
     group by p.service_type_allocation_id
