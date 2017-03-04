@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.Date;
+
 /**
  * ScheduleEvent.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
@@ -39,8 +41,8 @@ public class ScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="进港：0，出港：1",name="isApproach")
     private Boolean isApproach;
 
-    @ApiModelProperty(value="修改人",name="uupdateUser")
-    private Long uupdateUser;
+    @ApiModelProperty(value="调度时间",name="scheduleTime")
+    private Date scheduleTime;
 
     /**
      * 自增id
@@ -123,18 +125,18 @@ public class ScheduleEvent extends BaseEntity{
     }
 
     /**
-     * 修改人
-     * @return uupdate_user 修改人
+     * 调度时间
+     * @return scheduleTime 调度时间
      */
-    public Long getUupdateUser() {
-        return uupdateUser;
+    public Date getScheduleTime() {
+        return scheduleTime;
     }
 
     /**
-     * 修改人
-     * @param uupdateUser 修改人
+     * 调度时间
+     * @param scheduleTime 调度时间
      */
-    public void setUupdateUser(Long uupdateUser) {
-        this.uupdateUser = uupdateUser;
+    public void setScheduleTime(Date scheduleTime) {
+        this.scheduleTime = scheduleTime;
     }
 }

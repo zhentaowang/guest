@@ -6,21 +6,54 @@
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
     <result column="is_approach" jdbcType="BIT" property="isApproach" />
   </resultMap>
   <sql id="Base_Column_List">
-    schedule_event_id, no, type, name, is_approach
+    schedule_event_id, no, type, name, is_approach, schedule_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    SELECT
+    schedule_event_id, no, type, name, is_approach
+    FROM v_schedule_event
+    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    order by schedule_event_id
+    LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getListCount" parameterType="map" resultType="int">
+    SELECT
+    count(schedule_event_id)
+    FROM v_schedule_event
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from schedule_event
-    where schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR}
+    and schedule_event_id = #{scheduleEventId,jdbcType=BIGINT} and is_deleted = 0
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from schedule_event
-    where schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
-  </delete>
+
+  <select id="selectByFlightId" parameterType="map" resultMap="BaseResultMap">
+    select schedule_time, name
+    from schedule_event as s right join (select schedule_event_id from flight where airport_code = #{airportCode,jdbcType=VARCHAR}
+    and flight_id = #{flightId,jdbcType=BIGINT} and is_deleted = 0) as f
+    on s.schedule_event_id = f.schedule_event_id
+    where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.is_deleted = 0
+    <if test="scheduleEventId != null">
+      and s.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+    </if>
+  </select>
+
+  <select id="getScheduleEventBox" parameterType="map" resultMap="BaseResultMap">
+    select schedule_event_id, name
+    from schedule_event
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+  </select>
+
   <insert id="insert" parameterType="com.zhiweicloud.guest.model.ScheduleEvent">
     insert into schedule_event (schedule_event_id, no, type, 
       name, is_approach, uupdate_user
@@ -75,9 +108,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.ScheduleEvent">
     update schedule_event
     <set>
-      <if test="no != null">
-        no = #{no,jdbcType=VARCHAR},
-      </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
       </if>
@@ -87,11 +117,12 @@
       <if test="isApproach != null">
         is_approach = #{isApproach,jdbcType=BIT},
       </if>
-      <if test="uupdateUser != null">
-        uupdate_user = #{uupdateUser,jdbcType=BIGINT},
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
+      update_time = CURRENT_TIMESTAMP
     </set>
-    where schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.ScheduleEvent">
     update schedule_event

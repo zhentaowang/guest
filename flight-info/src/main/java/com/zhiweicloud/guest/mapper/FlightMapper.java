@@ -34,12 +34,11 @@ import java.util.Map;
  * @author wzt
  * @since 2017-03-03 21:17
  */
-public interface ScheduleEventMapper {
-    ScheduleEvent selectByPrimaryKey(Map<String, Object> map);
-    List<ScheduleEvent> selectByFlightId(Map<String, Object> map);
-    List<ScheduleEvent> getScheduleEventBox(Map<String, Object> map);
-    List<ScheduleEvent> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
-    Integer getListCount(Map<String, Object> map);
-    Integer updateByPrimaryKeySelective(ScheduleEvent scheduleEvent);
-    void insertSelective(ScheduleEvent scheduleEvent);
+public interface FlightMapper {
+    //订单状态值为null时使用
+    List<ScheduleEvent> getFlightListByConidition(BasePagination<Map<String, Object>> queryCondition);
+    Integer getFlightListCount(Map<String, Object> map);
+    //订单状态值不为null时使用
+    List<ScheduleEvent> getFlightListByOrderStatus(BasePagination<Map<String, Object>> queryCondition);
+    Integer getFlightListCountByOrderStatus(Map<String, Object> map);
 }
