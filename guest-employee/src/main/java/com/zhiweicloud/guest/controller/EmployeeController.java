@@ -34,6 +34,7 @@ import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.service.EmployeeService;
 import io.swagger.annotations.*;
+import org.apache.ibatis.ognl.IntHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,6 +264,33 @@ public class EmployeeController {
         try {
             String airportCode = request.getHeaders().getFirst("client-id").toString();
             List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch (Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+    }
+
+    /**
+     * 根据角色查代办人 下拉框
+     * @return
+     */
+    @GET
+    @Path("getEmployeeDropdownListByRoleId")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "系统中用到的员工下拉框，只包含id，和value的对象", notes = "根据数据字典的角色id获取用户数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public String getEmployeeDropdownListByRoleId(ContainerRequestContext request,
+                                                  @QueryParam(value="roleId") Long roleId) {
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+        try {
+            String airportCode = request.getHeaders().getFirst("client-id").toString();
+            List<Dropdownlist> list = employeeService.getEmployeeDropdownListByRoleId(airportCode, roleId);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);

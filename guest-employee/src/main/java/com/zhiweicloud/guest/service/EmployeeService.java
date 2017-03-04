@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -112,6 +113,13 @@ public class EmployeeService {
 
     public List<Dropdownlist> queryEmployeeDropdownList(String airportCode) {
         return employeeMapper.getEmployeeDropdownList(airportCode);
+    }
+
+    public List<Dropdownlist> getEmployeeDropdownListByRoleId(String airportCode, Long roleId){
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        map.put("roleId",roleId);
+        return employeeMapper.getEmployeeDropdownListByRoleId(map);
     }
 
     public List<Map> getRoleListByUserId(Long employeeId, String airportCode) {

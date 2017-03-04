@@ -51,18 +51,18 @@
 
   <select id="queryByIdAndAirCode" resultMap="productResultMap">
     SELECT
-      <include refid="Base_Column_List"/>
+      *
     FROM
-      product
+      v_product
     WHERE
       product_id = #{productId} AND airport_code = #{airportCode} AND is_deleted = 0
   </select>
 
   <select id="getProductList" resultMap="productResultMap">
     SELECT
-      <include refid="Base_Column_List"/>
+      *
     FROM
-      product
+      v_product
     WHERE
       airport_code = #{airportCode} AND is_deleted = 0
     ORDER BY create_time DESC  limit #{begin}, #{end}
@@ -73,7 +73,7 @@
     SELECT
       count(product_id) as num
     FROM
-      product
+      v_product
     WHERE
       airport_code = #{airportCode} AND is_deleted = 0
   </select>

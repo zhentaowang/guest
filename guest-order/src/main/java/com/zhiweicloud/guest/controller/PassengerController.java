@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.service.PassengerService;
@@ -34,7 +35,7 @@ public class PassengerController {
     @Path(value="getIdentityCardDropdownList")
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="乘客身份证模糊匹配下拉框，不重复的字符串",notes="乘客身份证模糊匹配下拉框", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
-    public LZResult<List<String>> queryInstitutionClientDropdownList(
+    public String getIdentityCardDropdownList(
             ContainerRequestContext request,
             @QueryParam(value = "identityCard") String identityCard) {
         LZResult<List<String>> result = new LZResult<>();
@@ -43,12 +44,12 @@ public class PassengerController {
             result.setMsg(LZStatus.DATA_EMPTY.display());
             result.setStatus(LZStatus.DATA_EMPTY.value());
             result.setData(null);
-            return result;
+            return JSON.toJSONString(result);
         }
         List<String> list = passengerService.getIdentityCardDropdownList(identityCard, airportCode);
         result.setMsg(LZStatus.SUCCESS.display());
         result.setStatus(LZStatus.SUCCESS.value());
         result.setData(list);
-        return result;
+        return JSON.toJSONString(result);
     }
 }
