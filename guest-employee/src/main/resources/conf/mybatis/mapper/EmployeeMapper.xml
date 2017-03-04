@@ -20,6 +20,18 @@
     select employee_id,name as value from employee where is_deleted = 0 and airport_code = #{airportCode}
   </select>
 
+  <select id="getEmployeeDropdownListByRoleId" resultMap="DropdownlistMap" parameterType="string">
+    select e.employee_id,e.`name` as `value` from employee e
+    <if test="roleId != null">
+      RIGHT JOIN sys_user_role r ON e.employee_id = r.user_id
+    </if>
+    where e.is_deleted = 0 and e.airport_code = #{airportCode}
+    <if test="roleId != null">
+      AND r.role_id = #{roleId} and r.is_deleted=0
+    </if>
+    ORDER BY e.`name`
+  </select>
+
 
   <select id="selectEmployeeTotal" parameterType="com.zhiweicloud.guest.model.Employee" resultType="int">
     select count(employee_id) from employee e
