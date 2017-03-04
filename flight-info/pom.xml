@@ -230,6 +230,7 @@
               <springmvc>false</springmvc>
               <locations>
                 <location>com.zhiweicloud.guest.controller.FlightInfoController</location>
+                <location>com.zhiweicloud.guest.controller.ScheduleEventController</location>
               </locations>
               <schemes>
                 <scheme>http</scheme>
