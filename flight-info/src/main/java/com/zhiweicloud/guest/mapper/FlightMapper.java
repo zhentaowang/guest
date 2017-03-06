@@ -43,4 +43,5 @@ public interface FlightMapper {
     List<ScheduleEvent> getFlightListByOrderStatus(BasePagination<Map<String, Object>> queryCondition);
     Integer getFlightListCountByOrderStatus(Map<String, Object> map);
     Flight selectByPrimaryKey(Map<String, Object> map);
+    Integer updateByPrimaryKeySelective(Flight flight);
 }

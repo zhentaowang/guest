@@ -348,16 +348,16 @@
         flight_status = #{flightStatus,jdbcType=SMALLINT},
       </if>
       <if test="realLandingTime != null">
-        real_landing_time = #{realLandingTime,jdbcType=TIME},
+        real_landing_time = #{realLandingTime,jdbcType=VARCHAR},
       </if>
       <if test="realTakeOffTime != null">
-        real_take_off_time = #{realTakeOffTime,jdbcType=TIME},
+        real_take_off_time = #{realTakeOffTime,jdbcType=VARCHAR},
       </if>
       <if test="planTakeOffTime != null">
-        plan_take_off_time = #{planTakeOffTime,jdbcType=TIME},
+        plan_take_off_time = #{planTakeOffTime,jdbcType=VARCHAR},
       </if>
       <if test="planLandingTime != null">
-        plan_landing_time = #{planLandingTime,jdbcType=TIME},
+        plan_landing_time = #{planLandingTime,jdbcType=VARCHAR},
       </if>
       <if test="isInOrOut != null">
         is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
@@ -372,7 +372,7 @@
         server_time = #{serverTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where flight_id = #{flightId,jdbcType=BIGINT}
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
@@ -389,14 +389,14 @@
       flight_position = #{flightPosition,jdbcType=VARCHAR},
       board_in_out = #{boardInOut,jdbcType=SMALLINT},
       flight_status = #{flightStatus,jdbcType=SMALLINT},
-      real_landing_time = #{realLandingTime,jdbcType=TIME},
-      real_take_off_time = #{realTakeOffTime,jdbcType=TIME},
-      plan_take_off_time = #{planTakeOffTime,jdbcType=TIME},
-      plan_landing_time = #{planLandingTime,jdbcType=TIME},
+      real_landing_time = #{realLandingTime,jdbcType=VARCHAR},
+      real_take_off_time = #{realTakeOffTime,jdbcType=VARCHAR},
+      plan_take_off_time = #{planTakeOffTime,jdbcType=VARCHAR},
+      plan_landing_time = #{planLandingTime,jdbcType=VARCHAR},
       is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
       boarding_port = #{boardingPort,jdbcType=VARCHAR},
       is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
       server_time = #{serverTime,jdbcType=TIMESTAMP}
-    where flight_id = #{flightId,jdbcType=BIGINT}
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 </mapper>

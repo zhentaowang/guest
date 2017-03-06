@@ -23,7 +23,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 2017-03-04 16:46:06 Created By wzt
 */
 @ApiModel(value="Flight",description="flight")
-public class Flight {
+public class Flight extends BaseEntity{
     @ApiModelProperty(value="主键自增id",name="flightId", required=true)
     @NotEmpty
     @Id

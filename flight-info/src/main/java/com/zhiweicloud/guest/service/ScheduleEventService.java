@@ -140,6 +140,14 @@ public class ScheduleEventService {
     }
 
     /**
+     * 修改航班
+     * @param flight
+     */
+    public void flightUpdate(Flight flight) {
+        flightMapper.updateByPrimaryKeySelective(flight);
+    }
+
+    /**
      * 删除调度事件
      * @param airportCode
      * @param ids

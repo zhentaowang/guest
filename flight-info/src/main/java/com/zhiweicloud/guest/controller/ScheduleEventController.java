@@ -43,6 +43,33 @@ public class ScheduleEventController {
     @Autowired
     private ScheduleEventService scheduleEventService;
 
+    /**
+     * 航班管理 - 修改航班
+     * @param params
+     * @return
+     */
+    @POST
+    @Path("flight-update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value="航班管理 - 修改航班", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
+    public LXResult flightUpdate(@ApiParam(value = "flight", required = true) @RequestBody RequsetParams<Flight> params,
+                         @Context final HttpHeaders headers){
+        try{
+            Flight flight = null;
+            if(!CollectionUtils.isEmpty(params.getData())){
+                flight = params.getData().get(0);
+            }
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            flight.setAirportCode(airportCode);
+            scheduleEventService.flightUpdate(flight);
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+        }
+    }
+
     @GET
     @Path("get-flight-list")
     @Produces("application/json;charset=utf8")
@@ -82,14 +109,14 @@ public class ScheduleEventController {
     }
 
     /**
-     * 调度事件管理 - 根据flightId查询航班详情
+     * 航班管理 - 根据flightId查询航班详情
      * @param flightId
      * @return
      */
     @GET
     @Path("get-flight-view")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "调度事件管理 - 根据flightId查询航班详情 ", notes = "返回航班详情", httpMethod = "GET", produces = "application/json")
+    @ApiOperation(value = "航班管理 - 根据flightId查询航班详情 ", notes = "返回航班详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "28", required = true, paramType = "query")
@@ -99,7 +126,7 @@ public class ScheduleEventController {
     ) {
         Map<String,Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode","LJG");
+        param.put("airportCode",airportCode);
         param.put("flightId",flightId);
         Flight flight = scheduleEventService.getByFlightId(param);
         return JSON.toJSONString(new LZResult<>(flight));
