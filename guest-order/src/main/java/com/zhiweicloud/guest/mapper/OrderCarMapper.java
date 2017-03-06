@@ -25,9 +25,6 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.OrderCar;
-
 import java.util.Map;
 
 /**

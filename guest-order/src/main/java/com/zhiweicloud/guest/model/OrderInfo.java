@@ -34,7 +34,7 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="协议id",name="protocolId", required=true)
     private Long protocolId;
 
-    @ApiModelProperty(value="预约人",name="bookingPerson",hidden = true)
+    @ApiModelProperty(value="预约人",name="bookingPerson")
     private Long bookingPerson;
 
     @ApiModelProperty(value="通知人",name="noticePerson")
@@ -55,10 +55,10 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="座位要求: 靠窗 靠走道 不要安全门 前排 后排",name="printCheckRemark")
     private String printCheckRemark;
 
-    @ApiModelProperty(value="代办托运 说明",name="consign")
+    @ApiModelProperty(value="是否托运, 0:托运，1：不托运",name="consign")
     private Short consign;
 
-    @ApiModelProperty(value="是否托运, 0:托运，1：不托运",name="consignRemark")
+    @ApiModelProperty(value="代办托运 说明",name="consignRemark")
     private String consignRemark;
 
     @ApiModelProperty(value="服务说明",name="otherRemark")
@@ -105,9 +105,16 @@ public class OrderInfo extends BaseEntity{
     private Integer changeOrderStatus;
 
 
+    @ApiModelProperty(value = "航班id", name = "flightId")
+    private Long flightId;
+
     @ApiModelProperty(value = "航班信息", name = "flight")
     @Transient
     private Flight flight;
+
+    @ApiModelProperty(value = "客户名称", name = "customerName")
+    @Transient
+    private String customerName;
 
     /**
      * 主键自增id
@@ -477,11 +484,27 @@ public class OrderInfo extends BaseEntity{
         this.serverPersonNum = serverPersonNum;
     }
 
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
     public Flight getFlight() {
         return flight;
     }
 
     public void setFlight(Flight flight) {
         this.flight = flight;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }

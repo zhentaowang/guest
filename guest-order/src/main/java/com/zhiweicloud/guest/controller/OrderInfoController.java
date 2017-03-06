@@ -26,8 +26,11 @@ package com.zhiweicloud.guest.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
@@ -40,7 +43,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -49,7 +57,7 @@ import javax.ws.rs.core.MediaType;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path("/")
+@Path("/guest-order")
 @Api(value = "订单", description = "订单desc ", tags = {"订单管理"})
 public class OrderInfoController {
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoController.class);
@@ -58,11 +66,44 @@ public class OrderInfoController {
     private OrderInfoService orderInfoService;
 
 
+    @GET
+    @Path("list")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "员工列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = OrderInfo.class)
+    })
+    public String list(
+            @DefaultValue("1") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @QueryParam(value = "customerInfo") String customerInfo, //客户信息：客户名称，协议名称，预约号，预约人
+            @QueryParam(value = "passengerName") String passengerName,
+            @QueryParam(value = "passengerId") String passengerId,
+            @QueryParam(value = "flightDate") String flightDate,
+            @QueryParam(value = "flightNo") String flightNo,
+            @Context final HttpHeaders headers) {
+        try {
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+
+            LZResult<PaginationResult<Map>> result = orderInfoService.getOrderInfoList(page, rows,customerInfo,passengerId,passengerName,flightDate,flightNo,airportCode);
+            return JSON.toJSONString(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            LZResult result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return  JSON.toJSONString(result);
+        }
+    }
+
     /**
      * 订单管理 - 新增or更新
      * 需要判断name是否重复
      *
-     * @param params
+    // * @param orderInfo
      * @return
      */
     @POST
@@ -70,22 +111,36 @@ public class OrderInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String save(@ApiParam(value = "OrderInfo", required = true) @RequestBody RequsetParams<OrderInfo> params) {
+    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,/*@Context final HttpHeaders headers,*/  @QueryParam("airportCode") String airportCode, @QueryParam("userId") Long userId) {
+    //public String saveOrUpdate(@RequestBody RequsetParams<OrderInfo> params) {
         LZResult<String> result = new LZResult<>();
         try {
-            OrderInfo order = null;
-            if (!CollectionUtils.isEmpty(params.getData())) {
-                order = params.getData().get(0);
-            }
+            //Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+
+            //String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+
+            JSONObject param = JSON.parseObject(orderInfo);
+            JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
+            JSONArray serviceListArray = orderObject.getJSONArray("serviceList");
+            JSONArray passengerListArray = orderObject.getJSONArray("passengerList");
+            orderObject.remove("serviceList");
+            orderObject.remove("passengerList");
+
+            List<OrderService> orderServiceList = JSON.parseArray(JSON.toJSONString(serviceListArray), OrderService.class);
+            List<Passenger> passengerList = JSON.parseArray(JSON.toJSONString(passengerListArray), Passenger.class);
+
+            OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
+
             if (order == null) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
+            }else{
+                orderInfoService.saveOrUpdate(order,passengerList,orderServiceList,userId,airportCode);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(null);
             }
-            orderInfoService.saveOrUpdate(order);
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
