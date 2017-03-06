@@ -12,7 +12,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Passenger.java
@@ -63,6 +65,32 @@ public class Passenger extends BaseEntity{
 
     @ApiModelProperty(value="有效期",name="expireTime")
     private Date expireTime;
+
+    /**
+     * 返回字段。详细服务
+     */
+    @Transient
+    private String serviceDetail;
+
+    /**
+     * 返回字段。订单状态
+     */
+    @Transient
+    private Short orderStatus;
+
+    /**
+     * 返回字段。厅名
+     */
+    @Transient
+    private String roomName;
+
+    /**
+     * 返回字段。旅客姓名
+     */
+    @Transient
+    private List<String> passengerList;
+
+
 
     /**
      * 主键自增id
@@ -272,4 +300,35 @@ public class Passenger extends BaseEntity{
         this.expireTime = expireTime;
     }
 
+    public String getServiceDetail() {
+        return serviceDetail;
+    }
+
+    public void setServiceDetail(String serviceDetail) {
+        this.serviceDetail = serviceDetail;
+    }
+
+    public Short getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(Short orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public List<String> getPassengerList() {
+        return passengerList;
+    }
+
+    public void setPassengerList(List<String> passengerList) {
+        this.passengerList = passengerList;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
 }

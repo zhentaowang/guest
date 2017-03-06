@@ -183,6 +183,43 @@
     where passenger_id = #{passengerId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 
+
+  <resultMap id="PassengerResultMap" type="com.zhiweicloud.guest.model.Passenger">
+    <!--<id column="passenger_id" jdbcType="BIGINT" property="passengerId" />-->
+    <id column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="orderStatus" jdbcType="VARCHAR" property="order_status" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
+    <result column="room_name" jdbcType="VARCHAR" property="roomName" />
+    <collection property="passengerList" resultMap="passengerNameResult" />
+  </resultMap>
+
+  <resultMap id="passengerNameResult" type="String">
+    <result property="name" column="name" />
+  </resultMap>
+
+  <select id="getPassengerlistByFlightId" resultMap="PassengerResultMap">
+    SELECT
+      p.name,sd.order_id,sd.serviceDetailId,o.order_status,o.create_time ,o.order_id,o.flight_id,se.room_name
+    FROM wyun_guest.passenger p
+    LEFT JOIN
+      (SELECT service_detail->>"$.serviceDetailId" AS serviceDetailId,service_detail->>"$.serviceName",order_id
+        FROM wyun_guest.order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
+    ON p.order_id = sd.order_id
+    LEFT JOIN
+	  (SELECT flight_id,order_status,create_time,order_id
+	    FROM wyun_guest.order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
+	ON p.order_id = o.order_id
+    LEFT JOIN wyun_guest.protocol_product_service pps ON pps.protocol_product_service_id = sd.serviceDetailId
+    LEFT JOIN
+      (SELECT serv_id, `name` AS room_name
+        FROM wyun_guest.v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
+    ON pps.service_id = se.serv_id
+
+    WHERE o.flight_id = #{flightId}
+
+  </select>
+
   <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
