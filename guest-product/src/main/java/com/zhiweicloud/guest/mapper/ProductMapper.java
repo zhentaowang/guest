@@ -69,7 +69,7 @@ public interface ProductMapper{
      * @param end
      * @return
      */
-    List<Product> getProductList(@Param("airportCode")String airportCode,@Param("begin") int begin,@Param("end") int end);
+    List<Product> getProductList(@Param("airportCode")String airportCode,@Param("begin")int begin,@Param("end")int end,@Param("noPage")boolean noPage);
 
     /**
      * 产品数量
