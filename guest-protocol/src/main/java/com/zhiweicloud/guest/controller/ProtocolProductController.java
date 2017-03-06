@@ -111,14 +111,17 @@ public class ProtocolProductController {
         @ApiImplicitParams(
                 {
                         @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-                        @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")})
+                        @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+                        @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", defaultValue = "188", required = true, paramType = "query")})
         public String protocolProductList(
                 @Context final HttpHeaders headers,
                 @QueryParam(value = "page") Integer page,
-                @QueryParam(value = "rows") Integer rows) {
+                @QueryParam(value = "rows") Integer rows,
+                @QueryParam(value = "protocolId") Long protocolId) {
             Map<String,Object> param = new HashMap();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             param.put("airportCode",airportCode);
+            param.put("protocolId",protocolId);
             LZResult<PaginationResult<ProtocolProduct>> result  = protocolProductService.getAll(param,page,rows);
             return JSON.toJSONString(result);
         }
