@@ -17,7 +17,7 @@
    SELECT pp.protocol_product_id, pp.protocol_id, pp.product_id, p.product_no, p.product_name, pp.product_desc
     FROM protocol_product as pp left join
     (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
-    where pp.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0
+    where pp.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0 and pp.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
@@ -25,7 +25,7 @@
     SELECT count(pp.protocol_product_id)
     FROM protocol_product as pp left join
     (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
-    where pp.airport_code = #{airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0
+    where pp.airport_code = #{airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0 and pp.protocol_id = #{protocolId,jdbcType=BIGINT}
   </select>
 
   <select id="selectById" parameterType="map" resultMap="BaseResultMap">

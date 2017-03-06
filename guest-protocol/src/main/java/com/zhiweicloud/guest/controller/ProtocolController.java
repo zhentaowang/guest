@@ -125,7 +125,8 @@ public class ProtocolController {
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            if (protocol.getName() == null || protocol.getInstitutionClientId() == null || protocol.getType() == null) {
+            if (protocol.getName() == null || protocol.getInstitutionClientId() == null || protocol.getType() == null
+                    || protocol.getReservationNum() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
 //            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
