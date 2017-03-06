@@ -226,6 +226,7 @@
               <locations>
                 <location>com.zhiweicloud.guest.controller.OrderInfoController</location>
                 <location>com.zhiweicloud.guest.controller.PassengerController</location>
+                <location>com.zhiweicloud.guest.controller.OrderServiceRecordController</location>
               </locations>
               <schemes>
                 <scheme>http</scheme>
