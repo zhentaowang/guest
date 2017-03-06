@@ -28,6 +28,7 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
@@ -39,11 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -85,9 +84,10 @@ public class OrderInfoController {
             @QueryParam(value = "flightNo") String flightNo,
             @Context final HttpHeaders headers) {
         try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
 
-            LZResult<PaginationResult<Map>> result = orderInfoService.getOrderInfoList(page, rows,customerInfo,passengerId,passengerName,flightDate,flightNo,airportCode);
+            LZResult<PaginationResult<Map>> result = orderInfoService.getOrderInfoList(page, rows,customerInfo,passengerId,passengerName,flightDate,flightNo,userId,airportCode);
             return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -111,14 +111,13 @@ public class OrderInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,/*@Context final HttpHeaders headers,*/  @QueryParam("airportCode") String airportCode, @QueryParam("userId") Long userId) {
+    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,@Context final HttpHeaders headers) {
     //public String saveOrUpdate(@RequestBody RequsetParams<OrderInfo> params) {
         LZResult<String> result = new LZResult<>();
         try {
-            //Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
 
-            //String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
             JSONArray serviceListArray = orderObject.getJSONArray("serviceList");
@@ -150,6 +149,72 @@ public class OrderInfoController {
         return JSON.toJSONString(result);
     }
 
+
+    /**
+     * 员工管理 - 删除
+     * {
+     * "data": [
+     * 6,7,8
+     * ]
+     * }
+     *
+     * @return
+     */
+    @POST
+    @Path("delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "订单管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public String delete(
+            @Context final HttpHeaders headers,
+            @RequestBody RequsetParams<Long> params) {
+        try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            List<Long> ids = params.getData();
+            orderInfoService.deleteById(ids, userId,airportCode);
+            return JSON.toJSONString(LXResult.success());
+        } catch (Exception e) {
+            logger.error("delete employee by ids error", e);
+            return JSON.toJSONString(LXResult.error());
+        }
+    }
+
+
+
+    /**
+     * 员工管理 - 根据id查询员工
+     * @param orderId
+     * @return
+     */
+    @GET
+    @Path("view")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "订单管理 - 根据id查询订单 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = OrderInfo.class)
+    })
+    public String view(
+            @QueryParam("orderId") Long orderId,
+            @Context final HttpHeaders headers) {
+        LZResult<OrderInfo> result = new LZResult();
+        try {
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            OrderInfo orderInfo = orderInfoService.getById(orderId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(orderInfo);
+        }catch (Exception e){
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(result);
+    }
 
 
 

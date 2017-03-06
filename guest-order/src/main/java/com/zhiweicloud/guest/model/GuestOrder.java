@@ -11,10 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +23,7 @@ import java.util.List;
  * 2017-01-04 17:01:53 Created By zhangpengfei
  */
 @ApiModel(value = "GuestOrder", description = "guest_order")
-public class GuestOrder extends GuestOrderQuery {
+public class GuestOrder extends OrderInfoQuery {
     @ApiModelProperty(value = "协议id", name = "protocolId", required = true)
     @NotEmpty
     private Long protocolId;

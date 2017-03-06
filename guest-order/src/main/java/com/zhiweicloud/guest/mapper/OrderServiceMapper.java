@@ -36,4 +36,7 @@ public interface OrderServiceMapper{
     void updateByOrderServiceIdAndAirportCodeKeySelective(OrderService os);
 
     void insertSelective(OrderService os);
+
+    void markAsDeleted(OrderService orderService);
+
 }

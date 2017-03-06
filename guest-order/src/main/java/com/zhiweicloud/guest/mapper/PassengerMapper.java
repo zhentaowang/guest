@@ -44,4 +44,6 @@ public interface PassengerMapper{
     void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
 
     void insertSelective(Passenger p);
+
+    void markAsDeleted(Passenger passenger);
 }

@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.OrderInfoMapper">
-  <!--<resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderInfo">
-    <id column="order_id" jdbcType="BIGINT" property="orderId" />
-    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
-    <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
-    <result column="flight_id" jdbcType="BIGINT" property="flightId" />
-    <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
-    <result column="notice_person" jdbcType="VARCHAR" property="noticePerson" />
-    <result column="booking_way" jdbcType="SMALLINT" property="bookingWay" />
-    <result column="is_important" jdbcType="SMALLINT" property="isImportant" />
-    <result column="product_id" jdbcType="BIGINT" property="productId" />
-    <result column="print_check" jdbcType="SMALLINT" property="printCheck" />
-    <result column="print_check_remark" jdbcType="VARCHAR" property="printCheckRemark" />
-    <result column="consign" jdbcType="SMALLINT" property="consign" />
-    <result column="consign_remark" jdbcType="VARCHAR" property="consignRemark" />
-    <result column="other_remark" jdbcType="VARCHAR" property="otherRemark" />
-    <result column="order_status" jdbcType="SMALLINT" property="orderStatus" />
-    <result column="order_type" jdbcType="SMALLINT" property="orderType" />
-    <result column="agent_person" jdbcType="BIGINT" property="agentPerson" />
-    <result column="server_card_no" jdbcType="VARCHAR" property="serverCardNo" />
-    <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
-    <result column="cash" jdbcType="DECIMAL" property="cash" />
-    <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
-    <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
-    <result column="create_user" jdbcType="BIGINT" property="createUser" />
-    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
-  </resultMap>-->
-
     <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderInfo">
       <id column="order_id" jdbcType="BIGINT" property="orderId" />
       <result column="customer_id" jdbcType="BIGINT" property="customerId" />
@@ -53,25 +26,15 @@
       <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
 
       <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
-      <!--<result column="protocol_name" jdbcType="VARCHAR" property="protocolName" />
-      <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
-      <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
-      <result column="passage_way_name" jdbcType="VARCHAR" property="passageWayName" />
-
-      <result column="org_customer_id" jdbcType="BIGINT" property="orgCustomerId" />
-      <result column="protocol_remark" jdbcType="VARCHAR" property="protocolRemark" />
-
-      <result column="check_person" jdbcType="BIGINT" property="checkPerson" />
-      <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
-      <result column="check_complete" jdbcType="SMALLINT" property="checkComplete" />
-      <result column="consign_person" jdbcType="BIGINT" property="consignPerson" />
-      <result column="consign_time" jdbcType="TIMESTAMP" property="consignTime" />
-      <result column="consign_complete" jdbcType="BIGINT" property="consignComplete" />-->
 
       <association property="flight" javaType="com.zhiweicloud.guest.model.Flight">
         <result column="flight_id" jdbcType="BIGINT" property="flightId" />
         <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
         <result column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode" />
+        <result column="flight_arrcode" jdbcType="VARCHAR" property="flightArrcode" />
+        <result column="flight_dep" jdbcType="VARCHAR" property="flightDep" />
+        <result column="flight_arr" jdbcType="VARCHAR" property="flightArr" />
         <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
         <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
         <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
@@ -338,6 +301,9 @@
       <if test="serverComplete != null">
         server_complete = #{serverComplete,jdbcType=SMALLINT},
       </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=SMALLINT},
+      </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=BIGINT},
       </if>
@@ -348,8 +314,42 @@
     where order_id = #{orderId,jdbcType=BIGINT} and airport_code=#{airportCode,jdbcType=VARCHAR}
   </update>
 
-  <select id="selectOrderInfoTotal" resultType="int">
-      SELECT count(order_id) from order_info
+  <select id="selectOrderInfoTotal" resultType="int" parameterType="com.zhiweicloud.guest.model.OrderInfoQuery">
+    select count(orderFlightClientPassengerService.order_id) from
+    (
+    select orderFlightClientPassenger.*,orderService.order_service_id,orderService.service_detail from
+    (
+    select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
+    (
+    select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
+    o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
+    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
+    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
+    f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
+    ic.name as customer_name
+    from order_info o
+    inner join flight f
+    on o.flight_id = f.flight_id
+    inner JOIN institution_client ic on ic.institution_client_id = o.customer_id
+    ) as orderFlightClient
+    left join passenger p on orderFlightClient.order_id = p.order_id
+    )as orderFlightClientPassenger
+    left join order_service orderService
+    on orderService.order_id = orderFlightClientPassenger.order_id
+    ) as orderFlightClientPassengerService
+    where orderFlightClientPassengerService.is_deleted = 0 and orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
+    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
+      and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.queryFlightNo},'%')
+    </if>
+    <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
+      and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
+    </if>
+    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+      and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
+    </if>
+    <if test="criteria.queryPassengerId != null and !''.equals(criteria.queryPassengerId)">
+      and orderFlightClientPassengerService.passenger_id = #{criteria.queryPassengerId}
+    </if>
   </select>
 
   <select id="selectOrderInfoList" resultMap="BaseResultMap">
@@ -357,10 +357,10 @@
 (
 	select orderFlightClientPassenger.*,orderService.order_service_id,orderService.service_detail from
 	(
-		select orderFlightClient.*,p.passenger_id,p.name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
+		select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
 		(
 			select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
-             o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,
+             o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
 						 o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
              f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
 						 f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
@@ -368,31 +368,62 @@
 			from order_info o
 			inner join flight f
 			on o.flight_id = f.flight_id
+            and o.is_deleted = 0
 			inner JOIN institution_client ic on ic.institution_client_id = o.customer_id
+            limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
 		left join passenger p on orderFlightClient.order_id = p.order_id
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id
 ) as orderFlightClientPassengerService
-<!--where orderFlightClientPassengerService.airport_code = #{airportCode}
-    <if test="criteria.flightNo != null and !''.equals(criteria.flightNo)">
-      and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.flightNo},'%')
+   where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
+    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
+      and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.queryFlightNo},'%')
     </if>
-    <if test="criteria.flightDate != null and !''.equals(criteria.flightDate)">
-      and orderFlightClientPassengerService.flight_date = #{criteria.flightDate}
+    <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
+      and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
     </if>
-    <if test="criteria.passengerName != null and !''.equals(criteria.passengerName)">
-      and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.passengerName},'%')
+    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+      and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
-    <if test="criteria.passengerId != null and !''.equals(criteria.passengerId)">
-      and orderFlightClientPassengerService.passenger_id = #{criteria.passengerId}
+    <if test="criteria.queryPassengerId != null and !''.equals(criteria.queryPassengerId)">
+      and orderFlightClientPassengerService.passenger_id = #{criteria.queryPassengerId}
     </if>
-    <if test="criteria.passengerId != null and !''.equals(criteria.passengerId)">
-      and orderFlightClientPassengerService.passenger_id = #{criteria.passengerId}
-    </if>-->
+  </select>
 
 
+
+
+
+  <select id="getDetailById" parameterType="map" resultMap="BaseResultMap">
+    select orderFlightClientPassengerService.* from
+    (
+    select orderFlightClientPassenger.*,orderService.order_service_id,orderService.service_detail from
+    (
+    select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
+    (
+    select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
+    o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,
+    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
+    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
+    f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
+    ic.name as customer_name
+    from order_info o
+    inner join flight f
+    on o.flight_id = f.flight_id
+    inner JOIN institution_client ic on ic.institution_client_id = o.customer_id
+    ) as orderFlightClient
+    left join passenger p on orderFlightClient.order_id = p.order_id
+    )as orderFlightClientPassenger
+    left join order_service orderService
+    on orderService.order_id = orderFlightClientPassenger.order_id
+    ) as orderFlightClientPassengerService
+    where orderFlightClientPassengerService.airport_code = #{airportCode}
+
+    <if test="orderId != null and !''.equals(orderId)">
+      and orderFlightClientPassengerService.order_id = #{orderId}
+    </if>
   </select>
 
 </mapper>

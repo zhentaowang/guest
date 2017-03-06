@@ -13,7 +13,7 @@ import java.util.Date;
  * https://www.zhiweicloud.com
  * 2017-01-04 17:01:53 Created By zhangpengfei
  */
-@ApiModel(value = "GuestOrderQuery", description = "仅用订单条件查询使用")
+@ApiModel(value = "OrderInfoQuery", description = "仅用订单条件查询使用")
 public class GuestOrderQueryParam {
 
     @Transient
