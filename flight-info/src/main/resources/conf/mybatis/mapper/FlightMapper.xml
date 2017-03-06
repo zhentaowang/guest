@@ -16,10 +16,10 @@
     <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
     <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
     <result column="flight_status" jdbcType="SMALLINT" property="flightStatus" />
-    <result column="real_landing_time" jdbcType="TIME" property="realLandingTime" />
-    <result column="real_take_off_time" jdbcType="TIME" property="realTakeOffTime" />
-    <result column="plan_take_off_time" jdbcType="TIME" property="planTakeOffTime" />
-    <result column="plan_landing_time" jdbcType="TIME" property="planLandingTime" />
+    <result column="real_landing_time" jdbcType="VARCHAR" property="realLandingTime" />
+    <result column="real_take_off_time" jdbcType="VARCHAR" property="realTakeOffTime" />
+    <result column="plan_take_off_time" jdbcType="VARCHAR" property="planTakeOffTime" />
+    <result column="plan_landing_time" jdbcType="VARCHAR" property="planLandingTime" />
     <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
     <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
     <result column="board_status" jdbcType="SMALLINT" property="boardStatus" />
@@ -138,11 +138,11 @@
     </if>
   </select>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from flight
-    where flight_id = #{flightId,jdbcType=BIGINT}
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from flight

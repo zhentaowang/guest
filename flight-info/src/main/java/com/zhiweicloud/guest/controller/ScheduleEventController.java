@@ -10,6 +10,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.service.FlightService;
 import com.zhiweicloud.guest.service.ScheduleEventService;
@@ -80,6 +81,30 @@ public class ScheduleEventController {
         return JSON.toJSONString(result);
     }
 
+    /**
+     * 调度事件管理 - 根据flightId查询航班详情
+     * @param flightId
+     * @return
+     */
+    @GET
+    @Path("get-flight-view")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "调度事件管理 - 根据flightId查询航班详情 ", notes = "返回航班详情", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "28", required = true, paramType = "query")
+    })
+    public String getFlightView(@Context final HttpHeaders headers,
+                       @QueryParam(value = "flightId") Long flightId
+    ) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode","LJG");
+        param.put("flightId",flightId);
+        Flight flight = scheduleEventService.getByFlightId(param);
+        return JSON.toJSONString(new LZResult<>(flight));
+    }
+
     @GET
     @Path("schedule-event-list")
     @Produces("application/json;charset=utf8")
@@ -139,14 +164,14 @@ public class ScheduleEventController {
 
 
     /**
-     * 调度事件管理 - 根据id查询
+     * 调度事件管理 - 根据scheduleEventId查询事件详情
      * @param scheduleEventId
      * @return
      */
     @GET
     @Path("schedule-event-view")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "调度事件管理 - 根据id查询 ", notes = "返回调度事件详情", httpMethod = "GET", produces = "application/json")
+    @ApiOperation(value = "调度事件管理 - 根据scheduleEventId查询事件详情 ", notes = "返回调度事件详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
@@ -158,7 +183,7 @@ public class ScheduleEventController {
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("scheduleEventId",scheduleEventId);
-        ScheduleEvent scheduleEvent = scheduleEventService.getById(param);
+        ScheduleEvent scheduleEvent = scheduleEventService.getByScheduleEventId(param);
         return JSON.toJSONString(new LZResult<>(scheduleEvent));
     }
 

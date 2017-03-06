@@ -29,6 +29,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
+import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -95,8 +96,16 @@ public class ScheduleEventService {
      * 获取调度事件详情
      * @param param
      */
-    public ScheduleEvent getById(Map<String,Object> param) {
+    public ScheduleEvent getByScheduleEventId(Map<String,Object> param) {
         return scheduleEventMapper.selectByPrimaryKey(param);
+    }
+
+    /**
+     * 获取航班详情
+     * @param param
+     */
+    public Flight getByFlightId(Map<String,Object> param) {
+        return flightMapper.selectByPrimaryKey(param);
     }
 
     /**
