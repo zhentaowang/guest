@@ -117,9 +117,9 @@ public class ProtocolService {
                         protocolProductMapper.insertBySelective(protocolProduct);
                         ids00.append(protocolProduct.getProtocolProductId()+",");
                     }
-                    if(protocolProduct.getProtocolProductServiceList() != null){
-                        for(int j = 0; j < protocolProduct.getProtocolProductServiceList().size(); j++ ){
-                            ProtocolProductService protocolProductService = protocolProduct.getProtocolProductServiceList().get(j);
+                    if(protocolProduct.getProtocolProductServList() != null){
+                        for(int j = 0; j < protocolProduct.getProtocolProductServList().size(); j++ ){
+                            ProtocolProductServ protocolProductService = protocolProduct.getProtocolProductServList().get(j);
                             if (protocolProductService.getProtocolProductServiceId() != null){
                                 protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductService);
                             }else{
@@ -178,8 +178,8 @@ public class ProtocolService {
                     pp.setUpdateTime(new Date());
                     pp.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                     protocolProductMapper.insertBySelective(pp);
-                    for(int i = 0; i < protocol.getProtocolProductList().get(j).getProtocolProductServiceList().size(); i++){
-                        ProtocolProductService p = protocol.getProtocolProductList().get(j).getProtocolProductServiceList().get(i);
+                    for(int i = 0; i < protocol.getProtocolProductList().get(j).getProtocolProductServList().size(); i++){
+                        ProtocolProductServ p = protocol.getProtocolProductList().get(j).getProtocolProductServList().get(i);
                         p.setProtocolProductId(pp.getProtocolProductId());
                         p.setCreateTime(new Date());
                         p.setUpdateTime(new Date());
@@ -205,8 +205,8 @@ public class ProtocolService {
         for(int i = 0; i < protocolProductList.size(); i++){
             ProtocolProduct protocolProduct = protocolProductList.get(i);
             param.put("protocolProductId",protocolProduct.getProtocolProductId());
-            List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
-            protocolProduct.setProtocolProductServiceList(protocolProductServiceList);
+            List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
+            protocolProduct.setProtocolProductServList(protocolProductServiceList);
         }
         if(protocolProductList.size() != 0){
             protocol.setProtocolProductList(protocolProductList);
@@ -331,13 +331,13 @@ public class ProtocolService {
     /**
      * 获取服务类型树
      * @param param
-     * @return List<ProtocolProductService>
+     * @return List<ProtocolProductServ>
      */
-    public List<ProtocolProductService> getServiceMenuList(Map<String,Object> param){
-        List<ProtocolProductService> result = protocolProductServiceMapper.getServiceMenuList(param);
+    public List<ProtocolProductServ> getServiceMenuList(Map<String,Object> param){
+        List<ProtocolProductServ> result = protocolProductServiceMapper.getServiceMenuList(param);
         for(int i = 0; i < result.size(); i++){
             param.put("category",result.get(i).getCategory());
-            List<ProtocolProductService> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
+            List<ProtocolProductServ> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
             result.get(i).setServiceTypeList(out);
         }
         return result;
@@ -346,10 +346,10 @@ public class ProtocolService {
     /**
      * 获取服务类别
      * @param param
-     * @return List<ProtocolProductService>
+     * @return List<ProtocolProductServ>
      */
-    public List<ProtocolProductService> getServiceTypeList(Map<String,Object> param){
-        List<ProtocolProductService> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
+    public List<ProtocolProductServ> getServiceTypeList(Map<String,Object> param){
+        List<ProtocolProductServ> out = protocolProductServiceMapper.getServiceTypeDropdownList(param);
         return out;
     }
 
@@ -365,7 +365,7 @@ public class ProtocolService {
         int count = protocolProductServiceMapper.getListCount(param);
 
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-        List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.getListByConidition(queryCondition);
+        List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.getListByConidition(queryCondition);
         List<JSONObject> protocolProductServiceJson = new ArrayList<>();
         for(int i = 0; i < protocolProductServiceList.size(); i++){
             JSONObject result = new JSONObject();
@@ -395,9 +395,9 @@ public class ProtocolService {
      * @param param
      * @return PaginationResult<JSONObject>
      */
-    public LZResult<List<ProtocolProductService>> getServiceDropDownBox(Map<String,Object> param) {
-        List<ProtocolProductService> protocolProductServiceList = protocolProductServiceMapper.getServiceDropDownBoxByParam(param);
-        LZResult<List<ProtocolProductService>> result = new LZResult<>(protocolProductServiceList);
+    public LZResult<List<ProtocolProductServ>> getServiceDropDownBox(Map<String,Object> param) {
+        List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.getServiceDropDownBoxByParam(param);
+        LZResult<List<ProtocolProductServ>> result = new LZResult<>(protocolProductServiceList);
         return result;
     }
 

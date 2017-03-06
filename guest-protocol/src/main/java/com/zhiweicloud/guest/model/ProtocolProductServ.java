@@ -1,5 +1,5 @@
 /**
- * ProtocolProductService.java
+ * ProtocolProductServ.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017-02-27 21:06:37 Created By wzt
@@ -8,7 +8,7 @@ package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.persistence.Id;
+
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -16,13 +16,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * ProtocolProductService.java
+ * ProtocolProductServ.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017-02-27 21:06:37 Created By wzt
 */
-@ApiModel(value="ProtocolProductService",description="protocol_product_service")
-public class ProtocolProductService extends BaseEntity{
+@ApiModel(value="ProtocolProductServ",description="protocol_product_service")
+public class ProtocolProductServ extends BaseEntity{
     @ApiModelProperty(value="主键自增Id",name="protocolProductServiceId", required=true)
     @NotEmpty
     private Long protocolProductServiceId;
@@ -66,12 +66,12 @@ public class ProtocolProductService extends BaseEntity{
 
     @Transient
     @ApiModelProperty(value = "服务类别列表",name="serviceTypeList")
-    private List<ProtocolProductService> serviceTypeList;
+    private List<ProtocolProductServ> serviceTypeList;
 
-    public List<ProtocolProductService> getServiceTypeList() {
+    public List<ProtocolProductServ> getServiceTypeList() {
         return serviceTypeList;
     }
-    public void setServiceTypeList(List<ProtocolProductService> serviceTypeList) {
+    public void setServiceTypeList(List<ProtocolProductServ> serviceTypeList) {
         this.serviceTypeList = serviceTypeList;
     }
 

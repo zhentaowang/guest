@@ -16,4 +16,9 @@ public interface ProtocolProductMapper {
     Integer updateByIdAndAirportCode(ProtocolProduct protocolProduct);
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
     void insertBySelective(ProtocolProduct protocolProduct);
+    List<ProtocolProduct> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
+    Integer getListCount(Map<String, Object> map);
+    ProtocolProduct selectById(Map<String, Object> map);
+    Long selectByProductId(Map<String, Object> map);
+    Long selectOrderByProtocolProductId(Map<String, Object> map);
 }

@@ -65,57 +65,62 @@ public class ProtocolController {
             Protocol protocol = JSONObject.toJavaObject(param00,Protocol.class);
             protocol.setAirportCode(airportCode);
             List<Authorizer> authorizers = new ArrayList<>();
-            for (int i = 0; i < authorizerList.size(); i++) {
-                JSONObject authorizer00 = JSON.parseObject(authorizerList.get(i).toString());
-                Authorizer authorizer = JSONObject.toJavaObject(authorizer00,Authorizer.class);
-                authorizer.setAirportCode(protocol.getAirportCode());
-                authorizers.add(authorizer);
+            if(authorizerList != null){
+                for (int i = 0; i < authorizerList.size(); i++) {
+                    JSONObject authorizer00 = JSON.parseObject(authorizerList.get(i).toString());
+                    Authorizer authorizer = JSONObject.toJavaObject(authorizer00,Authorizer.class);
+                    authorizer.setAirportCode(protocol.getAirportCode());
+                    authorizers.add(authorizer);
+                }
             }
             protocol.setAuthorizerList(authorizers);
-            List<ProtocolProduct> protocolProducts = new ArrayList<>();
-            for (int i = 0; i < protocolProductList.size(); i++) {
-                JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
-                JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
-                protocolProduct00.remove("protocolProductService");
-                ProtocolProduct protocolProduct = JSONObject.toJavaObject(protocolProduct00,ProtocolProduct.class);
-                protocolProduct.setAirportCode(protocol.getAirportCode());
-                List<ProtocolProductService> protocolProductServices = new ArrayList<>();
-                for (int j = 0; j < protocolProductServiceList.size(); j++) {
-                    JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
-                    ProtocolProductService protocolProductService = JSONObject.toJavaObject(protocolProductService00,ProtocolProductService.class);
-                    protocolProductService.setAirportCode(protocol.getAirportCode());
-                    protocolProductService00.remove("protocolProductServiceId");
-                    protocolProductService00.remove("airportCode");
-                    protocolProductService00.remove("serviceTypeAllocationId");
-                    protocolProductService00.remove("serviceId");
-                    protocolProductService00.remove("isPricing");
-                    protocolProductService00.remove("isPrioritized");
-                    protocolProductService00.remove("isAvailabled");
-                    protocolProductService.setPricingRule(protocolProductService00.toJSONString());
-                    Set keys = protocolProductService00.keySet();
-                    Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductService.getServiceTypeAllocationId());
-                    if (keys.size() != protocolProductFieldName.size()) {
-                        return LXResult.build(4995, "传输数据字段错误");
-                    } else {
-                        if (protocolProductFieldName != null) {
-                            for (int k = 0; k < keys.size(); k++) {
-                                if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
-                                    return LXResult.build(4995, "传输数据字段错误");
-                                } else {
-                                    if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
-                                        return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            if(protocolProductList != null){
+                List<ProtocolProduct> protocolProducts = new ArrayList<>();
+                for (int i = 0; i < protocolProductList.size(); i++) {
+                    JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
+                    JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
+                    protocolProduct00.remove("protocolProductService");
+                    ProtocolProduct protocolProduct = JSONObject.toJavaObject(protocolProduct00,ProtocolProduct.class);
+                    protocolProduct.setAirportCode(protocol.getAirportCode());
+                    List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
+                    for (int j = 0; j < protocolProductServiceList.size(); j++) {
+                        JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
+                        ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductService00,ProtocolProductServ.class);
+                        protocolProductServ.setAirportCode(protocol.getAirportCode());
+                        protocolProductService00.remove("protocolProductServiceId");
+                        protocolProductService00.remove("airportCode");
+                        protocolProductService00.remove("serviceTypeAllocationId");
+                        protocolProductService00.remove("serviceId");
+                        protocolProductService00.remove("isPricing");
+                        protocolProductService00.remove("isPrioritized");
+                        protocolProductService00.remove("isAvailabled");
+                        protocolProductServ.setPricingRule(protocolProductService00.toJSONString());
+                        Set keys = protocolProductService00.keySet();
+                        Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductServ.getServiceTypeAllocationId());
+                        if (keys.size() != protocolProductFieldName.size()) {
+                            return LXResult.build(4995, "传输数据字段错误");
+                        } else {
+                            if (protocolProductFieldName != null) {
+                                for (int k = 0; k < keys.size(); k++) {
+                                    if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
+                                        return LXResult.build(4995, "传输数据字段错误");
+                                    } else {
+                                        if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
+                                            return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                                        }
                                     }
                                 }
                             }
                         }
+                        protocolProductFieldName.clear();
+                        protocolProductServs.add(protocolProductServ);
                     }
-                    protocolProductFieldName.clear();
-                    protocolProductServices.add(protocolProductService);
+                    protocolProduct.setProtocolProductServList(protocolProductServs);
+                    protocolProducts.add(protocolProduct);
                 }
-                protocolProduct.setProtocolProductServiceList(protocolProductServices);
-                protocolProducts.add(protocolProduct);
+                protocol.setProtocolProductList(protocolProducts);
             }
-            protocol.setProtocolProductList(protocolProducts);
+
 
             if (protocol == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
@@ -182,7 +187,7 @@ public class ProtocolController {
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode", airportCode);
         param.put("protocolProductId", protocolProductId);
-        List<ProtocolProductService> serviceMenuList = protocolService.getServiceMenuList(param);
+        List<ProtocolProductServ> serviceMenuList = protocolService.getServiceMenuList(param);
         return JSON.toJSONString(new LZResult<>(serviceMenuList));
     }
 
@@ -205,7 +210,7 @@ public class ProtocolController {
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode", airportCode);
         param.put("protocolProductId", protocolProductId);
-        List<ProtocolProductService> serviceMenuList = protocolService.getServiceTypeList(param);
+        List<ProtocolProductServ> serviceMenuList = protocolService.getServiceTypeList(param);
         return JSON.toJSONString(new LZResult<>(serviceMenuList));
     }
 
@@ -262,7 +267,7 @@ public class ProtocolController {
         param.put("airportCode",airportCode);
         param.put("typeId", typeId);
         param.put("protocolProductId", protocolProductId);
-        LZResult<List<ProtocolProductService>> result  = protocolService.getServiceDropDownBox(param);
+        LZResult<List<ProtocolProductServ>> result  = protocolService.getServiceDropDownBox(param);
         return JSON.toJSONString(result);
     }
 

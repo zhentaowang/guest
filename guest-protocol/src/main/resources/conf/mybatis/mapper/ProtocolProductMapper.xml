@@ -12,21 +12,48 @@
   <sql id="Base_Column_List">
     protocol_product_id, protocol_id, product_id, product_desc
   </sql>
-  <select id="selectById" parameterType="map" resultMap="BaseResultMap">
-    SELECT protocol_product_id, protocol_id, product_id, product_desc
-    FROM protocol_product
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and is_deleted = 0
+
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+   SELECT pp.protocol_product_id, pp.protocol_id, pp.product_id, p.product_no, p.product_name, pp.product_desc
+    FROM protocol_product as pp left join
+    (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
+    where pp.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0
+    LIMIT #{page.startPageNo},#{page.pCount}
   </select>
+
+  <select id="getListCount" parameterType="map" resultType="int">
+    SELECT count(pp.protocol_product_id)
+    FROM protocol_product as pp left join
+    (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
+    where pp.airport_code = #{airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0
+  </select>
+
+  <select id="selectById" parameterType="map" resultMap="BaseResultMap">
+    SELECT pp.protocol_product_id, pp.protocol_id, pp.product_id, p.product_no, p.product_name, pp.product_desc
+    FROM protocol_product as pp left join
+    (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
+    where pp.airport_code = #{airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0 and pp.protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByProductId"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    SELECT count(protocol_product_id) from protocol_product where airport_code = #{airportCode,jdbcType=VARCHAR}
+      and product_id = #{productId,jdbcType=BIGINT} and protocol_id = #{protocolId,jdbcType=BIGINT}
+  </select>
+
   <select id="selectByProtocolId" parameterType="map" resultMap="BaseResultMap">
     SELECT pp.protocol_product_id, pp.protocol_id, pp.product_id, p.product_no, p.product_name, pp.product_desc
     FROM protocol_product as pp left join
     (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
     where pp.airport_code = #{airportCode,jdbcType=VARCHAR} and pp.protocol_id = #{protocolId,jdbcType=BIGINT} and pp.is_deleted = 0
   </select>
+
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update protocol_product set is_deleted = 1 where protocol_product_id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_id = #{protocolId,jdbcType=BIGINT}
   </select>
 
+  <select id="selectOrderByProtocolProductId"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    SELECT count(order_id) from order_info where airport_code = #{airportCode,jdbcType=VARCHAR} and product_id = #{protocolProductId,jdbcType=BIGINT}
+  </select>
 
   <update id="updateByIdAndAirportCode" parameterType="com.zhiweicloud.guest.model.ProtocolProduct">
     update protocol_product
@@ -37,13 +64,11 @@
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
-      <if test="updateUser != null">
-        update_user = #{updateUser,jdbcType=SMALLINT},
-      </if>
       update_time = CURRENT_TIMESTAMP
     </set>
     where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
   </update>
+
   <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.ProtocolProduct">
     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="protocolProductId">
       SELECT LAST_INSERT_ID()

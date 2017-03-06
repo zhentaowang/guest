@@ -226,6 +226,7 @@
                                 <location>com.zhiweicloud.guest.controller.AuthorizerController</location>
                                 <location>com.zhiweicloud.guest.controller.CommonController</location>
                                 <location>com.zhiweicloud.guest.controller.ProtocolController</location>
+                                <location>com.zhiweicloud.guest.controller.ProtocolProductController</location>
                             </locations>
                             <schemes>
                                 <scheme>http</scheme>
