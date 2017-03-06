@@ -15,8 +15,8 @@
     <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
     <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
     <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
-    <result column="plan_take_off_time" jdbcType="TIME" property="planTakeOffTime" />
-    <result column="plan_landing_time" jdbcType="TIME" property="planLandingTime" />
+    <result column="plan_take_off_time" jdbcType="VARCHAR" property="planTakeOffTime" />
+    <result column="plan_landing_time" jdbcType="VARCHAR" property="planLandingTime" />
     <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
     <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
     <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
@@ -313,10 +313,11 @@
   </update>
 
 
-  <select id="isFlightExist" resultType="int">
-    select count(flight_id) from flight
+  <select id="isFlightExist" resultType="Long">
+    select flight_id from flight
     where flight_date = #{flightDate} and flight_no = #{flightNo} and flight_depcode = #{flightDepcode}
     and flight_arrcode = #{flightArrcode} and airport_code = #{airportCode} and is_deleted = 0
   </select>
+
 
 </mapper>

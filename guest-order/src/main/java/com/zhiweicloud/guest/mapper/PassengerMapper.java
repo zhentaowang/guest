@@ -45,6 +45,7 @@ public interface PassengerMapper{
 
     void insertSelective(Passenger p);
 
+    void markAsDeleted(Passenger passenger);
     /**
      * 返回航班信息中的 旅客信息，与订单状态等信息结合
      * @param flightId

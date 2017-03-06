@@ -1,27 +1,25 @@
 package com.zhiweicloud.guest.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.OrderInfoMapper;
 import com.zhiweicloud.guest.mapper.OrderServiceMapper;
 import com.zhiweicloud.guest.mapper.PassengerMapper;
-import com.zhiweicloud.guest.model.Flight;
-import com.zhiweicloud.guest.model.OrderInfo;
-import com.zhiweicloud.guest.model.OrderService;
-import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zhangpengfei on 2017/2/28.
@@ -43,6 +41,7 @@ public class OrderInfoService {
 
 
     public void saveOrUpdate(OrderInfo orderInfo,List<Passenger> passengerList,List<OrderService> orderServiceList,Long userId,String airportCode) throws Exception{
+        orderInfo.setAirportCode(airportCode);
         if (orderInfo.getOrderId() != null) {
             orderInfo.setUpdateTime(new Date());
             orderInfo.setUpdateUser(userId);
@@ -59,13 +58,21 @@ public class OrderInfoService {
              */
             if(orderInfo.getFlight() != null){
                 Flight flight = orderInfo.getFlight();
+                flight.setAirportCode(airportCode);
+
                 if(flight.getFlightId() != null){
                     flight.setUpdateTime(new Date());
                     flight.setUpdateUser(userId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
                 }else{
-                    int count = flightMapper.isFlightExist(flight);
-                    if (count > 0){
+                    Long flightId = flightMapper.isFlightExist(flight);
+                    if(airportCode.equals(flight.getFlightDepcode())){//当前登录三字码 == 航班目的港口
+                        flight.setIsInOrOut((short)0);//出港
+                    }else if(airportCode.equals(flight.getFlightArrcode())){//当前登录三字码 == 航班出发港口
+                        flight.setIsInOrOut((short)1);//进港
+                    }
+                    if (flightId != null && !flightId.equals("")){
+                        flight.setFlightId(flightId);
                         flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
                     }else{
                         flight.setCreateTime(new Date());
@@ -119,7 +126,9 @@ public class OrderInfoService {
             os.setAirportCode(orderInfo.getAirportCode());
             os.setUpdateTime(new Date());
             os.setUpdateUser(orderInfo.getUpdateUser());
-
+            String detail = os.getServiceDetail();
+            JSONObject jsonObject = JSON.parseObject(detail);
+            os.setServiceDetail(jsonObject.toJSONString());
             if(os.getOrderServiceId() != null){
                 serverDetailsList.add(os.getOrderServiceId());
                 orderServiceMapper.updateByOrderServiceIdAndAirportCodeKeySelective(os);
@@ -154,17 +163,38 @@ public class OrderInfoService {
     }
 
     public LZResult<PaginationResult<Map>> getOrderInfoList(Integer page, Integer rows,
-                    String customerInfo,String passengerId,String passengerName,String flightDate,String flightNo,String airportCode) throws Exception{
-        BasePagination<OrderInfo> queryCondition = new BasePagination<>(new OrderInfo(), new PageModel(page, rows));
-
-        int total = orderInfoMapper.selectOrderInfoTotal(new OrderInfo(),passengerId,passengerName,flightDate,flightNo,airportCode);
-
+                    String customerInfo,String passengerId,String passengerName,String flightDate,String flightNo,Long userId,String airportCode) throws Exception{
+        OrderInfoQuery orderInfoQuery = new OrderInfoQuery();
+        orderInfoQuery.setQueryPassengerId(passengerId);
+        orderInfoQuery.setQueryPassengerName(passengerName);
+        orderInfoQuery.setQueryFlightNo(flightNo);
+        orderInfoQuery.setQueryFlightDate(flightDate);
+        orderInfoQuery.setAirportCode(airportCode);
 
         //获取客户id，institution_client 客户名称
 
         //获取预约人 authorizer 预约人姓名
 
         //获取协议id protocol 协议名称
+
+        //JSONObject param = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList" + customerInfo,headerMap));
+        JSONObject param = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?name=%E5%95%86&access_token=DZ75lFTo7qLmUkcM0zSBz6VA17Aw6cHtWCXb1DYT"));
+        JSONArray protocolArray = param.getJSONArray("data");
+        String protocolIds = "";
+        for(int i = 0; i < protocolArray.size();i++){
+            JSONObject jsonObject = JSON.parseObject(protocolArray.get(i).toString());
+            protocolIds = protocolIds + jsonObject.get("id") + ",";
+        }
+        protocolIds = protocolIds.substring(0,protocolIds.length() - 1);
+
+        BasePagination<OrderInfoQuery> queryCondition = new BasePagination<>(orderInfoQuery, new PageModel(page, rows));
+
+        int total = orderInfoMapper.selectOrderInfoTotal(queryCondition);
+
+        Map<String,Object> headerMap = new HashMap();
+        headerMap.put("user-id",userId);
+        headerMap.put("client-id",airportCode);
+
 
         //获取协议id，protocol 预约号
 
@@ -177,5 +207,46 @@ public class OrderInfoService {
         PaginationResult<Map> eqr = new PaginationResult<>(total, orderInfoList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
         return result;
+    }
+
+    public void deleteById(List<Long> ids, Long userId, String airportCode) throws  Exception{
+        //删除订单  删除乘客，订单服务
+        for (int i = 0; i < ids.size(); i++) {
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setIsDeleted(Constant.MARK_AS_DELETED);
+            orderInfo.setOrderId(ids.get(i));
+            orderInfo.setAirportCode(airportCode);
+            orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            this.deletePassengerAndOrderServiceDeatil(ids.get(i), airportCode);
+        }
+    }
+
+    /**
+     * 根据订单id逻辑删除旅客，详细服务
+     *
+     * @param orderId
+     */
+    private void deletePassengerAndOrderServiceDeatil(Long orderId, String airportCode) throws Exception{
+        /**
+         * 逻辑删除旅客
+         */
+        Passenger passenger = new Passenger();
+        passenger.setAirportCode(airportCode);
+        passenger.setOrderId(orderId);
+        passengerMapper.markAsDeleted(passenger);
+
+        /**
+         * 逻辑删除旅客
+         */
+        OrderService orderService = new OrderService();
+        orderService.setAirportCode(airportCode);
+        orderService.setOrderId(orderId);
+        orderServiceMapper.markAsDeleted(orderService);
+
+    }
+
+    public OrderInfo getById(Long orderId, String airportCode) throws Exception{
+        OrderInfo map = orderInfoMapper.getDetailById(orderId, airportCode);
+        return map;
     }
 }

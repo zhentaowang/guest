@@ -62,10 +62,10 @@ public class Flight extends BaseEntity{
     private Short boardInOut;
 
     @ApiModelProperty(value="计划起飞时间",name="planTakeOffTime")
-    private Date planTakeOffTime;
+    private String planTakeOffTime;
 
     @ApiModelProperty(value="计划降落时间",name="planLandingTime")
-    private Date planLandingTime;
+    private String planLandingTime;
 
     @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
     private Short isInOrOut;
@@ -292,7 +292,7 @@ public class Flight extends BaseEntity{
      * 计划起飞时间
      * @return plan_take_off_time 计划起飞时间
      */
-    public Date getPlanTakeOffTime() {
+    public String getPlanTakeOffTime() {
         return planTakeOffTime;
     }
 
@@ -300,7 +300,7 @@ public class Flight extends BaseEntity{
      * 计划起飞时间
      * @param planTakeOffTime 计划起飞时间
      */
-    public void setPlanTakeOffTime(Date planTakeOffTime) {
+    public void setPlanTakeOffTime(String planTakeOffTime) {
         this.planTakeOffTime = planTakeOffTime;
     }
 
@@ -308,7 +308,7 @@ public class Flight extends BaseEntity{
      * 计划降落时间
      * @return plan_landing_time 计划降落时间
      */
-    public Date getPlanLandingTime() {
+    public String getPlanLandingTime() {
         return planLandingTime;
     }
 
@@ -316,7 +316,7 @@ public class Flight extends BaseEntity{
      * 计划降落时间
      * @param planLandingTime 计划降落时间
      */
-    public void setPlanLandingTime(Date planLandingTime) {
+    public void setPlanLandingTime(String planLandingTime) {
         this.planLandingTime = planLandingTime;
     }
 

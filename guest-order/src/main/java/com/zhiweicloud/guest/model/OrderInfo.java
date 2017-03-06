@@ -88,7 +88,7 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="座位号",name="sitNo")
     private String sitNo;
 
-    @ApiModelProperty(value="服务完成：0：是，1：否",name="serverComplete")
+    @ApiModelProperty(value="服务完成：0：否,1：是",name="serverComplete")
     private Short serverComplete;
 
     @ApiModelProperty(value = "服务人数", name = "serverPersonNum")
@@ -118,6 +118,24 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value = "客户名称", name = "customerName")
     @Transient
     private String customerName;
+
+
+    @ApiModelProperty(value = "乘客id", name = "queryPassengerId")
+    @Transient
+    private String queryPassengerId;
+
+    @ApiModelProperty(value = "乘客姓名", name = "queryPassengerName")
+    @Transient
+    private String queryPassengerName;
+
+    @ApiModelProperty(value = "航班日期", name = "queryFlightDate")
+    @Transient
+    private String queryFlightDate;
+
+    @ApiModelProperty(value = "航班号", name = "queryFlightNo")
+    @Transient
+    private String queryFlightNo;
+
 
     /**
      * 主键自增id

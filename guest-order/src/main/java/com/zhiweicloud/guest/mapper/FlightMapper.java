@@ -44,5 +44,5 @@ public interface FlightMapper{
 
     void insertSelective(Flight flight);
 
-    int isFlightExist(Flight flight);
+    Long isFlightExist(Flight flight);
 }
