@@ -32,6 +32,9 @@
   </update>
 
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.OrderService">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="orderServiceId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into order_service
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderServiceId != null">
@@ -68,47 +71,4 @@
       </if>
     </trim>
   </insert>
-  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from order_service
-    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from order_service
-    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.zhiweicloud.guest.model.OrderService">
-    insert into order_service (order_service_id, order_id, service_detail, 
-      create_user, update_user)
-    values (#{orderServiceId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{serviceDetail,jdbcType=OTHER}, 
-      #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT})
-  </insert>
-
-  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.OrderService">
-    update order_service
-    <set>
-      <if test="orderId != null">
-        order_id = #{orderId,jdbcType=BIGINT},
-      </if>
-      <if test="serviceDetail != null">
-        service_detail = #{serviceDetail,jdbcType=OTHER},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=BIGINT},
-      </if>
-      <if test="updateUser != null">
-        update_user = #{updateUser,jdbcType=BIGINT},
-      </if>
-    </set>
-    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.OrderService">
-    update order_service
-    set order_id = #{orderId,jdbcType=BIGINT},
-      service_detail = #{serviceDetail,jdbcType=OTHER},
-      create_user = #{createUser,jdbcType=BIGINT},
-      update_user = #{updateUser,jdbcType=BIGINT}
-    where order_service_id = #{orderServiceId,jdbcType=BIGINT}
-  </update>-->
 </mapper>

@@ -33,6 +33,9 @@ public class Passenger extends BaseEntity{
     @NotEmpty
     private Long orderId;
 
+    @ApiModelProperty(value="航班id",name="orderId")
+    private Long flightId;
+
     @ApiModelProperty(value="旅客姓名",name="name")
     private String name;
 
@@ -330,5 +333,13 @@ public class Passenger extends BaseEntity{
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
+    }
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
     }
 }

@@ -140,6 +140,7 @@ public class ProductService {
     public List<ProductServiceType> getServiceMenuList(Map<String,Object> param){
         List<ProductServiceType> result = productServiceTypeMapper.getServiceMenuList(param);
         for(int i = 0; i < result.size(); i++){
+            param.put("category",result.get(i).getCategory());
             List<ProductServiceType> out = productServiceTypeMapper.getServiceTypeDropdownList(param);
             result.get(i).setServiceTypeList(out);
         }

@@ -172,7 +172,7 @@ public class ProductController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "productId", value = "产品id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
     })
-    public String view(@Context final HttpHeaders headers,
+    public String getServiceTypeTreeByProductId(@Context final HttpHeaders headers,
                                                    @QueryParam(value = "productId") Long productId) {
         Map<String,Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");

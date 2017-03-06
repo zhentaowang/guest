@@ -16,16 +16,106 @@
   },
   "host" : "localhost:8080",
   "tags" : [ {
+    "name" : "common:公共接口"
+  }, {
+    "name" : "passenger"
+  }, {
     "name" : "订单管理"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
-    "/saveOrUpdate" : {
+    "/getIdentityCardDropdownList" : {
+      "get" : {
+        "tags" : [ "common:公共接口" ],
+        "summary" : "乘客身份证模糊匹配下拉框，不重复的字符串",
+        "description" : "乘客身份证模糊匹配下拉框",
+        "operationId" : "queryInstitutionClientDropdownList",
+        "produces" : [ "application/json;charset=utf-8" ],
+        "parameters" : [ {
+          "name" : "identityCard",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/响应结果"
+            }
+          }
+        }
+      }
+    },
+    "/guest-order/list" : {
+      "get" : {
+        "tags" : [ "订单管理" ],
+        "summary" : "员工列表 - 分页查询",
+        "description" : "返回分页结果",
+        "operationId" : "list",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 1,
+          "format" : "int32"
+        }, {
+          "name" : "rows",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
+        }, {
+          "name" : "customerInfo",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "passengerName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "passengerId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "flightDate",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "flightNo",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "请求成功",
+            "schema" : {
+              "$ref" : "#/definitions/OrderInfo"
+            }
+          },
+          "400" : {
+            "description" : "参数错误"
+          },
+          "405" : {
+            "description" : "请求方式不对"
+          }
+        }
+      }
+    },
+    "/guest-order/saveOrUpdate" : {
       "post" : {
         "tags" : [ "订单管理" ],
         "summary" : "订单 - 新增/修改",
         "description" : "返回成功还是失败",
-        "operationId" : "save",
+        "operationId" : "saveOrUpdate",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json;charset=utf-8" ],
         "parameters" : [ {
@@ -34,8 +124,19 @@
           "description" : "OrderInfo",
           "required" : true,
           "schema" : {
-            "$ref" : "#/definitions/全局统一接受参数OrderInfo"
+            "type" : "string"
           }
+        }, {
+          "name" : "airportCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
         } ],
         "responses" : {
           "200" : {
@@ -160,6 +261,11 @@
           "format" : "int64",
           "description" : "协议id"
         },
+        "bookingPerson" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "预约人"
+        },
         "noticePerson" : {
           "type" : "string",
           "description" : "通知人"
@@ -191,11 +297,11 @@
         "consign" : {
           "type" : "integer",
           "format" : "int32",
-          "description" : "代办托运 说明"
+          "description" : "是否托运, 0:托运，1：不托运"
         },
         "consignRemark" : {
           "type" : "string",
-          "description" : "是否托运, 0:托运，1：不托运"
+          "description" : "代办托运 说明"
         },
         "otherRemark" : {
           "type" : "string",
@@ -261,9 +367,18 @@
           "format" : "int32",
           "description" : "确认消费，仅仅用于前台标志 是用来更改订单的状态,确认：1"
         },
+        "flightId" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "航班id"
+        },
         "flight" : {
           "description" : "航班信息",
           "$ref" : "#/definitions/Flight"
+        },
+        "customerName" : {
+          "type" : "string",
+          "description" : "客户名称"
         }
       },
       "description" : "order_info"
@@ -291,7 +406,7 @@
     },
     "Passenger" : {
       "type" : "object",
-      "required" : [ "orderId", "passengerId" ],
+      "required" : [ "passengerId" ],
       "properties" : {
         "passengerId" : {
           "type" : "integer",
@@ -301,7 +416,7 @@
         "orderId" : {
           "type" : "integer",
           "format" : "int64",
-          "description" : "订单id"
+          "description" : "航班id"
         },
         "name" : {
           "type" : "string",
@@ -353,18 +468,25 @@
       },
       "description" : "passenger"
     },
-    "全局统一接受参数OrderInfo" : {
+    "响应结果" : {
       "type" : "object",
+      "required" : [ "msg", "status" ],
       "properties" : {
+        "status" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "响应状态码"
+        },
+        "msg" : {
+          "type" : "string",
+          "description" : "响应消息"
+        },
         "data" : {
-          "type" : "array",
-          "description" : "数据",
-          "items" : {
-            "$ref" : "#/definitions/OrderInfo"
-          }
+          "type" : "object",
+          "description" : "响应数据"
         }
       },
-      "description" : "全局统一接受参数"
+      "description" : "响应结果"
     }
   }
 }

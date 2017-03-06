@@ -131,16 +131,8 @@ public class GuestOrder extends GuestOrderQuery {
     private Short orderType;
 
     @Transient
-    @ApiModelProperty(value = "车辆", name = "orderCar")
-    private List<OrderCar> orderCarList;
-
-    @Transient
     @ApiModelProperty(value = "乘客信息", name = "bsPassenger")
     private List<Passenger> passengerList;
-
-    @Transient
-    @ApiModelProperty(value = "收费服务", name = "orderChargeList")
-    private List<OrderCharge> orderChargeList;
 
     @Transient
     @ApiModelProperty(value = "确认消费，仅仅用于前台标志 是用来更改订单的状态,确认：1")
@@ -701,13 +693,6 @@ public class GuestOrder extends GuestOrderQuery {
         this.orgCustomerId = orgCustomerId;
     }
 
-    public List<OrderCar> getOrderCarList() {
-        return orderCarList;
-    }
-
-    public void setOrderCarList(List<OrderCar> orderCarList) {
-        this.orderCarList = orderCarList;
-    }
 
     public List<Passenger> getPassengerList() {
         return passengerList;
@@ -725,13 +710,6 @@ public class GuestOrder extends GuestOrderQuery {
         this.changeOrderStatus = changeOrderStatus;
     }
 
-    public List<OrderCharge> getOrderChargeList() {
-        return orderChargeList;
-    }
-
-    public void setOrderChargeList(List<OrderCharge> orderChargeList) {
-        this.orderChargeList = orderChargeList;
-    }
 
     public String getProtocolName() {
         return protocolName;

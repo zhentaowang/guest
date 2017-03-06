@@ -4,7 +4,7 @@
   <groupId>com.zhiweicloud</groupId>
   <artifactId>guest-order</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Guest Order</name>
   <url>http://maven.apache.org</url>
 

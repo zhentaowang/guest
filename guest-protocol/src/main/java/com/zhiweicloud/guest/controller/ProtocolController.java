@@ -111,6 +111,7 @@ public class ProtocolController {
                             }
                         }
                     }
+                    protocolProductFieldName.clear();
                     protocolProductServices.add(protocolProductService);
                 }
                 protocolProduct.setProtocolProductServiceList(protocolProductServices);

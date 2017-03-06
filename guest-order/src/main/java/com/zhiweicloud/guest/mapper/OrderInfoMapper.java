@@ -27,7 +27,11 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.OrderInfo;
+import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -46,4 +50,8 @@ public interface OrderInfoMapper{
     void insertSelective(OrderInfo orderInfo);
 
     void updateByPrimaryKeySelective(OrderInfo orderInfo);
+
+    int selectOrderInfoTotal(@Param("orderParam") OrderInfo orderParam, @Param("passengerId")String passengerId, @Param("passengerName")String passengerName, @Param("flightDate")String flightDate, @Param("flightNo")String flightNo,@Param("airportCode") String airportCode);
+
+    List<Map> selectOrderInfoList(BasePagination<OrderInfo> queryCondition);
 }

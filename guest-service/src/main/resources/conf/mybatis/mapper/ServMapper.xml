@@ -97,10 +97,10 @@
     SELECT count(s.serv_id)
     FROM v_serv as s left join
     (select service_type_id from product_service_type
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and product_id = #{criteria.productId,jdbcType=BIGINT}
-    and is_deleted = 0 and service_type_id = #{criteria.typeId,jdbcType=BIGINT}) as p
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and product_id = #{productId,jdbcType=BIGINT}
+    and is_deleted = 0 and service_type_id = #{typeId,jdbcType=BIGINT}) as p
     on  s.service_type_allocation_id = p.service_type_id
-    where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and s.service_type_allocation_id = #{criteria.typeId,jdbcType=BIGINT} and s.is_deleted = 0
+    where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.service_type_allocation_id = #{typeId,jdbcType=BIGINT} and s.is_deleted = 0
   </select>
 
   <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">
