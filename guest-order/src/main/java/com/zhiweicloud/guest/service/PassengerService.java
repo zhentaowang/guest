@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.service;
 
 import com.zhiweicloud.guest.mapper.PassengerMapper;
+import com.zhiweicloud.guest.model.Passenger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,9 @@ public class PassengerService {
 
     public List<String> getIdentityCardDropdownList(String identityCard, String airportCode){
         return passengerMapper.getIdentityCardDropdownList(identityCard,airportCode);
+    }
+
+    public List<Passenger> getPassengerlistByFlightId(Long flightId,String airportCode){
+        return passengerMapper.getPassengerlistByFlightId(flightId,airportCode);
     }
 }

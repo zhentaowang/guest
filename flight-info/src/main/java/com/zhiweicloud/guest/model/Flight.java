@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
@@ -22,9 +23,11 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 2017-03-04 16:46:06 Created By wzt
 */
 @ApiModel(value="Flight",description="flight")
-public class Flight {
+public class Flight extends BaseEntity{
     @ApiModelProperty(value="主键自增id",name="flightId", required=true)
     @NotEmpty
+    @Id
+    @GeneratedValue(generator = "JDBC")
     private Long flightId;
 
     @ApiModelProperty(value="调度事件id",name="scheduleEventId")
@@ -68,16 +71,16 @@ public class Flight {
     private Short flightStatus;
 
     @ApiModelProperty(value="实际降落时间",name="realLandingTime")
-    private Date realLandingTime;
+    private String realLandingTime;
 
     @ApiModelProperty(value="实际起飞时间",name="realTakeOffTime")
-    private Date realTakeOffTime;
+    private String realTakeOffTime;
 
     @ApiModelProperty(value="计划起飞时间",name="planTakeOffTime")
-    private Date planTakeOffTime;
+    private String planTakeOffTime;
 
     @ApiModelProperty(value="计划降落时间",name="planLandingTime")
-    private Date planLandingTime;
+    private String planLandingTime;
 
     @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
     private Short isInOrOut;
@@ -346,7 +349,7 @@ public class Flight {
      * 实际降落时间
      * @return real_landing_time 实际降落时间
      */
-    public Date getRealLandingTime() {
+    public String getRealLandingTime() {
         return realLandingTime;
     }
 
@@ -354,7 +357,7 @@ public class Flight {
      * 实际降落时间
      * @param realLandingTime 实际降落时间
      */
-    public void setRealLandingTime(Date realLandingTime) {
+    public void setRealLandingTime(String realLandingTime) {
         this.realLandingTime = realLandingTime;
     }
 
@@ -362,7 +365,7 @@ public class Flight {
      * 实际起飞时间
      * @return real_take_off_time 实际起飞时间
      */
-    public Date getRealTakeOffTime() {
+    public String getRealTakeOffTime() {
         return realTakeOffTime;
     }
 
@@ -370,7 +373,7 @@ public class Flight {
      * 实际起飞时间
      * @param realTakeOffTime 实际起飞时间
      */
-    public void setRealTakeOffTime(Date realTakeOffTime) {
+    public void setRealTakeOffTime(String realTakeOffTime) {
         this.realTakeOffTime = realTakeOffTime;
     }
 
@@ -378,7 +381,7 @@ public class Flight {
      * 计划起飞时间
      * @return plan_take_off_time 计划起飞时间
      */
-    public Date getPlanTakeOffTime() {
+    public String getPlanTakeOffTime() {
         return planTakeOffTime;
     }
 
@@ -386,7 +389,7 @@ public class Flight {
      * 计划起飞时间
      * @param planTakeOffTime 计划起飞时间
      */
-    public void setPlanTakeOffTime(Date planTakeOffTime) {
+    public void setPlanTakeOffTime(String planTakeOffTime) {
         this.planTakeOffTime = planTakeOffTime;
     }
 
@@ -394,7 +397,7 @@ public class Flight {
      * 计划降落时间
      * @return plan_landing_time 计划降落时间
      */
-    public Date getPlanLandingTime() {
+    public String getPlanLandingTime() {
         return planLandingTime;
     }
 
@@ -402,7 +405,7 @@ public class Flight {
      * 计划降落时间
      * @param planLandingTime 计划降落时间
      */
-    public void setPlanLandingTime(Date planLandingTime) {
+    public void setPlanLandingTime(String planLandingTime) {
         this.planLandingTime = planLandingTime;
     }
 

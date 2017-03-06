@@ -417,15 +417,10 @@ public class ProtocolService {
 
     /**
      * 协议名称模糊查询下拉框
-     * @param airportCode
-     * @param name
+     * @param map
      * @return
      */
-    public List<Dropdownlist> getProtocolNameDropdownList(String airportCode,String name,Long authorizerId){
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("airportCode",airportCode);
-        map.put("name",name);
-        map.put("authorizerId",authorizerId);
+    public List<Dropdownlist> getProtocolNameDropdownList(Map<String,Object> map){
         return protocolMapper.getProtocolNameDropdownList(map);
     }
 

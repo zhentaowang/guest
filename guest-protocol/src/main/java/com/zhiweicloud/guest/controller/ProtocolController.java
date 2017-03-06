@@ -21,8 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -325,36 +323,6 @@ public class ProtocolController {
             result.setData(list);
 
             return JSON.toJSONString(result);
-        }
-
-        /**
-         * 协议名称name模糊匹配下拉框
-         * 或者 根据authorizerId 获取协议下拉框
-         * @return
-         */
-        @GET
-        @Path(value = "getProtocolNameDropdownList")
-        @ApiOperation(value = "系统中用到协议名称下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-        @Produces("application/json;charset=utf-8")
-        public String getProtocolNameDropdownList (
-                ContainerRequestContext request,
-                @QueryParam(value = "name") String name,
-                @QueryParam(value = "authorizerId") Long authorizerId){
-            String airportCode = request.getHeaders().getFirst("client-id").toString();
-            LZResult<List<Dropdownlist>> result = new LZResult<>();
-            try{
-                List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(airportCode, name, authorizerId);
-                result.setMsg(LZStatus.SUCCESS.display());
-                result.setStatus(LZStatus.SUCCESS.value());
-                result.setData(list);
-            }catch(Exception e){
-                e.printStackTrace();
-                result.setMsg(LZStatus.ERROR.display());
-                result.setStatus(LZStatus.ERROR.value());
-                result.setData(null);
-            }
-            return JSON.toJSONString(result);
-
         }
 
 

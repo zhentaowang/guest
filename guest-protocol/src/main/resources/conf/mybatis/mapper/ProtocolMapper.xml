@@ -328,16 +328,26 @@
       p.protocol_id,p.`name` AS `value`
     FROM
       v_protocol p
-    <if test="authorizerId != null" >
+    <if test="authorizerName != null and !authorizerName.trim().equals('') or authorizerId != null" >
       INNER JOIN authorizer a on p.protocol_id = a.protocol_id
     </if>
     WHERE p.is_deleted = 0 AND p.airport_code = #{airportCode}
-    <if test="name != null and !name.trim().equals('')" >
-      and p.`name` like concat('%',#{name},'%')
+    <if test="protocolId != null" >
+      and p.protocol_id = #{protocolId}
+    </if>
+    <if test="protocolName != null and !protocolName.trim().equals('')" >
+      and p.`name` like concat('%',#{protocolName},'%')
+    </if>
+    <if test="reservationNum != null and !reservationNum.trim().equals('')">
+      and p.reservation_num like concat('%',#{reservationNum},'%')
     </if>
     <if test="authorizerId != null" >
       and a.authorizer_id = #{authorizerId}
     </if>
+    <if test="authorizerName != null and !authorizerName.trim().equals('')">
+      and a.`name` like concat('%',#{authorizerName},'%')
+    </if>
+
   </select>
   
 </mapper>

@@ -65,7 +65,10 @@
       v_product
     WHERE
       airport_code = #{airportCode} AND is_deleted = 0
-    ORDER BY create_time DESC  limit #{begin}, #{end}
+    ORDER BY create_time DESC
+    <if test="!noPage">
+      limit #{begin}, #{end}
+    </if>
 
   </select>
 

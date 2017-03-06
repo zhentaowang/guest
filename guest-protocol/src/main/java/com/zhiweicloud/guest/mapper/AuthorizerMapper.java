@@ -19,10 +19,4 @@ public interface AuthorizerMapper {
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
     void insertBySelective(Authorizer authorizer);
 
-    /**
-     * 协议预约人模糊查询下拉框
-     * @param map
-     * @return
-     */
-    List<Dropdownlist> getAuthorizerDropdownList(Map<String, Object> map);
 }

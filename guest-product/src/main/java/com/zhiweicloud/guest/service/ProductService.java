@@ -107,10 +107,10 @@ public class ProductService {
      * @param rows
      * @return
      */
-    public LZResult<PaginationResult<Product>> getAll(String airportCode, Integer page, Integer rows) {
+    public LZResult<PaginationResult<Product>> getAll(String airportCode, Integer page, Integer rows,boolean noPage) {
 
         int total = productMapper.getListCount(airportCode);
-        List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,rows);
+        List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,rows,noPage);
         PaginationResult<Product> eqr = new PaginationResult<>(total, productList);
         LZResult<PaginationResult<Product>> result = new LZResult<>(eqr);
         return result;
@@ -140,6 +140,7 @@ public class ProductService {
     public List<ProductServiceType> getServiceMenuList(Map<String,Object> param){
         List<ProductServiceType> result = productServiceTypeMapper.getServiceMenuList(param);
         for(int i = 0; i < result.size(); i++){
+            param.put("category",result.get(i).getCategory());
             List<ProductServiceType> out = productServiceTypeMapper.getServiceTypeDropdownList(param);
             result.get(i).setServiceTypeList(out);
         }

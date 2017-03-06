@@ -16,10 +16,10 @@
     <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
     <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
     <result column="flight_status" jdbcType="SMALLINT" property="flightStatus" />
-    <result column="real_landing_time" jdbcType="TIME" property="realLandingTime" />
-    <result column="real_take_off_time" jdbcType="TIME" property="realTakeOffTime" />
-    <result column="plan_take_off_time" jdbcType="TIME" property="planTakeOffTime" />
-    <result column="plan_landing_time" jdbcType="TIME" property="planLandingTime" />
+    <result column="real_landing_time" jdbcType="VARCHAR" property="realLandingTime" />
+    <result column="real_take_off_time" jdbcType="VARCHAR" property="realTakeOffTime" />
+    <result column="plan_take_off_time" jdbcType="VARCHAR" property="planTakeOffTime" />
+    <result column="plan_landing_time" jdbcType="VARCHAR" property="planLandingTime" />
     <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
     <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
     <result column="board_status" jdbcType="SMALLINT" property="boardStatus" />
@@ -138,11 +138,11 @@
     </if>
   </select>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from flight
-    where flight_id = #{flightId,jdbcType=BIGINT}
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from flight
@@ -348,16 +348,16 @@
         flight_status = #{flightStatus,jdbcType=SMALLINT},
       </if>
       <if test="realLandingTime != null">
-        real_landing_time = #{realLandingTime,jdbcType=TIME},
+        real_landing_time = #{realLandingTime,jdbcType=VARCHAR},
       </if>
       <if test="realTakeOffTime != null">
-        real_take_off_time = #{realTakeOffTime,jdbcType=TIME},
+        real_take_off_time = #{realTakeOffTime,jdbcType=VARCHAR},
       </if>
       <if test="planTakeOffTime != null">
-        plan_take_off_time = #{planTakeOffTime,jdbcType=TIME},
+        plan_take_off_time = #{planTakeOffTime,jdbcType=VARCHAR},
       </if>
       <if test="planLandingTime != null">
-        plan_landing_time = #{planLandingTime,jdbcType=TIME},
+        plan_landing_time = #{planLandingTime,jdbcType=VARCHAR},
       </if>
       <if test="isInOrOut != null">
         is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
@@ -372,7 +372,7 @@
         server_time = #{serverTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where flight_id = #{flightId,jdbcType=BIGINT}
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
@@ -389,14 +389,14 @@
       flight_position = #{flightPosition,jdbcType=VARCHAR},
       board_in_out = #{boardInOut,jdbcType=SMALLINT},
       flight_status = #{flightStatus,jdbcType=SMALLINT},
-      real_landing_time = #{realLandingTime,jdbcType=TIME},
-      real_take_off_time = #{realTakeOffTime,jdbcType=TIME},
-      plan_take_off_time = #{planTakeOffTime,jdbcType=TIME},
-      plan_landing_time = #{planLandingTime,jdbcType=TIME},
+      real_landing_time = #{realLandingTime,jdbcType=VARCHAR},
+      real_take_off_time = #{realTakeOffTime,jdbcType=VARCHAR},
+      plan_take_off_time = #{planTakeOffTime,jdbcType=VARCHAR},
+      plan_landing_time = #{planLandingTime,jdbcType=VARCHAR},
       is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
       boarding_port = #{boardingPort,jdbcType=VARCHAR},
       is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
       server_time = #{serverTime,jdbcType=TIMESTAMP}
-    where flight_id = #{flightId,jdbcType=BIGINT}
+    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 </mapper>

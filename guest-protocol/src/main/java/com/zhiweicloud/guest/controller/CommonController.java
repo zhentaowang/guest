@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.zhiweicloud.guest.APIUtil.LZResult;
+import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.service.ProtocolService;
 import io.swagger.annotations.Api;
@@ -12,13 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.ContainerRequestContext;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -75,5 +78,49 @@ public class CommonController {
     ) {
         List<Dropdownlist> protocolNameList = protocolService.getProtocolNoDropdownList(airportCode,type, no);
         return JSON.toJSONString(new LZResult<>(protocolNameList));
+    }
+
+
+    /**
+     * 协议名称name模糊匹配下拉框
+     * 或者 根据authorizerId 获取协议下拉框
+     * 或者 预约号
+     * 或者 预约人
+     * @return
+     */
+    @GET
+    @Path(value = "getProtocolNameDropdownList")
+    @ApiOperation(value = "系统中用到协议名称下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
+    @Produces("application/json;charset=utf-8")
+    public String getProtocolNameDropdownList (
+            ContainerRequestContext request,
+            @QueryParam(value = "protocolId") Long protocolId,
+            @QueryParam(value = "protocolName") String protocolName,
+            @QueryParam(value = "authorizerId") Long authorizerId,
+            @QueryParam(value = "authorizerName") String authorizerName,
+            @QueryParam(value = "reservationNum") String reservationNum){
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+        try{
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("airportCode",airportCode);
+            map.put("protocolId",protocolId);
+            map.put("protocolName",protocolName);
+            map.put("authorizerId",authorizerId);
+            map.put("authorizerName",authorizerName);//预约人
+            map.put("reservationNum",reservationNum);//预约号
+            List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(map);
+
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch(Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+
     }
 }

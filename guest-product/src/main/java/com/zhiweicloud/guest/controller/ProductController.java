@@ -47,9 +47,10 @@ public class ProductController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品列表 - 分页查询", notes = "返回分页结果")
     public String list(ContainerRequestContext request,
+                       @QueryParam("noPage") boolean noPage,
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows) {
-        //@TODO:根据userId 查页面权限
+
         String airportCode = request.getHeaders().getFirst("client-id").toString();
         LZResult<PaginationResult<Product>> result = new LZResult<>();
         if(StringUtils.isEmpty(airportCode)){
@@ -58,7 +59,7 @@ public class ProductController {
             result.setData(null);
             return JSON.toJSONString(result);
         }
-        result = productService.getAll(airportCode, page, rows);
+        result = productService.getAll(airportCode, page, rows, noPage);
         return JSON.toJSONString(result);
 
     }
