@@ -11,9 +11,17 @@ import java.util.List;
 public interface OrderServiceRecordMapper {
 
     /**
-     * 插入
-     * @param recordList
+     * 插入服务动态
+     * @param record
      * @return
      */
-    int insert(@Param("recordList") List<OrderServiceRecord> recordList);
+    int insert(@Param("record") OrderServiceRecord record);
+
+    /**
+     * 根据订单id获取 服务附加单的服务动态
+     * @param orderId
+     * @param airportCode
+     * @return
+     */
+    List<OrderServiceRecord> getOrderServiceRecord(@Param("orderId") Long orderId,@Param("airportCode")String airportCode);
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.OrderServiceRecordMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderServiceRecord">
+    <id column="order_service_record_id" jdbcType="BIGINT" property="orderServiceRecordId" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="record_desc" jdbcType="VARCHAR" property="recordDesc" />
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    order_service_record_id, order_id, record_desc, is_deleted, airport_code, create_time, 
+    create_user, update_time, update_user
+  </sql>
+
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.OrderServiceRecord">
+    INSERT INTO
+      order_service_record (order_id, record_desc, is_deleted, airport_code, create_time,  create_user )
+    VALUES
+      (#{record.orderId}, #{record.recordDesc}, 0, #{record.airportCode}, #{record.createTime}, #{record.createUser})
+  </insert>
+
+  <select id="getOrderServiceRecord"  resultMap="BaseResultMap">
+    SELECT
+      create_time,record_desc
+    FROM
+      order_service_record
+    WHERE
+      is_deleted = 0 AND airport_code = #{airportCode} AND order_id = #{orderId}
+    ORDER BY create_time DESC
+  </select>
+
+</mapper>
