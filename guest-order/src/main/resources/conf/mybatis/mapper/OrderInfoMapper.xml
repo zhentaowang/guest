@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.OrderInfoMapper">
-  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderInfo">
+  <!--<resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderInfo">
     <id column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="customer_id" jdbcType="BIGINT" property="customerId" />
     <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
+    <result column="flight_id" jdbcType="BIGINT" property="flightId" />
     <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
     <result column="notice_person" jdbcType="VARCHAR" property="noticePerson" />
     <result column="booking_way" jdbcType="SMALLINT" property="bookingWay" />
@@ -25,9 +26,88 @@
     <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
-  </resultMap>
+  </resultMap>-->
+
+    <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.OrderInfo">
+      <id column="order_id" jdbcType="BIGINT" property="orderId" />
+      <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+      <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
+      <result column="flight_id" jdbcType="BIGINT" property="flightId" />
+      <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
+      <result column="notice_person" jdbcType="VARCHAR" property="noticePerson" />
+      <result column="booking_way" jdbcType="SMALLINT" property="bookingWay" />
+      <result column="is_important" jdbcType="SMALLINT" property="isImportant" />
+      <result column="product_id" jdbcType="BIGINT" property="productId" />
+      <result column="print_check" jdbcType="SMALLINT" property="printCheck" />
+      <result column="print_check_remark" jdbcType="VARCHAR" property="printCheckRemark" />
+      <result column="consign" jdbcType="SMALLINT" property="consign" />
+      <result column="consign_remark" jdbcType="VARCHAR" property="consignRemark" />
+      <result column="other_remark" jdbcType="VARCHAR" property="otherRemark" />
+      <result column="order_status" jdbcType="SMALLINT" property="orderStatus" />
+      <result column="order_type" jdbcType="SMALLINT" property="orderType" />
+      <result column="agent_person" jdbcType="BIGINT" property="agentPerson" />
+      <result column="server_card_no" jdbcType="VARCHAR" property="serverCardNo" />
+      <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+      <result column="cash" jdbcType="DECIMAL" property="cash" />
+      <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+      <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
+
+      <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+      <!--<result column="protocol_name" jdbcType="VARCHAR" property="protocolName" />
+      <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+      <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+      <result column="passage_way_name" jdbcType="VARCHAR" property="passageWayName" />
+
+      <result column="org_customer_id" jdbcType="BIGINT" property="orgCustomerId" />
+      <result column="protocol_remark" jdbcType="VARCHAR" property="protocolRemark" />
+
+      <result column="check_person" jdbcType="BIGINT" property="checkPerson" />
+      <result column="check_time" jdbcType="TIMESTAMP" property="checkTime" />
+      <result column="check_complete" jdbcType="SMALLINT" property="checkComplete" />
+      <result column="consign_person" jdbcType="BIGINT" property="consignPerson" />
+      <result column="consign_time" jdbcType="TIMESTAMP" property="consignTime" />
+      <result column="consign_complete" jdbcType="BIGINT" property="consignComplete" />-->
+
+      <association property="flight" javaType="com.zhiweicloud.guest.model.Flight">
+        <result column="flight_id" jdbcType="BIGINT" property="flightId" />
+        <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+        <result column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+        <result column="flight_segment" jdbcType="VARCHAR" property="flightSegment" />
+        <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+        <result column="plan_take_off_time" jdbcType="TIMESTAMP" property="planTakeOffTime" />
+        <result column="plan_landing_time" jdbcType="TIMESTAMP" property="planLandingTime" />
+        <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+        <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
+        <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+        <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+      </association>
+      <collection property="passengerList" ofType="com.zhiweicloud.guest.model.Passenger">
+        <id column="passenger_id" jdbcType="BIGINT" property="passengerId" />
+        <result column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="passenger_name" jdbcType="VARCHAR" property="name" />
+        <result column="phone" jdbcType="BIGINT" property="phone" />
+        <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
+        <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+        <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+        <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+        <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
+        <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
+        <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
+        <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+        <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+        <result column="create_user" jdbcType="BIGINT" property="createUser" />
+        <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+      </collection >
+      <collection property="serviceList" ofType="com.zhiweicloud.guest.model.OrderService">
+        <id column="order_service_id" jdbcType="BIGINT" property="orderServiceId" />
+        <result column="order_id" jdbcType="BIGINT" property="orderId" />
+        <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
+      </collection >
+    </resultMap>
+
   <sql id="Base_Column_List">
-    order_id, customer_id, protocol_id, booking_person, notice_person, booking_way, is_important, 
+    order_id, customer_id,flight_id, protocol_id, booking_person, notice_person, booking_way, is_important,
     product_id, print_check, print_check_remark, consign, consign_remark, other_remark, 
     order_status, order_type, agent_person, server_card_no, vip_card, cash, sit_no, server_complete, 
     create_user, update_user
@@ -38,6 +118,9 @@
   </update>
 
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.OrderInfo">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="orderId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into order_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
@@ -48,6 +131,9 @@
       </if>
       <if test="protocolId != null">
         protocol_id,
+      </if>
+      <if test="flightId != null">
+        flight_id,
       </if>
       <if test="bookingPerson != null">
         booking_person,
@@ -119,6 +205,9 @@
       </if>
       <if test="protocolId != null">
         #{protocolId,jdbcType=BIGINT},
+      </if>
+      <if test="flightId != null">
+        #{flightId,jdbcType=BIGINT},
       </if>
       <if test="bookingPerson != null">
         #{bookingPerson,jdbcType=BIGINT},
@@ -192,6 +281,9 @@
       <if test="protocolId != null">
         protocol_id = #{protocolId,jdbcType=BIGINT},
       </if>
+      <if test="flightId != null">
+        flight_id = #{flightId,jdbcType=BIGINT},
+      </if>
       <if test="bookingPerson != null">
         booking_person = #{bookingPerson,jdbcType=BIGINT},
       </if>
@@ -256,60 +348,51 @@
     where order_id = #{orderId,jdbcType=BIGINT} and airport_code=#{airportCode,jdbcType=VARCHAR}
   </update>
 
-  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from order_info
-    where order_id = #{orderId,jdbcType=BIGINT}
+  <select id="selectOrderInfoTotal" resultType="int">
+      SELECT count(order_id) from order_info
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from order_info
-    where order_id = #{orderId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.zhiweicloud.guest.model.OrderInfo">
-    insert into order_info (order_id, customer_id, protocol_id, 
-      booking_person, notice_person, booking_way, 
-      is_important, product_id, print_check, 
-      print_check_remark, consign, consign_remark, 
-      other_remark, order_status, order_type, 
-      agent_person, server_card_no, vip_card, 
-      cash, sit_no, server_complete, 
-      create_user, update_user)
-    values (#{orderId,jdbcType=BIGINT}, #{customerId,jdbcType=BIGINT}, #{protocolId,jdbcType=BIGINT}, 
-      #{bookingPerson,jdbcType=BIGINT}, #{noticePerson,jdbcType=VARCHAR}, #{bookingWay,jdbcType=SMALLINT}, 
-      #{isImportant,jdbcType=SMALLINT}, #{productId,jdbcType=BIGINT}, #{printCheck,jdbcType=SMALLINT}, 
-      #{printCheckRemark,jdbcType=VARCHAR}, #{consign,jdbcType=SMALLINT}, #{consignRemark,jdbcType=VARCHAR}, 
-      #{otherRemark,jdbcType=VARCHAR}, #{orderStatus,jdbcType=SMALLINT}, #{orderType,jdbcType=SMALLINT}, 
-      #{agentPerson,jdbcType=BIGINT}, #{serverCardNo,jdbcType=VARCHAR}, #{vipCard,jdbcType=VARCHAR}, 
-      #{cash,jdbcType=DECIMAL}, #{sitNo,jdbcType=VARCHAR}, #{serverComplete,jdbcType=SMALLINT}, 
-      #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT})
-  </insert>
+
+  <select id="selectOrderInfoList" resultMap="BaseResultMap">
+    select orderFlightClientPassengerService.* from
+(
+	select orderFlightClientPassenger.*,orderService.order_service_id,orderService.service_detail from
+	(
+		select orderFlightClient.*,p.passenger_id,p.name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
+		(
+			select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
+             o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,
+						 o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
+             f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
+						 f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
+             ic.name as customer_name
+			from order_info o
+			inner join flight f
+			on o.flight_id = f.flight_id
+			inner JOIN institution_client ic on ic.institution_client_id = o.customer_id
+		) as orderFlightClient
+		left join passenger p on orderFlightClient.order_id = p.order_id
+	)as orderFlightClientPassenger
+	left join order_service orderService
+	on orderService.order_id = orderFlightClientPassenger.order_id
+) as orderFlightClientPassengerService
+<!--where orderFlightClientPassengerService.airport_code = #{airportCode}
+    <if test="criteria.flightNo != null and !''.equals(criteria.flightNo)">
+      and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.flightNo},'%')
+    </if>
+    <if test="criteria.flightDate != null and !''.equals(criteria.flightDate)">
+      and orderFlightClientPassengerService.flight_date = #{criteria.flightDate}
+    </if>
+    <if test="criteria.passengerName != null and !''.equals(criteria.passengerName)">
+      and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.passengerName},'%')
+    </if>
+    <if test="criteria.passengerId != null and !''.equals(criteria.passengerId)">
+      and orderFlightClientPassengerService.passenger_id = #{criteria.passengerId}
+    </if>
+    <if test="criteria.passengerId != null and !''.equals(criteria.passengerId)">
+      and orderFlightClientPassengerService.passenger_id = #{criteria.passengerId}
+    </if>-->
 
 
-  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.OrderInfo">
-    update order_info
-    set customer_id = #{customerId,jdbcType=BIGINT},
-      protocol_id = #{protocolId,jdbcType=BIGINT},
-      booking_person = #{bookingPerson,jdbcType=BIGINT},
-      notice_person = #{noticePerson,jdbcType=VARCHAR},
-      booking_way = #{bookingWay,jdbcType=SMALLINT},
-      is_important = #{isImportant,jdbcType=SMALLINT},
-      product_id = #{productId,jdbcType=BIGINT},
-      print_check = #{printCheck,jdbcType=SMALLINT},
-      print_check_remark = #{printCheckRemark,jdbcType=VARCHAR},
-      consign = #{consign,jdbcType=SMALLINT},
-      consign_remark = #{consignRemark,jdbcType=VARCHAR},
-      other_remark = #{otherRemark,jdbcType=VARCHAR},
-      order_status = #{orderStatus,jdbcType=SMALLINT},
-      order_type = #{orderType,jdbcType=SMALLINT},
-      agent_person = #{agentPerson,jdbcType=BIGINT},
-      server_card_no = #{serverCardNo,jdbcType=VARCHAR},
-      vip_card = #{vipCard,jdbcType=VARCHAR},
-      cash = #{cash,jdbcType=DECIMAL},
-      sit_no = #{sitNo,jdbcType=VARCHAR},
-      server_complete = #{serverComplete,jdbcType=SMALLINT},
-      create_user = #{createUser,jdbcType=BIGINT},
-      update_user = #{updateUser,jdbcType=BIGINT}
-    where order_id = #{orderId,jdbcType=BIGINT}
-  </update>-->
+  </select>
+
 </mapper>

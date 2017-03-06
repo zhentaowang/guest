@@ -43,4 +43,6 @@ public interface FlightMapper{
     void updateByFlithIdAndAirportCodeSelective(Flight flight);
 
     void insertSelective(Flight flight);
+
+    int isFlightExist(Flight flight);
 }

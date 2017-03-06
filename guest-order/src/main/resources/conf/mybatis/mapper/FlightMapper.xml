@@ -108,25 +108,11 @@
     delete from flight
     where flight_id = #{flightId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.zhiweicloud.guest.model.Flight">
-    insert into flight (flight_id, order_id, flight_date, 
-      flight_no, flight_depcode, flight_arrcode, 
-      flight_dep, flight_arr, flight_dep_airport, 
-      flight_arr_airport, plan_no, flight_position, 
-      board_in_out, plan_take_off_time, plan_landing_time, 
-      is_in_or_out, boarding_port, is_near_or_far, 
-      server_time, create_user, update_user
-      )
-    values (#{flightId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{flightDate,jdbcType=DATE}, 
-      #{flightNo,jdbcType=VARCHAR}, #{flightDepcode,jdbcType=VARCHAR}, #{flightArrcode,jdbcType=VARCHAR}, 
-      #{flightDep,jdbcType=VARCHAR}, #{flightArr,jdbcType=VARCHAR}, #{flightDepAirport,jdbcType=VARCHAR}, 
-      #{flightArrAirport,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, #{flightPosition,jdbcType=VARCHAR}, 
-      #{boardInOut,jdbcType=SMALLINT}, #{planTakeOffTime,jdbcType=TIME}, #{planLandingTime,jdbcType=TIME}, 
-      #{isInOrOut,jdbcType=SMALLINT}, #{boardingPort,jdbcType=VARCHAR}, #{isNearOrFar,jdbcType=SMALLINT}, 
-      #{serverTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.Flight">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="flightId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into flight
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="flightId != null">
@@ -325,5 +311,12 @@
     </set>
     where flight_id = #{flightId,jdbcType=BIGINT} and airport_code=#{airportCode}
   </update>
+
+
+  <select id="isFlightExist" resultType="int">
+    select count(flight_id) from flight
+    where flight_date = #{flightDate} and flight_no = #{flightNo} and flight_depcode = #{flightDepcode}
+    and flight_arrcode = #{flightArrcode} and airport_code = #{airportCode} and is_deleted = 0
+  </select>
 
 </mapper>
