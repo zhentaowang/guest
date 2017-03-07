@@ -22,8 +22,8 @@
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
-    SELECT count(st.product_service_type_id) from product_service_type as st
-    left join (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    SELECT count(DISTINCT st.product_id) from product_service_type as st
+    right join (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as p on st.product_id = p.product_id
     where st.airport_code = #{airportCode,jdbcType=VARCHAR} and st.is_deleted = 0
   </select>
