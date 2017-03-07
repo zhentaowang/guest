@@ -82,13 +82,13 @@ public class OrderInfoController {
             @QueryParam(value = "identityCard") String identityCard,
             @QueryParam(value = "flightDate") String flightDate,
             @QueryParam(value = "flightNo") String flightNo,
-            @QueryParam(value = "queryOrderStatus") String queryOrderStatus,
+            @QueryParam(value = "queryOrderStatus") String queryOrderStatus,//订单状态:预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
             @QueryParam(value = "queryOrderBy") String queryOrderBy, //按照航班起飞时间或者降落时间排序：0：起飞顺序，1：起飞倒序，2：降落顺序，3：降落倒序
             @QueryParam(value = "queryIsImportant") String queryIsImportant, //是否重要订单：0：重要，1：不重要
             @QueryParam(value = "queryOrderType") String queryOrderType, //订单类型：0：预约订单，1：服务订单
             @QueryParam(value = "queryBookingOneDayBefore") String queryBookingOneDayBefore, //提前一天预约
             @QueryParam(value = "queryProductId") String queryProductId, //提前一天预约
-
+            @QueryParam(value = "queryIsInOrOut") String queryIsInOrOut, //出港：0，进港1
             @Context final HttpHeaders headers) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
