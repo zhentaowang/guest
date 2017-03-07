@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zhiweicloud.guest.mapper.test.ProductServiceTypeMapper">
+<mapper namespace="com.zhiweicloud.guest.mapper.ProductServiceTypeMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.ProductServiceType">
     <id column="product_service_type_id" jdbcType="BIGINT" property="productServiceTypeId" />
     <result column="product_id" jdbcType="BIGINT" property="productId" />
@@ -13,13 +13,19 @@
   </sql>
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    SELECT product_id, service_type_id, product_name, product_no from product_service_type where airport_code = #{criteria.airportCode,jdbcType=VARCHAR}
-    order by product_service_type_id
+    SELECT st.product_id, st.service_type_id, p.product_name, p.product_no from product_service_type as st
+    left join (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as p on st.product_id = p.product_id
+    where st.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and st.is_deleted = 0
+    order by st.product_service_type_id
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">
-    SELECT count(product_service_type_id) from product_service_type where airport_code = #{airportCode,jdbcType=VARCHAR}
+    SELECT count(st.product_service_type_id) from product_service_type as st
+    left join (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as p on st.product_id = p.product_id
+    where st.airport_code = #{airportCode,jdbcType=VARCHAR} and st.is_deleted = 0
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
