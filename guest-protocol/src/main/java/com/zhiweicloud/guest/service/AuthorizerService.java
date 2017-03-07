@@ -95,11 +95,12 @@ public class AuthorizerService {
      * @param name
      * @return
      */
-    public List<Dropdownlist> getAuthorizerDropdownList(String airportCode, String name, Long protocolId){
+    public List<Dropdownlist> getAuthorizerDropdownList(String airportCode, String name, Long protocolId, Long authorizerId){
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("airportCode",airportCode);
         map.put("name",name);
         map.put("protocolId",protocolId);
+        map.put("authorizerId",authorizerId);
         return authorizerMapper.getAuthorizerDropdownList(map);
     }
 
