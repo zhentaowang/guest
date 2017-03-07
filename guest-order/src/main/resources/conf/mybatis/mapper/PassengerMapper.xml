@@ -133,13 +133,23 @@
   </insert>
 
 
-  <select id="getIdentityCardDropdownList" resultType="String" parameterType="map">
-    select DISTINCT identity_card from passenger
-    WHERE is_deleted = 0 AND airport_code = #{airportCode}
-    <if test="identityCard != null and !identityCard.trim().equals('')" >
-      and identity_card like concat('%',#{identityCard},'%')
-    </if>
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="passenger_id" jdbcType="BIGINT" property="id" />
+    <result column="identity_card" jdbcType="VARCHAR" property="value" />
+  </resultMap>
 
+  <select id="getIdentityCardDropdownList" resultMap="DropdownlistMap">
+    <![CDATA[
+    SELECT
+      passenger_id,identity_card
+    FROM passenger
+    WHERE is_deleted = 0 AND airport_code = #{airportCode} AND  identity_card <>''
+    AND passenger_id IN(SELECT MAX(passenger_id) FROM passenger GROUP BY identity_card)
+    <if test="identityCard != null and !identityCard.trim().equals('')" >
+      AND identity_card LIKE concat('%',#{identityCard},'%')
+    </if>
+    ORDER BY passenger_id DESC
+    ]]>
   </select>
 
 
@@ -183,9 +193,6 @@
       <if test="expireTime != null">
         expire_time = #{expireTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="isDeleted != null">
-        is_deleted = #{isDeleted,jdbcType=SMALLINT},
-      </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=BIGINT},
       </if>
@@ -195,12 +202,6 @@
     </set>
     where passenger_id = #{passengerId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
-
-
- <update id="markAsDeleted">
-    update passenger set is_deleted = 1
-    where order_id = #{orderId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
- </update>
 
 
   <resultMap id="PassengerResultMap" type="com.zhiweicloud.guest.model.Passenger">
@@ -219,22 +220,23 @@
   <select id="getPassengerlistByFlightId" resultMap="PassengerResultMap">
     SELECT
       p.name,sd.order_id,sd.serviceDetailId,o.order_status,o.create_time ,o.order_id,o.flight_id,se.room_name
-    FROM wyun_guest.passenger p
+    FROM  passenger p
     LEFT JOIN
       (SELECT service_detail->>"$.serviceDetailId" AS serviceDetailId,service_detail->>"$.serviceName",order_id
-        FROM wyun_guest.order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
+        FROM order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
     ON p.order_id = sd.order_id
     LEFT JOIN
 	  (SELECT flight_id,order_status,create_time,order_id
-	    FROM wyun_guest.order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
+	    FROM order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
 	ON p.order_id = o.order_id
-    LEFT JOIN wyun_guest.protocol_product_service pps ON pps.protocol_product_service_id = sd.serviceDetailId
+    LEFT JOIN protocol_product_service pps ON pps.protocol_product_service_id = sd.serviceDetailId
     LEFT JOIN
       (SELECT serv_id, `name` AS room_name
-        FROM wyun_guest.v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
+        FROM v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
     ON pps.service_id = se.serv_id
 
     WHERE o.flight_id = #{flightId}
 
   </select>
+
 </mapper>

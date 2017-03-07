@@ -25,6 +25,7 @@
 package com.zhiweicloud.guest.mapper;
 
 
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Passenger;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,10 +37,11 @@ import java.util.List;
 public interface PassengerMapper{
 
     /**
-     * 订单列表，身份证号模糊匹配
+     * 订单列表，身份证号模糊匹配下拉框
+     * 返回不重复的身份证号码
      * @return
      */
-    List<String> getIdentityCardDropdownList(@Param("identityCard") String identityCard, @Param("airportCode") String airportCode);
+    List<Dropdownlist> getIdentityCardDropdownList(@Param("identityCard") String identityCard, @Param("airportCode") String airportCode);
 
     void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
 

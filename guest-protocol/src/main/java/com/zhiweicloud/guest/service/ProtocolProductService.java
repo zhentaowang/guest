@@ -5,6 +5,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.ProtocolProductMapper;
+import com.zhiweicloud.guest.mapper.ProtocolProductServiceMapper;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -20,11 +21,13 @@ import java.util.*;
 public class ProtocolProductService {
 
     private final ProtocolProductMapper protocolProductMapper;
+    private final ProtocolProductServiceMapper protocolProductServiceMapper;
 
 
     @Autowired
-    public ProtocolProductService(ProtocolProductMapper protocolProductMapper) {
+    public ProtocolProductService(ProtocolProductMapper protocolProductMapper,ProtocolProductServiceMapper protocolProductServiceMapper) {
         this.protocolProductMapper = protocolProductMapper;
+        this.protocolProductServiceMapper = protocolProductServiceMapper;
     }
 
     /**
@@ -63,6 +66,21 @@ public class ProtocolProductService {
             protocolProduct.setUpdateTime(new Date());
             protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             protocolProductMapper.insertBySelective(protocolProduct);
+        }
+    }
+
+    /**
+     * 协议产品服务添加与修改
+     * @param protocolProductServ
+     */
+    public void saveOrUpdateProtocolProductServ(ProtocolProductServ protocolProductServ) {
+        if (protocolProductServ.getProtocolProductServiceId() != null) {
+            protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductServ);
+        } else {
+            protocolProductServ.setCreateTime(new Date());
+            protocolProductServ.setUpdateTime(new Date());
+            protocolProductServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            protocolProductServiceMapper.insertBySelective(protocolProductServ);
         }
     }
 

@@ -235,6 +235,57 @@ public class OrderInfoController {
     }
 
 
+    /**
+     * 订单管理 - 修改订单服务状态
+     * @return
+     */
+    @POST
+    @Path("updateServerComplete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "修改订单服务状态", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    public String updateServerComplete(
+            @Context final HttpHeaders headers,
+            @QueryParam("flightId") Long flightId,
+            @QueryParam("serverComplete") Short serverComplete) {
+        try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
 
+            orderInfoService.updateServerComplete(flightId,serverComplete, userId,airportCode);
+            return JSON.toJSONString(LXResult.success());
+        } catch (Exception e) {
+            logger.error("updateServerComplete error", e);
+            return JSON.toJSONString(LXResult.error());
+        }
+    }
+
+    /**
+     * 根据订单状态/详细服务id 获取订单数量
+     * @return
+     */
+    @GET
+    @Path("getOrderCountByServiceDetail")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "订单管理 - 根据id查询订单 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
+    public String getOrderCountByServiceDetail(
+            @QueryParam("orderStatus") Short orderStatus,
+            @QueryParam("serviceDetailId") Long serviceDetailId,
+            @Context final HttpHeaders headers) {
+        LZResult<Integer> result = new LZResult();
+        try {
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            int orderCount = orderInfoService.getOrderCountByServiceDetail(orderStatus,serviceDetailId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(orderCount);
+        }catch (Exception e){
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(result);
+    }
 
 }

@@ -17,6 +17,7 @@ public interface ServMapper {
     List<Serv> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);
     List<Serv> getServListByTypeId(BasePagination<Map<String, Object>> queryCondition);
+    List<Serv> getServListByCondition(Map<String, Object> map);
     int getServListCount(Map<String, Object> map);
     Long selectByName(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Serv serv);

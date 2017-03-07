@@ -77,6 +77,40 @@ public class ProtocolProductController {
     }
 
     /**
+     * 协议产品服务管理 - 新增or更新
+     * 需要判断name是否重复
+     * @param params
+     * @return
+     */
+    @POST
+    @Path("protocol-product-service-save-or-update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议产品服务管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
+    public LXResult protocolProductServiceSave(@ApiParam(value = "protocolProductService", required = true) @RequestBody String params,
+                                        @Context final HttpHeaders headers) {
+        try {
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            JSONArray param = JSON.parseObject(params).getJSONArray("data");
+            for(int i = 0; i < param.size(); i++){
+                JSONObject param00 = JSON.parseObject(param.get(i).toString());
+                ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(param00,ProtocolProductServ.class);
+                protocolProductServ.setAirportCode(airportCode);
+                if(protocolProductServ.getProtocolProductServiceId() == null){
+                    if (protocolProductServ == null || protocolProductServ.getProtocolProductId() == null || protocolProductServ.getServiceTypeAllocationId() == null) {
+                        return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                    }
+                }
+                protocolProductService.saveOrUpdateProtocolProductServ(protocolProductServ);
+            }
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+        }
+    }
+
+    /**
      * 协议产品管理 - 根据id查询
      *
      * @param protocolProductId

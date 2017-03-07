@@ -25,6 +25,10 @@
   <result column="no" jdbcType="VARCHAR" property="no" />
   <result column="name" jdbcType="VARCHAR" property="name" />
   <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
+    <result column="pricing_rule" jdbcType="OTHER" property="pricingRule" />
+    <result column="is_pricing" jdbcType="BIT" property="isPricing" />
+    <result column="is_prioritized" jdbcType="BIT" property="isPrioritized" />
+    <result column="is_availabled" jdbcType="BIT" property="isAvailabled" />
   <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
   <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -91,6 +95,17 @@
     where s.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and s.service_type_allocation_id = #{criteria.typeId,jdbcType=BIGINT} and s.is_deleted = 0
     order by s.serv_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getServListByCondition" parameterType="map" resultMap="BaseResultMap">
+    SELECT s.serv_id, s.airport_code, s.service_type_allocation_id, s.no, s.name
+    FROM v_serv as s left join
+    (select service_type_id from product_service_type
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and product_id = #{productId,jdbcType=BIGINT}
+    and is_deleted = 0) as p
+    on  s.service_type_allocation_id = p.service_type_id
+    where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.is_deleted = 0
+    order by s.serv_id
   </select>
 
   <select id="getServListCount" parameterType="map" resultType="int">

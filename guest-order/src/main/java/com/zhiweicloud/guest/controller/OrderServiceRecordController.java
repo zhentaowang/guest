@@ -3,12 +3,10 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
-import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.OrderInfo;
-import com.zhiweicloud.guest.model.OrderService;
 import com.zhiweicloud.guest.model.OrderServiceRecord;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import com.zhiweicloud.guest.service.OrderServiceRecordService;
@@ -16,7 +14,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,7 +24,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,10 +51,8 @@ public class OrderServiceRecordController {
             @Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = 1L;
-//            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode = "LJG";
-//            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             OrderServiceRecord orderParam = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
                 orderParam = params.getData().get(0);
@@ -126,7 +120,7 @@ public class OrderServiceRecordController {
                 }
 
                 //修改订单附加服务部分信息
-                orderInfoService.saveOrUpdate(tempOrder,null,null,null,null);
+                orderInfoService.saveOrUpdate(tempOrder,null,null,userId,airportCode);
 
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
@@ -142,6 +136,12 @@ public class OrderServiceRecordController {
     }
 
 
+    /**
+     * 根据订单id 获取附加服务动态
+     * @param request
+     * @param orderId
+     * @return
+     */
     @GET
     @Path(value = "getOrderServiceRecord")
     @Produces("application/json;charset=utf8")
@@ -149,8 +149,7 @@ public class OrderServiceRecordController {
     public String getOrderServiceRecord(ContainerRequestContext request,
                        @QueryParam(value="orderId") Long orderId) {
         LZResult<List<OrderServiceRecord>> result = new LZResult<>();
-        String airportCode = "LJG";
-//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
         if (orderId == null || StringUtils.isEmpty(airportCode)) {
             result.setMsg(LZStatus.DATA_EMPTY.display());
             result.setStatus(LZStatus.DATA_EMPTY.value());
