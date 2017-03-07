@@ -8,6 +8,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.model.ProductServiceType;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.model.ServiceDetail;
 import com.zhiweicloud.guest.service.ServService;
@@ -202,7 +203,7 @@ public class ServController {
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "productId", value = "产品id", dataType = "Long", defaultValue = "39", required = true, paramType = "query")})
-    public String list( @QueryParam(value = "page") Integer page,
+    public String getServiceList( @QueryParam(value = "page") Integer page,
                         @QueryParam(value = "rows") Integer rows,
                         @QueryParam(value = "typeId") Long typeId,
                         @QueryParam(value = "productId") Long productId,
@@ -213,6 +214,24 @@ public class ServController {
         param.put("typeId", typeId);
         param.put("productId", productId);
         LZResult<PaginationResult<JSONObject>> result  = servService.getServiceListByTypeId(param,page,rows);
+        return JSON.toJSONString(result);
+    }
+
+    @GET
+    @Path("product-and-service-list")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "产品列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")})
+    public String getProductAndServiceList( @QueryParam(value = "page") Integer page,
+                        @QueryParam(value = "rows") Integer rows,
+                        @Context final HttpHeaders headers) {
+        Map<String,Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode",airportCode);
+        LZResult<PaginationResult<ProductServiceType>> result  = servService.getProductAndServiceList(param,page,rows);
         return JSON.toJSONString(result);
     }
 

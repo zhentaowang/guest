@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
+import com.zhiweicloud.guest.mapper.ProductServiceTypeMapper;
 import com.zhiweicloud.guest.mapper.ServMapper;
+import com.zhiweicloud.guest.model.ProductServiceType;
 import com.zhiweicloud.guest.model.ProtocolProductDetail;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -24,6 +26,9 @@ public class ServService {
 
     @Autowired
     private ServMapper servMapper;
+
+    @Autowired
+    private ProductServiceTypeMapper productServiceTypeMapper;
 
     /**
      * 分页获取服务列表
@@ -53,6 +58,32 @@ public class ServService {
         }
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, servJson);
         LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
+        return result;
+    }
+
+    /**
+     * 分页获取产品列表
+     * @param param
+     * @param page
+     * @param rows
+     * @return PaginationResult<ProductServiceType>
+     */
+    public LZResult<PaginationResult<ProductServiceType>> getProductAndServiceList(Map<String,Object> param, Integer page, Integer rows) {
+
+        int count = productServiceTypeMapper.getListCount(param);
+
+        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        List<ProductServiceType> productList = productServiceTypeMapper.getListByConidition(queryCondition);
+        for(int i = 0; i < productList.size(); i++){
+            Map<String,Object> params = new HashMap<>();
+            params.put("airportCode",param.get("airportCode"));
+            params.put("productId",productList.get(i).getProductId());
+            params.put("typeId",productList.get(i).getServiceTypeId());
+            List<Serv> servList = servMapper.getServListByCondition(params);
+            productList.get(i).setServiceList(servList);
+        }
+        PaginationResult<ProductServiceType> eqr = new PaginationResult<>(count, productList);
+        LZResult<PaginationResult<ProductServiceType>> result = new LZResult<>(eqr);
         return result;
     }
 
