@@ -149,5 +149,34 @@ public class AuthorizerController {
         }
     }
 
+    /**
+     * 协议预约人模糊匹配下拉框
+     * @return
+     */
+    @GET
+    @Path(value = "getAuthorizerDropdownList")
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value="订单中用到协议预约人下拉框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉",tags={"common:公共接口"})
+    public String getAuthorizerDropdownList(
+            ContainerRequestContext request,
+            @QueryParam(value = "protocolId") Long protocolId,
+            @QueryParam(value = "name") String name) {
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+
+        try{
+            List<Dropdownlist> list = authorizerService.getAuthorizerDropdownList(airportCode, name, protocolId);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch(Exception e){
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+    }
+
 }
 
