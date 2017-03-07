@@ -126,7 +126,7 @@ public class OrderServiceRecordController {
                 }
 
                 //修改订单附加服务部分信息
-                orderInfoService.saveOrUpdate(tempOrder);
+                orderInfoService.saveOrUpdate(tempOrder,null,null,null,null);
 
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());

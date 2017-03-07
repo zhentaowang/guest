@@ -347,8 +347,23 @@
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
-    <if test="criteria.queryPassengerId != null and !''.equals(criteria.queryPassengerId)">
-      and orderFlightClientPassengerService.passenger_id = #{criteria.queryPassengerId}
+    <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
+      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+    </if>
+    <if test="criteria.queryBookingIds != null and !''.equals(criteria.queryBookingIds)">
+      and orderFlightClientPassengerService.booking_person in ( #{criteria.queryBookingIds})
+    </if>
+    <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
+      and orderFlightClientPassengerService.protocol_id in ( #{criteria.queryProtocolIds})
+    </if>
+    <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+      and orderFlightClientPassengerService.order_status in ( #{criteria.queryOrderStatus})
+    </if>
+    <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
+      and orderFlightClientPassengerService.is_important in ( #{criteria.queryIsImportant})
+    </if>
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)">
+      and orderFlightClientPassengerService.order_type in ( #{criteria.queryOrderType})
     </if>
   </select>
 
@@ -387,8 +402,23 @@
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
-    <if test="criteria.queryPassengerId != null and !''.equals(criteria.queryPassengerId)">
-      and orderFlightClientPassengerService.passenger_id = #{criteria.queryPassengerId}
+    <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
+      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+    </if>
+    <if test="criteria.queryBookingIds != null and !''.equals(criteria.queryBookingIds)">
+      and orderFlightClientPassengerService.booking_person in ( #{criteria.queryBookingIds})
+    </if>
+    <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
+      and orderFlightClientPassengerService.protocol_id in ( #{criteria.queryProtocolIds})
+    </if>
+    <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+      and orderFlightClientPassengerService.order_status in ( #{criteria.queryOrderStatus})
+    </if>
+    <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
+      and orderFlightClientPassengerService.is_important in ( #{criteria.queryIsImportant})
+    </if>
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)">
+      and orderFlightClientPassengerService.order_type in ( #{criteria.queryOrderType})
     </if>
   </select>
 
