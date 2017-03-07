@@ -202,12 +202,15 @@ public class ProtocolService {
             protocol.setAuthorizerList(authorizerList);
         }
         List<ProtocolProduct> protocolProductList = protocolProductMapper.selectByProtocolId(param);
-        for(int i = 0; i < protocolProductList.size(); i++){
-            ProtocolProduct protocolProduct = protocolProductList.get(i);
-            param.put("protocolProductId",protocolProduct.getProtocolProductId());
-            List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
-            protocolProduct.setProtocolProductServList(protocolProductServiceList);
+        if(protocolProductList != null){
+            for(int i = 0; i < protocolProductList.size(); i++){
+                ProtocolProduct protocolProduct = protocolProductList.get(i);
+                param.put("protocolProductId",protocolProduct.getProtocolProductId());
+                List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
+                protocolProduct.setProtocolProductServList(protocolProductServiceList);
+            }
         }
+
         if(protocolProductList.size() != 0){
             protocol.setProtocolProductList(protocolProductList);
         }
