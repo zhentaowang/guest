@@ -37,7 +37,7 @@
 
   <select id="selectByProductId"  parameterType="java.util.Map"  resultType="java.lang.Long">
     SELECT count(protocol_product_id) from protocol_product where airport_code = #{airportCode,jdbcType=VARCHAR}
-      and product_id = #{productId,jdbcType=BIGINT} and protocol_id = #{protocolId,jdbcType=BIGINT}
+      and product_id = #{productId,jdbcType=BIGINT} and protocol_id = #{protocolId,jdbcType=BIGINT} and is_deleted = 0
   </select>
 
   <select id="selectByProtocolId" parameterType="map" resultMap="BaseResultMap">
