@@ -120,21 +120,14 @@ public class OrderInfo extends BaseEntity{
     private String customerName;
 
 
-    @ApiModelProperty(value = "乘客id", name = "queryPassengerId")
+    @ApiModelProperty(value = "协议名称", name = "protocolName")
     @Transient
-    private String queryPassengerId;
+    private String protocolName;
 
-    @ApiModelProperty(value = "乘客姓名", name = "queryPassengerName")
-    @Transient
-    private String queryPassengerName;
 
-    @ApiModelProperty(value = "航班日期", name = "queryFlightDate")
+    @ApiModelProperty(value = "产品名称", name = "productName")
     @Transient
-    private String queryFlightDate;
-
-    @ApiModelProperty(value = "航班号", name = "queryFlightNo")
-    @Transient
-    private String queryFlightNo;
+    private String productName;
 
 
     /**
@@ -535,5 +528,21 @@ public class OrderInfo extends BaseEntity{
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

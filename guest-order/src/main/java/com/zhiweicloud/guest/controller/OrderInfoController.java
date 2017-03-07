@@ -80,15 +80,28 @@ public class OrderInfoController {
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "customerInfo") String customerInfo, //客户信息：客户名称，协议名称，预约号，预约人
             @QueryParam(value = "passengerName") String passengerName,
-            @QueryParam(value = "passengerId") String passengerId,
+            @QueryParam(value = "identityCard") String identityCard,
             @QueryParam(value = "flightDate") String flightDate,
             @QueryParam(value = "flightNo") String flightNo,
+            @QueryParam(value = "queryOrderStatus") String queryOrderStatus,
+            @QueryParam(value = "queryOrderBy") String queryOrderBy, //按照航班起飞时间或者降落时间排序：0：起飞顺序，1：起飞倒序，2：降落顺序，3：降落倒序
+            @QueryParam(value = "queryIsImportant") String queryIsImportant, //是否重要订单：0：重要，1：不重要
+            @QueryParam(value = "queryOrderType") String queryOrderType, //订单类型：0：预约订单，1：服务订单
             @Context final HttpHeaders headers) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-
-            LZResult<PaginationResult<Map>> result = orderInfoService.getOrderInfoList(page, rows,customerInfo,passengerId,passengerName,flightDate,flightNo,userId,airportCode);
+            OrderInfoQuery orderInfoQuery = new OrderInfoQuery();
+            orderInfoQuery.setQueryCustomerInfo(customerInfo);
+            orderInfoQuery.setQueryPassengerName(passengerName);
+            orderInfoQuery.setQueryIdentityCard(identityCard);
+            orderInfoQuery.setQueryFlightDate(flightDate);
+            orderInfoQuery.setQueryFlightNo(flightNo);
+            orderInfoQuery.setQueryOrderStatus(queryOrderStatus);
+            orderInfoQuery.setQueryIsImportant(queryIsImportant);
+            orderInfoQuery.setQueryOrderType(queryOrderType);
+            orderInfoQuery.setAirportCode(airportCode);
+            LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows,orderInfoQuery,userId);
             return JSON.toJSONString(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -113,7 +126,6 @@ public class OrderInfoController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,@Context final HttpHeaders headers) {
-    //public String saveOrUpdate(@RequestBody RequsetParams<OrderInfo> params) {
         LZResult<String> result = new LZResult<>();
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
@@ -204,7 +216,8 @@ public class OrderInfoController {
         LZResult<OrderInfo> result = new LZResult();
         try {
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-            OrderInfo orderInfo = orderInfoService.getById(orderId,airportCode);
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            OrderInfo orderInfo = orderInfoService.getById(orderId,userId,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderInfo);

@@ -53,7 +53,7 @@ public interface OrderInfoMapper{
 
     int selectOrderInfoTotal(BasePagination<OrderInfoQuery> orderInfoQuery);
 
-    List<Map> selectOrderInfoList(BasePagination<OrderInfoQuery> queryCondition);
+    List<OrderInfo> selectOrderInfoList(BasePagination<OrderInfoQuery> queryCondition);
 
     OrderInfo getDetailById(@Param("orderId") Long orderId, @Param("airportCode") String airportCode);
 
