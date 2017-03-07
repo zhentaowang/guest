@@ -52,7 +52,7 @@ public class OrderInfoQuery extends BaseEntity{
     @Transient
     private String queryOrderBy;
 
-    @ApiModelProperty(value = "订单状态", name = "queryOrderStatus")
+    @ApiModelProperty(value = "订单状态:预约草稿，已预约，预约取消，已使用，服务草稿，服务取消", name = "queryOrderStatus")
     @Transient
     private String queryOrderStatus;
 
@@ -68,6 +68,12 @@ public class OrderInfoQuery extends BaseEntity{
     @ApiModelProperty(value = "订单类型：0：预约订单，1：服务订单", name = "queryOrderType")
     @Transient
     private String queryOrderType;
+
+    @ApiModelProperty(value = "出港：0，进港1", name = "queryIsInOrOut")
+    @Transient
+    private String queryIsInOrOut;
+
+
 
 
     public String getQueryPassengerName() {
@@ -172,5 +178,13 @@ public class OrderInfoQuery extends BaseEntity{
 
     public void setQueryIdentityCard(String queryIdentityCard) {
         this.queryIdentityCard = queryIdentityCard;
+    }
+
+    public String getQueryIsInOrOut() {
+        return queryIsInOrOut;
+    }
+
+    public void setQueryIsInOrOut(String queryIsInOrOut) {
+        this.queryIsInOrOut = queryIsInOrOut;
     }
 }

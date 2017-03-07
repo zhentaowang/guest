@@ -347,6 +347,9 @@
     <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
       and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
     </if>
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
+      and orderFlightClientPassengerService.is_in_or_out = #{criteria.queryIsInOrOut}
+    </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
@@ -422,6 +425,9 @@
     </if>
     <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
       and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
+    </if>
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
+      and orderFlightClientPassengerService.is_in_or_out = #{criteria.queryIsInOrOut}
     </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
