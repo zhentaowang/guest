@@ -13,11 +13,11 @@
   </sql>
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    SELECT st.product_id, st.service_type_id, p.product_name, p.product_no from product_service_type as st
-    left join (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    SELECT st.product_id, p.product_name, p.product_no from product_service_type as st
+    right join (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as p on st.product_id = p.product_id
     where st.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and st.is_deleted = 0
-    order by st.product_service_type_id
+    group by st.product_id
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 

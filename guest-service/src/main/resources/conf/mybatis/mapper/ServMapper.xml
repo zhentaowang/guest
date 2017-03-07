@@ -102,9 +102,9 @@
     FROM v_serv as s left join
     (select service_type_id from product_service_type
     where airport_code = #{airportCode,jdbcType=VARCHAR} and product_id = #{productId,jdbcType=BIGINT}
-    and is_deleted = 0 and service_type_id = #{typeId,jdbcType=BIGINT}) as p
+    and is_deleted = 0) as p
     on  s.service_type_allocation_id = p.service_type_id
-    where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.service_type_allocation_id = #{typeId,jdbcType=BIGINT} and s.is_deleted = 0
+    where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.is_deleted = 0
     order by s.serv_id
   </select>
 
