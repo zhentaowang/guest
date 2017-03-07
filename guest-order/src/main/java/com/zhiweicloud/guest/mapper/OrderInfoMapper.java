@@ -31,7 +31,6 @@ import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -57,6 +56,8 @@ public interface OrderInfoMapper{
 
     OrderInfo getDetailById(@Param("orderId") Long orderId, @Param("airportCode") String airportCode);
 
+    void insertIntoOrderStatusRecord(OrderInfo orderInfo);
+
     /**
      * 根据flight_id 修改订单服务状态
      * @param flightId
@@ -74,4 +75,5 @@ public interface OrderInfoMapper{
      * @return
      */
     int getOrderCountByServiceDetail(@Param("orderStatus") Short orderStatus,@Param("serviceDetailId") Long serviceDetailId,@Param("airportCode")String airportCode);
+
 }
