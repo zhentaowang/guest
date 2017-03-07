@@ -328,4 +328,15 @@ public class OrderInfoService {
     public void updateServerComplete(Long flightId,Short serverComplete, Long updateUser, String airportCode) throws Exception{
         orderInfoMapper.updateServerComplete(flightId,serverComplete,updateUser,airportCode);
     }
+
+    /**
+     * 根据详细服务id和服务状态获取订单数
+     * @param orderStatus
+     * @param serviceDetailId
+     * @param airportCode
+     * @return
+     */
+    public int getOrderCountByServiceDetail(Short orderStatus, Long serviceDetailId, String airportCode){
+       return orderInfoMapper.getOrderCountByServiceDetail(orderStatus,serviceDetailId,airportCode);
+    }
 }

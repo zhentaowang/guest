@@ -205,7 +205,6 @@
 
 
   <resultMap id="PassengerResultMap" type="com.zhiweicloud.guest.model.Passenger">
-    <!--<id column="passenger_id" jdbcType="BIGINT" property="passengerId" />-->
     <id column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="orderStatus" jdbcType="VARCHAR" property="order_status" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
@@ -221,67 +220,23 @@
   <select id="getPassengerlistByFlightId" resultMap="PassengerResultMap">
     SELECT
       p.name,sd.order_id,sd.serviceDetailId,o.order_status,o.create_time ,o.order_id,o.flight_id,se.room_name
-    FROM wyun_guest.passenger p
+    FROM  passenger p
     LEFT JOIN
       (SELECT service_detail->>"$.serviceDetailId" AS serviceDetailId,service_detail->>"$.serviceName",order_id
-        FROM wyun_guest.order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
+        FROM order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
     ON p.order_id = sd.order_id
     LEFT JOIN
 	  (SELECT flight_id,order_status,create_time,order_id
-	    FROM wyun_guest.order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
+	    FROM order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
 	ON p.order_id = o.order_id
-    LEFT JOIN wyun_guest.protocol_product_service pps ON pps.protocol_product_service_id = sd.serviceDetailId
+    LEFT JOIN protocol_product_service pps ON pps.protocol_product_service_id = sd.serviceDetailId
     LEFT JOIN
       (SELECT serv_id, `name` AS room_name
-        FROM wyun_guest.v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
+        FROM v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
     ON pps.service_id = se.serv_id
 
     WHERE o.flight_id = #{flightId}
 
   </select>
 
-  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from passenger
-    where passenger_id = #{passengerId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from passenger
-    where passenger_id = #{passengerId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.zhiweicloud.guest.model.Passenger">
-    insert into passenger (passenger_id, order_id, name,
-      phone, identity_card, work_unit,
-      vip_card, sit_no, cabin_no,
-      ticket_no, card_no, card_type,
-      expire_time, create_user, update_user
-      )
-    values (#{passengerId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
-      #{phone,jdbcType=BIGINT}, #{identityCard,jdbcType=VARCHAR}, #{workUnit,jdbcType=VARCHAR},
-      #{vipCard,jdbcType=VARCHAR}, #{sitNo,jdbcType=VARCHAR}, #{cabinNo,jdbcType=VARCHAR},
-      #{ticketNo,jdbcType=VARCHAR}, #{cardNo,jdbcType=VARCHAR}, #{cardType,jdbcType=SMALLINT},
-      #{expireTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}
-      )
-  </insert>
-
-
-  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Passenger">
-    update passenger
-    set order_id = #{orderId,jdbcType=BIGINT},
-      name = #{name,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=BIGINT},
-      identity_card = #{identityCard,jdbcType=VARCHAR},
-      work_unit = #{workUnit,jdbcType=VARCHAR},
-      vip_card = #{vipCard,jdbcType=VARCHAR},
-      sit_no = #{sitNo,jdbcType=VARCHAR},
-      cabin_no = #{cabinNo,jdbcType=VARCHAR},
-      ticket_no = #{ticketNo,jdbcType=VARCHAR},
-      card_no = #{cardNo,jdbcType=VARCHAR},
-      card_type = #{cardType,jdbcType=SMALLINT},
-      expire_time = #{expireTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=BIGINT},
-      update_user = #{updateUser,jdbcType=BIGINT}
-    where passenger_id = #{passengerId,jdbcType=BIGINT}
-  </update>-->
 </mapper>

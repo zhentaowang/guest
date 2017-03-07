@@ -51,9 +51,7 @@ public class OrderServiceRecordController {
             @Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
         try {
-//            Long userId = 1L;
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-//            String airportCode = "LJG";
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             OrderServiceRecord orderParam = null;
             if (!CollectionUtils.isEmpty(params.getData())) {

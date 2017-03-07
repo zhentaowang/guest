@@ -36,7 +36,6 @@ import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -254,6 +252,34 @@ public class OrderInfoController {
             logger.error("updateServerComplete error", e);
             return JSON.toJSONString(LXResult.error());
         }
+    }
+
+    /**
+     * 根据订单状态/详细服务id 获取订单数量
+     * @return
+     */
+    @GET
+    @Path("getOrderCountByServiceDetail")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "订单管理 - 根据id查询订单 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
+    public String getOrderCountByServiceDetail(
+            @QueryParam("orderStatus") Short orderStatus,
+            @QueryParam("serviceDetailId") Long serviceDetailId,
+            @Context final HttpHeaders headers) {
+        LZResult<Integer> result = new LZResult();
+        try {
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            int orderCount = orderInfoService.getOrderCountByServiceDetail(orderStatus,serviceDetailId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(orderCount);
+        }catch (Exception e){
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(result);
     }
 
 }

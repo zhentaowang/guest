@@ -65,4 +65,13 @@ public interface OrderInfoMapper{
      */
     int updateServerComplete(@Param("flightId") Long flightId, @Param("serverComplete") Short serverComplete,
                              @Param("updateUser") Long updateUser, @Param("airportCode") String airportCode);
+
+    /**
+     * 根据详细服务id和服务状态获取订单数
+     * @param orderStatus
+     * @param serviceDetailId
+     * @param airportCode
+     * @return
+     */
+    int getOrderCountByServiceDetail(@Param("orderStatus") Short orderStatus,@Param("serviceDetailId") Long serviceDetailId,@Param("airportCode")String airportCode);
 }
