@@ -15,6 +15,7 @@ import com.zhiweicloud.guest.mapper.PassengerMapper;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -248,5 +249,15 @@ public class OrderInfoService {
     public OrderInfo getById(Long orderId, String airportCode) throws Exception{
         OrderInfo map = orderInfoMapper.getDetailById(orderId, airportCode);
         return map;
+    }
+
+    /**
+     * 根据flight_id 修改订单服务状态
+     * @param flightId
+     * @param airportCode
+     * @return
+     */
+    public void updateServerComplete(Long flightId,Short serverComplete, Long updateUser, String airportCode) throws Exception{
+        orderInfoMapper.updateServerComplete(flightId,serverComplete,updateUser,airportCode);
     }
 }

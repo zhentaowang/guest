@@ -55,10 +55,10 @@ public class OrderServiceRecordController {
             @Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = 1L;
-//            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode = "LJG";
-//            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+//            Long userId = 1L;
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+//            String airportCode = "LJG";
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             OrderServiceRecord orderParam = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
                 orderParam = params.getData().get(0);
@@ -126,7 +126,7 @@ public class OrderServiceRecordController {
                 }
 
                 //修改订单附加服务部分信息
-                orderInfoService.saveOrUpdate(tempOrder);
+                orderInfoService.saveOrUpdate(tempOrder,null,null,userId,airportCode);
 
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
@@ -142,6 +142,12 @@ public class OrderServiceRecordController {
     }
 
 
+    /**
+     * 根据订单id 获取附加服务动态
+     * @param request
+     * @param orderId
+     * @return
+     */
     @GET
     @Path(value = "getOrderServiceRecord")
     @Produces("application/json;charset=utf8")
@@ -149,8 +155,7 @@ public class OrderServiceRecordController {
     public String getOrderServiceRecord(ContainerRequestContext request,
                        @QueryParam(value="orderId") Long orderId) {
         LZResult<List<OrderServiceRecord>> result = new LZResult<>();
-        String airportCode = "LJG";
-//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
         if (orderId == null || StringUtils.isEmpty(airportCode)) {
             result.setMsg(LZStatus.DATA_EMPTY.display());
             result.setStatus(LZStatus.DATA_EMPTY.value());

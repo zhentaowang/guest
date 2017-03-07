@@ -36,6 +36,7 @@ import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,6 +218,29 @@ public class OrderInfoController {
     }
 
 
+    /**
+     * 订单管理 - 修改订单服务状态
+     * @return
+     */
+    @POST
+    @Path("updateServerComplete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "修改订单服务状态", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    public String updateServerComplete(
+            @Context final HttpHeaders headers,
+            @QueryParam("flightId") Long flightId,
+            @QueryParam("serverComplete") Short serverComplete) {
+        try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
 
+            orderInfoService.updateServerComplete(flightId,serverComplete, userId,airportCode);
+            return JSON.toJSONString(LXResult.success());
+        } catch (Exception e) {
+            logger.error("updateServerComplete error", e);
+            return JSON.toJSONString(LXResult.error());
+        }
+    }
 
 }

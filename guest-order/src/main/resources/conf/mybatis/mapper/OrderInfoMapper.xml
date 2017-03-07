@@ -426,4 +426,11 @@
     </if>
   </select>
 
+  <update id="updateServerComplete">
+    UPDATE
+      order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{updateUser}
+    WHERE airport_code = #{airportCode} AND flight_id = #{flightId}
+
+  </update>
+
 </mapper>

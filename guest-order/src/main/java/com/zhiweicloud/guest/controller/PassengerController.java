@@ -4,6 +4,7 @@ import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.service.PassengerService;
 import io.swagger.annotations.Api;
@@ -40,7 +41,7 @@ public class PassengerController {
     public String getIdentityCardDropdownList(
             ContainerRequestContext request,
             @QueryParam(value = "identityCard") String identityCard) {
-        LZResult<List<String>> result = new LZResult<>();
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
         String airportCode = request.getHeaders().getFirst("client-id").toString();
         if(airportCode == null){
             result.setMsg(LZStatus.DATA_EMPTY.display());
@@ -48,7 +49,7 @@ public class PassengerController {
             result.setData(null);
             return JSON.toJSONString(result);
         }
-        List<String> list = passengerService.getIdentityCardDropdownList(identityCard, airportCode);
+        List<Dropdownlist> list = passengerService.getIdentityCardDropdownList(identityCard, airportCode);
         result.setMsg(LZStatus.SUCCESS.display());
         result.setStatus(LZStatus.SUCCESS.value());
         result.setData(list);
@@ -61,12 +62,11 @@ public class PassengerController {
     @GET
     @Path(value="getPassengerByFlightId")
     @Produces("application/json;charset=utf-8")
-    @ApiOperation(value="根据航班id查询乘客信息",notes="乘客身份证模糊匹配下拉框", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    @ApiOperation(value="根据航班id查询乘客信息",notes="根据航班id获取乘客信息", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
     public String getPassengerByFlightId(ContainerRequestContext request,
                                          @QueryParam(value = "flightId") Long flightId) {
         LZResult<List<Passenger>> result = new LZResult<>();
-        String airportCode = "LJG";
-//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
         if(StringUtils.isEmpty(airportCode)){
             result.setMsg(LZStatus.DATA_EMPTY.display());
             result.setStatus(LZStatus.DATA_EMPTY.value());

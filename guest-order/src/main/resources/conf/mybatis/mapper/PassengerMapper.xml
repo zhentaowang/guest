@@ -133,13 +133,23 @@
   </insert>
 
 
-  <select id="getIdentityCardDropdownList" resultType="String" parameterType="map">
-    select DISTINCT identity_card from passenger
-    WHERE is_deleted = 0 AND airport_code = #{airportCode}
-    <if test="identityCard != null and !identityCard.trim().equals('')" >
-      and identity_card like concat('%',#{identityCard},'%')
-    </if>
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="passenger_id" jdbcType="BIGINT" property="id" />
+    <result column="identity_card" jdbcType="VARCHAR" property="value" />
+  </resultMap>
 
+  <select id="getIdentityCardDropdownList" resultMap="DropdownlistMap">
+    <![CDATA[
+    SELECT
+      passenger_id,identity_card
+    FROM passenger
+    WHERE is_deleted = 0 AND airport_code = #{airportCode} AND  identity_card <>''
+    AND passenger_id IN(SELECT MAX(passenger_id) FROM passenger GROUP BY identity_card)
+    <if test="identityCard != null and !identityCard.trim().equals('')" >
+      AND identity_card LIKE concat('%',#{identityCard},'%')
+    </if>
+    ORDER BY passenger_id DESC
+    ]]>
   </select>
 
 
@@ -183,9 +193,6 @@
       <if test="expireTime != null">
         expire_time = #{expireTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="isDeleted != null">
-        is_deleted = #{isDeleted,jdbcType=SMALLINT},
-      </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=BIGINT},
       </if>
@@ -197,13 +204,8 @@
   </update>
 
 
- <update id="markAsDeleted">
-    update passenger set is_deleted = 1
-    where order_id = #{orderId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
- </update>
-
-
   <resultMap id="PassengerResultMap" type="com.zhiweicloud.guest.model.Passenger">
+    <!--<id column="passenger_id" jdbcType="BIGINT" property="passengerId" />-->
     <id column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="orderStatus" jdbcType="VARCHAR" property="order_status" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
@@ -237,4 +239,49 @@
     WHERE o.flight_id = #{flightId}
 
   </select>
+
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from passenger
+    where passenger_id = #{passengerId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from passenger
+    where passenger_id = #{passengerId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.Passenger">
+    insert into passenger (passenger_id, order_id, name,
+      phone, identity_card, work_unit,
+      vip_card, sit_no, cabin_no,
+      ticket_no, card_no, card_type,
+      expire_time, create_user, update_user
+      )
+    values (#{passengerId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
+      #{phone,jdbcType=BIGINT}, #{identityCard,jdbcType=VARCHAR}, #{workUnit,jdbcType=VARCHAR},
+      #{vipCard,jdbcType=VARCHAR}, #{sitNo,jdbcType=VARCHAR}, #{cabinNo,jdbcType=VARCHAR},
+      #{ticketNo,jdbcType=VARCHAR}, #{cardNo,jdbcType=VARCHAR}, #{cardType,jdbcType=SMALLINT},
+      #{expireTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}
+      )
+  </insert>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Passenger">
+    update passenger
+    set order_id = #{orderId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=BIGINT},
+      identity_card = #{identityCard,jdbcType=VARCHAR},
+      work_unit = #{workUnit,jdbcType=VARCHAR},
+      vip_card = #{vipCard,jdbcType=VARCHAR},
+      sit_no = #{sitNo,jdbcType=VARCHAR},
+      cabin_no = #{cabinNo,jdbcType=VARCHAR},
+      ticket_no = #{ticketNo,jdbcType=VARCHAR},
+      card_no = #{cardNo,jdbcType=VARCHAR},
+      card_type = #{cardType,jdbcType=SMALLINT},
+      expire_time = #{expireTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=BIGINT},
+      update_user = #{updateUser,jdbcType=BIGINT}
+    where passenger_id = #{passengerId,jdbcType=BIGINT}
+  </update>-->
 </mapper>
