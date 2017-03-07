@@ -64,8 +64,8 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="服务说明",name="otherRemark")
     private String otherRemark;
 
-    @ApiModelProperty(value="0:预约成功，1：消费,2 : 取消，3：使用，4：草稿",name="orderStatus")
-    private Short orderStatus;
+    @ApiModelProperty(value="预约草稿，已预约，预约取消，已使用，服务草稿，服务取消",name="orderStatus")
+    private String orderStatus;
 
     @ApiModelProperty(value="订单类型：0：预约订单，1：服务订单",name="orderType")
     private Short orderType;
@@ -129,6 +129,13 @@ public class OrderInfo extends BaseEntity{
     @Transient
     private String productName;
 
+    @ApiModelProperty(value = "预约人姓名", name = "bookingPersonName")
+    @Transient
+    private String bookingPersonName;
+
+    @ApiModelProperty(value = "创建人姓名", name = "createUserName")
+    @Transient
+    private String createUserName;
 
     /**
      * 主键自增id
@@ -339,18 +346,18 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
-     * 0:预约成功，1：消费,2 : 取消，3：使用，4：草稿
-     * @return order_status 0:预约成功，1：消费,2 : 取消，3：使用，4：草稿
+     * 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
+     * @return order_status 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
      */
-    public Short getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 
     /**
-     * 0:预约成功，1：消费,2 : 取消，3：使用，4：草稿
-     * @param orderStatus 0:预约成功，1：消费,2 : 取消，3：使用，4：草稿
+     * 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
+     * @param orderStatus 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
      */
-    public void setOrderStatus(Short orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -544,5 +551,21 @@ public class OrderInfo extends BaseEntity{
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getBookingPersonName() {
+        return bookingPersonName;
+    }
+
+    public void setBookingPersonName(String bookingPersonName) {
+        this.bookingPersonName = bookingPersonName;
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 }

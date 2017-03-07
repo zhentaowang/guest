@@ -25,14 +25,12 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.OrderInfo;
 import com.zhiweicloud.guest.model.OrderInfoQuery;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -57,4 +55,6 @@ public interface OrderInfoMapper{
     List<OrderInfo> selectOrderInfoList(BasePagination<OrderInfoQuery> queryCondition);
 
     OrderInfo getDetailById(@Param("orderId") Long orderId, @Param("airportCode") String airportCode);
+
+    void insertIntoOrderStatusRecord(OrderInfo orderInfo);
 }
