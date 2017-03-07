@@ -162,11 +162,11 @@ public class AuthorizerController {
             @QueryParam(value = "protocolId") Long protocolId,
             @QueryParam(value = "name") String name,
             @QueryParam(value = "authorizerId") Long authorizerId) {
-//        String airportCode = request.getHeaders().getFirst("client-id").toString();
+        String airportCode = request.getHeaders().getFirst("client-id").toString();
         LZResult<List<Dropdownlist>> result = new LZResult<>();
 
         try{
-            List<Dropdownlist> list = authorizerService.getAuthorizerDropdownList("LJG", name, protocolId,authorizerId);
+            List<Dropdownlist> list = authorizerService.getAuthorizerDropdownList(airportCode, name, protocolId,authorizerId);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
