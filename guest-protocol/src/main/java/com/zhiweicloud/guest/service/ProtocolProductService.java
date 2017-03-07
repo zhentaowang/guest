@@ -55,6 +55,14 @@ public class ProtocolProductService {
     }
 
     /**
+     * 获取协议产品服务详情
+     * @param param
+     */
+    public ProtocolProductServ getByProtocolProductServiceId(Map<String,Object> param) {
+        return protocolProductServiceMapper.selectByProtocolProductServiceId(param);
+    }
+
+    /**
      * 协议产品添加与修改
      * @param protocolProduct
      */

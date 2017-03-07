@@ -119,7 +119,7 @@ public class ProtocolProductController {
     @GET
     @Path("protocol-product-view")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "协议产品管理 - 根据id查询 ", notes = "返回协议详情", httpMethod = "GET", produces = "application/json")
+    @ApiOperation(value = "协议产品管理 - 根据id查询 ", notes = "返回协议产品详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
     })
@@ -132,6 +132,30 @@ public class ProtocolProductController {
         param.put("protocolProductId", protocolProductId);
         ProtocolProduct protocolProduct = protocolProductService.getById(param);
         return JSON.toJSONString(new LZResult<>(protocolProduct));
+    }
+
+    /**
+     * 协议产品服务管理 - 根据id查询
+     *
+     * @param protocolProductServiceId
+     * @return
+     */
+    @GET
+    @Path("protocol-product-service-view")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议产品服务管理 - 根据id查询 ", notes = "返回协议产品服务详情", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "protocolProductServiceId", value = "协议产品服务id", dataType = "Long", defaultValue = "11", required = true, paramType = "query")
+    })
+    public String protocolProductServiceView(@Context final HttpHeaders headers,
+                                      @QueryParam(value = "protocolProductServiceId") Long protocolProductServiceId
+    ) {
+        Map<String, Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode", airportCode);
+        param.put("protocolProductServiceId", protocolProductServiceId);
+        ProtocolProductServ protocolProductServ = protocolProductService.getByProtocolProductServiceId(param);
+        return JSON.toJSONString(new LZResult<>(protocolProductServ));
     }
 
         /**
