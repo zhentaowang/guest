@@ -52,7 +52,7 @@ public class ProtocolController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult save(@ApiParam(value = "protocol", required = true) @RequestBody String params,
+    public String save(@ApiParam(value = "protocol", required = true) @RequestBody String params,
                          @Context final HttpHeaders headers) {
         try {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
@@ -98,15 +98,15 @@ public class ProtocolController {
                         Set keys = protocolProductService00.keySet();
                         Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductServ.getServiceTypeAllocationId());
                         if (keys.size() != protocolProductFieldName.size()) {
-                            return LXResult.build(4995, "传输数据字段错误");
+                            return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
                         } else {
                             if (protocolProductFieldName != null) {
                                 for (int k = 0; k < keys.size(); k++) {
                                     if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
-                                        return LXResult.build(4995, "传输数据字段错误");
+                                        return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
                                     } else {
                                         if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
-                                            return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                                            return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
                                         }
                                     }
                                 }
@@ -123,11 +123,11 @@ public class ProtocolController {
 
 
             if (protocol == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
             if (protocol.getName() == null || protocol.getInstitutionClientId() == null || protocol.getType() == null
                     || protocol.getReservationNum() == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
 //            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
 //                if(authorizerService.selectByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
@@ -135,13 +135,12 @@ public class ProtocolController {
 //                }
 //            }
             if (protocolService.selectByName(protocol) == true) {
-                return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
+                return JSON.toJSONString(LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display()));
             }
-            protocolService.saveOrUpdate(protocol);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            return protocolService.saveOrUpdate(protocol).toString();
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
