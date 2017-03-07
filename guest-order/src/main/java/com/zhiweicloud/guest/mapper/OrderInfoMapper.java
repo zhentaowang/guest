@@ -25,7 +25,6 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.OrderInfo;
 import com.zhiweicloud.guest.model.OrderInfoQuery;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -57,4 +56,13 @@ public interface OrderInfoMapper{
     List<Map> selectOrderInfoList(BasePagination<OrderInfoQuery> queryCondition);
 
     OrderInfo getDetailById(@Param("orderId") Long orderId, @Param("airportCode") String airportCode);
+
+    /**
+     * 根据flight_id 修改订单服务状态
+     * @param flightId
+     * @param airportCode
+     * @return
+     */
+    int updateServerComplete(@Param("flightId") Long flightId, @Param("serverComplete") Short serverComplete,
+                             @Param("updateUser") Long updateUser, @Param("airportCode") String airportCode);
 }
