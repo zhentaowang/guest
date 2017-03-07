@@ -55,18 +55,20 @@ public class ProtocolProductController {
         try {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
-            JSONObject param00 = JSON.parseObject(param.get(0).toString());
-            ProtocolProduct protocolProduct = JSONObject.toJavaObject(param00,ProtocolProduct.class);
-            protocolProduct.setAirportCode(airportCode);
-            if(protocolProduct.getProtocolProductId() == null){
-                if (protocolProduct == null || protocolProduct.getProductId() == null || protocolProduct.getProtocolId() == null) {
-                    return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+            for(int k = 0; k < param.size(); k++){
+                JSONObject param00 = JSON.parseObject(param.get(k).toString());
+                ProtocolProduct protocolProduct = JSONObject.toJavaObject(param00,ProtocolProduct.class);
+                protocolProduct.setAirportCode(airportCode);
+                if(protocolProduct.getProtocolProductId() == null){
+                    if (protocolProduct == null || protocolProduct.getProductId() == null || protocolProduct.getProtocolId() == null) {
+                        return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                    }
+                    if (protocolProductService.selectByProductId(protocolProduct) == true) {
+                        return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
+                    }
                 }
-                if (protocolProductService.selectByProductId(protocolProduct) == true) {
-                    return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
-                }
+                protocolProductService.saveOrUpdate(protocolProduct);
             }
-            protocolProductService.saveOrUpdate(protocolProduct);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();

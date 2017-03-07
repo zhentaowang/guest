@@ -58,7 +58,7 @@ public class ProtocolService {
      * 协议添加与修改
      * @param protocol
      */
-    public void saveOrUpdate(Protocol protocol) {
+    public Long saveOrUpdate(Protocol protocol) {
         if (protocol.getProtocolId() != null) {
             Map<String,Object> params = new HashMap<>();
             params.put("airportCode",protocol.getAirportCode());
@@ -189,6 +189,7 @@ public class ProtocolService {
                 }
             }
         }
+        return protocol.getProtocolId();
     }
 
     /**
