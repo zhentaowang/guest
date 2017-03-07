@@ -137,7 +137,12 @@ public class ProtocolController {
             if (protocolService.selectByName(protocol) == true) {
                 return JSON.toJSONString(LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display()));
             }
-            return protocolService.saveOrUpdate(protocol).toString();
+            Long data = protocolService.saveOrUpdate(protocol);
+            LZResult<Long> result = new LZResult<>();
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(data);
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             e.printStackTrace();
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
