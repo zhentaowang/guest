@@ -167,4 +167,17 @@
     <result column="value" jdbcType="VARCHAR" property="value" />
   </resultMap>
 
+  <select id="getAuthorizerDropdownList" resultMap="DropdownlistMap" parameterType="map">
+    SELECT
+    authorizer_id,`name` AS `value`
+    FROM
+    authorizer WHERE is_deleted = 0 AND airport_code = #{airportCode} and NOT ISNULL(`name`)
+    <if test="name != null and !name.trim().equals('')" >
+      and `name` like concat('%',#{name},'%')
+    </if>
+    <if test="protocolId != null" >
+      and protocol_id = #{protocolId}
+    </if>
+  </select>
+
 </mapper>
