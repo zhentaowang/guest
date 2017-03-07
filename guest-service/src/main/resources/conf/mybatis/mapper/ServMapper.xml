@@ -25,6 +25,10 @@
   <result column="no" jdbcType="VARCHAR" property="no" />
   <result column="name" jdbcType="VARCHAR" property="name" />
   <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
+    <result column="pricing_rule" jdbcType="OTHER" property="pricingRule" />
+    <result column="is_pricing" jdbcType="BIT" property="isPricing" />
+    <result column="is_prioritized" jdbcType="BIT" property="isPrioritized" />
+    <result column="is_availabled" jdbcType="BIT" property="isAvailabled" />
   <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
   <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

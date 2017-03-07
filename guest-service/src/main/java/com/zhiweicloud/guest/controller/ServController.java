@@ -224,7 +224,7 @@ public class ServController {
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "1", required = true, paramType = "query")})
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")})
     public String getProductAndServiceList( @QueryParam(value = "page") Integer page,
                         @QueryParam(value = "rows") Integer rows,
                         @Context final HttpHeaders headers) {
