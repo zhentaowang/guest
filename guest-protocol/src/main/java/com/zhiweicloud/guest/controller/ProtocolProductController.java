@@ -65,6 +65,9 @@ public class ProtocolProductController {
                 if(serviceList != null){
                     for (int i = 0; i < serviceList.size(); i++) {
                         JSONObject protocolProductServ00 = JSON.parseObject(serviceList.get(i).toString());
+                        protocolProductServ00.remove("servId");
+                        protocolProductServ00.remove("no");
+                        protocolProductServ00.remove("name");
                         ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductServ00,ProtocolProductServ.class);
                         protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
                         protocolProductServs.add(protocolProductServ);
