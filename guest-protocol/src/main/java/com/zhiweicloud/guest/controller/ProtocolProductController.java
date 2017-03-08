@@ -57,8 +57,20 @@ public class ProtocolProductController {
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for(int k = 0; k < param.size(); k++){
                 JSONObject param00 = JSON.parseObject(param.get(k).toString());
+                JSONArray serviceList = param00.getJSONArray("serviceList");
+                param00.remove("serviceList");
                 ProtocolProduct protocolProduct = JSONObject.toJavaObject(param00,ProtocolProduct.class);
                 protocolProduct.setAirportCode(airportCode);
+                List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
+                if(serviceList != null){
+                    for (int i = 0; i < serviceList.size(); i++) {
+                        JSONObject protocolProductServ00 = JSON.parseObject(serviceList.get(i).toString());
+                        ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductServ00,ProtocolProductServ.class);
+                        protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
+                        protocolProductServs.add(protocolProductServ);
+                    }
+                }
+                protocolProduct.setProtocolProductServList(protocolProductServs);
                 if(protocolProduct.getProtocolProductId() == null){
                     if (protocolProduct == null || protocolProduct.getProductId() == null || protocolProduct.getProtocolId() == null) {
                         return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());

@@ -1,6 +1,8 @@
 package com.zhiweicloud.guest.service;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -70,19 +72,20 @@ public class ProtocolProductService {
         if (protocolProduct.getProtocolProductId() != null) {
             protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
         } else {
+            protocolProduct.setCreateTime(new Date());
+            protocolProduct.setUpdateTime(new Date());
+            protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            protocolProductMapper.insertBySelective(protocolProduct);
             List<ProtocolProductServ> protocolProductServList = protocolProduct.getProtocolProductServList();
             for(int i = 0; i < protocolProductServList.size(); i++){
                 ProtocolProductServ protocolProductServ = new ProtocolProductServ();
                 protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
+                protocolProductServ.setProtocolProductId(protocolProduct.getProtocolProductId());
                 protocolProductServ.setCreateTime(new Date());
                 protocolProductServ.setUpdateTime(new Date());
                 protocolProductServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                 protocolProductServiceMapper.insertBySelective(protocolProductServ);
             }
-            protocolProduct.setCreateTime(new Date());
-            protocolProduct.setUpdateTime(new Date());
-            protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-            protocolProductMapper.insertBySelective(protocolProduct);
         }
     }
 
