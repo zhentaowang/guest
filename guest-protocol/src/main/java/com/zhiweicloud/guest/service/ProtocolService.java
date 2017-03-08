@@ -118,20 +118,20 @@ public class ProtocolService {
                         ids00.append(protocolProduct.getProtocolProductId()+",");
                     }
                     if(protocolProduct.getProtocolProductServList() != null){
-                        for(int j = 0; j < protocolProduct.getProtocolProductServList().size(); j++ ){
-                            ProtocolProductServ protocolProductService = protocolProduct.getProtocolProductServList().get(j);
-                            if (protocolProductService.getProtocolProductServiceId() != null){
-                                protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductService);
-                            }else{
-                                protocolProductService.setProtocolProductId(protocolProduct.getProtocolProductId());
-                                protocolProductService.setCreateTime(new Date());
-                                protocolProductService.setUpdateTime(new Date());
-                                protocolProductService.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-                                protocolProductServiceMapper.insertBySelective(protocolProductService);
-                            }
+                    for(int j = 0; j < protocolProduct.getProtocolProductServList().size(); j++ ){
+                        ProtocolProductServ protocolProductService = protocolProduct.getProtocolProductServList().get(j);
+                        if (protocolProductService.getProtocolProductServiceId() != null){
+                            protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductService);
+                        }else{
+                            protocolProductService.setProtocolProductId(protocolProduct.getProtocolProductId());
+                            protocolProductService.setCreateTime(new Date());
+                            protocolProductService.setUpdateTime(new Date());
+                            protocolProductService.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                            protocolProductServiceMapper.insertBySelective(protocolProductService);
                         }
                     }
                 }
+            }
                 if(ids00.length() != 0){
                     params.put("ids00",ids00.substring(0,ids00.length() - 1));
                     protocolProductMapper.deleteByIdAndAirportCode(params);

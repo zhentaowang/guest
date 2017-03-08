@@ -22,6 +22,14 @@
     is_prioritized, is_availabled
   </sql>
 
+
+  <select id="selectByProtocolProductServiceId" parameterType="map" resultMap="BaseResultMap">
+    SELECT s.name
+    FROM protocol_product_service as p left join (select serv_id, name from serv where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as s on p.service_id = s.serv_id
+    where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0 and p.protocol_product_service_id = #{protocolProductServiceId,jdbcType=BIGINT}
+  </select>
+
   <select id="selectByProtocolProductId" parameterType="map" resultMap="BaseResultMap">
     SELECT protocol_product_service_id, airport_code, service_type_allocation_id, protocol_product_id, service_id, pricing_rule, is_pricing,
     is_prioritized, is_availabled

@@ -8,6 +8,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.model.ProductServiceType;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.model.ServiceDetail;
 import com.zhiweicloud.guest.service.ServService;
@@ -48,21 +49,22 @@ public class ServController {
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")})
-    public String list( @QueryParam(value = "page") Integer page,
-                        @QueryParam(value = "rows") Integer rows,
-                        @QueryParam(value = "typeId") Long typeId,
-                        @Context final HttpHeaders headers) {
-        Map<String,Object> param = new HashMap();
+    public String list(@QueryParam(value = "page") Integer page,
+                       @QueryParam(value = "rows") Integer rows,
+                       @QueryParam(value = "typeId") Long typeId,
+                       @Context final HttpHeaders headers) {
+        Map<String, Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode",airportCode);
+        param.put("airportCode", airportCode);
         param.put("typeId", typeId);
-        LZResult<PaginationResult<JSONObject>> result  = servService.getAll(param,page,rows);
+        LZResult<PaginationResult<JSONObject>> result = servService.getAll(param, page, rows);
         return JSON.toJSONString(result);
     }
 
     /**
      * 服务管理 - 新增or更新
      * 需要判断name是否重复
+     *
      * @param params
      * @return
      */
@@ -70,14 +72,14 @@ public class ServController {
     @Path("save-or-update")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value="服务管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
+    @ApiOperation(value = "服务管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
     public LXResult save(@ApiParam(value = "service", required = true) @RequestBody String params,
-                         @Context final HttpHeaders headers){
-        try{
+                         @Context final HttpHeaders headers) {
+        try {
             Serv serv = new Serv();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            JSONArray param= JSON.parseObject(params).getJSONArray("data");
+            JSONArray param = JSON.parseObject(params).getJSONArray("data");
             JSONObject param00 = JSON.parseObject(param.get(0).toString());
             serv.setServId(param00.getLong("servId"));
             serv.setAirportCode(airportCode);
@@ -88,38 +90,38 @@ public class ServController {
             param00.remove("serviceTypeAllocationId");
             serv.setServiceDetail(param00.toJSONString());
             Set keys = param00.keySet();
-            Map<String,Object> serviceFieldName = ServiceDetail.getServiceFieldName(serv.getServiceTypeAllocationId());
-            if(keys.size() != serviceFieldName.size()){
+            Map<String, Object> serviceFieldName = ServiceDetail.getServiceFieldName(serv.getServiceTypeAllocationId());
+            if (keys.size() != serviceFieldName.size()) {
                 return LXResult.build(4995, "传输数据字段错误");
-            }else{
-                if(serviceFieldName != null){
-                    for(int i = 0; i < keys.size(); i++){
-                        if(!serviceFieldName.containsKey(keys.toArray()[i])){
+            } else {
+                if (serviceFieldName != null) {
+                    for (int i = 0; i < keys.size(); i++) {
+                        if (!serviceFieldName.containsKey(keys.toArray()[i])) {
                             return LXResult.build(4995, "传输数据字段错误");
-                        }else{
-                            if(param00.getString(keys.toArray()[i].toString()).isEmpty() && !keys.toArray()[i].toString().equals("plateNumber")){
+                        } else {
+                            if (param00.getString(keys.toArray()[i].toString()).isEmpty() && !keys.toArray()[i].toString().equals("plateNumber")) {
                                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
                             }
                         }
                     }
                 }
             }
-            if (serv.getServId() == null){
+            if (serv.getServId() == null) {
                 if (serv == null || serv.getAirportCode() == null || serv.getServiceTypeAllocationId() == null
                         || serv.getName() == null) {
                     return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
                 }
-            }else{
+            } else {
                 if (serv.getAirportCode() == null || serv.getName() == null) {
                     return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
                 }
             }
 
-            if(servService.selectByName(serv) == true){
+            if (servService.selectByName(serv) == true) {
                 return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
             }
             servService.saveOrUpdate(serv);
-            return  LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
             return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
@@ -129,6 +131,7 @@ public class ServController {
 
     /**
      * 服务管理 - 根据id查询
+     *
      * @param servId
      * @return
      */
@@ -141,22 +144,23 @@ public class ServController {
             @ApiImplicitParam(name = "servId", value = "服务id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
     })
     public String view(@Context final HttpHeaders headers,
-                               @QueryParam(value = "servId") Long servId) {
-        Map<String,Object> param = new HashMap();
+                       @QueryParam(value = "servId") Long servId) {
+        Map<String, Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode",airportCode);
-        param.put("servId",servId);
+        param.put("airportCode", airportCode);
+        param.put("servId", servId);
         Serv serv = servService.getById(param);
         JSONObject result = JSON.parseObject(serv.getServiceDetail());
-        result.put("servId",serv.getServId());
-        result.put("airportCode",serv.getAirportCode());
-        result.put("serviceTypeAllocationId",serv.getServiceTypeAllocationId());
-        result.put("name",serv.getName());
+        result.put("servId", serv.getServId());
+        result.put("airportCode", serv.getAirportCode());
+        result.put("serviceTypeAllocationId", serv.getServiceTypeAllocationId());
+        result.put("name", serv.getName());
         return result.toJSONString();
     }
 
     /**
      * 服务管理 - 删除
+     *
      * @param params ids
      * @return
      */
@@ -171,12 +175,12 @@ public class ServController {
         try {
             List<Long> ids = params.getData();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-//            for(int i = 0; i < ids.size(); i++){
-//                if(servService.selectProductByServiceId(ids.get(i),airportCode) == true){
-//                    return JSON.toJSONString(LXResult.build(4996, "该服务被产品引用，不能被删除"));
-//                }
-//            }
-            servService.deleteById(ids,airportCode);
+            for (int i = 0; i < ids.size(); i++) {
+                if (servService.selectProductByServiceId(ids.get(i), airportCode) == true) {
+                    return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
+                }
+            }
+            servService.deleteById(ids, airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete serv by ids error", e);
@@ -186,9 +190,10 @@ public class ServController {
 
     /**
      * 服务管理 - 根据服务类型配置id和产品id查询服务详情
-     * @param page 起始页
-     * @param rows 每页显示数目
-     * @param typeId 服务类型配置id
+     *
+     * @param page      起始页
+     * @param rows      每页显示数目
+     * @param typeId    服务类型配置id
      * @param productId 产品id
      * @return
      */
@@ -202,19 +207,20 @@ public class ServController {
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "typeId", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "productId", value = "产品id", dataType = "Long", defaultValue = "39", required = true, paramType = "query")})
-    public String list( @QueryParam(value = "page") Integer page,
-                        @QueryParam(value = "rows") Integer rows,
-                        @QueryParam(value = "typeId") Long typeId,
-                        @QueryParam(value = "productId") Long productId,
-                        @Context final HttpHeaders headers) {
-        Map<String,Object> param = new HashMap();
+    public String getServiceList(@QueryParam(value = "page") Integer page,
+                                 @QueryParam(value = "rows") Integer rows,
+                                 @QueryParam(value = "typeId") Long typeId,
+                                 @QueryParam(value = "productId") Long productId,
+                                 @Context final HttpHeaders headers) {
+        Map<String, Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode",airportCode);
+        param.put("airportCode", airportCode);
         param.put("typeId", typeId);
         param.put("productId", productId);
-        LZResult<PaginationResult<JSONObject>> result  = servService.getServiceListByTypeId(param,page,rows);
+        LZResult<PaginationResult<JSONObject>> result = servService.getServiceListByTypeId(param, page, rows);
         return JSON.toJSONString(result);
     }
+
 
     /**
      * 根据服务分类查询 服务名，服务人数
@@ -226,21 +232,42 @@ public class ServController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "休息室/服务厅管理 - 服务查询", notes = "显示服务厅名以及可服务人数", httpMethod = "GET", produces = "application/json")
     public String getServNameAndPositionNum(
-                        @QueryParam(value = "typeId") Long typeId,
-                        @Context final HttpHeaders headers) {
+            @QueryParam(value = "typeId") Long typeId,
+            @Context final HttpHeaders headers) {
         LZResult<List<Serv>> result = new LZResult<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        try{
-            List<Serv> list = servService.getServNameAndPositionNum(typeId,airportCode);
+        try {
+            List<Serv> list = servService.getServNameAndPositionNum(typeId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
         return JSON.toJSONString(result);
     }
+
+
+    @GET
+    @Path("product-and-service-list")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "产品列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")})
+    public String getProductAndServiceList(@QueryParam(value = "page") Integer page,
+                                           @QueryParam(value = "rows") Integer rows,
+                                           @Context final HttpHeaders headers) {
+        Map<String, Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode", airportCode);
+        LZResult<PaginationResult<ProductServiceType>> result = servService.getProductAndServiceList(param, page, rows);
+
+        return JSON.toJSONString(result);
+    }
+
 
 }

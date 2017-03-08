@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public interface ProtocolProductServiceMapper extends MyMapper<ProtocolProductServ> {
     List<ProtocolProductServ> selectByProtocolProductId(Map<String, Object> map);
+    ProtocolProductServ selectByProtocolProductServiceId(Map<String, Object> map);
     List<ProtocolProductServ> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);
     Integer updateByIdAndAirportCode(ProtocolProductServ protocolProductServ);

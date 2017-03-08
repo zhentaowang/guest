@@ -83,7 +83,8 @@ public class ScheduleEventController {
                     @ApiImplicitParam(name = "flightStatus", value = "航班状态", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "orderStatus", value = "订单状态为服务完成", dataType = "Long", required = false, paramType = "query")
+                    @ApiImplicitParam(name = "servId", value = "服务id", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "serverComplete", value = "订单是否为服务完成状态", dataType = "Long", required = false, paramType = "query")
             })
     public String getFlightList(
             @Context final HttpHeaders headers,
@@ -92,7 +93,8 @@ public class ScheduleEventController {
             @QueryParam(value = "flightStatus") Long flightStatus,
             @QueryParam(value = "isInOrOut") Long isInOrOut,
             @QueryParam(value = "scheduleEventId") Long scheduleEventId,
-            @QueryParam(value = "orderStatus") Long orderStatus,
+            @QueryParam(value = "servId") Long servId,
+            @QueryParam(value = "serverComplete") Long serverComplete,
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows) {
         Map<String,Object> param = new HashMap();
@@ -103,7 +105,8 @@ public class ScheduleEventController {
         param.put("flightStatus",flightStatus);
         param.put("isInOrOut",isInOrOut);
         param.put("scheduleEventId",scheduleEventId);
-        param.put("orderStatus",orderStatus);
+        param.put("servId",servId);
+        param.put("serverComplete",serverComplete);
         LZResult<PaginationResult<ScheduleEvent>> result  = scheduleEventService.getFlightList(param,page,rows);
         return JSON.toJSONString(result);
     }

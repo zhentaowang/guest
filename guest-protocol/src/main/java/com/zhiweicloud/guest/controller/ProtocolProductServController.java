@@ -38,7 +38,7 @@ public class ProtocolProductServController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议产品服务 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
-    public String getProtocolProductServByServiceId (@QueryParam(value = "servId") Long servId,
+    public String getProtocolProductServByServId (@QueryParam(value = "servId") Long servId,
                                                         @Context final HttpHeaders headers){
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         LZResult<List<ProtocolProductServ>> result = new LZResult<>();

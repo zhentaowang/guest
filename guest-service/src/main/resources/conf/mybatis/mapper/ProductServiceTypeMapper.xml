@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.ProductServiceTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.ProductServiceType">
+    <id column="product_service_type_id" jdbcType="BIGINT" property="productServiceTypeId" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="service_type_id" jdbcType="BIGINT" property="serviceTypeId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="product_no" jdbcType="VARCHAR" property="productNo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    product_service_type_id, product_id, service_type_id
+  </sql>
+
+  <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    SELECT st.product_id, p.product_name, p.product_no from product_service_type as st
+    right join (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as p on st.product_id = p.product_id
+    where st.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and st.is_deleted = 0
+    group by st.product_id
+    LIMIT #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <select id="getListCount" parameterType="map" resultType="int">
+    SELECT count(DISTINCT st.product_id) from product_service_type as st
+    right join (select product_id, product_name, product_no from v_product where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as p on st.product_id = p.product_id
+    where st.airport_code = #{airportCode,jdbcType=VARCHAR} and st.is_deleted = 0
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from product_service_type
+    where product_service_type_id = #{productServiceTypeId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from product_service_type
+    where product_service_type_id = #{productServiceTypeId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.ProductServiceType">
+    insert into product_service_type (product_service_type_id, product_id, service_type_id
+      )
+    values (#{productServiceTypeId,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{serviceTypeId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.ProductServiceType">
+    insert into product_service_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="productServiceTypeId != null">
+        product_service_type_id,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="serviceTypeId != null">
+        service_type_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="productServiceTypeId != null">
+        #{productServiceTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceTypeId != null">
+        #{serviceTypeId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.ProductServiceType">
+    update product_service_type
+    <set>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceTypeId != null">
+        service_type_id = #{serviceTypeId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where product_service_type_id = #{productServiceTypeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.ProductServiceType">
+    update product_service_type
+    set product_id = #{productId,jdbcType=BIGINT},
+      service_type_id = #{serviceTypeId,jdbcType=BIGINT}
+    where product_service_type_id = #{productServiceTypeId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,10 +1,13 @@
 package com.zhiweicloud.guest.service;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.ProtocolProductMapper;
+import com.zhiweicloud.guest.mapper.ProtocolProductServiceMapper;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -20,11 +23,13 @@ import java.util.*;
 public class ProtocolProductService {
 
     private final ProtocolProductMapper protocolProductMapper;
+    private final ProtocolProductServiceMapper protocolProductServiceMapper;
 
 
     @Autowired
-    public ProtocolProductService(ProtocolProductMapper protocolProductMapper) {
+    public ProtocolProductService(ProtocolProductMapper protocolProductMapper,ProtocolProductServiceMapper protocolProductServiceMapper) {
         this.protocolProductMapper = protocolProductMapper;
+        this.protocolProductServiceMapper = protocolProductServiceMapper;
     }
 
     /**
@@ -52,6 +57,14 @@ public class ProtocolProductService {
     }
 
     /**
+     * 获取协议产品服务详情
+     * @param param
+     */
+    public ProtocolProductServ getByProtocolProductServiceId(Map<String,Object> param) {
+        return protocolProductServiceMapper.selectByProtocolProductServiceId(param);
+    }
+
+    /**
      * 协议产品添加与修改
      * @param protocolProduct
      */
@@ -63,6 +76,31 @@ public class ProtocolProductService {
             protocolProduct.setUpdateTime(new Date());
             protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             protocolProductMapper.insertBySelective(protocolProduct);
+            List<ProtocolProductServ> protocolProductServList = protocolProduct.getProtocolProductServList();
+            for(int i = 0; i < protocolProductServList.size(); i++){
+                ProtocolProductServ protocolProductServ = protocolProductServList.get(i);
+                protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
+                protocolProductServ.setProtocolProductId(protocolProduct.getProtocolProductId());
+                protocolProductServ.setCreateTime(new Date());
+                protocolProductServ.setUpdateTime(new Date());
+                protocolProductServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                protocolProductServiceMapper.insertBySelective(protocolProductServ);
+            }
+        }
+    }
+
+    /**
+     * 协议产品服务添加与修改
+     * @param protocolProductServ
+     */
+    public void saveOrUpdateProtocolProductServ(ProtocolProductServ protocolProductServ) {
+        if (protocolProductServ.getProtocolProductServiceId() != null) {
+            protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductServ);
+        } else {
+            protocolProductServ.setCreateTime(new Date());
+            protocolProductServ.setUpdateTime(new Date());
+            protocolProductServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            protocolProductServiceMapper.insertBySelective(protocolProductServ);
         }
     }
 
@@ -78,6 +116,10 @@ public class ProtocolProductService {
             protocolProduct.setProtocolProductId(ids.get(i));
             protocolProduct.setIsDeleted(Constant.MARK_AS_DELETED);
             protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
+            ProtocolProductServ protocolProductServ = new ProtocolProductServ();
+            protocolProductServ.setAirportCode(airportCode);
+            protocolProductServ.setProtocolProductId(protocolProduct.getProtocolProductId());
+            protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductServ);
         }
     }
 

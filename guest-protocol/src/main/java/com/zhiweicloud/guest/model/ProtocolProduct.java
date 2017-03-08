@@ -49,7 +49,7 @@ public class ProtocolProduct extends BaseEntity{
     private String productNo;
 
     @Transient
-    @ApiModelProperty(value = "授权人",name="protocolProductService")
+    @ApiModelProperty(value = "协议产品服务",name="protocolProductService")
     private List<ProtocolProductServ> protocolProductServList;
 
     public List<ProtocolProductServ> getProtocolProductServList() {

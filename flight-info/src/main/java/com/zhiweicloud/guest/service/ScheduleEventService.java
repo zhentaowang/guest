@@ -79,7 +79,7 @@ public class ScheduleEventService {
         BasePagination<Map<String,Object>> queryCondition;
         List<ScheduleEvent> protocolList;
         PaginationResult<ScheduleEvent> eqr;
-        if(param.get("orderStatus") == null){
+        if(param.get("serverComplete") == null){
             count = flightMapper.getFlightListCount(param);
             queryCondition = new BasePagination<>(param, new PageModel(page, rows));
             protocolList = flightMapper.getFlightListByConidition(queryCondition);

@@ -28,6 +28,7 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -56,7 +57,7 @@ import java.util.List;
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
 @Component
-@Path("/guest-order")
+@Path("/")
 @Api(value = "订单", description = "订单desc ", tags = {"订单管理"})
 public class OrderInfoController {
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoController.class);
@@ -82,10 +83,15 @@ public class OrderInfoController {
             @QueryParam(value = "identityCard") String identityCard,
             @QueryParam(value = "flightDate") String flightDate,
             @QueryParam(value = "flightNo") String flightNo,
-            @QueryParam(value = "queryOrderStatus") String queryOrderStatus,
+            @QueryParam(value = "queryOrderStatus") String queryOrderStatus,//订单状态:预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
             @QueryParam(value = "queryOrderBy") String queryOrderBy, //按照航班起飞时间或者降落时间排序：0：起飞顺序，1：起飞倒序，2：降落顺序，3：降落倒序
             @QueryParam(value = "queryIsImportant") String queryIsImportant, //是否重要订单：0：重要，1：不重要
             @QueryParam(value = "queryOrderType") String queryOrderType, //订单类型：0：预约订单，1：服务订单
+            @QueryParam(value = "queryBookingOneDayBefore") String queryBookingOneDayBefore, //提前一天预约
+            @QueryParam(value = "queryProductId") String queryProductId, //产品id
+            @QueryParam(value = "queryIsInOrOut") String queryIsInOrOut, //出港：0，进港1
+            @QueryParam(value = "queryAttServerOrderList") String queryAttServerOrderList, //附加服务单:1：代表查询的是勾选了代办登机牌，或者代托行李的订单
+            @QueryParam(value = "queryAgentPerson") String queryAgentPerson, //附加服务单 订单是否被安排，0：未安排，1：已安排，2：已完成
             @Context final HttpHeaders headers) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
@@ -99,7 +105,11 @@ public class OrderInfoController {
             orderInfoQuery.setQueryOrderStatus(queryOrderStatus);
             orderInfoQuery.setQueryIsImportant(queryIsImportant);
             orderInfoQuery.setQueryOrderType(queryOrderType);
+            orderInfoQuery.setQueryBookingOneDayBefore(queryBookingOneDayBefore);
+            orderInfoQuery.setQueryProductId(queryProductId);
             orderInfoQuery.setAirportCode(airportCode);
+            orderInfoQuery.setQueryAttServerOrderList(queryAttServerOrderList);
+            orderInfoQuery.setQueryAgentPerson(queryAgentPerson);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows,orderInfoQuery,userId);
             return JSON.toJSONString(result);
         }catch (Exception e){
@@ -156,7 +166,7 @@ public class OrderInfoController {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
+            result.setData(e.toString());
         }
         return JSON.toJSONString(result);
     }
@@ -226,7 +236,7 @@ public class OrderInfoController {
             result.setData(null);
             e.printStackTrace();
         }
-        return JSON.toJSONString(result);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 
 

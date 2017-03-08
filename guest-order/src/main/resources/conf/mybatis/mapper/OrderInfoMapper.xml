@@ -23,6 +23,8 @@
       <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
       <result column="cash" jdbcType="DECIMAL" property="cash" />
       <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+      <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+      <result column="create_user" jdbcType="BIGINT" property="createUser" />
       <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
 
       <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
@@ -40,6 +42,7 @@
         <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
         <result column="plan_take_off_time" jdbcType="TIMESTAMP" property="planTakeOffTime" />
         <result column="plan_landing_time" jdbcType="TIMESTAMP" property="planLandingTime" />
+        <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
         <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
         <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
         <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
@@ -52,7 +55,7 @@
         <result column="phone" jdbcType="BIGINT" property="phone" />
         <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
         <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
-        <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+        <result column="passenger_vip_card" jdbcType="VARCHAR" property="vipCard" />
         <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
         <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
         <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
@@ -323,26 +326,77 @@
     (
     select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
     o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
+    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
     ic.name as customer_name
     from order_info o
     inner join flight f
     on o.flight_id = f.flight_id
+    and o.is_deleted = 0
     inner JOIN institution_client ic on ic.institution_client_id = o.customer_id
+    <if test="criteria.queryBookingIds != null and !''.equals(criteria.queryBookingIds)">
+      and o.booking_person in ( #{criteria.queryBookingIds})
+    </if>
+    <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
+      and o.protocol_id in ( #{criteria.queryProtocolIds})
+    </if>
+    <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
+      and o.is_important =  #{criteria.queryIsImportant}
+    </if>
+    <!-- 预约订单 -->
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '0'.equals(criteria.queryOrderType)">
+      and o.order_type = (#{criteria.queryOrderType})
+      <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+        and o.order_status in (#{criteria.queryOrderStatus})
+      </if>
+    </if>
+    <!-- 服务订单 -->
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '1'.equals(criteria.queryOrderType)">
+      <choose>
+        <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
+          and o.order_type = 1
+          and o.order_status in (#{criteria.queryOrderStatus})
+        </when>
+        <otherwise>
+          and o.order_type = 1
+          and o.order_status in (#{criteria.queryOrderStatus})
+        </otherwise>
+      </choose>
+    </if>
+    <if test="criteria.queryBookingOneDayBefore != null and !''.equals(criteria.queryBookingOneDayBefore)">
+      and datediff(now(),o.create_time) &gt; 0
+    </if>
+    <if test="criteria.queryAttServerOrderList != null and !''.equals(criteria.queryAttServerOrderList)">
+      and (o.print_check is not null or  o.consign is not null)
+    </if>
+
+    <!-- 附加服务单 订单是否被安排，0：未安排与agent_person 比较，1：已安排 agent_person 比较，2：已完成,与server_complete比较 -->
+    <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '0'.equals(criteria.queryAgentPerson)">
+      and o.agent_person is null
+    </if>
+    <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '1'.equals(criteria.queryAgentPerson)">
+      and o.agent_person is not null
+    </if>
+    <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
+      and o.server_complete is not null
+    </if>
+
     ) as orderFlightClient
     left join passenger p on orderFlightClient.order_id = p.order_id
     )as orderFlightClientPassenger
     left join order_service orderService
     on orderService.order_id = orderFlightClientPassenger.order_id
     ) as orderFlightClientPassengerService
-    where orderFlightClientPassengerService.is_deleted = 0 and orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
+    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
       and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.queryFlightNo},'%')
     </if>
     <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
       and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
+    </if>
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
+      and orderFlightClientPassengerService.is_in_or_out = #{criteria.queryIsInOrOut}
     </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
@@ -350,21 +404,7 @@
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
       and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
     </if>
-    <if test="criteria.queryBookingIds != null and !''.equals(criteria.queryBookingIds)">
-      and orderFlightClientPassengerService.booking_person in ( #{criteria.queryBookingIds})
-    </if>
-    <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
-      and orderFlightClientPassengerService.protocol_id in ( #{criteria.queryProtocolIds})
-    </if>
-    <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
-      and orderFlightClientPassengerService.order_status in ( #{criteria.queryOrderStatus})
-    </if>
-    <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
-      and orderFlightClientPassengerService.is_important in ( #{criteria.queryIsImportant})
-    </if>
-    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)">
-      and orderFlightClientPassengerService.order_type in ( #{criteria.queryOrderType})
-    </if>
+
   </select>
 
   <select id="selectOrderInfoList" resultMap="BaseResultMap">
@@ -376,7 +416,7 @@
 		(
 			select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
              o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-						 o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
+						 o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
              f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
 						 f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
              ic.name as customer_name
@@ -385,6 +425,51 @@
 			on o.flight_id = f.flight_id
             and o.is_deleted = 0
 			inner JOIN institution_client ic on ic.institution_client_id = o.customer_id
+            <if test="criteria.queryBookingIds != null and !''.equals(criteria.queryBookingIds)">
+              and o.booking_person in ( #{criteria.queryBookingIds})
+            </if>
+            <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
+              and o.protocol_id in ( #{criteria.queryProtocolIds})
+            </if>
+            <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
+              and o.is_important =  #{criteria.queryIsImportant}
+            </if>
+            <!-- 预约订单 -->
+            <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '0'.equals(criteria.queryOrderType)">
+              and o.order_type = (#{criteria.queryOrderType})
+              <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+                and o.order_status in (#{criteria.queryOrderStatus})
+              </if>
+            </if>
+            <!-- 服务订单 -->
+            <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '1'.equals(criteria.queryOrderType)">
+              <choose>
+                <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
+                  and o.order_type = 1
+                  and o.order_status in (#{criteria.queryOrderStatus})
+                </when>
+                <otherwise>
+                  and o.order_type = 1
+                  and o.order_status in (#{criteria.queryOrderStatus})
+                </otherwise>
+              </choose>
+            </if>
+            <if test="criteria.queryBookingOneDayBefore != null and !''.equals(criteria.queryBookingOneDayBefore)">
+              and datediff(now(),o.create_time) &gt; 0
+            </if>
+            <if test="criteria.queryAttServerOrderList != null and !''.equals(criteria.queryAttServerOrderList)">
+              and (o.print_check is not null or  o.consign is not null)
+            </if>
+            <!-- 附加服务单 订单是否被安排，0：未安排与agent_person 比较，1：已安排 agent_person 比较，2：已完成,与server_complete比较 -->
+            <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '0'.equals(criteria.queryAgentPerson)">
+              and o.agent_person is null
+            </if>
+            <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '1'.equals(criteria.queryAgentPerson)">
+              and o.agent_person is not null
+            </if>
+            <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
+              and o.server_complete is not null
+            </if>
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
 		left join passenger p on orderFlightClient.order_id = p.order_id
@@ -399,27 +484,29 @@
     <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
       and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
     </if>
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
+      and orderFlightClientPassengerService.is_in_or_out = #{criteria.queryIsInOrOut}
+    </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
       and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
     </if>
-    <if test="criteria.queryBookingIds != null and !''.equals(criteria.queryBookingIds)">
-      and orderFlightClientPassengerService.booking_person in ( #{criteria.queryBookingIds})
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '0'.equals(criteria.queryOrderType)">
+      order by orderFlightClientPassengerService.plan_take_off_time asc
     </if>
-    <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
-      and orderFlightClientPassengerService.protocol_id in ( #{criteria.queryProtocolIds})
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '1'.equals(criteria.queryOrderType)">
+      order by orderFlightClientPassengerService.plan_take_off_time desc
     </if>
-    <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
-      and orderFlightClientPassengerService.order_status in ( #{criteria.queryOrderStatus})
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '2'.equals(criteria.queryOrderType)">
+      order by orderFlightClientPassengerService.plan_landing_time asc
     </if>
-    <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
-      and orderFlightClientPassengerService.is_important in ( #{criteria.queryIsImportant})
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '3'.equals(criteria.queryOrderType)">
+      order by orderFlightClientPassengerService.plan_landing_time desc
     </if>
-    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType)">
-      and orderFlightClientPassengerService.order_type in ( #{criteria.queryOrderType})
-    </if>
+
+
   </select>
 
 
@@ -435,9 +522,10 @@
     (
     select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.customer_id,o.booking_person,
     o.notice_person,o.booking_way,o.is_important,o.product_id,o.print_check,o.print_check_remark,o.consign,o.consign_remark,
-    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,
-    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
-    f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,
+    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,
+    o.airport_code,o.create_user,o.create_time,
+    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,
+    f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.boarding_port,f.is_near_or_far,f.plan_no,f.board_in_out,
     ic.name as customer_name
     from order_info o
     inner join flight f
@@ -456,6 +544,12 @@
     </if>
   </select>
 
+
+
+  <insert id="insertIntoOrderStatusRecord">
+    insert into order_status_record (order_id,order_status,airport_code)
+    values (#{orderId},#{orderStatus},#{airportCode});
+  </insert>
   <update id="updateServerComplete">
     UPDATE
       order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{updateUser}
@@ -474,6 +568,5 @@
     WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete = 0 and airport_code = #{airportCode}
     ]]>
   </select>
-
 
 </mapper>

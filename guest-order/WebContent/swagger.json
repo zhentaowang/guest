@@ -51,6 +51,32 @@
         }
       }
     },
+    "/delete" : {
+      "post" : {
+        "tags" : [ "订单管理" ],
+        "summary" : "订单管理 - 删除",
+        "description" : "返回响应结果",
+        "operationId" : "delete",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/全局统一接受参数Long"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
     "/getIdentityCardDropdownList" : {
       "get" : {
         "tags" : [ "common:公共接口" ],
@@ -63,6 +89,36 @@
           "in" : "query",
           "required" : false,
           "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/getOrderCountByServiceDetail" : {
+      "get" : {
+        "tags" : [ "订单管理" ],
+        "summary" : "订单管理 - 根据id查询订单 ",
+        "description" : "返回合同详情",
+        "operationId" : "getOrderCountByServiceDetail",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "orderStatus",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "serviceDetailId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
         } ],
         "responses" : {
           "200" : {
@@ -102,7 +158,7 @@
       "get" : {
         "tags" : [ "common:公共接口" ],
         "summary" : "根据航班id查询乘客信息",
-        "description" : "乘客身份证模糊匹配下拉框",
+        "description" : "根据航班id获取乘客信息",
         "operationId" : "getPassengerByFlightId",
         "produces" : [ "application/json;charset=utf-8" ],
         "parameters" : [ {
@@ -122,33 +178,7 @@
         }
       }
     },
-    "/guest-order/delete" : {
-      "post" : {
-        "tags" : [ "订单管理" ],
-        "summary" : "订单管理 - 删除",
-        "description" : "返回响应结果",
-        "operationId" : "delete",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json;charset=utf8" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/全局统一接受参数Long"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "schema" : {
-              "type" : "string"
-            }
-          }
-        }
-      }
-    },
-    "/guest-order/list" : {
+    "/list" : {
       "get" : {
         "tags" : [ "订单管理" ],
         "summary" : "员工列表 - 分页查询",
@@ -214,6 +244,31 @@
           "in" : "query",
           "required" : false,
           "type" : "string"
+        }, {
+          "name" : "queryBookingOneDayBefore",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryProductId",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryIsInOrOut",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryAttServerOrderList",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryAgentPerson",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -231,7 +286,7 @@
         }
       }
     },
-    "/guest-order/saveOrUpdate" : {
+    "/saveOrUpdate" : {
       "post" : {
         "tags" : [ "订单管理" ],
         "summary" : "订单 - 新增/修改",
@@ -258,7 +313,38 @@
         }
       }
     },
-    "/guest-order/view" : {
+    "/updateServerComplete" : {
+      "post" : {
+        "tags" : [ "订单管理" ],
+        "summary" : "修改订单服务状态",
+        "description" : "返回响应结果",
+        "operationId" : "updateServerComplete",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "flightId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "serverComplete",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "/view" : {
       "get" : {
         "tags" : [ "订单管理" ],
         "summary" : "订单管理 - 根据id查询订单 ",
@@ -446,9 +532,8 @@
           "description" : "服务说明"
         },
         "orderStatus" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "0:预约成功，1：消费,2 : 取消，3：使用，4：草稿"
+          "type" : "string",
+          "description" : "预约草稿，已预约，预约取消，已使用，服务草稿，服务取消"
         },
         "orderType" : {
           "type" : "integer",
@@ -459,6 +544,10 @@
           "type" : "integer",
           "format" : "int32",
           "description" : "代办完成:1：是，0：否"
+        },
+        "agentPersonName" : {
+          "type" : "string",
+          "description" : "安排代办人姓名"
         },
         "serverCardNo" : {
           "type" : "string",
@@ -525,6 +614,14 @@
         "productName" : {
           "type" : "string",
           "description" : "产品名称"
+        },
+        "bookingPersonName" : {
+          "type" : "string",
+          "description" : "预约人姓名"
+        },
+        "createUserName" : {
+          "type" : "string",
+          "description" : "创建人姓名"
         }
       },
       "description" : "order_info"

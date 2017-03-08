@@ -57,8 +57,23 @@ public class ProtocolProductController {
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for(int k = 0; k < param.size(); k++){
                 JSONObject param00 = JSON.parseObject(param.get(k).toString());
+                JSONArray serviceList = param00.getJSONArray("serviceList");
+                param00.remove("serviceList");
                 ProtocolProduct protocolProduct = JSONObject.toJavaObject(param00,ProtocolProduct.class);
                 protocolProduct.setAirportCode(airportCode);
+                List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
+                if(serviceList != null){
+                    for (int i = 0; i < serviceList.size(); i++) {
+                        JSONObject protocolProductServ00 = JSON.parseObject(serviceList.get(i).toString());
+                        protocolProductServ00.remove("servId");
+                        protocolProductServ00.remove("no");
+                        protocolProductServ00.remove("name");
+                        ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductServ00,ProtocolProductServ.class);
+                        protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
+                        protocolProductServs.add(protocolProductServ);
+                    }
+                }
+                protocolProduct.setProtocolProductServList(protocolProductServs);
                 if(protocolProduct.getProtocolProductId() == null){
                     if (protocolProduct == null || protocolProduct.getProductId() == null || protocolProduct.getProtocolId() == null) {
                         return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
@@ -77,6 +92,40 @@ public class ProtocolProductController {
     }
 
     /**
+     * 协议产品服务管理 - 新增or更新
+     * 需要判断name是否重复
+     * @param params
+     * @return
+     */
+    @POST
+    @Path("protocol-product-service-save-or-update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议产品服务管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
+    public LXResult protocolProductServiceSave(@ApiParam(value = "protocolProductService", required = true) @RequestBody String params,
+                                        @Context final HttpHeaders headers) {
+        try {
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            JSONArray param = JSON.parseObject(params).getJSONArray("data");
+            for(int i = 0; i < param.size(); i++){
+                JSONObject param00 = JSON.parseObject(param.get(i).toString());
+                ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(param00,ProtocolProductServ.class);
+                protocolProductServ.setAirportCode(airportCode);
+                if(protocolProductServ.getProtocolProductServiceId() == null){
+                    if (protocolProductServ == null || protocolProductServ.getProtocolProductId() == null || protocolProductServ.getServiceTypeAllocationId() == null) {
+                        return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                    }
+                }
+                protocolProductService.saveOrUpdateProtocolProductServ(protocolProductServ);
+            }
+            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+        }
+    }
+
+    /**
      * 协议产品管理 - 根据id查询
      *
      * @param protocolProductId
@@ -85,7 +134,7 @@ public class ProtocolProductController {
     @GET
     @Path("protocol-product-view")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "协议产品管理 - 根据id查询 ", notes = "返回协议详情", httpMethod = "GET", produces = "application/json")
+    @ApiOperation(value = "协议产品管理 - 根据id查询 ", notes = "返回协议产品详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
     })
@@ -98,6 +147,30 @@ public class ProtocolProductController {
         param.put("protocolProductId", protocolProductId);
         ProtocolProduct protocolProduct = protocolProductService.getById(param);
         return JSON.toJSONString(new LZResult<>(protocolProduct));
+    }
+
+    /**
+     * 协议产品服务管理 - 根据id查询
+     *
+     * @param protocolProductServiceId
+     * @return
+     */
+    @GET
+    @Path("protocol-product-service-view")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议产品服务管理 - 根据id查询 ", notes = "返回协议产品服务详情", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "protocolProductServiceId", value = "协议产品服务id", dataType = "Long", defaultValue = "11", required = true, paramType = "query")
+    })
+    public String protocolProductServiceView(@Context final HttpHeaders headers,
+                                      @QueryParam(value = "protocolProductServiceId") Long protocolProductServiceId
+    ) {
+        Map<String, Object> param = new HashMap();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        param.put("airportCode", airportCode);
+        param.put("protocolProductServiceId", protocolProductServiceId);
+        ProtocolProductServ protocolProductServ = protocolProductService.getByProtocolProductServiceId(param);
+        return JSON.toJSONString(new LZResult<>(protocolProductServ));
     }
 
         /**
@@ -149,7 +222,7 @@ public class ProtocolProductController {
                     return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
                 }
             }
-            protocolProductService.deleteById(ids,"LJG");
+            protocolProductService.deleteById(ids,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete protocolProduct by ids error", e);
