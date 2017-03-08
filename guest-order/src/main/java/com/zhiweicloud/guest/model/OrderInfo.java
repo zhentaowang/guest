@@ -73,6 +73,9 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="安排代办人",name="agentPerson")
     private Long agentPerson;
 
+    @ApiModelProperty(value="安排代办人姓名",name="agentPersonName")
+    private String agentPersonName;
+
     @ApiModelProperty(value="代办完成:1：是，0：否",name="agentPerson")
     private Short agentComplete;
 
@@ -567,5 +570,13 @@ public class OrderInfo extends BaseEntity{
 
     public void setCreateUserName(String createUserName) {
         this.createUserName = createUserName;
+    }
+
+    public String getAgentPersonName() {
+        return agentPersonName;
+    }
+
+    public void setAgentPersonName(String agentPersonName) {
+        this.agentPersonName = agentPersonName;
     }
 }
