@@ -136,9 +136,9 @@ public class OrderInfoController {
     public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,@Context final HttpHeaders headers) {
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            //Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
 
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            //String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
             JSONArray serviceListArray = orderObject.getJSONArray("serviceList");
@@ -156,7 +156,7 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             }else{
-                orderInfoService.saveOrUpdate(order,passengerList,orderServiceList,userId,airportCode);
+                orderInfoService.saveOrUpdate(order,passengerList,orderServiceList,40L,"LJG");
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
                 result.setData(null);
@@ -165,7 +165,7 @@ public class OrderInfoController {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
+            result.setData(e.toString());
         }
         return JSON.toJSONString(result);
     }
