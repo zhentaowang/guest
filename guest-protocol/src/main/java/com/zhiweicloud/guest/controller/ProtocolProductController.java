@@ -222,7 +222,7 @@ public class ProtocolProductController {
                     return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
                 }
             }
-            protocolProductService.deleteById(ids,"LJG");
+            protocolProductService.deleteById(ids,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete protocolProduct by ids error", e);

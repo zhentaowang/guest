@@ -78,7 +78,7 @@ public class ProtocolProductService {
             protocolProductMapper.insertBySelective(protocolProduct);
             List<ProtocolProductServ> protocolProductServList = protocolProduct.getProtocolProductServList();
             for(int i = 0; i < protocolProductServList.size(); i++){
-                ProtocolProductServ protocolProductServ = new ProtocolProductServ();
+                ProtocolProductServ protocolProductServ = protocolProductServList.get(i);
                 protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
                 protocolProductServ.setProtocolProductId(protocolProduct.getProtocolProductId());
                 protocolProductServ.setCreateTime(new Date());
@@ -116,6 +116,10 @@ public class ProtocolProductService {
             protocolProduct.setProtocolProductId(ids.get(i));
             protocolProduct.setIsDeleted(Constant.MARK_AS_DELETED);
             protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
+            ProtocolProductServ protocolProductServ = new ProtocolProductServ();
+            protocolProductServ.setAirportCode(airportCode);
+            protocolProductServ.setProtocolProductId(protocolProduct.getProtocolProductId());
+            protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductServ);
         }
     }
 
