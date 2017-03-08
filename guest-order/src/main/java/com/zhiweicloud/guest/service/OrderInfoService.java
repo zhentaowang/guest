@@ -330,13 +330,39 @@ public class OrderInfoService {
     }
 
     /**
-     * 根据详细服务id和服务状态获取订单数
-     * @param orderStatus
+     * 根据详细服务id和服务状态获取服务人次
      * @param serviceDetailId
      * @param airportCode
      * @return
      */
-    public int getOrderCountByServiceDetail(Short orderStatus, Long serviceDetailId, String airportCode){
-       return orderInfoMapper.getOrderCountByServiceDetail(orderStatus,serviceDetailId,airportCode);
+    public int getServerNumByServiceDetailId(String orderStatus,Long serviceDetailId, String airportCode){
+//        JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/view?protocolId="+ orderInfo.getProtocolId() ,headerMap));
+
+        //根据服务类型service_type_allocation_id 获取到服务列表
+//        JSONObject serviceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-service/getServerNumByServiceDetailId?typeId="+ typeId +"&access_token=cI6Nq3ulRJRz9aPZc2TREi9uqq7FOy8DWHnRziV6"));
+//        if(serviceJSONObject != null){
+////
+//            JSONArray protocolServArray = serviceJSONObject.getJSONArray("data");
+//            for(int i = 0; i < protocolServArray.size();i++){
+//                int servNum = 0;
+//                //解析服务对象
+//                JSONObject servObject = JSON.parseObject(protocolServArray.get(i).toString());
+//                Long servId = Long.valueOf(servObject.get("servId").toString());
+//
+//                //根据服务ser_id 查询协议产品服务
+//                JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServiceId?serviceId="+ servId +"&access_token=cI6Nq3ulRJRz9aPZc2TREi9uqq7FOy8DWHnRziV6"));
+//                //解析协议产品服务对象
+//                JSONObject protocolProductServObject = JSON.parseObject(protocolJSONObject.get("data").toString());
+//                for(int j = 0; j < protocolProductServObject.size(); i++){
+//                    JSONObject protocolProductServ = JSON.parseObject(protocolServArray.get(i).toString());
+//                    Long serviceDetailId = Long.valueOf(protocolProductServ.get("protocolProductServiceId").toString());
+//
+//                    servNum = orderInfoMapper.getServerNumByServiceDetailId(orderStatus,serviceDetailId,airportCode);
+//                }
+//                //
+//                servObject.put("servNum",servNum);
+//            }
+//        }
+       return orderInfoMapper.getServerNumByServiceDetailId(orderStatus,serviceDetailId,airportCode);
     }
 }

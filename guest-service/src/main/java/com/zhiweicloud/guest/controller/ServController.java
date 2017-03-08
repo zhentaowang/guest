@@ -216,4 +216,31 @@ public class ServController {
         return JSON.toJSONString(result);
     }
 
+    /**
+     * 根据服务分类查询 服务名，服务人数
+     * @param typeId
+     * @return
+     */
+    @GET
+    @Path("getServNameAndPositionNum")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "休息室/服务厅管理 - 服务查询", notes = "显示服务厅名以及可服务人数", httpMethod = "GET", produces = "application/json")
+    public String getServNameAndPositionNum(
+                        @QueryParam(value = "typeId") Long typeId,
+                        @Context final HttpHeaders headers) {
+        LZResult<List<Serv>> result = new LZResult<>();
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        try{
+            List<Serv> list = servService.getServNameAndPositionNum(typeId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch (Exception e){
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+    }
+
 }

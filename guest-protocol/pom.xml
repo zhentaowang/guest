@@ -227,6 +227,7 @@
                                 <location>com.zhiweicloud.guest.controller.CommonController</location>
                                 <location>com.zhiweicloud.guest.controller.ProtocolController</location>
                                 <location>com.zhiweicloud.guest.controller.ProtocolProductController</location>
+                                <location>com.zhiweicloud.guest.controller.ProtocolProductServController</location>
                             </locations>
                             <schemes>
                                 <scheme>http</scheme>

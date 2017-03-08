@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
+import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.ServMapper;
 import com.zhiweicloud.guest.model.ProtocolProductDetail;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -167,5 +169,33 @@ public class ServService {
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, servJson);
         LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
         return result;
+    }
+
+    /**
+     * 根据服务分类查询 服务名，服务人数
+     * @param typeId
+     * @param airportCode
+     * @return
+     */
+    public List<Serv> getServNameAndPositionNum(Long typeId, String airportCode){
+        List<Serv> servList = servMapper.getServNameAndPositionNum(typeId,airportCode);
+        for(Serv serv : servList){
+            //根据服务ser_id 查询协议产品服务
+            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=cI6Nq3ulRJRz9aPZc2TREi9uqq7FOy8DWHnRziV6"));
+            //解析协议产品服务对象
+            JSONObject protocolProductServList = JSON.parseObject(protocolJSONObject.get("data").toString());
+            int servNum = 0;
+            for(int i = 0; i < protocolProductServList.size(); i++){
+                JSONObject protocolProductServ = JSON.parseObject(protocolProductServList.get(i).toString());
+                Long serviceDetailId = Long.valueOf(protocolProductServ.get("protocolProductServiceId").toString());
+
+                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getServerNumByServiceDetailId?serviceDetailId="+ serviceDetailId +"&access_token=cI6Nq3ulRJRz9aPZc2TREi9uqq7FOy8DWHnRziV6"));
+                //解析协议产品服务对象
+                JSONObject orderCount = JSON.parseObject(orderServiceJSONObject.get("data").toString());
+                servNum = Integer.valueOf(orderCount.toString());
+            }
+            serv.setPositionNum(servNum);
+        }
+        return servList;
     }
 }
