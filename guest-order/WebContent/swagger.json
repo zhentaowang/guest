@@ -259,6 +259,16 @@
           "in" : "query",
           "required" : false,
           "type" : "string"
+        }, {
+          "name" : "queryAttServerOrderList",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryAgentPerson",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -534,6 +544,10 @@
           "type" : "integer",
           "format" : "int32",
           "description" : "代办完成:1：是，0：否"
+        },
+        "agentPersonName" : {
+          "type" : "string",
+          "description" : "安排代办人姓名"
         },
         "serverCardNo" : {
           "type" : "string",
