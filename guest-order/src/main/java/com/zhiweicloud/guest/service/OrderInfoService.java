@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
+import com.zhiweicloud.guest.common.CustomException;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
@@ -41,7 +42,7 @@ public class OrderInfoService {
 
 
 
-    public void saveOrUpdate(OrderInfo orderInfo,List<Passenger> passengerList,List<OrderService> orderServiceList,Long userId,String airportCode) throws Exception{
+    public void saveOrUpdate(OrderInfo orderInfo,List<Passenger> passengerList,List<OrderService> orderServiceList,Long userId,String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
         if (orderInfo.getOrderId() != null) {
             orderInfo.setUpdateTime(new Date());
@@ -59,7 +60,9 @@ public class OrderInfoService {
             if(orderInfo.getFlight() != null){
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
-
+                if(flight.getFlightArrcode() == null || flight.getFlightDepcode() == null){
+                    throw new CustomException("出发地三字码或者目的地三字码为空");
+                }
                 if(flight.getFlightId() != null){
                     flight.setUpdateTime(new Date());
                     flight.setUpdateUser(userId);
@@ -177,8 +180,8 @@ public class OrderInfoService {
          * 协议名称模糊匹配，获取协议ids
          */
         List protocolIdList = new ArrayList();
-        //JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getProtocolNameDropdownList?protocolName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=%E5%95%86&access_token=DZ75lFTo7qLmUkcM0zSBz6VA17Aw6cHtWCXb1DYT"));
+        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getProtocolNameDropdownList?protocolName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
+        //JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=%E5%95%86&access_token=DZ75lFTo7qLmUkcM0zSBz6VA17Aw6cHtWCXb1DYT"));
         if(protocolParam != null){
             JSONArray protocolArray = protocolParam.getJSONArray("data");
 
@@ -191,8 +194,8 @@ public class OrderInfoService {
         /**
          * 预约号，拿到协议id，所以可以用 protocolIds
          */
-        //JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getProtocolNameDropdownList?reservationNum=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-        JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?reservationNum=%E5%95%86&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+        JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getProtocolNameDropdownList?reservationNum=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
+        //JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?reservationNum=%E5%95%86&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
         if(reservationNumObject != null){
             JSONArray reservationNumArray = reservationNumObject.getJSONArray("data");
             for(int i = 0; i < reservationNumArray.size();i++){
@@ -206,8 +209,8 @@ public class OrderInfoService {
          * 预约人
          */
         List authorizerNameIdList = new ArrayList();
-        //JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getProtocolNameDropdownList?authorizerName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-        JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?authorizerName=%E5%95%86&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+        JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getProtocolNameDropdownList?authorizerName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
+        //JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?authorizerName=%E5%95%86&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
         if(authorizerNameObject != null){
             JSONArray authorizerNameArray = authorizerNameObject.getJSONArray("data");
 
@@ -233,8 +236,8 @@ public class OrderInfoService {
         List<OrderInfo> orderInfoList = orderInfoMapper.selectOrderInfoList(queryCondition);
        for(int i = 0; i < orderInfoList.size();i++){
             OrderInfo temp = orderInfoList.get(i);
-            //JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/view?protocolId=" + temp.getProtocolId(),headerMap));
-            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/view?protocolId="+ temp.getProtocolId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/view?protocolId=" + temp.getProtocolId(),headerMap));
+            //JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/view?protocolId="+ temp.getProtocolId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
 
             if(temp.getProtocolId() != null){
 
@@ -245,8 +248,8 @@ public class OrderInfoService {
                 }
             }
             if(temp.getProductId() != null) {
-                //JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/protocol-product-view?protocolProductId=" + temp.getProductId(),headerMap));
-                JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocol-product-view?protocolProductId="+ temp.getProductId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+                JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/protocol-product-view?protocolProductId=" + temp.getProductId(),headerMap));
+                //JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocol-product-view?protocolProductId="+ temp.getProductId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
                 if(productJSONObject != null){
                     JSONObject productObject = JSON.parseObject(productJSONObject.get("data").toString());
                     String productName = productObject.get("productName").toString();//产品名称
@@ -255,8 +258,8 @@ public class OrderInfoService {
             }
 
             if(temp.getAgentPerson() != null){
-                //JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/view?employeeId="+ temp.getAgentPerson() ,headerMap));
-                JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId="+ temp.getAgentPerson() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+                JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/view?employeeId="+ temp.getAgentPerson() ,headerMap));
+                //JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId="+ temp.getAgentPerson() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
                 if(agentPersonNameObject != null){
                     JSONArray jsonArray = agentPersonNameObject.getJSONArray("data");
                     String agentPersonName = jsonArray.getJSONObject(0).get("name").toString();
@@ -314,36 +317,54 @@ public class OrderInfoService {
         Map<String,Object> headerMap = new HashMap();
         headerMap.put("user-id",userId);
         headerMap.put("client-id",airportCode);
-        JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/view?protocolId="+ orderInfo.getProtocolId() ,headerMap));
-        //JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/view?protocolId="+ orderInfo.getProtocolId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
-        if(protocolJSONObject != null){
-            JSONObject protocolObject = JSON.parseObject(protocolJSONObject.get("data").toString());
-            String protocolName = protocolObject.get("name").toString();//协议名称
-            orderInfo.setProtocolName(protocolName);
+        if(orderInfo.getProtocolId() != null){
+            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/view?protocolId="+ orderInfo.getProtocolId() ,headerMap));
+            //JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/view?protocolId="+ orderInfo.getProtocolId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+            if(protocolJSONObject != null){
+                JSONObject protocolObject = JSON.parseObject(protocolJSONObject.get("data").toString());
+                String protocolName = protocolObject.get("name").toString();//协议名称
+                orderInfo.setProtocolName(protocolName);
+            }
         }
 
-        JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/protocol-product-view?protocolProductId="+ orderInfo.getProductId() ,headerMap));
-        //JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocol-product-view?protocolProductId="+ orderInfo.getProductId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
-        if(productJSONObject != null){
-            JSONObject productObject = JSON.parseObject(productJSONObject.get("data").toString());
-            String productName = productObject.get("productName").toString();//产品名称
-            orderInfo.setProductName(productName);
+        if(orderInfo.getProductId() != null){
+            JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/protocol-product-view?protocolProductId="+ orderInfo.getProductId() ,headerMap));
+            //JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocol-product-view?protocolProductId="+ orderInfo.getProductId() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+            if(productJSONObject != null){
+                JSONObject productObject = JSON.parseObject(productJSONObject.get("data").toString());
+                String productName = productObject.get("productName").toString();//产品名称
+                orderInfo.setProductName(productName);
+            }
         }
 
-        //JSONObject bookingPersonJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getAuthorizerDropdownList?authorizerId="+ orderInfo.getBookingPerson() ,headerMap));
-        JSONObject bookingPersonJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getAuthorizerDropdownList?authorizerId="+ orderInfo.getBookingPerson() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
-        if(bookingPersonJSONObject != null){
-            JSONArray jsonArray = bookingPersonJSONObject.getJSONArray("data");
-            String bookingPersonName = jsonArray.getJSONObject(0).get("value").toString();
-            orderInfo.setBookingPersonName(bookingPersonName);
+        if(orderInfo.getBookingPerson() != null){
+            JSONObject bookingPersonJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/getAuthorizerDropdownList?authorizerId="+ orderInfo.getBookingPerson() ,headerMap));
+            //JSONObject bookingPersonJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getAuthorizerDropdownList?authorizerId="+ orderInfo.getBookingPerson() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+            if(bookingPersonJSONObject != null){
+                JSONArray jsonArray = bookingPersonJSONObject.getJSONArray("data");
+                String bookingPersonName = jsonArray.getJSONObject(0).get("value").toString();
+                orderInfo.setBookingPersonName(bookingPersonName);
+            }
         }
 
-        //JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/view?employeeId="+ orderInfo.getCreateUser() ,headerMap));
-        JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId="+ orderInfo.getCreateUser() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
-        if(createUserObject != null){
-            JSONArray jsonArray = createUserObject.getJSONArray("data");
-            String createUserName = jsonArray.getJSONObject(0).get("name").toString();
-            orderInfo.setCreateUserName(createUserName);
+        if(orderInfo.getCreateUser() != null){
+            JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/view?employeeId="+ orderInfo.getCreateUser() ,headerMap));
+            //JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId="+ orderInfo.getCreateUser() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+            if(createUserObject != null){
+                JSONArray jsonArray = createUserObject.getJSONArray("data");
+                String createUserName = jsonArray.getJSONObject(0).get("name").toString();
+                orderInfo.setCreateUserName(createUserName);
+            }
+        }
+
+        if(orderInfo.getAgentPerson() != null){
+            JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/view?employeeId="+ orderInfo.getAgentPerson() ,headerMap));
+            //JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId="+ orderInfo.getAgentPerson() +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+            if(agentPersonNameObject != null){
+                JSONArray jsonArray = agentPersonNameObject.getJSONArray("data");
+                String agentPersonName = jsonArray.getJSONObject(0).get("name").toString();
+                orderInfo.setAgentPersonName(agentPersonName);
+            }
         }
 
         return orderInfo;

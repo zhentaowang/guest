@@ -165,7 +165,7 @@ public class OrderInfoController {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
+            result.setData(e.toString());
         }
         return JSON.toJSONString(result);
     }
