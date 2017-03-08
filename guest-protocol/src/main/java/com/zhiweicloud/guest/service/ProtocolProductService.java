@@ -70,6 +70,15 @@ public class ProtocolProductService {
         if (protocolProduct.getProtocolProductId() != null) {
             protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
         } else {
+            List<ProtocolProductServ> protocolProductServList = protocolProduct.getProtocolProductServList();
+            for(int i = 0; i < protocolProductServList.size(); i++){
+                ProtocolProductServ protocolProductServ = new ProtocolProductServ();
+                protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
+                protocolProductServ.setCreateTime(new Date());
+                protocolProductServ.setUpdateTime(new Date());
+                protocolProductServ.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                protocolProductServiceMapper.insertBySelective(protocolProductServ);
+            }
             protocolProduct.setCreateTime(new Date());
             protocolProduct.setUpdateTime(new Date());
             protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
