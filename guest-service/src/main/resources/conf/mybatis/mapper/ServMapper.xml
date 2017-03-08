@@ -120,13 +120,18 @@
 
   <select id="selectByName"  parameterType="java.util.Map"  resultType="java.lang.Long">
     SELECT count(serv_id) from serv where airport_code = #{airportCode,jdbcType=VARCHAR} and name = #{serviceName,jdbcType=VARCHAR}
+    and is_deleted = 0
     <if test="id != null">
       and serv_id != #{id,jdbcType=BIGINT}
     </if>
   </select>
 
   <select id="selectProductByServiceId"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT count(id) from product where airport_code = #{airportCode,jdbcType=VARCHAR} and service_id = #{serviceId,jdbcType=BIGINT}
+    SELECT count(p.product_id) from product_service_type as p right join
+    (select service_type_allocation_id from serv
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and serv_id = #{serviceId,jdbcType=BIGINT} and is_deleted = 0)
+    as s on p.service_type_id = s.service_type_allocation_id
+     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
   </select>
 
   <select id="getServiceNameDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">
