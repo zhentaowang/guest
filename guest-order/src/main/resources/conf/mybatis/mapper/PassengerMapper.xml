@@ -139,17 +139,15 @@
   </resultMap>
 
   <select id="getIdentityCardDropdownList" resultMap="DropdownlistMap">
-    <![CDATA[
     SELECT
       passenger_id,identity_card
     FROM passenger
-    WHERE is_deleted = 0 AND airport_code = #{airportCode} AND  identity_card <>''
+    WHERE is_deleted = 0 AND airport_code = #{airportCode} AND identity_card IS NOT NULL
     AND passenger_id IN(SELECT MAX(passenger_id) FROM passenger GROUP BY identity_card)
     <if test="identityCard != null and !identityCard.trim().equals('')" >
       AND identity_card LIKE concat('%',#{identityCard},'%')
     </if>
     ORDER BY passenger_id DESC
-    ]]>
   </select>
 
 
