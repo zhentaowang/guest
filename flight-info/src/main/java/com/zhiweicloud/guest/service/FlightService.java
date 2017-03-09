@@ -38,11 +38,16 @@ import java.util.Map;
  */
 @Service
 public class FlightService {
+
     @Autowired
     private AirportInfoMapper airportInfoMapper;
-
 
     public List<Map<String,String>> flightInfoDropdownList(String airportNameOrCode) {
         return airportInfoMapper.queryFlightInfoDropdownList(airportNameOrCode);
     }
+
+    public List<Map<String,String>> flightNoDropdownList(String airportCode) {
+        return airportInfoMapper.queryFlightNoDropdownList(airportCode);
+    }
+
 }
