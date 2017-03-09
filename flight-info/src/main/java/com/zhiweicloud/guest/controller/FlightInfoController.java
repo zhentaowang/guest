@@ -120,11 +120,11 @@ public class FlightInfoController {
     @Path("flightNoDropdownList")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "航班号下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-    public String flightNoDropdownList(@Context final HttpHeaders headers) {
+    public String flightNoDropdownList(@QueryParam(value = "flightNo") String flightNo,@Context final HttpHeaders headers) {
         LZResult<List<Map<String,String>>> result = new LZResult<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         try {
-            List<Map<String,String>> list = flightService.flightNoDropdownList(airportCode);
+            List<Map<String,String>> list = flightService.flightNoDropdownList(flightNo,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);

@@ -29,6 +29,7 @@ import com.zhiweicloud.guest.mapper.AirportInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +47,8 @@ public class FlightService {
         return airportInfoMapper.queryFlightInfoDropdownList(airportNameOrCode);
     }
 
-    public List<Map<String,String>> flightNoDropdownList(String airportCode) {
-        return airportInfoMapper.queryFlightNoDropdownList(airportCode);
+    public List<Map<String,String>> flightNoDropdownList(String flightNo,String airportCode) {
+        return airportInfoMapper.queryFlightNoDropdownList(flightNo,airportCode);
     }
 
 }
