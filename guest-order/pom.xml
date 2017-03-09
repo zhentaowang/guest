@@ -9,6 +9,7 @@
   <url>http://maven.apache.org</url>
 
   <properties>
+    <encoding>UTF-8</encoding>
     <spring.version>4.2.5.RELEASE</spring.version>
     <jersey.version>2.23.1</jersey.version>
     <mysql.version>5.1.38</mysql.version>
@@ -203,6 +204,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven.plugin.version}</version>
         <configuration>
+          <encoding>${encoding}</encoding>
           <source>${jdk.version}</source> <!-- 源代码使用的开发版本 -->
           <target>${jdk.version}</target> <!-- 需要生成的目标class文件的编译版本 -->
         </configuration>
