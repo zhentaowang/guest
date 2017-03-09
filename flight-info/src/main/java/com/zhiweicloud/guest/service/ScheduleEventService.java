@@ -73,22 +73,22 @@ public class ScheduleEventService {
      * @param page
      * @param rows
      */
-    public LZResult<PaginationResult<ScheduleEvent>> getFlightList(Map<String,Object> param, Integer page, Integer rows) {
+    public LZResult<PaginationResult<Flight>> getFlightList(Map<String,Object> param, Integer page, Integer rows) {
 
         int count;
         BasePagination<Map<String,Object>> queryCondition;
-        List<ScheduleEvent> protocolList;
-        PaginationResult<ScheduleEvent> eqr;
+        List<Flight> flightList;
+        PaginationResult<Flight> eqr;
         if(param.get("serverComplete") == null){
             count = flightMapper.getFlightListCount(param);
             queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-            protocolList = flightMapper.getFlightListByConidition(queryCondition);
+            flightList = flightMapper.getFlightListByConidition(queryCondition);
         }else{
             count = flightMapper.getFlightListCountByOrderStatus(param);
             queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-            protocolList = flightMapper.getFlightListByOrderStatus(queryCondition);
+            flightList = flightMapper.getFlightListByOrderStatus(queryCondition);
         }
-        eqr = new PaginationResult<>(count, protocolList);
+        eqr = new PaginationResult<>(count, flightList);
         return new LZResult<>(eqr);
     }
 
