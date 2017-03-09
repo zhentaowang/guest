@@ -557,15 +557,15 @@
 
   </update>
 
-  <select id="getOrderCountByServiceDetail" resultType="int">
+  <select id="getServerNumByServiceDetailId" resultType="int">
     <![CDATA[
     SELECT
-      count(o.order_id) FROM order_service os
-    INNER JOIN order_info o ON os.order_id = o.order_id
-    WHERE
-      o.is_deleted = 0 AND os.is_deleted=0 AND o.airport_code = #{airportCode}
-      AND o.order_status = #{orderStatus}
-      AND service_detail->'$.serviceDetailId' = #{serviceDetailId}
+      sum(ifnull(sd.serverNum,0)) FROM order_info o
+    LEFT JOIN
+      (SELECT service_detail->>"$.serverNum" as serverNum, order_id FROM order_service
+        WHERE service_detail->'$.serviceDetailId' = #{serviceDetailId} AND is_deleted = 0 AND airport_code = #{airportCode}) sd
+    ON sd.order_id = o.order_id
+    WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete = 0 and airport_code = #{airportCode}
     ]]>
   </select>
 

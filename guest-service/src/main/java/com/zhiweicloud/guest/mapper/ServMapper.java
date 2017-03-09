@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.mapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Serv;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +23,12 @@ public interface ServMapper {
     Long selectByName(Map<String, Object> map);
     Integer updateByIdAndAirportCode(Serv serv);
     List<Dropdownlist> getServiceNameDropdownList(Map<String, Object> param);
+
+    /**
+     * 根据服务分类查询 服务名，服务人数
+     * @param typeId
+     * @param airportCode
+     * @return
+     */
+    List<Serv> getServNameAndPositionNum(@Param("typeId") Long typeId, @Param("airportCode") String airportCode);
 }

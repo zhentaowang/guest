@@ -15,4 +15,12 @@ public class OrderConstant {
     public static final String ORDER_SER_SIT_NO = "座位号：";
     public static final String ORDER_SER_SERVER_COMPLETE = "服务完成";
     public static final String ORDER_SER_SERVER_RESTART = "服务重新开启";
+
+    /**
+     * 订单状态：已使用
+     */
+    public static final String ORDER_STATUS_USED = "已使用";
+
+
+
 }

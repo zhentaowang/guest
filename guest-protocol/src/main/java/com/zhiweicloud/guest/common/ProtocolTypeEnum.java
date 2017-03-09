@@ -8,11 +8,16 @@ package com.zhiweicloud.guest.common;
  */
 public enum  ProtocolTypeEnum {
 
-    PROTOCOL_TYPE_1(1, "协议类型1"),
-    PROTOCOL_TYPE_2(2, "协议类型2"),
-    PROTOCOL_TYPE_3(3, "协议类型3"),
-    PROTOCOL_TYPE_4(4, "协议类型4"),
-    PROTOCOL_TYPE_5(5, "协议类型5");
+    PROTOCOL_TYPE_1(1, "冠名客户"),
+    PROTOCOL_TYPE_2(2, "服务会员"),
+    PROTOCOL_TYPE_3(3, "地方政要"),
+    PROTOCOL_TYPE_4(4, "机场接待"),
+    PROTOCOL_TYPE_5(5, "副部级政要"),
+    PROTOCOL_TYPE_6(6, "包量客户"),
+    PROTOCOL_TYPE_7(7, "结算会员"),
+    PROTOCOL_TYPE_8(8, "结算金银卡"),
+    PROTOCOL_TYPE_9(9, "结算头等舱"),
+    PROTOCOL_TYPE_10(10, "零散散客");
 
 
     private Integer typeValue;

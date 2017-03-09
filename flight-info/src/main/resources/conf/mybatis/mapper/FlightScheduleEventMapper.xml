@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.FlightScheduleEventMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.FlightScheduleEvent">
+    <id column="flight_schedule_event_id" jdbcType="BIGINT" property="flightScheduleEventId" />
+    <result column="flight_id" jdbcType="BIGINT" property="flightId" />
+    <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    flight_schedule_event_id, flight_id, schedule_event_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from flight_schedule_event
+    where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from flight_schedule_event
+    where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
+    insert into flight_schedule_event (flight_schedule_event_id, flight_id, schedule_event_id
+      )
+    values (#{flightScheduleEventId,jdbcType=BIGINT}, #{flightId,jdbcType=BIGINT}, #{scheduleEventId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
+    insert into flight_schedule_event
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="flightScheduleEventId != null">
+        flight_schedule_event_id,
+      </if>
+      <if test="flightId != null">
+        flight_id,
+      </if>
+      <if test="scheduleEventId != null">
+        schedule_event_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="flightScheduleEventId != null">
+        #{flightScheduleEventId,jdbcType=BIGINT},
+      </if>
+      <if test="flightId != null">
+        #{flightId,jdbcType=BIGINT},
+      </if>
+      <if test="scheduleEventId != null">
+        #{scheduleEventId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
+    update flight_schedule_event
+    <set>
+      <if test="flightId != null">
+        flight_id = #{flightId,jdbcType=BIGINT},
+      </if>
+      <if test="scheduleEventId != null">
+        schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
+    update flight_schedule_event
+    set flight_id = #{flightId,jdbcType=BIGINT},
+      schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+    where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
+  </update>
+</mapper>

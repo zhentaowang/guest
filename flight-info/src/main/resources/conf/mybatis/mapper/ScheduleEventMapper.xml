@@ -39,7 +39,7 @@
 
   <select id="selectByFlightId" parameterType="map" resultMap="BaseResultMap">
     select schedule_time, name
-    from schedule_event as s right join (select schedule_event_id from flight where airport_code = #{airportCode,jdbcType=VARCHAR}
+    from schedule_event as s right join (select schedule_event_id from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR}
     and flight_id = #{flightId,jdbcType=BIGINT} and is_deleted = 0) as f
     on s.schedule_event_id = f.schedule_event_id
     where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.is_deleted = 0
