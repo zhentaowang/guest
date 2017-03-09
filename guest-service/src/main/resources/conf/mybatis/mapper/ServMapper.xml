@@ -202,5 +202,13 @@
       </if>
     </trim>
   </insert>
+  
+  <select id="getServNameAndPositionNum">
+    <![CDATA[
+      SELECT
+        serv_id,`no`,`name`,service_detail->>"$.positionNum" as positionNum FROM wyun_guest.v_serv
+      WHERE is_deleted = 0 AND airport_code = #{airportCode} AND service_type_allocation_id = #{typeId}
+    ]]>
+  </select>
 
 </mapper>

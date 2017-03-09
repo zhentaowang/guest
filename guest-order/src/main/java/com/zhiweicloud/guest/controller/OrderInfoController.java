@@ -33,6 +33,7 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
@@ -265,21 +266,20 @@ public class OrderInfoController {
     }
 
     /**
-     * 根据订单状态/详细服务id 获取订单数量
+     * 根据订单状态/详细服务id 获取服务人次
      * @return
      */
     @GET
-    @Path("getOrderCountByServiceDetail")
+    @Path("getServerNumByServiceDetailId")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "订单管理 - 根据id查询订单 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
-    public String getOrderCountByServiceDetail(
-            @QueryParam("orderStatus") Short orderStatus,
+    public String getServerNumByServiceDetailId(
             @QueryParam("serviceDetailId") Long serviceDetailId,
             @Context final HttpHeaders headers) {
         LZResult<Integer> result = new LZResult();
         try {
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-            int orderCount = orderInfoService.getOrderCountByServiceDetail(orderStatus,serviceDetailId,airportCode);
+            Integer orderCount = orderInfoService.getServerNumByServiceDetailId(OrderConstant.ORDER_STATUS_USED,serviceDetailId,airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderCount);

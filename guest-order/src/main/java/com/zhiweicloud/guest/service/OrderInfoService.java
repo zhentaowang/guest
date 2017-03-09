@@ -381,13 +381,12 @@ public class OrderInfoService {
     }
 
     /**
-     * 根据详细服务id和服务状态获取订单数
-     * @param orderStatus
+     * 根据详细服务id和服务状态获取服务人次
      * @param serviceDetailId
      * @param airportCode
      * @return
      */
-    public int getOrderCountByServiceDetail(Short orderStatus, Long serviceDetailId, String airportCode){
-       return orderInfoMapper.getOrderCountByServiceDetail(orderStatus,serviceDetailId,airportCode);
+    public int getServerNumByServiceDetailId(String orderStatus,Long serviceDetailId, String airportCode){
+       return orderInfoMapper.getServerNumByServiceDetailId(orderStatus,serviceDetailId,airportCode);
     }
 }

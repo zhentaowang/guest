@@ -59,6 +59,18 @@ public class Serv extends BaseEntity{
     @ApiModelProperty(value="是否可用：0，可用；1，不可用",name="isAvailabled")
     private Boolean isAvailabled;
 
+    /**
+     * 作为返回字段：服务厅位置数量
+     */
+    @Transient
+    private Integer positionNum;
+
+    /**
+     * 作为返回字段：服务厅已使用位置数量
+     */
+    @Transient
+    private Integer serverNum;
+
     public String getPricingRule() {
         return pricingRule;
     }
@@ -153,5 +165,21 @@ public class Serv extends BaseEntity{
      */
     public void setServiceTypeAllocationId(Long serviceTypeAllocationId) {
         this.serviceTypeAllocationId = serviceTypeAllocationId;
+    }
+
+    public Integer getPositionNum() {
+        return positionNum;
+    }
+
+    public void setPositionNum(Integer positionNum) {
+        this.positionNum = positionNum;
+    }
+
+    public Integer getServerNum() {
+        return serverNum;
+    }
+
+    public void setServerNum(Integer serverNum) {
+        this.serverNum = serverNum;
     }
 }

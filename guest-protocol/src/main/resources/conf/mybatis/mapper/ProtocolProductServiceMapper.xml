@@ -16,10 +16,12 @@
     <result column="is_prioritized" jdbcType="BIT" property="isPrioritized" />
     <result column="is_availabled" jdbcType="BIT" property="isAvailabled" />
   </resultMap>
+
   <sql id="Base_Column_List">
     protocol_product_service_id, airport_code, service_type_allocation_id, protocol_product_id, service_id, pricing_rule, is_pricing,
     is_prioritized, is_availabled
   </sql>
+
 
   <select id="selectByProtocolProductServiceId" parameterType="map" resultMap="BaseResultMap">
     SELECT s.name
@@ -27,12 +29,20 @@
     as s on p.service_id = s.serv_id
     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0 and p.protocol_product_service_id = #{protocolProductServiceId,jdbcType=BIGINT}
   </select>
+
   <select id="selectByProtocolProductId" parameterType="map" resultMap="BaseResultMap">
     SELECT protocol_product_service_id, airport_code, service_type_allocation_id, protocol_product_id, service_id, pricing_rule, is_pricing,
     is_prioritized, is_availabled
     FROM protocol_product_service
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and is_deleted = 0
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    <if test="protocol_product_id != null">
+      and protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
+    </if>
+    <if test="serviceId != null">
+      and service_id = #{serviceId,jdbcType=BIGINT}
+    </if>
   </select>
+
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update protocol_product_service set is_deleted = 1 where protocol_product_id not in (${ids00}) and airport_code = #{airportCode,jdbcType=VARCHAR}
   </select>
