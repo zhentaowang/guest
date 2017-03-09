@@ -18,7 +18,7 @@
     schedule_event_id, no, type, name, is_approach
     FROM v_schedule_event
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    order by schedule_event_id
+    order by schedule_event_id asc
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
@@ -32,7 +32,7 @@
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from schedule_event
+    from v_schedule_event
     where airport_code = #{airportCode,jdbcType=VARCHAR}
     and schedule_event_id = #{scheduleEventId,jdbcType=BIGINT} and is_deleted = 0
   </select>
@@ -80,9 +80,6 @@
       <if test="isApproach != null">
         is_approach,
       </if>
-      <if test="uupdateUser != null">
-        uupdate_user,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="scheduleEventId != null">
@@ -99,9 +96,6 @@
       </if>
       <if test="isApproach != null">
         #{isApproach,jdbcType=BIT},
-      </if>
-      <if test="uupdateUser != null">
-        #{uupdateUser,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
