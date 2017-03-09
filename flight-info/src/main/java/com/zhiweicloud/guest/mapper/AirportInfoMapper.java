@@ -38,6 +38,8 @@ public interface AirportInfoMapper{
 
     List<Map<String,String>> queryFlightInfoDropdownList(@Param("airportNameOrCode") String airportNameOrCode);
 
+    List<Map<String, String>> queryFlightNoDropdownList(@Param("airportCode") String airportCode);
 
     void getCount();
+
 }

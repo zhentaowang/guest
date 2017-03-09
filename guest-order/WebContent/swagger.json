@@ -100,36 +100,6 @@
         }
       }
     },
-    "/getOrderCountByServiceDetail" : {
-      "get" : {
-        "tags" : [ "订单管理" ],
-        "summary" : "订单管理 - 根据id查询订单 ",
-        "description" : "返回合同详情",
-        "operationId" : "getOrderCountByServiceDetail",
-        "produces" : [ "application/json;charset=utf8" ],
-        "parameters" : [ {
-          "name" : "orderStatus",
-          "in" : "query",
-          "required" : false,
-          "type" : "integer",
-          "format" : "int32"
-        }, {
-          "name" : "serviceDetailId",
-          "in" : "query",
-          "required" : false,
-          "type" : "integer",
-          "format" : "int64"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "schema" : {
-              "type" : "string"
-            }
-          }
-        }
-      }
-    },
     "/getOrderServiceRecord" : {
       "get" : {
         "tags" : [ "订单管理" ],
@@ -178,6 +148,30 @@
         }
       }
     },
+    "/getServerNumByServiceDetailId" : {
+      "get" : {
+        "tags" : [ "订单管理" ],
+        "summary" : "订单管理 - 根据id查询订单 ",
+        "description" : "返回合同详情",
+        "operationId" : "getServerNumByServiceDetailId",
+        "produces" : [ "application/json;charset=utf8" ],
+        "parameters" : [ {
+          "name" : "serviceDetailId",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "format" : "int64"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
     "/list" : {
       "get" : {
         "tags" : [ "订单管理" ],
@@ -200,37 +194,32 @@
           "default" : 10,
           "format" : "int32"
         }, {
-          "name" : "customerInfo",
+          "name" : "queryIdentityCard",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "passengerName",
+          "name" : "queryPassengerName",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "identityCard",
+          "name" : "queryFlightDate",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "flightDate",
+          "name" : "queryFlightNo",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "flightNo",
+          "name" : "queryProtocolIds",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "queryOrderStatus",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "queryOrderBy",
+          "name" : "queryProductId",
           "in" : "query",
           "required" : false,
           "type" : "string"
@@ -240,17 +229,32 @@
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "queryOrderType",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "queryBookingOneDayBefore",
           "in" : "query",
           "required" : false,
           "type" : "string"
         }, {
-          "name" : "queryProductId",
+          "name" : "queryOrderBy",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryOrderStatus",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryBookingIds",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryCustomerInfo",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "queryOrderType",
           "in" : "query",
           "required" : false,
           "type" : "string"
