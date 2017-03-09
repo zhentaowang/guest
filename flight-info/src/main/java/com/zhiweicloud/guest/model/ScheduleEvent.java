@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Date;

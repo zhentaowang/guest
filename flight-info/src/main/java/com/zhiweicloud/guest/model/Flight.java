@@ -30,9 +30,6 @@ public class Flight extends BaseEntity{
     @GeneratedValue(generator = "JDBC")
     private Long flightId;
 
-    @ApiModelProperty(value="调度事件id",name="scheduleEventId")
-    private Long scheduleEventId;
-
     @ApiModelProperty(value="航班日期",name="flightDate")
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
     private Date flightDate;
@@ -135,22 +132,6 @@ public class Flight extends BaseEntity{
      */
     public void setFlightId(Long flightId) {
         this.flightId = flightId;
-    }
-
-    /**
-     * 调度事件id
-     * @return schedule_event_id 调度事件id
-     */
-    public Long getScheduleEventId() {
-        return scheduleEventId;
-    }
-
-    /**
-     * 调度事件id
-     * @param scheduleEventId 调度事件id
-     */
-    public void setScheduleEventId(Long scheduleEventId) {
-        this.scheduleEventId = scheduleEventId;
     }
 
     /**

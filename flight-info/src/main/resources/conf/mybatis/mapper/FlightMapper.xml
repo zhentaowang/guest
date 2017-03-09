@@ -3,7 +3,6 @@
 <mapper namespace="com.zhiweicloud.guest.mapper.FlightMapper">
   <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Flight">
     <id column="flight_id" jdbcType="BIGINT" property="flightId" />
-    <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
     <result column="flight_date" jdbcType="DATE" property="flightDate" />
     <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
     <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode" />
@@ -29,7 +28,7 @@
     <result column="schedule_event_name" jdbcType="TIMESTAMP" property="scheduleEventName" />
   </resultMap>
   <sql id="Base_Column_List">
-    flight_id, schedule_event_id, flight_date, flight_no, flight_depcode, flight_arrcode, 
+    flight_id, flight_date, flight_no, flight_depcode, flight_arrcode,
     flight_dep, flight_arr, flight_dep_airport, flight_arr_airport, plan_no, flight_position, 
     board_in_out, flight_status, real_landing_time, real_take_off_time, plan_take_off_time, 
     plan_landing_time, is_in_or_out, boarding_port, board_status, is_near_or_far, server_time
@@ -38,8 +37,10 @@
   <select id="getFlightListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
     f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join ( select schedule_event_id, schedule_time, name from schedule_event
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as s on f.schedule_event_id = s.schedule_event_id
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as se on fse.schedule_event_id =se.schedule_event_id
+    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -76,8 +77,10 @@
   <select id="getFlightListCount" parameterType="map" resultType="int">
     select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
     f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join ( select schedule_event_id, schedule_time, name from schedule_event
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as s on f.schedule_event_id = s.schedule_event_id
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as se on fse.schedule_event_id =se.schedule_event_id
+    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -101,13 +104,22 @@
     <if test="criteria.scheduleEventId != null">
       and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
     </if>
+    order by fs.schedule_time desc,
+    <if test="criteria.isInOrOut == 0">
+      fs.plan_take_off_time desc
+    </if>
+    <if test="criteria.isInOrOut == 1">
+      fs.plan_landing_time desc
+    </if>
   </select>
 
   <select id="getFlightListByOrderStatus" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
     f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join ( select schedule_event_id, schedule_time, name from schedule_event
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as s on f.schedule_event_id = s.schedule_event_id
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as se on fse.schedule_event_id =se.schedule_event_id
+    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -145,8 +157,10 @@
   <select id="getFlightListCountByOrderStatus" parameterType="map" resultType="int">
     select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
     f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join ( select schedule_event_id, schedule_time, name from schedule_event
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as s on f.schedule_event_id = s.schedule_event_id
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+    as se on fse.schedule_event_id =se.schedule_event_id
+    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -184,7 +198,7 @@
     where flight_id = #{flightId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.zhiweicloud.guest.model.Flight">
-    insert into flight (flight_id, schedule_event_id, flight_date, 
+    insert into flight (flight_id, flight_date,
       flight_no, flight_depcode, flight_arrcode, 
       flight_dep, flight_arr, flight_dep_airport, 
       flight_arr_airport, plan_no, flight_position, 
@@ -192,7 +206,7 @@
       real_take_off_time, plan_take_off_time, plan_landing_time, 
       is_in_or_out, boarding_port, is_near_or_far, 
       server_time)
-    values (#{flightId,jdbcType=BIGINT}, #{scheduleEventId,jdbcType=BIGINT}, #{flightDate,jdbcType=DATE}, 
+    values (#{flightId,jdbcType=BIGINT}, #{flightDate,jdbcType=DATE},
       #{flightNo,jdbcType=VARCHAR}, #{flightDepcode,jdbcType=VARCHAR}, #{flightArrcode,jdbcType=VARCHAR}, 
       #{flightDep,jdbcType=VARCHAR}, #{flightArr,jdbcType=VARCHAR}, #{flightDepAirport,jdbcType=VARCHAR}, 
       #{flightArrAirport,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, #{flightPosition,jdbcType=VARCHAR}, 
@@ -206,9 +220,6 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="flightId != null">
         flight_id,
-      </if>
-      <if test="scheduleEventId != null">
-        schedule_event_id,
       </if>
       <if test="flightDate != null">
         flight_date,
@@ -275,9 +286,6 @@
       <if test="flightId != null">
         #{flightId,jdbcType=BIGINT},
       </if>
-      <if test="scheduleEventId != null">
-        #{scheduleEventId,jdbcType=BIGINT},
-      </if>
       <if test="flightDate != null">
         #{flightDate,jdbcType=DATE},
       </if>
@@ -343,9 +351,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
     <set>
-      <if test="scheduleEventId != null">
-        schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
-      </if>
       <if test="flightDate != null">
         flight_date = #{flightDate,jdbcType=DATE},
       </if>
@@ -411,8 +416,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
-    set schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
-      flight_date = #{flightDate,jdbcType=DATE},
+    set flight_date = #{flightDate,jdbcType=DATE},
       flight_no = #{flightNo,jdbcType=VARCHAR},
       flight_depcode = #{flightDepcode,jdbcType=VARCHAR},
       flight_arrcode = #{flightArrcode,jdbcType=VARCHAR},
