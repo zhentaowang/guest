@@ -27,5 +27,12 @@
     </if>
   </select>
 
+  <select id="queryFlightNoDropdownList" resultType="map">
+    SELECT flight_id id,flight_no value
+    FROM flight
+    <if test="airportCode != null ">
+      WHERE airport_code = #{airportCode}
+    </if>
+  </select>
 
 </mapper>
