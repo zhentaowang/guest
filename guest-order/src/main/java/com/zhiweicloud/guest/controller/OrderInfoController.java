@@ -252,7 +252,7 @@ public class OrderInfoController {
     @GET
     @Path("getServerNumByServiceDetailId")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "订单管理 - 根据id查询订单 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
+    @ApiOperation(value = "根据订单状态/详细服务id 获取服务人次 ", notes = "返回服务人次", httpMethod = "GET", produces = "application/json")
     public String getServerNumByServiceDetailId(
             @QueryParam("serviceDetailId") Long serviceDetailId,
             @Context final HttpHeaders headers) {
@@ -271,5 +271,29 @@ public class OrderInfoController {
         }
         return JSON.toJSONString(result);
     }
+
+    @GET
+    @Path("getOrderCountByProtocolId")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "订单管理 - 判断协议是否被订单引用 ", notes = "返回被引用数量", httpMethod = "GET", produces = "application/json")
+    public String getOrderCountByProtocolId(
+            @QueryParam("protocolId") Long protocolId,
+            @Context final HttpHeaders headers) {
+        LZResult<Integer> result = new LZResult();
+        try {
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            int orderCount = orderInfoService.getOrderCountByProtocolId(protocolId, airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(orderCount);
+        }catch (Exception e){
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(result);
+    }
+
 
 }

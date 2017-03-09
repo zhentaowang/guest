@@ -550,6 +550,7 @@
     insert into order_status_record (order_id,order_status,airport_code)
     values (#{orderId},#{orderStatus},#{airportCode});
   </insert>
+
   <update id="updateServerComplete">
     UPDATE
       order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{updateUser}
@@ -567,6 +568,10 @@
     ON sd.order_id = o.order_id
     WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete = 0 and airport_code = #{airportCode}
     ]]>
+  </select>
+
+  <select id="getOrderCountByProtocolId" resultType="int">
+    SELECT count(order_id) FROM order_info WHERE airport_code = #{airportCode} AND is_deleted = 0 AND protocol_id = #{protocolId}
   </select>
 
 </mapper>
