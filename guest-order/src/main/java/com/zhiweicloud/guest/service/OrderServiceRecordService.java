@@ -2,7 +2,6 @@ package com.zhiweicloud.guest.service;
 
 import com.zhiweicloud.guest.mapper.OrderServiceRecordMapper;
 import com.zhiweicloud.guest.model.OrderServiceRecord;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,4 +34,5 @@ public class OrderServiceRecordService {
     public List<OrderServiceRecord> getOrderServiceRecord(Long orderId, String airportCode){
         return orderServiceRecordMapper.getOrderServiceRecord(orderId, airportCode);
     }
+
 }
