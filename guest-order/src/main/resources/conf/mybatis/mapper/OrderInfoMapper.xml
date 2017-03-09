@@ -16,7 +16,7 @@
       <result column="consign" jdbcType="SMALLINT" property="consign" />
       <result column="consign_remark" jdbcType="VARCHAR" property="consignRemark" />
       <result column="other_remark" jdbcType="VARCHAR" property="otherRemark" />
-      <result column="order_status" jdbcType="SMALLINT" property="orderStatus" />
+      <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
       <result column="order_type" jdbcType="SMALLINT" property="orderType" />
       <result column="agent_person" jdbcType="BIGINT" property="agentPerson" />
       <result column="server_card_no" jdbcType="VARCHAR" property="serverCardNo" />

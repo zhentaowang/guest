@@ -236,8 +236,9 @@ public class ServController {
             @Context final HttpHeaders headers) {
         LZResult<List<Serv>> result = new LZResult<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
         try {
-            List<Serv> list = servService.getServNameAndPositionNum(typeId, airportCode);
+            List<Serv> list = servService.getServNameAndPositionNum(typeId, userId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
