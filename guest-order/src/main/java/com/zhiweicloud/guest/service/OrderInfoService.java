@@ -181,7 +181,7 @@ public class OrderInfoService {
          */
         List protocolIdList = new ArrayList();
         //JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList?protocolName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=%E5%95%86&access_token=DZ75lFTo7qLmUkcM0zSBz6VA17Aw6cHtWCXb1DYT"));
+        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=%E5%95%86&access_token=R7mWrw29jimr2y5NNkXXUkJRhWD1vVVBY0hPF8NI"));
         if(protocolParam != null){
             JSONArray protocolArray = protocolParam.getJSONArray("data");
 

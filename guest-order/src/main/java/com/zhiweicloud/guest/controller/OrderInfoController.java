@@ -165,16 +165,22 @@ public class OrderInfoController {
     public String delete(
             @Context final HttpHeaders headers,
             @RequestBody RequsetParams<Long> params) {
+        LZResult<OrderInfo> result = new LZResult();
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
             orderInfoService.deleteById(ids, userId,airportCode);
-            return JSON.toJSONString(LXResult.success());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
         } catch (Exception e) {
-            logger.error("delete employee by ids error", e);
-            return JSON.toJSONString(LXResult.error());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
         }
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 
 
