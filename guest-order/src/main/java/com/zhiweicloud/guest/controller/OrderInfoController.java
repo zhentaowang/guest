@@ -77,40 +77,14 @@ public class OrderInfoController {
     public String list(
             @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-            @QueryParam(value = "customerInfo") String customerInfo, //客户信息：客户名称，协议名称，预约号，预约人
-            @QueryParam(value = "passengerName") String passengerName,
-            @QueryParam(value = "identityCard") String identityCard,
-            @QueryParam(value = "flightDate") String flightDate,
-            @QueryParam(value = "flightNo") String flightNo,
-            @QueryParam(value = "queryOrderStatus") String queryOrderStatus,//订单状态:预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
-            @QueryParam(value = "queryOrderBy") String queryOrderBy, //按照航班起飞时间或者降落时间排序：0：起飞顺序，1：起飞倒序，2：降落顺序，3：降落倒序
-            @QueryParam(value = "queryIsImportant") String queryIsImportant, //是否重要订单：0：重要，1：不重要
-            @QueryParam(value = "queryOrderType") String queryOrderType, //订单类型：0：预约订单，1：服务订单
-            @QueryParam(value = "queryBookingOneDayBefore") String queryBookingOneDayBefore, //提前一天预约
-            @QueryParam(value = "queryProductId") String queryProductId, //产品id
-            @QueryParam(value = "queryIsInOrOut") String queryIsInOrOut, //出港：0，进港1
-            @QueryParam(value = "queryAttServerOrderList") String queryAttServerOrderList, //附加服务单:1：代表查询的是勾选了代办登机牌，或者代托行李的订单
-            @QueryParam(value = "queryAgentPerson") String queryAgentPerson, //附加服务单 订单是否被安排，0：未安排，1：已安排，2：已完成
+            @BeanParam final OrderInfoQuery orderInfoQuery,
             @Context final HttpHeaders headers) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
             String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-            OrderInfoQuery orderInfoQuery = new OrderInfoQuery();
-            orderInfoQuery.setQueryCustomerInfo(customerInfo);
-            orderInfoQuery.setQueryPassengerName(passengerName);
-            orderInfoQuery.setQueryIdentityCard(identityCard);
-            orderInfoQuery.setQueryFlightDate(flightDate);
-            orderInfoQuery.setQueryFlightNo(flightNo);
-            orderInfoQuery.setQueryOrderStatus(queryOrderStatus);
-            orderInfoQuery.setQueryIsImportant(queryIsImportant);
-            orderInfoQuery.setQueryOrderType(queryOrderType);
-            orderInfoQuery.setQueryBookingOneDayBefore(queryBookingOneDayBefore);
-            orderInfoQuery.setQueryProductId(queryProductId);
             orderInfoQuery.setAirportCode(airportCode);
-            orderInfoQuery.setQueryAttServerOrderList(queryAttServerOrderList);
-            orderInfoQuery.setQueryAgentPerson(queryAgentPerson);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows,orderInfoQuery,userId);
-            return JSON.toJSONString(result);
+            return JSON.toJSONString(result,SerializerFeature.WriteMapNullValue);
         }catch (Exception e){
             e.printStackTrace();
             LZResult result = new LZResult<>();

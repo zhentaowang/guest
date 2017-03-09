@@ -1,11 +1,9 @@
 package com.zhiweicloud.guest.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Transient;
-import java.util.Date;
+import javax.ws.rs.QueryParam;
 
 /**
  * GuestOrder.java
@@ -17,68 +15,68 @@ import java.util.Date;
 public class OrderInfoQuery extends BaseEntity{
 
     @ApiModelProperty(value = "乘客身份证号码", name = "queryIdentityCard")
-    @Transient
+    @QueryParam("queryIdentityCard")
     private String queryIdentityCard;
 
     @ApiModelProperty(value = "乘客姓名", name = "queryPassengerName")
-    @Transient
+    @QueryParam("queryPassengerName")
     private String queryPassengerName;
 
     @ApiModelProperty(value = "航班日期", name = "queryFlightDate")
-    @Transient
+    @QueryParam("queryFlightDate")
     private String queryFlightDate;
 
     @ApiModelProperty(value = "航班号", name = "queryFlightNo")
-    @Transient
+    @QueryParam("queryFlightNo")
     private String queryFlightNo;
 
     @ApiModelProperty(value = "协议id", name = "queryProtocolId")
-    @Transient
+    @QueryParam("queryProtocolIds")
     private String queryProtocolIds;
 
     @ApiModelProperty(value = "产品id", name = "queryProductId")
-    @Transient
+    @QueryParam("queryProductId")
     private String queryProductId;
 
     @ApiModelProperty(value = "是否重要订单：0：重要，1：不重要", name = "queryIsImportant")
-    @Transient
+    @QueryParam("queryIsImportant")
     private String queryIsImportant;
 
     @ApiModelProperty(value = "提前一天预约", name = "queryBookingOneDayBefore")
-    @Transient
+    @QueryParam("queryBookingOneDayBefore")
     private String queryBookingOneDayBefore;
 
     @ApiModelProperty(value = "按照航班起飞时间或者降落时间排序：0：起飞顺序，1：起飞倒序，2：降落顺序，3：降落倒序", name = "queryOrderBy")
-    @Transient
+    @QueryParam("queryOrderBy")
     private String queryOrderBy;
 
     @ApiModelProperty(value = "订单状态:预约草稿，已预约，预约取消，已使用，服务草稿，服务取消", name = "queryOrderStatus")
-    @Transient
+    @QueryParam("queryOrderStatus")
     private String queryOrderStatus;
 
     @ApiModelProperty(value = "预约人id", name = "queryBookingIds")
-    @Transient
+    @QueryParam("queryBookingIds")
     private String queryBookingIds;
 
 
     @ApiModelProperty(value = "客户名称/协议名/预约号/预约人信息", name = "queryCustomerInfo")
-    @Transient
+    @QueryParam("queryCustomerInfo")
     private String queryCustomerInfo;
 
     @ApiModelProperty(value = "订单类型：0：预约订单，1：服务订单", name = "queryOrderType")
-    @Transient
+    @QueryParam("queryOrderType")
     private String queryOrderType;
 
     @ApiModelProperty(value = "出港：0，进港1", name = "queryIsInOrOut")
-    @Transient
+    @QueryParam("queryIsInOrOut")
     private String queryIsInOrOut;
 
     @ApiModelProperty(value = "附加服务单:1：代表查询的是勾选了代办登机牌，或者代托行李的订单", name = "queryAttServerOrderList")
-    @Transient
+    @QueryParam("queryAttServerOrderList")
     private String queryAttServerOrderList;
 
     @ApiModelProperty(value = "附加服务单 订单是否被安排，0：未安排，1：已安排，2：已完成", name = "queryAgentPerson")
-    @Transient
+    @QueryParam("queryAgentPerson")
     private String queryAgentPerson;
 
 
