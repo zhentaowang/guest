@@ -171,15 +171,15 @@
     SELECT
       authorizer_id,`name` AS `value`
     FROM
-      authorizer WHERE is_deleted = 0 AND airport_code = #{airportCode} and NOT ISNULL(`name`)
+      authorizer WHERE is_deleted = 0 AND airport_code = #{airportCode} AND `name` IS NOT NULL
     <if test="name != null and !name.trim().equals('')" >
-      and `name` like concat('%',#{name},'%')
+      AND `name` LIKE concat('%',#{name},'%')
     </if>
     <if test="protocolId != null" >
-      and protocol_id = #{protocolId}
+      AND protocol_id = #{protocolId}
     </if>
     <if test="authorizerId != null" >
-      and authorizer_id = #{authorizerId}
+      AND authorizer_id = #{authorizerId}
     </if>
   </select>
 

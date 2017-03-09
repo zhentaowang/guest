@@ -8,7 +8,6 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.CustomException;
 import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.OrderInfoMapper;
 import com.zhiweicloud.guest.mapper.OrderServiceMapper;
@@ -16,10 +15,8 @@ import com.zhiweicloud.guest.mapper.PassengerMapper;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -181,7 +178,7 @@ public class OrderInfoService {
          */
         List protocolIdList = new ArrayList();
         //JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList?protocolName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=%E5%95%86&access_token=DZ75lFTo7qLmUkcM0zSBz6VA17Aw6cHtWCXb1DYT"));
+        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=%E5%95%86&access_token=R7mWrw29jimr2y5NNkXXUkJRhWD1vVVBY0hPF8NI"));
         if(protocolParam != null){
             JSONArray protocolArray = protocolParam.getJSONArray("data");
 
@@ -386,7 +383,15 @@ public class OrderInfoService {
      * @param airportCode
      * @return
      */
-    public int getServerNumByServiceDetailId(String orderStatus,Long serviceDetailId, String airportCode){
+    public int getServerNumByServiceDetailId(String orderStatus,Long serviceDetailId, String airportCode) throws Exception{
        return orderInfoMapper.getServerNumByServiceDetailId(orderStatus,serviceDetailId,airportCode);
+    }
+
+    /**
+     * 根据协议id查询订单是否存在
+     * @return
+     */
+    public int getOrderCountByProtocolId(Long protocolId, String airportCode) throws Exception{
+        return orderInfoMapper.getOrderCountByProtocolId(protocolId,airportCode);
     }
 }
