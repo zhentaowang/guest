@@ -7,37 +7,55 @@
     <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
     <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode" />
     <result column="flight_arrcode" jdbcType="VARCHAR" property="flightArrcode" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+    <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+    <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
+    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+    <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+    <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
+    <result column="fd_id" jdbcType="VARCHAR" property="fdId" />
+    <result column="flight_company" jdbcType="VARCHAR" property="flightCompany" />
+    <result column="flight_deptime_plan_date" jdbcType="DATE" property="flightDeptimePlanDate" />
+    <result column="flight_arrtime_plan_date" jdbcType="DATE" property="flightArrtimePlanDate" />
+    <result column="flight_deptime_ready_date" jdbcType="DATE" property="flightDeptimeReadyDate" />
+    <result column="flight_arrtime_ready_date" jdbcType="DATE" property="flightArrtimeReadyDate" />
+    <result column="flight_deptime_date" jdbcType="DATE" property="flightDeptimeDate" />
+    <result column="flight_arrtime_date" jdbcType="DATE" property="flightArrtimeDate" />
+    <result column="stop_flag" jdbcType="SMALLINT" property="stopFlag" />
+    <result column="share_flag" jdbcType="SMALLINT" property="shareFlag" />
+    <result column="share_flight_no" jdbcType="VARCHAR" property="shareFlightNo" />
+    <result column="fill_flight_no" jdbcType="VARCHAR" property="fillFlightNo" />
+    <result column="board_gate" jdbcType="VARCHAR" property="boardGate" />
+    <result column="board_state" jdbcType="VARCHAR" property="boardState" />
+    <result column="flight_state" jdbcType="VARCHAR" property="flightState" />
+    <result column="flight_hterminal" jdbcType="VARCHAR" property="flightHterminal" />
+    <result column="flight_terminal" jdbcType="VARCHAR" property="flightTerminal" />
     <result column="flight_dep" jdbcType="VARCHAR" property="flightDep" />
     <result column="flight_arr" jdbcType="VARCHAR" property="flightArr" />
     <result column="flight_dep_airport" jdbcType="VARCHAR" property="flightDepAirport" />
     <result column="flight_arr_airport" jdbcType="VARCHAR" property="flightArrAirport" />
-    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
-    <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
-    <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
-    <result column="flight_status" jdbcType="SMALLINT" property="flightStatus" />
-    <result column="real_landing_time" jdbcType="VARCHAR" property="realLandingTime" />
-    <result column="real_take_off_time" jdbcType="VARCHAR" property="realTakeOffTime" />
-    <result column="plan_take_off_time" jdbcType="VARCHAR" property="planTakeOffTime" />
-    <result column="plan_landing_time" jdbcType="VARCHAR" property="planLandingTime" />
-    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
-    <result column="boarding_port" jdbcType="VARCHAR" property="boardingPort" />
-    <result column="board_status" jdbcType="SMALLINT" property="boardStatus" />
-    <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
-    <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
+    <result column="alternate_info" jdbcType="VARCHAR" property="alternateInfo" />
+    <result column="org_timezone" jdbcType="VARCHAR" property="orgTimezone" />
+    <result column="dst_timezone" jdbcType="VARCHAR" property="dstTimezone" />
+    <result column="fcategory" jdbcType="VARCHAR" property="fcategory" />
+    <result column="fid" jdbcType="VARCHAR" property="fid" />
+    <result column="board_gate_time" jdbcType="VARCHAR" property="boardGateTime" />
     <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
     <result column="schedule_event_name" jdbcType="TIMESTAMP" property="scheduleEventName" />
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
   </resultMap>
   <sql id="Base_Column_List">
-    flight_id, flight_date, flight_no, flight_depcode, flight_arrcode,
-    flight_dep, flight_arr, flight_dep_airport, flight_arr_airport, plan_no, flight_position, 
-    board_in_out, flight_status, real_landing_time, real_take_off_time, plan_take_off_time, 
-    plan_landing_time, is_in_or_out, boarding_port, board_status, is_near_or_far, server_time
+    flight_id, flight_date, flight_no, flight_depcode, flight_arrcode, plan_no, flight_position,
+    board_in_out, is_in_or_out, is_near_or_far, server_time, fd_id, flight_company, flight_deptime_plan_date, flight_arrtime_plan_date,
+    flight_deptime_ready_date, flight_arrtime_ready_date, flight_deptime_date, flight_arrtime_date,
+    stop_flag, share_flag, share_flight_no, fill_flight_no, board_gate, board_state,
+    flight_state, flight_hterminal, flight_terminal, flight_dep, flight_arr, flight_dep_airport,
+    flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time
   </sql>
 
   <select id="getFlightListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
-    f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+    select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
+    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
     from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
@@ -62,8 +80,8 @@
     <if test="criteria.isInOrOut != null and criteria.isInOrOut.trim().equals('') and criteria.isInOrOut != ''">
       and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="criteria.flightStatus != null and criteria.flightStatus.trim().equals('') and criteria.flightStatus != ''">
-      and fs.flight_status = #{criteria.flightStatus,jdbcType=SMALLINT}
+    <if test="criteria.flightState != null and criteria.flightState.trim().equals('') and criteria.flightState != ''">
+      and fs.flight_status = #{criteria.flightState,jdbcType=SMALLINT}
     </if>
     <if test="criteria.scheduleEventId != null and criteria.scheduleEventId.trim().equals('') and criteria.scheduleEventId != ''">
       and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
@@ -80,8 +98,8 @@
   </select>
 
   <select id="getFlightListCount" parameterType="map" resultType="int">
-    select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
-    f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+    select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
+    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
     from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
@@ -106,8 +124,8 @@
     <if test="isInOrOut != null and isInOrOut.trim().equals('') and isInOrOut != ''">
       and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="flightStatus != null and flightStatus.trim().equals('') and flightStatus != ''">
-      and fs.flight_status = #{flightStatus,jdbcType=SMALLINT}
+    <if test="flightState != null and flightState.trim().equals('') and flightState != ''">
+      and fs.flight_state = #{flightState,jdbcType=SMALLINT}
     </if>
     <if test="scheduleEventId != null and scheduleEventId.trim().equals('') and scheduleEventId != ''">
       and fs.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
@@ -115,8 +133,8 @@
   </select>
 
   <select id="getFlightListByOrderStatus" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
-    f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+    select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
+    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
     from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
@@ -142,8 +160,8 @@
     <if test="criteria.isInOrOut != null and criteria.isInOrOut.trim().equals('') and criteria.isInOrOut != ''">
       and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="criteria.flightStatus != null and criteria.flightStatus.trim().equals('') and criteria.flightStatus != ''">
-      and fs.flight_status = #{criteria.flightStatus,jdbcType=SMALLINT}
+    <if test="criteria.flightState != null and criteria.flightState.trim().equals('') and criteria.flightState != ''">
+      and fs.flight_state = #{criteria.flightState,jdbcType=SMALLINT}
     </if>
     <if test="criteria.scheduleEventId != null and criteria.scheduleEventId.trim().equals('') and criteria.scheduleEventId != ''">
       and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
@@ -160,8 +178,8 @@
   </select>
 
   <select id="getFlightListCountByOrderStatus" parameterType="map" resultType="int">
-    select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.real_landing_time, f.real_take_off_time,
-    f.plan_take_off_time, f.plan_landing_time, f.flight_status, f.boarding_port, f.board_status, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+    select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
+    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
     from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
@@ -187,8 +205,8 @@
     <if test="isInOrOut != null and isInOrOut.trim().equals('') and isInOrOut != ''">
       and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="flightStatus != null and flightStatus.trim().equals('') and flightStatus != ''">
-      and fs.flight_status = #{flightStatus,jdbcType=SMALLINT}
+    <if test="flightState != null and flightState.trim().equals('') and flightState != ''">
+      and fs.flight_state = #{flightState,jdbcType=SMALLINT}
     </if>
     <if test="scheduleEventId != null and scheduleEventId.trim().equals('') and scheduleEventId != ''">
       and fs.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
@@ -206,22 +224,34 @@
     where flight_id = #{flightId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.zhiweicloud.guest.model.Flight">
-    insert into flight (flight_id, flight_date,
-      flight_no, flight_depcode, flight_arrcode, 
-      flight_dep, flight_arr, flight_dep_airport, 
-      flight_arr_airport, plan_no, flight_position, 
-      board_in_out, flight_status, real_landing_time, 
-      real_take_off_time, plan_take_off_time, plan_landing_time, 
-      is_in_or_out, boarding_port, is_near_or_far, 
-      server_time)
-    values (#{flightId,jdbcType=BIGINT}, #{flightDate,jdbcType=DATE},
-      #{flightNo,jdbcType=VARCHAR}, #{flightDepcode,jdbcType=VARCHAR}, #{flightArrcode,jdbcType=VARCHAR}, 
-      #{flightDep,jdbcType=VARCHAR}, #{flightArr,jdbcType=VARCHAR}, #{flightDepAirport,jdbcType=VARCHAR}, 
-      #{flightArrAirport,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, #{flightPosition,jdbcType=VARCHAR}, 
-      #{boardInOut,jdbcType=SMALLINT}, #{flightStatus,jdbcType=SMALLINT}, #{realLandingTime,jdbcType=TIME}, 
-      #{realTakeOffTime,jdbcType=TIME}, #{planTakeOffTime,jdbcType=TIME}, #{planLandingTime,jdbcType=TIME}, 
-      #{isInOrOut,jdbcType=SMALLINT}, #{boardingPort,jdbcType=VARCHAR}, #{isNearOrFar,jdbcType=SMALLINT}, 
-      #{serverTime,jdbcType=TIMESTAMP})
+    insert into flight (flight_id, flight_date, flight_no,
+      flight_depcode, flight_arrcode, plan_no,
+      flight_position, board_in_out, is_in_or_out, is_near_or_far,
+      server_time, fd_id, flight_company,
+      flight_deptime_plan_date, flight_arrtime_plan_date,
+      flight_deptime_ready_date, flight_arrtime_ready_date,
+      flight_deptime_date, flight_arrtime_date, stop_flag,
+      share_flag, share_flight_no, fill_flight_no,
+      board_gate, board_state, flight_state,
+      flight_hterminal, flight_terminal, flight_dep,
+      flight_arr, flight_dep_airport, flight_arr_airport,
+      alternate_info, org_timezone, dst_timezone,
+      fcategory, fid, board_gate_time
+      )
+    values (#{flightId,jdbcType=BIGINT}, #{flightDate,jdbcType=DATE}, #{flightNo,jdbcType=VARCHAR},
+      #{flightDepcode,jdbcType=VARCHAR}, #{flightArrcode,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR},
+      #{flightPosition,jdbcType=VARCHAR}, #{boardInOut,jdbcType=SMALLINT}, #{isInOrOut,jdbcType=SMALLINT}, #{isNearOrFar,jdbcType=SMALLINT},
+      #{serverTime,jdbcType=TIMESTAMP}, #{fdId,jdbcType=VARCHAR}, #{flightCompany,jdbcType=VARCHAR},
+      #{flightDeptimePlanDate,jdbcType=DATE}, #{flightArrtimePlanDate,jdbcType=DATE},
+      #{flightDeptimeReadyDate,jdbcType=DATE}, #{flightArrtimeReadyDate,jdbcType=DATE},
+      #{flightDeptimeDate,jdbcType=DATE}, #{flightArrtimeDate,jdbcType=DATE}, #{stopFlag,jdbcType=SMALLINT},
+      #{shareFlag,jdbcType=SMALLINT}, #{shareFlightNo,jdbcType=VARCHAR}, #{fillFlightNo,jdbcType=VARCHAR},
+      #{boardGate,jdbcType=VARCHAR}, #{boardState,jdbcType=VARCHAR}, #{flightState,jdbcType=VARCHAR},
+      #{flightHterminal,jdbcType=VARCHAR}, #{flightTerminal,jdbcType=VARCHAR}, #{flightDep,jdbcType=VARCHAR},
+      #{flightArr,jdbcType=VARCHAR}, #{flightDepAirport,jdbcType=VARCHAR}, #{flightArrAirport,jdbcType=VARCHAR},
+      #{alternateInfo,jdbcType=VARCHAR}, #{orgTimezone,jdbcType=VARCHAR}, #{dstTimezone,jdbcType=VARCHAR},
+      #{fcategory,jdbcType=VARCHAR}, #{fid,jdbcType=VARCHAR}, #{boardGateTime,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.Flight">
     insert into flight
@@ -241,6 +271,75 @@
       <if test="flightArrcode != null">
         flight_arrcode,
       </if>
+      <if test="planNo != null">
+        plan_no,
+      </if>
+      <if test="flightPosition != null">
+        flight_position,
+      </if>
+      <if test="boardInOut != null">
+        board_in_out,
+      </if>
+      <if test="isInOrOut != null">
+        is_in_or_out,
+      </if>
+      <if test="isNearOrFar != null">
+        is_near_or_far,
+      </if>
+      <if test="serverTime != null">
+        server_time,
+      </if>
+      <if test="fdId != null">
+        fd_id,
+      </if>
+      <if test="flightCompany != null">
+        flight_company,
+      </if>
+      <if test="flightDeptimePlanDate != null">
+        flight_deptime_plan_date,
+      </if>
+      <if test="flightArrtimePlanDate != null">
+        flight_arrtime_plan_date,
+      </if>
+      <if test="flightDeptimeReadyDate != null">
+        flight_deptime_ready_date,
+      </if>
+      <if test="flightArrtimeReadyDate != null">
+        flight_arrtime_ready_date,
+      </if>
+      <if test="flightDeptimeDate != null">
+        flight_deptime_date,
+      </if>
+      <if test="flightArrtimeDate != null">
+        flight_arrtime_date,
+      </if>
+      <if test="stopFlag != null">
+        stop_flag,
+      </if>
+      <if test="shareFlag != null">
+        share_flag,
+      </if>
+      <if test="shareFlightNo != null">
+        share_flight_no,
+      </if>
+      <if test="fillFlightNo != null">
+        fill_flight_no,
+      </if>
+      <if test="boardGate != null">
+        board_gate,
+      </if>
+      <if test="boardState != null">
+        board_state,
+      </if>
+      <if test="flightState != null">
+        flight_state,
+      </if>
+      <if test="flightHterminal != null">
+        flight_hterminal,
+      </if>
+      <if test="flightTerminal != null">
+        flight_terminal,
+      </if>
       <if test="flightDep != null">
         flight_dep,
       </if>
@@ -253,41 +352,23 @@
       <if test="flightArrAirport != null">
         flight_arr_airport,
       </if>
-      <if test="planNo != null">
-        plan_no,
+      <if test="alternateInfo != null">
+        alternate_info,
       </if>
-      <if test="flightPosition != null">
-        flight_position,
+      <if test="orgTimezone != null">
+        org_timezone,
       </if>
-      <if test="boardInOut != null">
-        board_in_out,
+      <if test="dstTimezone != null">
+        dst_timezone,
       </if>
-      <if test="flightStatus != null">
-        flight_status,
+      <if test="fcategory != null">
+        fcategory,
       </if>
-      <if test="realLandingTime != null">
-        real_landing_time,
+      <if test="fid != null">
+        fid,
       </if>
-      <if test="realTakeOffTime != null">
-        real_take_off_time,
-      </if>
-      <if test="planTakeOffTime != null">
-        plan_take_off_time,
-      </if>
-      <if test="planLandingTime != null">
-        plan_landing_time,
-      </if>
-      <if test="isInOrOut != null">
-        is_in_or_out,
-      </if>
-      <if test="boardingPort != null">
-        boarding_port,
-      </if>
-      <if test="isNearOrFar != null">
-        is_near_or_far,
-      </if>
-      <if test="serverTime != null">
-        server_time,
+      <if test="boardGateTime != null">
+        board_gate_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -306,6 +387,75 @@
       <if test="flightArrcode != null">
         #{flightArrcode,jdbcType=VARCHAR},
       </if>
+      <if test="planNo != null">
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightPosition != null">
+        #{flightPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="boardInOut != null">
+        #{boardInOut,jdbcType=SMALLINT},
+      </if>
+      <if test="isInOrOut != null">
+        #{isInOrOut,jdbcType=SMALLINT},
+      </if>
+      <if test="isNearOrFar != null">
+        #{isNearOrFar,jdbcType=SMALLINT},
+      </if>
+      <if test="serverTime != null">
+        #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fdId != null">
+        #{fdId,jdbcType=VARCHAR},
+      </if>
+      <if test="flightCompany != null">
+        #{flightCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDeptimePlanDate != null">
+        #{flightDeptimePlanDate,jdbcType=DATE},
+      </if>
+      <if test="flightArrtimePlanDate != null">
+        #{flightArrtimePlanDate,jdbcType=DATE},
+      </if>
+      <if test="flightDeptimeReadyDate != null">
+        #{flightDeptimeReadyDate,jdbcType=DATE},
+      </if>
+      <if test="flightArrtimeReadyDate != null">
+        #{flightArrtimeReadyDate,jdbcType=DATE},
+      </if>
+      <if test="flightDeptimeDate != null">
+        #{flightDeptimeDate,jdbcType=DATE},
+      </if>
+      <if test="flightArrtimeDate != null">
+        #{flightArrtimeDate,jdbcType=DATE},
+      </if>
+      <if test="stopFlag != null">
+        #{stopFlag,jdbcType=SMALLINT},
+      </if>
+      <if test="shareFlag != null">
+        #{shareFlag,jdbcType=SMALLINT},
+      </if>
+      <if test="shareFlightNo != null">
+        #{shareFlightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fillFlightNo != null">
+        #{fillFlightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boardGate != null">
+        #{boardGate,jdbcType=VARCHAR},
+      </if>
+      <if test="boardState != null">
+        #{boardState,jdbcType=VARCHAR},
+      </if>
+      <if test="flightState != null">
+        #{flightState,jdbcType=VARCHAR},
+      </if>
+      <if test="flightHterminal != null">
+        #{flightHterminal,jdbcType=VARCHAR},
+      </if>
+      <if test="flightTerminal != null">
+        #{flightTerminal,jdbcType=VARCHAR},
+      </if>
       <if test="flightDep != null">
         #{flightDep,jdbcType=VARCHAR},
       </if>
@@ -318,41 +468,23 @@
       <if test="flightArrAirport != null">
         #{flightArrAirport,jdbcType=VARCHAR},
       </if>
-      <if test="planNo != null">
-        #{planNo,jdbcType=VARCHAR},
+      <if test="alternateInfo != null">
+        #{alternateInfo,jdbcType=VARCHAR},
       </if>
-      <if test="flightPosition != null">
-        #{flightPosition,jdbcType=VARCHAR},
+      <if test="orgTimezone != null">
+        #{orgTimezone,jdbcType=VARCHAR},
       </if>
-      <if test="boardInOut != null">
-        #{boardInOut,jdbcType=SMALLINT},
+      <if test="dstTimezone != null">
+        #{dstTimezone,jdbcType=VARCHAR},
       </if>
-      <if test="flightStatus != null">
-        #{flightStatus,jdbcType=SMALLINT},
+      <if test="fcategory != null">
+        #{fcategory,jdbcType=VARCHAR},
       </if>
-      <if test="realLandingTime != null">
-        #{realLandingTime,jdbcType=TIME},
+      <if test="fid != null">
+        #{fid,jdbcType=VARCHAR},
       </if>
-      <if test="realTakeOffTime != null">
-        #{realTakeOffTime,jdbcType=TIME},
-      </if>
-      <if test="planTakeOffTime != null">
-        #{planTakeOffTime,jdbcType=TIME},
-      </if>
-      <if test="planLandingTime != null">
-        #{planLandingTime,jdbcType=TIME},
-      </if>
-      <if test="isInOrOut != null">
-        #{isInOrOut,jdbcType=SMALLINT},
-      </if>
-      <if test="boardingPort != null">
-        #{boardingPort,jdbcType=VARCHAR},
-      </if>
-      <if test="isNearOrFar != null">
-        #{isNearOrFar,jdbcType=SMALLINT},
-      </if>
-      <if test="serverTime != null">
-        #{serverTime,jdbcType=TIMESTAMP},
+      <if test="boardGateTime != null">
+        #{boardGateTime,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -371,6 +503,75 @@
       <if test="flightArrcode != null">
         flight_arrcode = #{flightArrcode,jdbcType=VARCHAR},
       </if>
+      <if test="planNo != null">
+        plan_no = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flightPosition != null">
+        flight_position = #{flightPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="boardInOut != null">
+        board_in_out = #{boardInOut,jdbcType=SMALLINT},
+      </if>
+      <if test="isInOrOut != null">
+        is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
+      </if>
+      <if test="isNearOrFar != null">
+        is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
+      </if>
+      <if test="serverTime != null">
+        server_time = #{serverTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fdId != null">
+        fd_id = #{fdId,jdbcType=VARCHAR},
+      </if>
+      <if test="flightCompany != null">
+        flight_company = #{flightCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="flightDeptimePlanDate != null">
+        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=DATE},
+      </if>
+      <if test="flightArrtimePlanDate != null">
+        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=DATE},
+      </if>
+      <if test="flightDeptimeReadyDate != null">
+        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=DATE},
+      </if>
+      <if test="flightArrtimeReadyDate != null">
+        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=DATE},
+      </if>
+      <if test="flightDeptimeDate != null">
+        flight_deptime_date = #{flightDeptimeDate,jdbcType=DATE},
+      </if>
+      <if test="flightArrtimeDate != null">
+        flight_arrtime_date = #{flightArrtimeDate,jdbcType=DATE},
+      </if>
+      <if test="stopFlag != null">
+        stop_flag = #{stopFlag,jdbcType=SMALLINT},
+      </if>
+      <if test="shareFlag != null">
+        share_flag = #{shareFlag,jdbcType=SMALLINT},
+      </if>
+      <if test="shareFlightNo != null">
+        share_flight_no = #{shareFlightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fillFlightNo != null">
+        fill_flight_no = #{fillFlightNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boardGate != null">
+        board_gate = #{boardGate,jdbcType=VARCHAR},
+      </if>
+      <if test="boardState != null">
+        board_state = #{boardState,jdbcType=VARCHAR},
+      </if>
+      <if test="flightState != null">
+        flight_state = #{flightState,jdbcType=VARCHAR},
+      </if>
+      <if test="flightHterminal != null">
+        flight_hterminal = #{flightHterminal,jdbcType=VARCHAR},
+      </if>
+      <if test="flightTerminal != null">
+        flight_terminal = #{flightTerminal,jdbcType=VARCHAR},
+      </if>
       <if test="flightDep != null">
         flight_dep = #{flightDep,jdbcType=VARCHAR},
       </if>
@@ -383,41 +584,23 @@
       <if test="flightArrAirport != null">
         flight_arr_airport = #{flightArrAirport,jdbcType=VARCHAR},
       </if>
-      <if test="planNo != null">
-        plan_no = #{planNo,jdbcType=VARCHAR},
+      <if test="alternateInfo != null">
+        alternate_info = #{alternateInfo,jdbcType=VARCHAR},
       </if>
-      <if test="flightPosition != null">
-        flight_position = #{flightPosition,jdbcType=VARCHAR},
+      <if test="orgTimezone != null">
+        org_timezone = #{orgTimezone,jdbcType=VARCHAR},
       </if>
-      <if test="boardInOut != null">
-        board_in_out = #{boardInOut,jdbcType=SMALLINT},
+      <if test="dstTimezone != null">
+        dst_timezone = #{dstTimezone,jdbcType=VARCHAR},
       </if>
-      <if test="flightStatus != null">
-        flight_status = #{flightStatus,jdbcType=SMALLINT},
+      <if test="fcategory != null">
+        fcategory = #{fcategory,jdbcType=VARCHAR},
       </if>
-      <if test="realLandingTime != null">
-        real_landing_time = #{realLandingTime,jdbcType=VARCHAR},
+      <if test="fid != null">
+        fid = #{fid,jdbcType=VARCHAR},
       </if>
-      <if test="realTakeOffTime != null">
-        real_take_off_time = #{realTakeOffTime,jdbcType=VARCHAR},
-      </if>
-      <if test="planTakeOffTime != null">
-        plan_take_off_time = #{planTakeOffTime,jdbcType=VARCHAR},
-      </if>
-      <if test="planLandingTime != null">
-        plan_landing_time = #{planLandingTime,jdbcType=VARCHAR},
-      </if>
-      <if test="isInOrOut != null">
-        is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
-      </if>
-      <if test="boardingPort != null">
-        boarding_port = #{boardingPort,jdbcType=VARCHAR},
-      </if>
-      <if test="isNearOrFar != null">
-        is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
-      </if>
-      <if test="serverTime != null">
-        server_time = #{serverTime,jdbcType=TIMESTAMP},
+      <if test="boardGateTime != null">
+        board_gate_time = #{boardGateTime,jdbcType=VARCHAR},
       </if>
     </set>
     where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
@@ -428,22 +611,39 @@
       flight_no = #{flightNo,jdbcType=VARCHAR},
       flight_depcode = #{flightDepcode,jdbcType=VARCHAR},
       flight_arrcode = #{flightArrcode,jdbcType=VARCHAR},
+      plan_no = #{planNo,jdbcType=VARCHAR},
+      flight_position = #{flightPosition,jdbcType=VARCHAR},
+      board_in_out = #{boardInOut,jdbcType=SMALLINT},
+      is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
+      is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
+      server_time = #{serverTime,jdbcType=TIMESTAMP},
+      fd_id = #{fdId,jdbcType=VARCHAR},
+      flight_company = #{flightCompany,jdbcType=VARCHAR},
+      flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=DATE},
+      flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=DATE},
+      flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=DATE},
+      flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=DATE},
+      flight_deptime_date = #{flightDeptimeDate,jdbcType=DATE},
+      flight_arrtime_date = #{flightArrtimeDate,jdbcType=DATE},
+      stop_flag = #{stopFlag,jdbcType=SMALLINT},
+      share_flag = #{shareFlag,jdbcType=SMALLINT},
+      share_flight_no = #{shareFlightNo,jdbcType=VARCHAR},
+      fill_flight_no = #{fillFlightNo,jdbcType=VARCHAR},
+      board_gate = #{boardGate,jdbcType=VARCHAR},
+      board_state = #{boardState,jdbcType=VARCHAR},
+      flight_state = #{flightState,jdbcType=VARCHAR},
+      flight_hterminal = #{flightHterminal,jdbcType=VARCHAR},
+      flight_terminal = #{flightTerminal,jdbcType=VARCHAR},
       flight_dep = #{flightDep,jdbcType=VARCHAR},
       flight_arr = #{flightArr,jdbcType=VARCHAR},
       flight_dep_airport = #{flightDepAirport,jdbcType=VARCHAR},
       flight_arr_airport = #{flightArrAirport,jdbcType=VARCHAR},
-      plan_no = #{planNo,jdbcType=VARCHAR},
-      flight_position = #{flightPosition,jdbcType=VARCHAR},
-      board_in_out = #{boardInOut,jdbcType=SMALLINT},
-      flight_status = #{flightStatus,jdbcType=SMALLINT},
-      real_landing_time = #{realLandingTime,jdbcType=VARCHAR},
-      real_take_off_time = #{realTakeOffTime,jdbcType=VARCHAR},
-      plan_take_off_time = #{planTakeOffTime,jdbcType=VARCHAR},
-      plan_landing_time = #{planLandingTime,jdbcType=VARCHAR},
-      is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
-      boarding_port = #{boardingPort,jdbcType=VARCHAR},
-      is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
-      server_time = #{serverTime,jdbcType=TIMESTAMP}
+      alternate_info = #{alternateInfo,jdbcType=VARCHAR},
+      org_timezone = #{orgTimezone,jdbcType=VARCHAR},
+      dst_timezone = #{dstTimezone,jdbcType=VARCHAR},
+      fcategory = #{fcategory,jdbcType=VARCHAR},
+      fid = #{fid,jdbcType=VARCHAR},
+      board_gate_time = #{boardGateTime,jdbcType=VARCHAR}
     where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 </mapper>

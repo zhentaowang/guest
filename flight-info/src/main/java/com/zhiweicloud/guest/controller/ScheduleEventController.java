@@ -81,7 +81,7 @@ public class ScheduleEventController {
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "flightNo", value = "航班号", dataType = "String", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "flightDate", value = "航班日期", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "flightStatus", value = "航班状态", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "servId", value = "服务id", dataType = "Long", required = false, paramType = "query"),
@@ -92,7 +92,7 @@ public class ScheduleEventController {
             @Context final HttpHeaders headers,
             @QueryParam(value = "flightNo") String flightNo,
             @QueryParam(value = "flightDate") String flightDate,
-            @QueryParam(value = "flightStatus") Long flightStatus,
+            @QueryParam(value = "flightState") Long flightState,
             @QueryParam(value = "isInOrOut") Long isInOrOut,
             @QueryParam(value = "scheduleEventId") Long scheduleEventId,
             @QueryParam(value = "servId") Long servId,
@@ -105,7 +105,7 @@ public class ScheduleEventController {
         param.put("airportCode",airportCode);
         param.put("flightNo",flightNo);
         param.put("flightDate",flightDate);
-        param.put("flightStatus",flightStatus);
+        param.put("flightState",flightState);
         param.put("isInOrOut",isInOrOut);
         param.put("scheduleEventId",scheduleEventId);
         param.put("servId",servId);
