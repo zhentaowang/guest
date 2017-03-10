@@ -240,4 +240,9 @@
 
   </select>
 
+  <update id="markAsDeleted">
+    update passenger set is_deleted = 1
+    where order_id = #{orderId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+  </update>
+
 </mapper>
