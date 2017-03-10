@@ -352,8 +352,8 @@ public class ProtocolController {
                 @RequestBody RequsetParams< Long > params){
             try {
                 List<Long> ids = params.getData();
-//                Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
-//                String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
+                Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
+                String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
 
                 for (int i = 0; i < ids.size(); i++) {
                     //调用order应用，根据协议id 判断有无被引用
@@ -364,7 +364,7 @@ public class ProtocolController {
                         return JSON.toJSONString(LXResult.build(LZStatus.DATA_REF_ERROR));
                     }
                 }
-//                protocolService.deleteById(ids, userId, airportCode);
+                protocolService.deleteById(ids, userId, airportCode);
                 return JSON.toJSONString(LXResult.success());
             } catch (Exception e) {
                 logger.error("delete protocol by ids error", e);
