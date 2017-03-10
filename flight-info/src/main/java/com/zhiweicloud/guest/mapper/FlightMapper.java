@@ -37,10 +37,10 @@ import java.util.Map;
  */
 public interface FlightMapper {
     //订单状态值为null时使用
-    List<ScheduleEvent> getFlightListByConidition(BasePagination<Map<String, Object>> queryCondition);
+    List<Flight> getFlightListByConidition(BasePagination<Map<String, Object>> queryCondition);
     Integer getFlightListCount(Map<String, Object> map);
     //订单状态值不为null时使用
-    List<ScheduleEvent> getFlightListByOrderStatus(BasePagination<Map<String, Object>> queryCondition);
+    List<Flight> getFlightListByOrderStatus(BasePagination<Map<String, Object>> queryCondition);
     Integer getFlightListCountByOrderStatus(Map<String, Object> map);
     Flight selectByPrimaryKey(Map<String, Object> map);
     Integer updateByPrimaryKeySelective(Flight flight);

@@ -75,52 +75,52 @@ public class ProtocolController {
                 }
             }
             protocol.setAuthorizerList(authorizers);
-            if(protocolProductList != null){
-                List<ProtocolProduct> protocolProducts = new ArrayList<>();
-                for (int i = 0; i < protocolProductList.size(); i++) {
-                    JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
-                    JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
-                    protocolProduct00.remove("protocolProductService");
-                    ProtocolProduct protocolProduct = JSONObject.toJavaObject(protocolProduct00,ProtocolProduct.class);
-                    protocolProduct.setAirportCode(protocol.getAirportCode());
-                    List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
-                    for (int j = 0; j < protocolProductServiceList.size(); j++) {
-                        JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
-                        ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductService00,ProtocolProductServ.class);
-                        protocolProductServ.setAirportCode(protocol.getAirportCode());
-                        protocolProductService00.remove("protocolProductServiceId");
-                        protocolProductService00.remove("airportCode");
-                        protocolProductService00.remove("serviceTypeAllocationId");
-                        protocolProductService00.remove("serviceId");
-                        protocolProductService00.remove("isPricing");
-                        protocolProductService00.remove("isPrioritized");
-                        protocolProductService00.remove("isAvailabled");
-                        protocolProductServ.setPricingRule(protocolProductService00.toJSONString());
-                        Set keys = protocolProductService00.keySet();
-                        Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductServ.getServiceTypeAllocationId());
-                        if (keys.size() != protocolProductFieldName.size()) {
-                            return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
-                        } else {
-                            if (protocolProductFieldName != null) {
-                                for (int k = 0; k < keys.size(); k++) {
-                                    if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
-                                        return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
-                                    } else {
-                                        if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
-                                            return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        protocolProductFieldName.clear();
-                        protocolProductServs.add(protocolProductServ);
-                    }
-                    protocolProduct.setProtocolProductServList(protocolProductServs);
-                    protocolProducts.add(protocolProduct);
-                }
-                protocol.setProtocolProductList(protocolProducts);
-            }
+//            if(protocolProductList != null){
+//                List<ProtocolProduct> protocolProducts = new ArrayList<>();
+//                for (int i = 0; i < protocolProductList.size(); i++) {
+//                    JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
+//                    JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
+//                    protocolProduct00.remove("protocolProductService");
+//                    ProtocolProduct protocolProduct = JSONObject.toJavaObject(protocolProduct00,ProtocolProduct.class);
+//                    protocolProduct.setAirportCode(protocol.getAirportCode());
+//                    List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
+//                    for (int j = 0; j < protocolProductServiceList.size(); j++) {
+//                        JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
+//                        ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductService00,ProtocolProductServ.class);
+//                        protocolProductServ.setAirportCode(protocol.getAirportCode());
+//                        protocolProductService00.remove("protocolProductServiceId");
+//                        protocolProductService00.remove("airportCode");
+//                        protocolProductService00.remove("serviceTypeAllocationId");
+//                        protocolProductService00.remove("serviceId");
+//                        protocolProductService00.remove("isPricing");
+//                        protocolProductService00.remove("isPrioritized");
+//                        protocolProductService00.remove("isAvailabled");
+//                        protocolProductServ.setPricingRule(protocolProductService00.toJSONString());
+//                        Set keys = protocolProductService00.keySet();
+//                        Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductServ.getServiceTypeAllocationId());
+//                        if (keys.size() != protocolProductFieldName.size()) {
+//                            return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
+//                        } else {
+//                            if (protocolProductFieldName != null) {
+//                                for (int k = 0; k < keys.size(); k++) {
+//                                    if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
+//                                        return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
+//                                    } else {
+//                                        if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
+//                                            return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        protocolProductFieldName.clear();
+//                        protocolProductServs.add(protocolProductServ);
+//                    }
+//                    protocolProduct.setProtocolProductServList(protocolProductServs);
+//                    protocolProducts.add(protocolProduct);
+//                }
+//                protocol.setProtocolProductList(protocolProducts);
+//            }
 
 
             if (protocol == null) {

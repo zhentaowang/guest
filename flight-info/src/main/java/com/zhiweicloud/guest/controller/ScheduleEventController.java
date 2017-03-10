@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dragon.sign.DragonSignature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
@@ -84,6 +85,7 @@ public class ScheduleEventController {
                     @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "servId", value = "服务id", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "typeId", value = "服务类型id", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "serverComplete", value = "订单是否为服务完成状态", dataType = "Long", required = false, paramType = "query")
             })
     public String getFlightList(
@@ -94,6 +96,7 @@ public class ScheduleEventController {
             @QueryParam(value = "isInOrOut") Long isInOrOut,
             @QueryParam(value = "scheduleEventId") Long scheduleEventId,
             @QueryParam(value = "servId") Long servId,
+            @QueryParam(value = "typeId") Long typeId,
             @QueryParam(value = "serverComplete") Long serverComplete,
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows) {
@@ -107,8 +110,8 @@ public class ScheduleEventController {
         param.put("scheduleEventId",scheduleEventId);
         param.put("servId",servId);
         param.put("serverComplete",serverComplete);
-        LZResult<PaginationResult<ScheduleEvent>> result  = scheduleEventService.getFlightList(param,page,rows);
-        return JSON.toJSONString(result);
+        LZResult<PaginationResult<Flight>> result  = scheduleEventService.getFlightList(param,page,rows);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 
     /**

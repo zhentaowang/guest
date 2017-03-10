@@ -40,8 +40,8 @@ public class ScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="调度事件描述信息",name="name")
     private String name;
 
-    @ApiModelProperty(value="进港：0，出港：1",name="isApproach")
-    private Boolean isApproach;
+    @ApiModelProperty(value="进港：1，出港：0",name="isApproach")
+    private Short isApproach;
 
     @ApiModelProperty(value="调度时间",name="scheduleTime")
     private Date scheduleTime;
@@ -111,18 +111,18 @@ public class ScheduleEvent extends BaseEntity{
     }
 
     /**
-     * 进港：0，出港：1
-     * @return is_approach 进港：0，出港：1
+     * 进港：1，出港：0
+     * @return is_approach 进港：1，出港：0
      */
-    public Boolean getIsApproach() {
+    public Short getIsApproach() {
         return isApproach;
     }
 
     /**
-     * 进港：0，出港：1
-     * @param isApproach 进港：0，出港：1
+     * 进港：1，出港：0
+     * @param isApproach 进港：1，出港：0
      */
-    public void setIsApproach(Boolean isApproach) {
+    public void setIsApproach(Short isApproach) {
         this.isApproach = isApproach;
     }
 

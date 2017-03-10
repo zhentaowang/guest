@@ -27,5 +27,15 @@
     </if>
   </select>
 
+  <select id="queryFlightNoDropdownList" resultType="map">
+    SELECT flight_id id,flight_no value
+    FROM flight WHERE 1 = 1
+    <if test="flightNo != null ">
+       AND flight_no LIKE concat('%',#{flightNo},'%')
+    </if>
+    <if test="airportCode != null ">
+      AND airport_code = #{airportCode}
+    </if>
+  </select>
 
 </mapper>
