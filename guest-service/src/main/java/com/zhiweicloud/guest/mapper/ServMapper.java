@@ -30,5 +30,6 @@ public interface ServMapper {
      * @param airportCode
      * @return
      */
-    List<Serv> getServNameAndPositionNum(@Param("typeId") Long typeId, @Param("airportCode") String airportCode);
+    List<Serv> getServNameAndPositionNum(@Param("typeId") Long typeId, @Param("userId") Long userId, @Param("airportCode") String airportCode,
+                                         @Param("begin") int begin,@Param("rows")int rows, @Param("hasDefault") boolean hasDefault);
 }

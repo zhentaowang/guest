@@ -61,6 +61,14 @@ public class OrderServiceRecord extends BaseEntity{
     @ApiModelProperty(value="座位号",name="sitNo")
     private String sitNo;
 
+    @Transient
+    @ApiModelProperty(value="是否托运",name="consign")
+    private Short consign;
+
+    @Transient
+    @ApiModelProperty(value="代办登机牌 0:需要，1：不需要",name="printCheck")
+    private Short printCheck;
+
 
     /**
      * 主键id
@@ -156,5 +164,21 @@ public class OrderServiceRecord extends BaseEntity{
 
     public void setSitNo(String sitNo) {
         this.sitNo = sitNo;
+    }
+
+    public Short getConsign() {
+        return consign;
+    }
+
+    public void setConsign(Short consign) {
+        this.consign = consign;
+    }
+
+    public Short getPrintCheck() {
+        return printCheck;
+    }
+
+    public void setPrintCheck(Short printCheck) {
+        this.printCheck = printCheck;
     }
 }

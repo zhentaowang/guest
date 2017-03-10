@@ -40,7 +40,6 @@ public class ProductService {
 
         List<Long> serviceTypeIds = product.getServiceTypeIds();
         if (product.getProductId() != null) {
-            product.setUpdateTime(new Date());
             product.setUpdateUser(userId);
             productMapper.updateProduct(product);
 
@@ -50,19 +49,16 @@ public class ProductService {
         } else {
 
             //插入product
-            product.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-            product.setCreateTime(new Date());
             product.setCreateUser(userId);
             productMapper.insertProduct(product);
         }
 
-        //@TODO:修改user类型
         //保存新选择的服务
         if(!CollectionUtils.isEmpty(serviceTypeIds)){
             ProductServiceType temp = new ProductServiceType();
             temp.setAirportCode(product.getAirportCode());
             temp.setProductId(product.getProductId());
-            temp.setCreateTime(new Date());
+            temp.setCreateUser(userId);
             for (Long serId : serviceTypeIds) {
                 temp.setServiceTypeId(serId);
                 productServiceTypeMapper.insertProductServiceType(temp);
@@ -78,12 +74,11 @@ public class ProductService {
      * @param airportCode
      * @throws Exception
      */
-    //@TODO: userId 类型要改
     public void deleteById(List<Long> ids, Long userId ,String airportCode) throws Exception {
         Product tempProduct = new Product();
         tempProduct.setAirportCode(airportCode);
         tempProduct.setIsDeleted(Constant.MARK_AS_DELETED);
-        //          tempProduct.setUpdateUser(userId);
+        tempProduct.setUpdateUser(userId);
 
         ProductServiceType productServiceType = new ProductServiceType();
         productServiceType.setAirportCode(airportCode);

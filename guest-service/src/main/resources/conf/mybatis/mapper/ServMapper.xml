@@ -207,11 +207,16 @@
   </insert>
   
   <select id="getServNameAndPositionNum" resultMap="BaseResultMap">
-    <![CDATA[
       SELECT
-        serv_id,`no`,`name`,ifnull(service_detail->>"$.positionNum",0) as positionNum FROM wyun_guest.v_serv
-      WHERE is_deleted = 0 AND airport_code = #{airportCode} AND service_type_allocation_id = #{typeId}
-    ]]>
+        s.serv_id,s.`no`,s.`name`,ifnull(service_detail->>"$.positionNum",0) as positionNum FROM v_serv s
+      <if test="hasDefault">
+        LEFT JOIN (SELECT serv_id,is_deleted from serv_default WHERE employee_id = #{userId}) d ON s.serv_id= d.serv_id
+      </if>
+      WHERE
+        s.is_deleted = 0 AND s.airport_code = #{airportCode} AND s.service_type_allocation_id = #{typeId}
+      <if test="hasDefault">
+        AND d.is_deleted = 0
+      </if>
   </select>
 
 </mapper>

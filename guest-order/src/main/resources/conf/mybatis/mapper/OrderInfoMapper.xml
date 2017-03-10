@@ -48,8 +48,6 @@
         <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
         <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
         <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
-        <result column="plan_take_off_time" jdbcType="TIME" property="planTakeOffTime" />
-        <result column="plan_landing_time" jdbcType="TIME" property="planLandingTime" />
         <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
         <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
         <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
@@ -80,6 +78,9 @@
         <result column="fcategory" jdbcType="VARCHAR" property="fcategory" />
         <result column="fid" jdbcType="VARCHAR" property="fid" />
         <result column="board_gate_time" jdbcType="VARCHAR" property="boardGateTime" />
+        <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
+        <result column="schedule_event_name" jdbcType="TIMESTAMP" property="scheduleEventName" />
+        <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
       </association>
       <collection property="passengerList" ofType="com.zhiweicloud.guest.model.Passenger">
         <id column="passenger_id" jdbcType="BIGINT" property="passengerId" />
@@ -450,7 +451,7 @@
     o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
     o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
 
-    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
+    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
 
     from order_info o
@@ -538,7 +539,7 @@
                 o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
                 o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
                 f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
-                f.plan_take_off_time,f.plan_landing_time,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
+                f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
 			from order_info o
 			inner join flight f
 			on o.flight_id = f.flight_id
