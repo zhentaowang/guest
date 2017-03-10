@@ -24,7 +24,7 @@
   <insert id="insertProductServiceType" parameterType="com.zhiweicloud.guest.model.ProductServiceType">
 
     INSERT INTO product_service_type (product_id, service_type_id, airport_code, create_time, create_user,is_deleted)
-    SELECT #{productId},#{serviceTypeId},#{airportCode},#{createTime},#{createUser},0
+    SELECT #{productId}, #{serviceTypeId}, #{airportCode}, NOW(), #{createUser}, 0
     FROM dual
     WHERE not exists (
       select * from product_service_type where product_id = #{productId} and service_type_id = #{serviceTypeId} and airport_code = #{airportCode} and is_deleted = 0
