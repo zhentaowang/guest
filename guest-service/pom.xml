@@ -229,7 +229,7 @@
               <schemes>
                 <scheme>http</scheme>
               </schemes>
-              <host>192.168.1.130:8080</host>
+              <host>localhost:8080</host>
               <!--<basePath>/guest-product</basePath>-->
               <info>
                 <title>Guest Service</title>
