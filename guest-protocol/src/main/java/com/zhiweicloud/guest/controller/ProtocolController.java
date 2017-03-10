@@ -8,6 +8,7 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.ProtocolTypeEnum;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
@@ -320,7 +321,7 @@ public class ProtocolController {
         @ApiOperation(value = "协议管理 - 协议类型下拉框", notes = "返回协议类型")
         public String getProtocolTypeSelect () {
             LZResult<List<Dropdownlist>> result = new LZResult<>();
-            List<Dropdownlist> list = new ArrayList<Dropdownlist>();
+            List<Dropdownlist> list = new ArrayList<>();
 
             for (ProtocolTypeEnum e : ProtocolTypeEnum.values()) {
                 Dropdownlist dropdown = new Dropdownlist();
@@ -351,21 +352,19 @@ public class ProtocolController {
                 @RequestBody RequsetParams< Long > params){
             try {
                 List<Long> ids = params.getData();
-                Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
-                String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
+//                Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
+//                String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
 
                 for (int i = 0; i < ids.size(); i++) {
-                    //调用order应用，根据协议id 查询有无订单关联
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("protocolId", ids.get(i));
-                    Properties p = new Properties();
-                    p.load(ProtocolController.class.getClassLoader().getResourceAsStream("application.properties"));
-                //@TODO:调用订单接口判断有无被引用
-//                String temp = HttpClientUtil.httpGetRequest(p.getProperty("guest.client.queryInstitutionClientDropdownList"), map);
-//                System.out.println(temp);
-//                byte[] b = temp.getBytes("ISO-8859-1");
+                    //调用order应用，根据协议id 判断有无被引用
+                    JSONObject orderJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getOrderCountByProtocolId?protocolId="+ ids.get(i) +"&access_token=aVdgpzRxSfDj21mIIKrdbTJtrD7boKq8W6Dmk6fq"));
+                    //解析协议产品服务对象
+                    int orderCount = Integer.valueOf(orderJSONObject.get("data").toString());
+                    if(orderCount > 0){
+                        return JSON.toJSONString(LXResult.build(LZStatus.DATA_REF_ERROR));
+                    }
                 }
-                protocolService.deleteById(ids, userId, airportCode);
+//                protocolService.deleteById(ids, userId, airportCode);
                 return JSON.toJSONString(LXResult.success());
             } catch (Exception e) {
                 logger.error("delete protocol by ids error", e);

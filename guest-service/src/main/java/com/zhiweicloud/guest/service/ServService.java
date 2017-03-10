@@ -218,7 +218,7 @@ public class ServService {
         for(Serv serv : servList){
             //根据服务ser_id 查询协议产品服务
 //            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=enIkAZRkrofx2MJDuxAAb0z4CTkt2fRl34GONOpy",headerMap));
-            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=enIkAZRkrofx2MJDuxAAb0z4CTkt2fRl34GONOpy"));
+            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=UVJKcORAGk7umj6CBnfsW7a2FbiXInzr3Juc62nc"));
             //解析协议产品服务对象
             JSONArray protocolProductServList = JSON.parseArray(JSON.toJSONString(protocolJSONObject.get("data")));
 
@@ -227,7 +227,7 @@ public class ServService {
                 JSONObject protocolProductServ = protocolProductServList.getJSONObject(i);
                 Long serviceDetailId = Long.valueOf(protocolProductServ.get("protocolProductServiceId").toString());
 
-                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getServerNumByServiceDetailId?serviceDetailId="+ serviceDetailId +"&access_token=enIkAZRkrofx2MJDuxAAb0z4CTkt2fRl34GONOpy"));
+                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getServerNumByServiceDetailId?serviceDetailId="+ serviceDetailId +"&access_token=UVJKcORAGk7umj6CBnfsW7a2FbiXInzr3Juc62nc"));
                 //解析协议产品服务对象
                 servNum = servNum + Integer.valueOf(orderServiceJSONObject.get("data").toString());
             }

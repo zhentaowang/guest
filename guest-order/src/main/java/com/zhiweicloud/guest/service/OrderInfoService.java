@@ -17,6 +17,7 @@ import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -47,7 +48,10 @@ public class OrderInfoService {
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
 
             //保存订单日志
-            orderInfoMapper.insertIntoOrderStatusRecord(orderInfo);
+            if(!StringUtils.isEmpty(orderInfo.getOrderStatus())){
+                orderInfoMapper.insertIntoOrderStatusRecord(orderInfo);
+            }
+
 
 
         } else {
