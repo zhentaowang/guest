@@ -384,12 +384,12 @@ public class ProtocolService {
             if(param.get("typeId") != null){
                 Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(Long.parseLong(param.get("typeId").toString()));
                 if(protocolProductFieldName != null){
-                    result.putAll(protocolProductFieldName);
+                    result.putAll(JSON.parseObject(protocolProductServiceList.get(i).getPricingRule()));
                 }
-                result.put("isPricing",protocolProductServiceList.get(i).getIsPricing());
-                result.put("isPrioritized",protocolProductServiceList.get(i).getIsPrioritized());
-                result.put("isAvailabled",protocolProductServiceList.get(i).getIsAvailabled());
             }
+            result.put("isPricing",protocolProductServiceList.get(i).getIsPricing());
+            result.put("isPrioritized",protocolProductServiceList.get(i).getIsPrioritized());
+            result.put("isAvailabled",protocolProductServiceList.get(i).getIsAvailabled());
             protocolProductServiceJson.add(result);
         }
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, protocolProductServiceJson);
