@@ -102,26 +102,46 @@ public class ProtocolProductController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议产品服务管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult protocolProductServiceSave(@ApiParam(value = "protocolProductService", required = true) @RequestBody String params,
+    public String protocolProductServiceSave(@ApiParam(value = "protocolProductService", required = true) @RequestBody String params,
                                         @Context final HttpHeaders headers) {
         try {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
-            for(int i = 0; i < param.size(); i++){
-                JSONObject param00 = JSON.parseObject(param.get(i).toString());
-                ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(param00,ProtocolProductServ.class);
+            for (int i = 0; i < param.size(); i++) {
+                JSONObject protocolProductService00 = JSON.parseObject(param.get(i).toString());
+                ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductService00,ProtocolProductServ.class);
                 protocolProductServ.setAirportCode(airportCode);
-                if(protocolProductServ.getProtocolProductServiceId() == null){
-                    if (protocolProductServ == null || protocolProductServ.getProtocolProductId() == null || protocolProductServ.getServiceTypeAllocationId() == null) {
-                        return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                protocolProductService00.remove("protocolProductServiceId");
+                protocolProductService00.remove("protocolProductId");
+                protocolProductService00.remove("serviceTypeAllocationId");
+                protocolProductService00.remove("isPricing");
+                protocolProductService00.remove("isPrioritized");
+                protocolProductService00.remove("isAvailabled");
+                protocolProductServ.setPricingRule(protocolProductService00.toJSONString());
+                Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductServ.getServiceTypeAllocationId());
+                Set keys = protocolProductService00.keySet();
+                if (keys.size() != protocolProductFieldName.size()) {
+                    return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
+                } else {
+                    if (protocolProductFieldName != null) {
+                        for (int k = 0; k < keys.size(); k++) {
+                            if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
+                                return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
+                            } else {
+                                if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
+                                    return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
+                                }
+                            }
+                        }
                     }
                 }
+                protocolProductFieldName.clear();
                 protocolProductService.saveOrUpdateProtocolProductServ(protocolProductServ);
             }
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 

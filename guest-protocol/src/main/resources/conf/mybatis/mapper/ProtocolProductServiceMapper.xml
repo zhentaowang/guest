@@ -99,7 +99,6 @@
     on p.service_id = s.serv_id
     where p.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{criteria.typeId,jdbcType=BIGINT} and p.is_deleted = 0
      and p.protocol_product_id = #{criteria.protocolProductId,jdbcType=BIGINT}
-    LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
   <select id="getServiceDropDownBoxByParam" parameterType="map" resultMap="BaseResultMap">
