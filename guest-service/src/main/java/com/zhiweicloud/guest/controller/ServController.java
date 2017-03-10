@@ -7,16 +7,21 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.ListUtil;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.ProductServiceType;
 import com.zhiweicloud.guest.model.Serv;
+import com.zhiweicloud.guest.model.ServDefault;
 import com.zhiweicloud.guest.model.ServiceDetail;
+import com.zhiweicloud.guest.service.ServDefaultService;
 import com.zhiweicloud.guest.service.ServService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
@@ -39,6 +44,9 @@ public class ServController {
     private static final Logger logger = LoggerFactory.getLogger(ServController.class);
     @Autowired
     private ServService servService;
+
+    @Autowired
+    private ServDefaultService servDefaultService;
 
     @GET
     @Path("list")
@@ -232,13 +240,15 @@ public class ServController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "休息室/服务厅管理 - 服务查询", notes = "显示服务厅名以及可服务人数", httpMethod = "GET", produces = "application/json")
     public String getServNameAndPositionNum(
+            @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "typeId") Long typeId,
             @Context final HttpHeaders headers) {
         LZResult<List<Serv>> result = new LZResult<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
         try {
-            List<Serv> list = servService.getServNameAndPositionNum(typeId, userId, airportCode);
+            List<Serv> list = servService.getServNameAndPositionNum(typeId, userId, airportCode, page, rows);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
@@ -269,6 +279,53 @@ public class ServController {
 
         return JSON.toJSONString(result);
     }
+
+    /**
+     * 服务查询列表 - 设置默认
+     * @param params
+     * @return
+     */
+    @POST
+    @Path(value="setDefaultRoom")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value = "服务查询列表 - 设置默认", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
+    public String setServDefault(
+            @RequestBody RequsetParams<Long> params,
+            @Context final HttpHeaders headers){
+        LZResult<String> result = new LZResult<>();
+        try {
+            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            List<Long> servIds = params.getData();
+
+            //删除取消默认的服务厅
+            servDefaultService.deleteServDefault(userId, airportCode, ListUtil.List2String(servIds));
+
+            //记住已选择的 默认服务厅
+            if(!CollectionUtils.isEmpty(servIds)){
+                ServDefault servDefault = new ServDefault();
+                servDefault.setEmployeeId(userId);
+                servDefault.setAirportCode(airportCode);
+                for (Long servId : servIds){
+                    servDefault.setServId(servId);
+                    servDefaultService.insertServDefault(servDefault);
+                }
+            }
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+    }
+
+
+
 
 
 }

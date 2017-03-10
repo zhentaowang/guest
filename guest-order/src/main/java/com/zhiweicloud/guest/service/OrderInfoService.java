@@ -304,22 +304,25 @@ public class OrderInfoService {
      * @param orderId
      */
     private void deletePassengerAndOrderServiceDeatil(Long orderId, String airportCode) throws Exception{
-        /**
-         * 逻辑删除旅客
-         */
-        Passenger passenger = new Passenger();
-        passenger.setAirportCode(airportCode);
-        passenger.setOrderId(orderId);
-        passengerMapper.markAsDeleted(passenger);
+        try{
+            /**
+             * 逻辑删除旅客
+             */
+            Passenger passenger = new Passenger();
+            passenger.setAirportCode(airportCode);
+            passenger.setOrderId(orderId);
+            passengerMapper.markAsDeleted(passenger);
 
-        /**
-         * 逻辑删除旅客
-         */
-        OrderService orderService = new OrderService();
-        orderService.setAirportCode(airportCode);
-        orderService.setOrderId(orderId);
-        orderServiceMapper.markAsDeleted(orderService);
-
+            /**
+             * 逻辑删除旅客
+             */
+            OrderService orderService = new OrderService();
+            orderService.setAirportCode(airportCode);
+            orderService.setOrderId(orderId);
+            orderServiceMapper.markAsDeleted(orderService);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public OrderInfo getById(Long orderId, Long userId,String airportCode) throws Exception{
