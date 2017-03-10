@@ -2,15 +2,14 @@
  * OrderInfo.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-02-24 17:28:24 Created By zhangpengfei
+ * 2017-03-10 10:44:21 Created By zhangpengfei
 */
 package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,23 +18,40 @@ import java.util.List;
  * OrderInfo.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-02-24 17:28:24 Created By zhangpengfei
+ * 2017-03-10 10:44:21 Created By zhangpengfei
 */
 @ApiModel(value="OrderInfo",description="order_info")
 public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="主键自增id",name="orderId", required=true)
-    @Id
-    @GeneratedValue(generator = "JDBC")
+    @NotEmpty
     private Long orderId;
+
+
+    @ApiModelProperty(value="订单编号",name="orderNo")
+    private String orderNo;
+
+    @ApiModelProperty(value="航班id",name="flightId", required=true)
+    @NotEmpty
+    private Long flightId;
 
     @ApiModelProperty(value="机构名称id",name="customerId")
     private Long customerId;
 
+    @ApiModelProperty(value="客户名称",name="customerName")
+    private String customerName;
+
     @ApiModelProperty(value="协议id",name="protocolId", required=true)
+    @NotEmpty
     private Long protocolId;
+
+    @ApiModelProperty(value="协议名称",name="protocolName")
+    private String protocolName;
 
     @ApiModelProperty(value="预约人",name="bookingPerson")
     private Long bookingPerson;
+
+    @ApiModelProperty(value="预约人姓名",name="bookingPersonName")
+    private String bookingPersonName;
 
     @ApiModelProperty(value="通知人",name="noticePerson")
     private String noticePerson;
@@ -44,40 +60,43 @@ public class OrderInfo extends BaseEntity{
     private Short bookingWay;
 
     @ApiModelProperty(value="是否重要订单：0：重要，1：不重要",name="isImportant")
-    private Short isImportant;
+    private Boolean isImportant;
 
     @ApiModelProperty(value="产品id",name="productId")
     private Long productId;
 
+    @ApiModelProperty(value="产品名称",name="productName")
+    private String productName;
+
     @ApiModelProperty(value="代办登机牌 0:需要，1：不需要",name="printCheck")
-    private Short printCheck;
+    private Boolean printCheck;
 
     @ApiModelProperty(value="座位要求: 靠窗 靠走道 不要安全门 前排 后排",name="printCheckRemark")
     private String printCheckRemark;
 
-    @ApiModelProperty(value="是否托运, 0:托运，1：不托运",name="consign")
+    @ApiModelProperty(value="代办托运 说明",name="consign")
     private Short consign;
 
-    @ApiModelProperty(value="代办托运 说明",name="consignRemark")
+    @ApiModelProperty(value="是否托运说明",name="consignRemark")
     private String consignRemark;
 
     @ApiModelProperty(value="服务说明",name="otherRemark")
     private String otherRemark;
 
-    @ApiModelProperty(value="预约草稿，已预约，预约取消，已使用，服务草稿，服务取消",name="orderStatus")
+    @ApiModelProperty(value="0:预约成功，1：消费,2 : 取消，3：草稿",name="orderStatus")
     private String orderStatus;
 
     @ApiModelProperty(value="订单类型：0：预约订单，1：服务订单",name="orderType")
     private Short orderType;
+
+    @ApiModelProperty(value="代办完成：0：是，1：否",name="agentComplete")
+    private Short agentComplete;
 
     @ApiModelProperty(value="安排代办人",name="agentPerson")
     private Long agentPerson;
 
     @ApiModelProperty(value="安排代办人姓名",name="agentPersonName")
     private String agentPersonName;
-
-    @ApiModelProperty(value="代办完成:1：是，0：否",name="agentPerson")
-    private Short agentComplete;
 
     @ApiModelProperty(value="证件",name="serverCardNo")
     private String serverCardNo;
@@ -92,11 +111,10 @@ public class OrderInfo extends BaseEntity{
     private String sitNo;
 
     @ApiModelProperty(value="服务完成：0：否,1：是",name="serverComplete")
-    private Short serverComplete;
+    private Boolean serverComplete;
 
-    @ApiModelProperty(value = "服务人数", name = "serverPersonNum")
+    @ApiModelProperty(value="服务人数",name="serverPersonNum")
     private Integer serverPersonNum;
-
 
     @Transient
     @ApiModelProperty(value="订单详细服务",name="serviceList")
@@ -110,31 +128,9 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value = "确认消费，仅仅用于前台标志 是用来更改订单的状态,确认：1")
     private Integer changeOrderStatus;
 
-
-    @ApiModelProperty(value = "航班id", name = "flightId")
-    private Long flightId;
-
     @ApiModelProperty(value = "航班信息", name = "flight")
     @Transient
     private Flight flight;
-
-    @ApiModelProperty(value = "客户名称", name = "customerName")
-    @Transient
-    private String customerName;
-
-
-    @ApiModelProperty(value = "协议名称", name = "protocolName")
-    @Transient
-    private String protocolName;
-
-
-    @ApiModelProperty(value = "产品名称", name = "productName")
-    @Transient
-    private String productName;
-
-    @ApiModelProperty(value = "预约人姓名", name = "bookingPersonName")
-    @Transient
-    private String bookingPersonName;
 
     @ApiModelProperty(value = "创建人姓名", name = "createUserName")
     @Transient
@@ -157,6 +153,22 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
+     * 航班id
+     * @return flight_id 航班id
+     */
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    /**
+     * 航班id
+     * @param flightId 航班id
+     */
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    /**
      * 机构名称id
      * @return customer_id 机构名称id
      */
@@ -170,6 +182,22 @@ public class OrderInfo extends BaseEntity{
      */
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    /**
+     * 客户名称
+     * @return customer_name 客户名称
+     */
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    /**
+     * 客户名称
+     * @param customerName 客户名称
+     */
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     /**
@@ -189,6 +217,22 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
+     * 协议名称
+     * @return protocol_name 协议名称
+     */
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    /**
+     * 协议名称
+     * @param protocolName 协议名称
+     */
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
+
+    /**
      * 预约人
      * @return booking_person 预约人
      */
@@ -202,6 +246,22 @@ public class OrderInfo extends BaseEntity{
      */
     public void setBookingPerson(Long bookingPerson) {
         this.bookingPerson = bookingPerson;
+    }
+
+    /**
+     * 预约人姓名
+     * @return booking_person_name 预约人姓名
+     */
+    public String getBookingPersonName() {
+        return bookingPersonName;
+    }
+
+    /**
+     * 预约人姓名
+     * @param bookingPersonName 预约人姓名
+     */
+    public void setBookingPersonName(String bookingPersonName) {
+        this.bookingPersonName = bookingPersonName;
     }
 
     /**
@@ -240,7 +300,7 @@ public class OrderInfo extends BaseEntity{
      * 是否重要订单：0：重要，1：不重要
      * @return is_important 是否重要订单：0：重要，1：不重要
      */
-    public Short getIsImportant() {
+    public Boolean getIsImportant() {
         return isImportant;
     }
 
@@ -248,7 +308,7 @@ public class OrderInfo extends BaseEntity{
      * 是否重要订单：0：重要，1：不重要
      * @param isImportant 是否重要订单：0：重要，1：不重要
      */
-    public void setIsImportant(Short isImportant) {
+    public void setIsImportant(Boolean isImportant) {
         this.isImportant = isImportant;
     }
 
@@ -269,10 +329,26 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
+     * 
+     * @return product_name 
+     */
+    public String getProductName() {
+        return productName;
+    }
+
+    /**
+     * 
+     * @param productName 
+     */
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    /**
      * 代办登机牌 0:需要，1：不需要
      * @return print_check 代办登机牌 0:需要，1：不需要
      */
-    public Short getPrintCheck() {
+    public Boolean getPrintCheck() {
         return printCheck;
     }
 
@@ -280,7 +356,7 @@ public class OrderInfo extends BaseEntity{
      * 代办登机牌 0:需要，1：不需要
      * @param printCheck 代办登机牌 0:需要，1：不需要
      */
-    public void setPrintCheck(Short printCheck) {
+    public void setPrintCheck(Boolean printCheck) {
         this.printCheck = printCheck;
     }
 
@@ -317,16 +393,16 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
-     * 是否托运, 0:托运，1：不托运
-     * @return consign_remark 是否托运, 0:托运，1：不托运
+     * 是否托运说明
+     * @return consign_remark 是否托运说明
      */
     public String getConsignRemark() {
         return consignRemark;
     }
 
     /**
-     * 是否托运, 0:托运，1：不托运
-     * @param consignRemark 是否托运, 0:托运，1：不托运
+     * 是否托运说明
+     * @param consignRemark 是否托运说明
      */
     public void setConsignRemark(String consignRemark) {
         this.consignRemark = consignRemark;
@@ -349,16 +425,16 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
-     * 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
-     * @return order_status 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
+     * 0:预约成功，1：消费,2 : 取消，3：草稿
+     * @return order_status 0:预约成功，1：消费,2 : 取消，3：草稿
      */
     public String getOrderStatus() {
         return orderStatus;
     }
 
     /**
-     * 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
-     * @param orderStatus 预约草稿，已预约，预约取消，已使用，服务草稿，服务取消
+     * 0:预约成功，1：消费,2 : 取消，3：草稿
+     * @param orderStatus 0:预约成功，1：消费,2 : 取消，3：草稿
      */
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
@@ -378,6 +454,22 @@ public class OrderInfo extends BaseEntity{
      */
     public void setOrderType(Short orderType) {
         this.orderType = orderType;
+    }
+
+    /**
+     * 代办完成：0：是，1：否
+     * @return agent_complete 代办完成：0：是，1：否
+     */
+    public Short getAgentComplete() {
+        return agentComplete;
+    }
+
+    /**
+     * 代办完成：0：是，1：否
+     * @param agentComplete 代办完成：0：是，1：否
+     */
+    public void setAgentComplete(Short agentComplete) {
+        this.agentComplete = agentComplete;
     }
 
     /**
@@ -461,19 +553,43 @@ public class OrderInfo extends BaseEntity{
     }
 
     /**
-     * 服务完成：0：是，1：否
-     * @return server_complete 服务完成：0：是，1：否
+     * 服务完成：0：否,1：是
+     * @return server_complete 服务完成：0：否,1：是
      */
-    public Short getServerComplete() {
+    public Boolean getServerComplete() {
         return serverComplete;
     }
 
     /**
-     * 服务完成：0：是，1：否
-     * @param serverComplete 服务完成：0：是，1：否
+     * 服务完成：0：否,1：是
+     * @param serverComplete 服务完成：0：否,1：是
      */
-    public void setServerComplete(Short serverComplete) {
+    public void setServerComplete(Boolean serverComplete) {
         this.serverComplete = serverComplete;
+    }
+
+    /**
+     * 服务人数
+     * @return server_person_num 服务人数
+     */
+    public Integer getServerPersonNum() {
+        return serverPersonNum;
+    }
+
+    /**
+     * 服务人数
+     * @param serverPersonNum 服务人数
+     */
+    public void setServerPersonNum(Integer serverPersonNum) {
+        this.serverPersonNum = serverPersonNum;
+    }
+
+    public Boolean getImportant() {
+        return isImportant;
+    }
+
+    public void setImportant(Boolean important) {
+        isImportant = important;
     }
 
     public List<OrderService> getServiceList() {
@@ -500,68 +616,12 @@ public class OrderInfo extends BaseEntity{
         this.changeOrderStatus = changeOrderStatus;
     }
 
-    public Integer getServerPersonNum() {
-        return serverPersonNum;
-    }
-
-    public void setServerPersonNum(Integer serverPersonNum) {
-        this.serverPersonNum = serverPersonNum;
-    }
-
-    public Long getFlightId() {
-        return flightId;
-    }
-
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
-
     public Flight getFlight() {
         return flight;
     }
 
     public void setFlight(Flight flight) {
         this.flight = flight;
-    }
-
-    public Short getAgentComplete() {
-        return agentComplete;
-    }
-
-    public void setAgentComplete(Short agentComplete) {
-        this.agentComplete = agentComplete;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getProtocolName() {
-        return protocolName;
-    }
-
-    public void setProtocolName(String protocolName) {
-        this.protocolName = protocolName;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getBookingPersonName() {
-        return bookingPersonName;
-    }
-
-    public void setBookingPersonName(String bookingPersonName) {
-        this.bookingPersonName = bookingPersonName;
     }
 
     public String getCreateUserName() {
@@ -578,5 +638,13 @@ public class OrderInfo extends BaseEntity{
 
     public void setAgentPersonName(String agentPersonName) {
         this.agentPersonName = agentPersonName;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 }
