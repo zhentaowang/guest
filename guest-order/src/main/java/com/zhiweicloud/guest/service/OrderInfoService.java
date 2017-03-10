@@ -26,18 +26,21 @@ import java.util.*;
  */
 @Service
 public class OrderInfoService {
-    @Autowired
-    private OrderInfoMapper orderInfoMapper;
+    private final OrderInfoMapper orderInfoMapper;
+
+    private final PassengerMapper passengerMapper;
+
+    private final OrderServiceMapper orderServiceMapper;
+
+    private final FlightMapper flightMapper;
 
     @Autowired
-    private PassengerMapper passengerMapper;
-
-    @Autowired
-    private OrderServiceMapper orderServiceMapper;
-
-    @Autowired
-    private FlightMapper flightMapper;
-
+    public OrderInfoService(OrderInfoMapper orderInfoMapper, PassengerMapper passengerMapper, OrderServiceMapper orderServiceMapper, FlightMapper flightMapper) {
+        this.orderInfoMapper = orderInfoMapper;
+        this.passengerMapper = passengerMapper;
+        this.orderServiceMapper = orderServiceMapper;
+        this.flightMapper = flightMapper;
+    }
 
 
     public void saveOrUpdate(OrderInfo orderInfo,List<Passenger> passengerList,List<OrderService> orderServiceList,Long userId,String airportCode) throws Exception {
@@ -321,13 +324,15 @@ public class OrderInfoService {
 
     public OrderInfo getById(Long orderId, Long userId,String airportCode) throws Exception{
         OrderInfo orderInfo = orderInfoMapper.getDetailById(orderId, airportCode);
-        Map<String,Object> headerMap = new HashMap();
-        headerMap.put("user-id",userId);
-        headerMap.put("client-id",airportCode);
+        Map<String, Object> headerMap = new HashMap<>();
+        Map<String, Object> paramMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
+        paramMap.put("employeeId", orderInfo.getCreateUser());
 
         if(orderInfo.getCreateUser() != null){
-            //JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view?employeeId="+ orderInfo.getCreateUser() ,headerMap));
-            JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId="+ orderInfo.getCreateUser() +"&access_token=X12VwTIt6lbw7xbJHPeQ5hUrIT5I8YNinBFEBL0K"));
+            JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+            // JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://localhost:8087/view", headerMap, paramMap));
             if(createUserObject != null){
                 JSONArray jsonArray = createUserObject.getJSONArray("data");
                 String createUserName = jsonArray.getJSONObject(0).get("name").toString();

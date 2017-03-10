@@ -34,7 +34,6 @@ import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.service.EmployeeService;
 import io.swagger.annotations.*;
-import org.apache.ibatis.ognl.IntHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +72,7 @@ public class EmployeeController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "参数错误"),
             @ApiResponse(code = 405, message = "请求方式不对"),
-            @ApiResponse(code = 200, message = "请求成功",response = Employee.class)
+            @ApiResponse(code = 200, message = "请求成功", response = Employee.class)
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
@@ -91,19 +90,20 @@ public class EmployeeController {
 
             LZResult<PaginationResult<Map>> result = employeeService.getAll(employeeParam, page, rows);
             return JSON.toJSONString(result);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return  JSON.toJSONString(result);
+            return JSON.toJSONString(result);
         }
     }
 
     /**
      * 员工管理 - 新增or更新
      * 需要判断name是否重复
+     *
      * @return
      */
     @POST
@@ -111,12 +111,12 @@ public class EmployeeController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param,@Context final HttpHeaders headers) {
+    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param, @Context final HttpHeaders headers) {
         LZResult<String> result = new LZResult<>();
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
 
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             Employee employee = null;
             if (!CollectionUtils.isEmpty(param.getData())) {
                 employee = param.getData().get(0);
@@ -125,12 +125,12 @@ public class EmployeeController {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
-            }else{
+            } else {
                 employee.setAirportCode(airportCode);
-                if(employee.getEmployeeId() != null){
+                if (employee.getEmployeeId() != null) {
                     employee.setUpdateUser(userId);
                     employee.setUpdateTime(new Date());
-                }else{
+                } else {
                     employee.setCreateUser(userId);
                     employee.setCreateTime(new Date());
                 }
@@ -162,20 +162,20 @@ public class EmployeeController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "参数错误"),
             @ApiResponse(code = 405, message = "请求方式不对"),
-            @ApiResponse(code = 200, message = "请求成功",response = Employee.class)
+            @ApiResponse(code = 200, message = "请求成功", response = Employee.class)
     })
     public String view(
             @QueryParam("employeeId") Long employeeId,
-            ContainerRequestContext request) {
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         LZResult<List<Map>> result = new LZResult<>();
         try {
-            String airportCode = request.getHeaders().getFirst("client-id").toString();
-            List<Map> employee = employeeService.getById(employeeId,airportCode);
+            List<Map> employee = employeeService.getById(employeeId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(employee);
             return JSON.toJSONString(result);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
@@ -197,7 +197,7 @@ public class EmployeeController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "参数错误"),
             @ApiResponse(code = 405, message = "请求方式不对"),
-            @ApiResponse(code = 200, message = "请求成功",response = Long.class)
+            @ApiResponse(code = 200, message = "请求成功", response = Long.class)
     })
     public String getRoleByUserId(
             @QueryParam("employeeId") Long employeeId,
@@ -205,11 +205,11 @@ public class EmployeeController {
         LZResult<List<Map>> result = new LZResult<>();
         try {
             String airportCode = request.getHeaders().getFirst("client-id").toString();
-            List<Map> employee = employeeService.getRoleListByUserId(employeeId,airportCode);
+            List<Map> employee = employeeService.getRoleListByUserId(employeeId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(employee);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
@@ -239,9 +239,9 @@ public class EmployeeController {
             @RequestBody RequsetParams<Long> params) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
-            employeeService.deleteById(ids, userId,airportCode);
+            employeeService.deleteById(ids, userId, airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete employee by ids error", e);
@@ -267,7 +267,7 @@ public class EmployeeController {
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
@@ -278,6 +278,7 @@ public class EmployeeController {
 
     /**
      * 根据角色查代办人 下拉框
+     *
      * @return
      */
     @GET
@@ -286,7 +287,7 @@ public class EmployeeController {
     @ApiOperation(value = "系统中用到的员工下拉框，只包含id，和value的对象", notes = "根据数据字典的角色id获取用户数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     public String getEmployeeDropdownListByRoleId(ContainerRequestContext request,
-                                                  @QueryParam(value="roleId") Long roleId) {
+                                                  @QueryParam(value = "roleId") Long roleId) {
         LZResult<List<Dropdownlist>> result = new LZResult<>();
         try {
             String airportCode = request.getHeaders().getFirst("client-id").toString();
@@ -294,7 +295,7 @@ public class EmployeeController {
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
