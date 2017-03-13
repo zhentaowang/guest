@@ -30,7 +30,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.common.InstitutionException;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -80,31 +79,37 @@ public class InstitutionClientService {
         }
     }
 
-    public List<Map<Long,String>> deleteByIds(List<Long> ids, Long deleteUser, String airportCode) throws Exception{
+    public List<Map<Long,String>> deleteByIds(List<Long> ids, Long userId, String airportCode) throws Exception{
         List<Long> deleteIds = new ArrayList<>();
         List<Map<Long,String>> disableDeleteIds = new ArrayList<>();
+        Map<String, Object> headerMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
         for (Long id : ids) {
-            Map<String, Object> headerMap = new HashMap<>();
             Map<String, Object> paramMap = new HashMap<>();
-            headerMap.put("user-id", deleteUser);
-            headerMap.put("client-id", airportCode);
             paramMap.put("institutionClientId", id);
-            JSONObject protocolList = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap));
+//            String s = HttpClientUtil.httpGetRequest("http://127.0.0.1:8084/protocolList", headerMap, paramMap);
+            String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
+            JSONObject protocolList = JSON.parseObject(s);
             if (protocolList != null) {
                 JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
                 if (rows.size()!=0) {
                     Map<Long, String> maps = new HashMap<>();
                     maps.put(id, institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
                     disableDeleteIds.add(maps);
+                }else {
+                    deleteIds.add(id);
                 }
-                deleteIds.add(id);
+
             }
         }
-        Map params = new HashMap();
-        params.put("ids",deleteIds);
-        params.put("userId",deleteUser);
-        params.put("airportCode", airportCode);
-        institutionClientMapper.deleteBatchByIdsAndUserId(params);
+        if (deleteIds.size()>0){
+            Map params = new HashMap();
+            params.put("ids",deleteIds);
+            params.put("userId", userId);
+            params.put("airportCode", airportCode);
+            institutionClientMapper.deleteBatchByIdsAndUserId(params);
+        }
         return disableDeleteIds;
         //一条一条删除数据
 //        for (Long id : ids) {
@@ -112,7 +117,7 @@ public class InstitutionClientService {
 //            if(protocolList!=null || protocolList.size()!=0){
 //                throw new InstitutionException("机构已经被协议占用，无法删除");
 //            }
-//            institutionClientMapper.markAsDeleted(id,deleteUser,airportCode);
+//            institutionClientMapper.markAsDeleted(id,userId,airportCode);
 //        }
     }
 

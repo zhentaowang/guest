@@ -180,8 +180,9 @@ public class InstitutionClientController {
         "data": [
         6,7,8
         ]
-    }
-     * @return
+     *
+     }
+     * @return 返回被引用的机构客户ID集合
      */
     @POST
     @Path(value = "delete")
@@ -197,6 +198,7 @@ public class InstitutionClientController {
         try {
             List<Long> ids = params.getData();
             List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,userId,airportCode);
+//            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,78L,"LJG");
             lzResult.setData(res);
             lzResult.setMsg(LZStatus.SUCCESS.display());
             lzResult.setStatus(LZStatus.SUCCESS.value());
