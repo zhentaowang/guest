@@ -130,7 +130,7 @@ public class OrderInfoController {
 
             OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
 
-            if (order == null) {
+            if (order == null || order.getProtocolId() == null || order.getProductId().equals("") || order.getProductId() == null || order.getProductId().equals("")) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
