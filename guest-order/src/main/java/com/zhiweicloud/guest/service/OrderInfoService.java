@@ -52,26 +52,24 @@ public class OrderInfoService {
             /**
              * 通过changeOrderStatus字段为1 来判断，是修改订单状态
              */
-            if(orderInfo.getChangeOrderStatus() == 1){
-                //首先根据订单拿到当前订单的状态
-                /**
-                 * 只有如下的几种订单流转状态
-                 * 预约草稿 to  {预约取消，已预约}
-                 已预约 to  {已使用,预约取消}
-                 已使用 to  {服务草稿，服务取消}
-                 服务草稿 to  {已使用，服务取消}
-                 */
-                String currentOrderStatus = orderInfoMapper.getDetailById(orderInfo.getOrderId(),airportCode).getOrderStatus();
-                String toOrderStatus = orderInfo.getOrderStatus();
-                if(currentOrderStatus.equals("预约草稿") && !toOrderStatus.equals("预约取消") && !toOrderStatus.equals("已预约")){
-                    return "错误的状态更新";
-                }else if(currentOrderStatus.equals("已预约") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("预约取消")){
-                    return "错误的状态更新";
-                }else if(currentOrderStatus.equals("已使用") && !toOrderStatus.equals("服务草稿") && !toOrderStatus.equals("服务取消")){
-                    return "错误的状态更新";
-                }else if(currentOrderStatus.equals("服务草稿") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("服务取消")){
-                    return "错误的状态更新";
-                }
+            //首先根据订单拿到当前订单的状态
+            /**
+             * 只有如下的几种订单流转状态
+             * 预约草稿 to  {预约取消，已预约}
+             已预约 to  {已使用,预约取消}
+             已使用 to  {服务草稿，服务取消}
+             服务草稿 to  {已使用，服务取消}
+             */
+            String currentOrderStatus = orderInfoMapper.getDetailById(orderInfo.getOrderId(),airportCode).getOrderStatus();
+            String toOrderStatus = orderInfo.getOrderStatus();
+            if(currentOrderStatus.equals("预约草稿") && !toOrderStatus.equals("预约取消") && !toOrderStatus.equals("已预约")){
+                return "错误的状态更新";
+            }else if(currentOrderStatus.equals("已预约") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("预约取消")){
+                return "错误的状态更新";
+            }else if(currentOrderStatus.equals("已使用") && !toOrderStatus.equals("服务草稿") && !toOrderStatus.equals("服务取消")){
+                return "错误的状态更新";
+            }else if(currentOrderStatus.equals("服务草稿") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("服务取消")){
+                return "错误的状态更新";
             }
 
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
