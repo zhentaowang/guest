@@ -385,7 +385,7 @@ public class ProtocolService {
             result.put("name",protocolProductServiceList.get(i).getName());
             if(param.get("typeId") != null){
                 Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(Long.parseLong(param.get("typeId").toString()));
-                if(protocolProductFieldName.size() != 0){
+                if(protocolProductFieldName.size() != 0 & protocolProductServiceList.get(i).getPricingRule() != null){
                     result.putAll(JSON.parseObject(protocolProductServiceList.get(i).getPricingRule()));
                 }
                 protocolProductFieldName.clear();
