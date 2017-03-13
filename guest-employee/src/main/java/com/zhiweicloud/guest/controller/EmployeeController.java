@@ -80,14 +80,12 @@ public class EmployeeController {
     public String list(
             @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-            @QueryParam(value = "name") String name,
-            ContainerRequestContext request) {
+            @HeaderParam("client-id") String airportCode,
+            @QueryParam(value = "name") String name){
         try {
-            String airportCode = request.getHeaders().getFirst("client-id").toString();
             Employee employeeParam = new Employee();
             employeeParam.setName(name);
             employeeParam.setAirportCode(airportCode);
-
             LZResult<PaginationResult<Map>> result = employeeService.getAll(employeeParam, page, rows);
             return JSON.toJSONString(result);
         } catch (Exception e) {
