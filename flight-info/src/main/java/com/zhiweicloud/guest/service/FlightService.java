@@ -25,7 +25,10 @@
 package com.zhiweicloud.guest.service;
 
 
+import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.mapper.AirportInfoMapper;
+import com.zhiweicloud.guest.mapper.FlightMapper;
+import com.zhiweicloud.guest.model.Flight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,12 +46,26 @@ public class FlightService {
     @Autowired
     private AirportInfoMapper airportInfoMapper;
 
+    @Autowired
+    private FlightMapper flightMapper;
+
     public List<Map<String,String>> flightInfoDropdownList(String airportNameOrCode) {
         return airportInfoMapper.queryFlightInfoDropdownList(airportNameOrCode);
     }
 
     public List<Map<String,String>> flightNoDropdownList(String flightNo,String airportCode) {
         return airportInfoMapper.queryFlightNoDropdownList(flightNo,airportCode);
+    }
+
+    public Long updateFlight(Flight flight)throws Exception{
+        Long flightId = flightMapper.isFlightExist(flight);
+        if (flightId == null || flightId.equals("") || flightId == 0){
+            throw new FlightException("没有找到对应的航班信息");
+        }else{
+            flight.setFlightId(flightId);
+            flightMapper.updateFlight(flight);
+        }
+        return flight.getFlightId();
     }
 
 }

@@ -3,21 +3,22 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.dragon.sign.DragonSignature;
+import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.model.Dropdownlist;
+import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.service.FlightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -135,6 +136,37 @@ public class FlightInfoController {
             result.setData(null);
         }
         return JSON.toJSONString(result);
+    }
+
+    /**
+     * 更新航班信息 根据航班对象的航班ID（flight_id）
+     *
+     * @return
+     */
+    @POST
+    @Path("updateFlightById")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
+    public String updateFlightById(@RequestBody Flight flight, @Context final HttpHeaders headers) {
+        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        try{
+            if (flight == null){
+                return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
+            }
+            flight.setAirportCode(airportCode);
+            Long data = flightService.updateFlight(flight);
+            LZResult<Long> result = new LZResult<>();
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(data);
+            return JSON.toJSONString(result);
+        }catch (FlightException e){
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.NOT_FOUND.value(), LZStatus.NOT_FOUND.display()));
+        }catch (Exception e){
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
     }
 
 }
