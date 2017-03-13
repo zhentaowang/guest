@@ -185,11 +185,11 @@ public class OrderInfoService {
          */
         List protocolIdList = new ArrayList();
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
-            //JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList?protocolName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-            JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?protocolName=" + orderInfoQuery.getQueryCustomerInfo() + "&access_token=QxkUgg19nKuKT9mgXVBLgr6nRI2A4PX0ENHu03I8"));
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("protocolName", orderInfoQuery.getQueryCustomerInfo());
+            JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",headerMap,paramMap));
             if (protocolParam != null) {
                 JSONArray protocolArray = protocolParam.getJSONArray("data");
-
                 for (int i = 0; i < protocolArray.size(); i++) {
                     JSONObject jsonObject = JSON.parseObject(protocolArray.get(i).toString());
                     protocolIdList.add(jsonObject.get("id"));
@@ -202,8 +202,9 @@ public class OrderInfoService {
          * 预约号，拿到协议id，所以可以用 protocolIds
          */
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
-            //JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList?reservationNum=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-            JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?reservationNum=" + orderInfoQuery.getQueryCustomerInfo() + "&access_token=X12VwTIt6lbw7xbJHPeQ5hUrIT5I8YNinBFEBL0K"));
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("reservationNum", orderInfoQuery.getQueryCustomerInfo());
+            JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",paramMap,headerMap));
             if (reservationNumObject != null) {
                 JSONArray reservationNumArray = reservationNumObject.getJSONArray("data");
                 for (int i = 0; i < reservationNumArray.size(); i++) {
@@ -218,8 +219,9 @@ public class OrderInfoService {
          */
         List authorizerNameIdList = new ArrayList();
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
-            //JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList?authorizerName=" + orderInfoQuery.getQueryCustomerInfo(),headerMap));
-            JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?authorizerName=" + orderInfoQuery.getQueryCustomerInfo() + "&access_token=X12VwTIt6lbw7xbJHPeQ5hUrIT5I8YNinBFEBL0K"));
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("authorizerName", orderInfoQuery.getQueryCustomerInfo());
+            JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",paramMap,headerMap));
             if (authorizerNameObject != null) {
                 JSONArray authorizerNameArray = authorizerNameObject.getJSONArray("data");
 
@@ -243,39 +245,6 @@ public class OrderInfoService {
 
 
         List<OrderInfo> orderInfoList = orderInfoMapper.selectOrderInfoList(queryCondition);
-        for (int i = 0; i < orderInfoList.size(); i++) {
-            OrderInfo temp = orderInfoList.get(i);
-            //JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/view?protocolId=" + temp.getProtocolId(),headerMap));
-            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/view?protocolId=" + temp.getProtocolId() + "&access_token=X12VwTIt6lbw7xbJHPeQ5hUrIT5I8YNinBFEBL0K"));
-
-            if (temp.getProtocolId() != null) {
-
-                if (protocolJSONObject != null) {
-                    JSONObject protocolObject = JSON.parseObject(protocolJSONObject.get("data").toString());
-                    String protocolName = protocolObject.get("name").toString();//协议名称
-                    orderInfoList.get(i).setProtocolName(protocolName);
-                }
-            }
-            if (temp.getProductId() != null) {
-                //JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocol-product-view?protocolProductId=" + temp.getProductId(),headerMap));
-                JSONObject productJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocol-product-view?protocolProductId=" + temp.getProductId() + "&access_token=X12VwTIt6lbw7xbJHPeQ5hUrIT5I8YNinBFEBL0K"));
-                if (productJSONObject != null) {
-                    JSONObject productObject = JSON.parseObject(productJSONObject.get("data").toString());
-                    String productName = productObject.get("productName").toString();//产品名称
-                    orderInfoList.get(i).setProductName(productName);
-                }
-            }
-
-            if (temp.getAgentPerson() != null) {
-                //JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view?employeeId="+ temp.getAgentPerson() ,headerMap));
-                JSONObject agentPersonNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-employee/view?employeeId=" + temp.getAgentPerson() + "&access_token=X12VwTIt6lbw7xbJHPeQ5hUrIT5I8YNinBFEBL0K"));
-                if (agentPersonNameObject != null) {
-                    JSONArray jsonArray = agentPersonNameObject.getJSONArray("data");
-                    String agentPersonName = jsonArray.getJSONObject(0).get("name").toString();
-                    orderInfoList.get(i).setAgentPersonName(agentPersonName);
-                }
-            }
-        }
 
         PaginationResult<OrderInfo> eqr = new PaginationResult<>(total, orderInfoList);
         LZResult<PaginationResult<OrderInfo>> result = new LZResult<>(eqr);
@@ -289,11 +258,13 @@ public class OrderInfoService {
             orderInfo.setIsDeleted(Constant.MARK_AS_DELETED);
             orderInfo.setOrderId(ids.get(i));
             orderInfo.setAirportCode(airportCode);
+            orderInfo.setUpdateTime(new Date());
+            orderInfo.setUpdateUser(userId);
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
             //保存订单日志
             orderInfo.setOrderStatus("删除订单");
             orderInfoMapper.insertIntoOrderStatusRecord(orderInfo);
-            this.deletePassengerAndOrderServiceDeatil(ids.get(i), airportCode);
+            this.deletePassengerAndOrderServiceDeatil(ids.get(i), userId,airportCode);
         }
     }
 
@@ -302,13 +273,15 @@ public class OrderInfoService {
      *
      * @param orderId
      */
-    private void deletePassengerAndOrderServiceDeatil(Long orderId, String airportCode) throws Exception {
+    private void deletePassengerAndOrderServiceDeatil(Long orderId,Long userId, String airportCode) throws Exception {
         try {
             /**
              * 逻辑删除旅客
              */
             Passenger passenger = new Passenger();
             passenger.setAirportCode(airportCode);
+            passenger.setUpdateTime(new Date());
+            passenger.setUpdateUser(userId);
             passenger.setOrderId(orderId);
             passengerMapper.markAsDeleted(passenger);
 
@@ -318,6 +291,8 @@ public class OrderInfoService {
             OrderService orderService = new OrderService();
             orderService.setAirportCode(airportCode);
             orderService.setOrderId(orderId);
+            orderService.setUpdateTime(new Date());
+            orderService.setUpdateUser(userId);
             orderServiceMapper.markAsDeleted(orderService);
         } catch (Exception e) {
             e.printStackTrace();
@@ -334,7 +309,6 @@ public class OrderInfoService {
 
         if (orderInfo.getCreateUser() != null) {
             JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-            // JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://localhost:8087/view", headerMap, paramMap));
             if (createUserObject != null) {
                 JSONArray jsonArray = createUserObject.getJSONArray("data");
                 String createUserName = jsonArray.getJSONObject(0).get("name").toString();
