@@ -29,7 +29,6 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.InstitutionException;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -194,10 +193,10 @@ public class InstitutionClientController {
             @RequestBody RequsetParams<Long> params,
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
-        LZResult<List<Map<Long,String>>> lzResult = new LZResult();
+        LZResult<String> lzResult = new LZResult();
         try {
             List<Long> ids = params.getData();
-            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,userId,airportCode);
+            String res =  institutionClientService.deleteByIds(ids,userId,airportCode);
 //            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,78L,"LJG");
             lzResult.setData(res);
             lzResult.setMsg(LZStatus.SUCCESS.display());

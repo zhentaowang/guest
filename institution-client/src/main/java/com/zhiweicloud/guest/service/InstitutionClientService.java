@@ -79,9 +79,9 @@ public class InstitutionClientService {
         }
     }
 
-    public List<Map<Long,String>> deleteByIds(List<Long> ids, Long userId, String airportCode) throws Exception{
+    public String deleteByIds(List<Long> ids, Long userId, String airportCode) throws Exception{
         List<Long> deleteIds = new ArrayList<>();
-        List<Map<Long,String>> disableDeleteIds = new ArrayList<>();
+        StringBuilder names = new StringBuilder();
         Map<String, Object> headerMap = new HashMap<>();
         headerMap.put("user-id", userId);
         headerMap.put("client-id", airportCode);
@@ -90,27 +90,26 @@ public class InstitutionClientService {
             paramMap.put("institutionClientId", id);
 //            String s = HttpClientUtil.httpGetRequest("http://127.0.0.1:8084/protocolList", headerMap, paramMap);
             String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
-            System.out.println(s);
             JSONObject protocolList = JSON.parseObject(s);
             if (protocolList != null) {
                 JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
                 if (rows.size() > 0) {
-                    Map<Long, String> maps = new HashMap<>();
-                    maps.put(id, institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
-                    disableDeleteIds.add(maps);
+                    names.append(institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
+                    names.append(",");
+                    names.deleteCharAt(names.length()-1);
                 }else {
                     deleteIds.add(id);
                 }
             }
         }
-        if (deleteIds.size()>0){
+        if (deleteIds.size() > 0){
             Map params = new HashMap();
             params.put("ids",deleteIds);
             params.put("userId", userId);
             params.put("airportCode", airportCode);
             institutionClientMapper.deleteBatchByIdsAndUserId(params);
         }
-        return disableDeleteIds;
+        return names.toString();
         //一条一条删除数据
 //        for (Long id : ids) {
 //            JSONObject protocolList = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocolList?institutionClientId="+ id +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
