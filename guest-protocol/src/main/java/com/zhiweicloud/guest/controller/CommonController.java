@@ -96,6 +96,7 @@ public class CommonController {
             ContainerRequestContext request,
             @QueryParam(value = "protocolId") Long protocolId,
             @QueryParam(value = "protocolName") String protocolName,
+            @QueryParam(value = "protocolType") Long protocolType,
             @QueryParam(value = "authorizerId") Long authorizerId,
             @QueryParam(value = "authorizerName") String authorizerName,
             @QueryParam(value = "reservationNum") String reservationNum){
@@ -106,6 +107,7 @@ public class CommonController {
             map.put("airportCode",airportCode);
             map.put("protocolId",protocolId);
             map.put("protocolName",protocolName);
+            map.put("protocolType",protocolType);//协议类型
             map.put("authorizerId",authorizerId);
             map.put("authorizerName",authorizerName);//预约人
             map.put("reservationNum",reservationNum);//预约号

@@ -42,12 +42,12 @@
   </select>
 
   <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
-    SELECT employee_id,e.account,e.name,e.sex FROM employee e
-    WHERE e.is_deleted = 0 AND e.airport_code = #{criteria.airportCode}
+    select employee_id,e.account,e.name,e.sex from employee e
+    where e.is_deleted = 0 and e.airport_code = #{criteria.airportCode}
     <if test="criteria.name != null ">
-      AND e.name LIKE concat('%',#{criteria.name},'%')
+      and e.name like concat('%',#{criteria.name},'%')
     </if>
-    ORDER BY e.employee_id DESC LIMIT #{page.startPageNo},#{page.pCount}
+    order by e.employee_id desc
   </select>
 
 

@@ -295,13 +295,15 @@ public class ProtocolController {
                 @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
                 @QueryParam(value = "protocolType") Integer protocolType,
                 @QueryParam(value = "institutionClientName") String institutionClientName,
+                @QueryParam(value = "institutionClientId") Long institutionClientId,
                 @QueryParam(value = "protocolName") String protocolName,
-                @Context final HttpHeaders headers){
+                @HeaderParam("client-id") String airportCode
+        ){
             Protocol protocolParam = new Protocol();
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             protocolParam.setAirportCode(airportCode);
 
             protocolParam.setInstitutionClientName(institutionClientName);
+            protocolParam.setInstitutionClientId(institutionClientId);
             protocolParam.setName(protocolName);
             if (protocolType != null) {
                 protocolParam.setType(protocolType);

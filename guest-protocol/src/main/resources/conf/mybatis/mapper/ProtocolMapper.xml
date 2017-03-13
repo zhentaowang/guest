@@ -297,6 +297,9 @@
     <if test="protocolParam.institutionClientName != null and '' != protocolParam.institutionClientName.trim()" >
       AND i.`name` LIKE concat('%',#{protocolParam.institutionClientName},'%')
     </if>
+    <if test="protocolParam.institutionClientId != null" >
+      AND i.institution_client_id = #{protocolParam.institutionClientId}
+    </if>
     <if test="protocolParam.name != null and !protocolParam.name.trim().equals('')" >
       AND p.`name` LIKE concat('%',#{protocolParam.name},'%')
     </if>
@@ -318,7 +321,10 @@
     <if test="protocolParam.institutionClientName != null and '' != protocolParam.institutionClientName.trim()" >
       AND i.`name` LIKE concat('%',#{protocolParam.institutionClientName},'%')
     </if>
-    <if test="protocolParam.name != null and '' != protocolParam.name.trim()" >
+    <if test="protocolParam.institutionClientId != null" >
+      AND i.institution_client_id = #{protocolParam.institutionClientId}
+    </if>
+    <if test="protocolParam.name != null and !protocolParam.name.trim().equals('')" >
       AND p.`name` LIKE concat('%',#{protocolParam.name},'%')
     </if>
   </select>
@@ -346,6 +352,9 @@
     </if>
     <if test="authorizerName != null and !authorizerName.trim().equals('')">
       and a.`name` like concat('%',#{authorizerName},'%')
+    </if>
+    <if test="protocolType != null" >
+      AND p.type = #{protocolType}
     </if>
 
   </select>

@@ -76,5 +76,5 @@ public interface ProductMapper{
      * @param airportCode
      * @return
      */
-    int getListCount(@Param("airportCode") String airportCode);
+    int getListCount(@Param("airportCode") String airportCode, @Param("productName") String productName, @Param("productId") Long productId);
 }

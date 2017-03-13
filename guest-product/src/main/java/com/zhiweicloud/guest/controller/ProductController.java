@@ -46,12 +46,13 @@ public class ProductController {
     @Path(value = "list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品列表 - 分页查询", notes = "返回分页结果")
-    public String list(ContainerRequestContext request,
-                       @QueryParam("noPage") boolean noPage,
+    public String list(
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
-            @DefaultValue("10") @QueryParam(value = "rows") Integer rows) {
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @QueryParam("noPage") boolean noPage,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
 
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
         LZResult<PaginationResult<Product>> result = new LZResult<>();
         if(StringUtils.isEmpty(airportCode)){
             result.setMsg(LZStatus.ERROR.display());
@@ -75,18 +76,17 @@ public class ProductController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品配置 - 根据id查询 ", notes = "返回产品信息")
     public String viewEdit(ContainerRequestContext request,
-                           @QueryParam(value = "productId") Long productId) {
+                           @QueryParam(value = "productId") Long productId,
+                           @HeaderParam("client-id") String airportCode) {
         LZResult<Product> result = new LZResult<>();
+        if (productId == null || StringUtils.isEmpty(airportCode)) {
+            result.setMsg(LZStatus.DATA_EMPTY.display());
+            result.setStatus(LZStatus.DATA_EMPTY.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
         try {
-            String airportCode = request.getHeaders().getFirst("client-id").toString();
-            if(StringUtils.isEmpty(airportCode)){
-                result.setMsg(LZStatus.ERROR.display());
-                result.setStatus(LZStatus.ERROR.value());
-                result.setData(null);
-                return JSON.toJSONString(result);
-            }
             Product guestOrder = productService.getById(productId, airportCode);
-
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(guestOrder);
@@ -112,33 +112,36 @@ public class ProductController {
     public String addProduct(
             @ApiParam(value = "product", required = true)
             @RequestBody RequsetParams<Product> params,
-            @Context final HttpHeaders headers){
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId){
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             Product product = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
                 product = params.getData().get(0);
             }
-            if (product == null) {
+            if (product == null || StringUtils.isEmpty(product.getProductName())) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
-            }else{
-                product.setAirportCode(airportCode);
-                productService.saveOrUpdate(product,userId);
-                result.setMsg(LZStatus.SUCCESS.display());
-                result.setStatus(LZStatus.SUCCESS.value());
-                result.setData(null);
+                return JSON.toJSONString(result);
             }
+            if (productService.selectByName(airportCode, product.getProductName(), product.getProductId()) == true) {
+                result.setMsg(LZStatus.REPNAM.display());
+                result.setStatus(LZStatus.REPNAM.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
+            }
+            product.setAirportCode(airportCode);
+            productService.saveOrUpdate(product,userId);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
         }
+        result.setData(null);
         return JSON.toJSONString(result);
     }
 
@@ -147,10 +150,10 @@ public class ProductController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "产品管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     public String deleteProduct(@Context final HttpHeaders headers,
-            @RequestBody RequsetParams<Long> params) {
+            @RequestBody RequsetParams<Long> params,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
-            String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
             List<Long> ids = params.getData();
             productService.deleteById(ids,userId,airportCode);
             return JSON.toJSONString(LXResult.success());
@@ -173,9 +176,9 @@ public class ProductController {
             @ApiImplicitParam(name = "productId", value = "产品id", dataType = "Long", defaultValue = "16", required = true, paramType = "query")
     })
     public String getServiceTypeTreeByProductId(@Context final HttpHeaders headers,
-                                                   @QueryParam(value = "productId") Long productId) {
+                                                @QueryParam(value = "productId") Long productId,
+                                                @HeaderParam("client-id") String airportCode) {
         Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("productId",productId);
         List<ProductServiceType> serviceMenuList = productService.getServiceMenuList(param);
