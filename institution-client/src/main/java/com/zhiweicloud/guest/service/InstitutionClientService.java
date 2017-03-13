@@ -96,7 +96,6 @@ public class InstitutionClientService {
                 if (rows.size() > 0) {
                     names.append(institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
                     names.append(",");
-                    names.deleteCharAt(names.length()-1);
                 }else {
                     deleteIds.add(id);
                 }
@@ -109,6 +108,7 @@ public class InstitutionClientService {
             params.put("airportCode", airportCode);
             institutionClientMapper.deleteBatchByIdsAndUserId(params);
         }
+        names.deleteCharAt(names.length()-1);
         return names.toString();
         //一条一条删除数据
 //        for (Long id : ids) {
