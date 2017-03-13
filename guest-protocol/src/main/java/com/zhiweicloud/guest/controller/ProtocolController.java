@@ -355,9 +355,14 @@ public class ProtocolController {
                 Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id").toString());
                 String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
 
+                Map<String, Object> headerMap = new HashMap<>();
+                Map<String, Object> paramMap = new HashMap<>();
+                headerMap.put("user-id", userId);
+                headerMap.put("client-id", airportCode);
                 for (int i = 0; i < ids.size(); i++) {
                     //调用order应用，根据协议id 判断有无被引用
-                    JSONObject orderJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getOrderCountByProtocolId?protocolId="+ ids.get(i) +"&access_token=aVdgpzRxSfDj21mIIKrdbTJtrD7boKq8W6Dmk6fq"));
+                    paramMap.put("protocolId", ids.get(i));
+                    JSONObject orderJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getOrderCountByProtocolId", headerMap, paramMap));
                     //解析协议产品服务对象
                     int orderCount = Integer.valueOf(orderJSONObject.get("data").toString());
                     if(orderCount > 0){

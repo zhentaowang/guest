@@ -44,4 +44,7 @@ public interface FlightMapper {
     Integer getFlightListCountByOrderStatus(Map<String, Object> map);
     Flight selectByPrimaryKey(Map<String, Object> map);
     Integer updateByPrimaryKeySelective(Flight flight);
+
+    Long isFlightExist(Flight flight);
+    Long updateFlight(Flight flight);
 }
