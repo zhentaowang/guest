@@ -104,7 +104,7 @@ public class ProductService {
      */
     public LZResult<PaginationResult<Product>> getAll(String airportCode, Integer page, Integer rows,boolean noPage) {
 
-        int total = productMapper.getListCount(airportCode);
+        int total = productMapper.getListCount(airportCode,null,null);
         List<Product> productList = productMapper.getProductList(airportCode,(page-1)*rows,rows,noPage);
         PaginationResult<Product> eqr = new PaginationResult<>(total, productList);
         LZResult<PaginationResult<Product>> result = new LZResult<>(eqr);
@@ -140,5 +140,15 @@ public class ProductService {
             result.get(i).setServiceTypeList(out);
         }
         return result;
+    }
+
+    /**
+     * 产品名称查重
+     * @param airportCode
+     * @param productName
+     * @return boolean
+     */
+    public boolean selectByName(String airportCode, String productName,Long productId) {
+        return productMapper.getListCount(airportCode,productName,productId) > 0;
     }
 }

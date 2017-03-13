@@ -115,30 +115,36 @@ public class ProductController {
             @Context final HttpHeaders headers){
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+//            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
+//            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            Long userId =0L;
+            String airportCode = "LJG";
             Product product = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
                 product = params.getData().get(0);
             }
-            if (product == null) {
+            if (product == null || StringUtils.isEmpty(product.getProductName())) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
-            }else{
-                product.setAirportCode(airportCode);
-                productService.saveOrUpdate(product,userId);
-                result.setMsg(LZStatus.SUCCESS.display());
-                result.setStatus(LZStatus.SUCCESS.value());
-                result.setData(null);
+                return JSON.toJSONString(result);
             }
+            if (productService.selectByName(airportCode, product.getProductName(), product.getProductId()) == true) {
+                result.setMsg(LZStatus.REPNAM.display());
+                result.setStatus(LZStatus.REPNAM.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
+            }
+            product.setAirportCode(airportCode);
+            productService.saveOrUpdate(product,userId);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
         }
+        result.setData(null);
         return JSON.toJSONString(result);
     }
 

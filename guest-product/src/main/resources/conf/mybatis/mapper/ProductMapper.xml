@@ -79,5 +79,12 @@
       v_product
     WHERE
       airport_code = #{airportCode} AND is_deleted = 0
+    <if test="null != productName and productName != ''">
+      <!-- 重名校验 -->
+      AND product_name = #{productName}
+    </if>
+    <if test="productId != null">
+      AND product_id != #{productId}
+    </if>
   </select>
 </mapper>
