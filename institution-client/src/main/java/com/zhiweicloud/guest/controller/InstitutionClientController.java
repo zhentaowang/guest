@@ -29,6 +29,7 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.InstitutionException;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -49,6 +50,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -187,20 +189,23 @@ public class InstitutionClientController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "机构客户管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public LXResult delete(
+    public String delete(
             @RequestBody RequsetParams<Long> params,
-            @Context final HttpHeaders headers) {
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        LZResult<List<Map<Long,String>>> lzResult = new LZResult();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
-            institutionClientService.deleteById(ids,userId,airportCode);
-            return LXResult.success();
-        } catch (Exception e) {
-            logger.error("delete employee by ids error", e);
-            return LXResult.error();
+            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,userId,airportCode);
+            lzResult.setData(res);
+            lzResult.setMsg(LZStatus.SUCCESS.display());
+            lzResult.setStatus(LZStatus.SUCCESS.value());
+        }catch (Exception e){
+            lzResult.setData(null);
+            lzResult.setMsg(LZStatus.ERROR.display());
+            lzResult.setStatus(LZStatus.ERROR.value());
         }
+        return JSON.toJSONString(lzResult);
     }
 
     /**
