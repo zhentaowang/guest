@@ -90,6 +90,7 @@ public class InstitutionClientService {
             paramMap.put("institutionClientId", id);
 //            String s = HttpClientUtil.httpGetRequest("http://127.0.0.1:8084/protocolList", headerMap, paramMap);
             String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
+            System.out.println(s);
             JSONObject protocolList = JSON.parseObject(s);
             if (protocolList != null) {
                 JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
@@ -100,7 +101,6 @@ public class InstitutionClientService {
                 }else {
                     deleteIds.add(id);
                 }
-
             }
         }
         if (deleteIds.size()>0){
