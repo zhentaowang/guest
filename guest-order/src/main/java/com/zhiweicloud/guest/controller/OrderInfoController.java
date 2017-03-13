@@ -135,10 +135,16 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             } else {
-                orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
-                result.setMsg(LZStatus.SUCCESS.display());
-                result.setStatus(LZStatus.SUCCESS.value());
-                result.setData(null);
+                String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
+                if(!res.equals("操作成功")){
+                    result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
+                    result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
+                    result.setData(res);
+                }else{
+                    result.setMsg(LZStatus.SUCCESS.display());
+                    result.setStatus(LZStatus.SUCCESS.value());
+                    result.setData(null);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
