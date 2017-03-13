@@ -41,6 +41,7 @@ import java.util.Map;
  * 2016-12-26 15:45:36 Created By zhangpengfei
  */
 public interface InstitutionClientMapper{
+
     List<InstitutionClient> getListByConidition(BasePagination<InstitutionClient> queryCondition);
 
     List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
@@ -54,4 +55,8 @@ public interface InstitutionClientMapper{
     void updateByPrimaryKeySelective(InstitutionClient institutionClient);
 
     void insertSelective(InstitutionClient institutionClient);
+
+    // 测试批量删除
+    void deleteBatchByIdsAndUserId(Map params);
+
 }
