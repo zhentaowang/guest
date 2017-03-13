@@ -94,7 +94,7 @@ public class InstitutionClientService {
             JSONObject protocolList = JSON.parseObject(s);
             if (protocolList != null) {
                 JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
-                if (rows.size()!=0) {
+                if (rows.size() > 0) {
                     Map<Long, String> maps = new HashMap<>();
                     maps.put(id, institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
                     disableDeleteIds.add(maps);
