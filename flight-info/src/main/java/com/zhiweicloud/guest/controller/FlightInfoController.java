@@ -144,10 +144,10 @@ public class FlightInfoController {
      * @return
      */
     @POST
-    @Path("updateFlightById")
+    @Path("updateFlight")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
-    public String updateFlightById(@RequestBody Flight flight, @Context final HttpHeaders headers) {
+    public String updateFlight(@RequestBody Flight flight, @Context final HttpHeaders headers) {
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         try{
             if (flight == null){
