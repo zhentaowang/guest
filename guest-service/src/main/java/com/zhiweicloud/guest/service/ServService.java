@@ -19,6 +19,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -210,15 +211,22 @@ public class ServService {
      * @param airportCode
      * @return
      */
-    public List<Serv> getServNameAndPositionNum(Long typeId, Long userId, String airportCode){
-        List<Serv> servList = servMapper.getServNameAndPositionNum(typeId,airportCode);
-        Map<String,Object> headerMap = new HashMap();
-        headerMap.put("user-id",userId);
-        headerMap.put("client-id",airportCode);
+    public List<Serv> getServNameAndPositionNum(Long typeId, Long userId, String airportCode, Integer page, Integer rows){
+
+        //查该用户默认选择的 服务厅
+        List<Serv> servList = servMapper.getServNameAndPositionNum(typeId,userId,airportCode,(page-1)*rows,rows,true);
+
+        //若没有设置默认，查询全部
+        if(CollectionUtils.isEmpty(servList)){
+            servList = servMapper.getServNameAndPositionNum(typeId,userId,airportCode,(page-1)*rows,rows,false);
+        }
+        if(CollectionUtils.isEmpty(servList)){
+            return null;
+        }
         for(Serv serv : servList){
             //根据服务ser_id 查询协议产品服务
-//            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=enIkAZRkrofx2MJDuxAAb0z4CTkt2fRl34GONOpy",headerMap));
-            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=UVJKcORAGk7umj6CBnfsW7a2FbiXInzr3Juc62nc"));
+//            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=NFRz8IdKFzQqZMvImF2jnPalTbbTSZDT3kyGnMC9",headerMap));
+            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolProductServByServId?servId="+ serv.getServId() +"&access_token=NFRz8IdKFzQqZMvImF2jnPalTbbTSZDT3kyGnMC9"));
             //解析协议产品服务对象
             JSONArray protocolProductServList = JSON.parseArray(JSON.toJSONString(protocolJSONObject.get("data")));
 
@@ -227,7 +235,7 @@ public class ServService {
                 JSONObject protocolProductServ = protocolProductServList.getJSONObject(i);
                 Long serviceDetailId = Long.valueOf(protocolProductServ.get("protocolProductServiceId").toString());
 
-                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getServerNumByServiceDetailId?serviceDetailId="+ serviceDetailId +"&access_token=UVJKcORAGk7umj6CBnfsW7a2FbiXInzr3Juc62nc"));
+                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-order/getServerNumByServiceDetailId?serviceDetailId="+ serviceDetailId +"&access_token=NFRz8IdKFzQqZMvImF2jnPalTbbTSZDT3kyGnMC9"));
                 //解析协议产品服务对象
                 servNum = servNum + Integer.valueOf(orderServiceJSONObject.get("data").toString());
             }

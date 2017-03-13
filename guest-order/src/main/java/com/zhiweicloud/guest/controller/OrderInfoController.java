@@ -35,7 +35,10 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.*;
+import com.zhiweicloud.guest.model.OrderInfo;
+import com.zhiweicloud.guest.model.OrderInfoQuery;
+import com.zhiweicloud.guest.model.OrderService;
+import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -73,7 +76,7 @@ public class OrderInfoController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "参数错误"),
             @ApiResponse(code = 405, message = "请求方式不对"),
-            @ApiResponse(code = 200, message = "请求成功",response = OrderInfo.class)
+            @ApiResponse(code = 200, message = "请求成功", response = OrderInfo.class)
     })
     public String list(
             @DefaultValue("1") @QueryParam(value = "page") Integer page,
@@ -82,25 +85,26 @@ public class OrderInfoController {
             @Context final HttpHeaders headers) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             orderInfoQuery.setAirportCode(airportCode);
-            LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows,orderInfoQuery,userId);
-            return JSON.toJSONString(result,SerializerFeature.WriteMapNullValue);
-        }catch (Exception e){
+            LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
+            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+        } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return  JSON.toJSONString(result);
+            return JSON.toJSONString(result);
         }
     }
 
     /**
      * 订单管理 - 新增or更新
      * 需要判断name是否重复
+     * <p>
+     * // * @param orderInfo
      *
-    // * @param orderInfo
      * @return
      */
     @POST
@@ -108,12 +112,12 @@ public class OrderInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,@Context final HttpHeaders headers) {
+    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo, @Context final HttpHeaders headers) {
         LZResult<String> result = new LZResult<>();
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
 
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
             JSONArray serviceListArray = orderObject.getJSONArray("serviceList");
@@ -130,8 +134,8 @@ public class OrderInfoController {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
-            }else{
-                orderInfoService.saveOrUpdate(order,passengerList,orderServiceList,userId,airportCode);
+            } else {
+                orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
                 result.setData(null);
@@ -168,9 +172,9 @@ public class OrderInfoController {
         LZResult<OrderInfo> result = new LZResult();
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
-            orderInfoService.deleteById(ids, userId,airportCode);
+            orderInfoService.deleteById(ids, userId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(null);
@@ -184,9 +188,9 @@ public class OrderInfoController {
     }
 
 
-
     /**
      * 员工管理 - 根据id查询员工
+     *
      * @param orderId
      * @return
      */
@@ -197,20 +201,19 @@ public class OrderInfoController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "参数错误"),
             @ApiResponse(code = 405, message = "请求方式不对"),
-            @ApiResponse(code = 200, message = "请求成功",response = OrderInfo.class)
+            @ApiResponse(code = 200, message = "请求成功", response = OrderInfo.class)
     })
     public String view(
             @QueryParam("orderId") Long orderId,
-            @Context final HttpHeaders headers) {
-        LZResult<OrderInfo> result = new LZResult();
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        LZResult<OrderInfo> result = new LZResult<>();
         try {
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            OrderInfo orderInfo = orderInfoService.getById(orderId,userId,airportCode);
+            OrderInfo orderInfo = orderInfoService.getById(orderId, userId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderInfo);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
@@ -222,6 +225,7 @@ public class OrderInfoController {
 
     /**
      * 订单管理 - 修改订单服务状态
+     *
      * @return
      */
     @POST
@@ -235,9 +239,9 @@ public class OrderInfoController {
             @QueryParam("serverComplete") Short serverComplete) {
         try {
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
 
-            orderInfoService.updateServerComplete(flightId,serverComplete, userId,airportCode);
+            orderInfoService.updateServerComplete(flightId, serverComplete, userId, airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("updateServerComplete error", e);
@@ -247,6 +251,7 @@ public class OrderInfoController {
 
     /**
      * 根据订单状态/详细服务id 获取服务人次
+     *
      * @return
      */
     @GET
@@ -258,12 +263,12 @@ public class OrderInfoController {
             @Context final HttpHeaders headers) {
         LZResult<Integer> result = new LZResult();
         try {
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-            Integer orderCount = orderInfoService.getServerNumByServiceDetailId(OrderConstant.ORDER_STATUS_USED,serviceDetailId,airportCode);
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            Integer orderCount = orderInfoService.getServerNumByServiceDetailId(OrderConstant.ORDER_STATUS_USED, serviceDetailId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderCount);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
@@ -281,12 +286,12 @@ public class OrderInfoController {
             @Context final HttpHeaders headers) {
         LZResult<Integer> result = new LZResult();
         try {
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             int orderCount = orderInfoService.getOrderCountByProtocolId(protocolId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderCount);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);

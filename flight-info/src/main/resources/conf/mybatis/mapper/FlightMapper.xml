@@ -56,10 +56,10 @@
   <select id="getFlightListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, max(se.schedule_time) as schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
-    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
+    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -100,10 +100,10 @@
   <select id="getFlightListCount" parameterType="map" resultType="int">
     select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, max(se.schedule_time) as schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
-    where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
+    where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -135,10 +135,10 @@
   <select id="getFlightListByOrderStatus" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, max(se.schedule_time) as schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
-    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
+    where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
@@ -180,10 +180,10 @@
   <select id="getFlightListCountByOrderStatus" parameterType="map" resultType="int">
     select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f right join (select fse.flight_id, se.schedule_event_id, se.schedule_time, se.name from flight_schedule_event as fse left join
+    from flight as f right join (select fse.flight_id, se.schedule_event_id, max(se.schedule_time) as schedule_time, se.name from flight_schedule_event as fse left join
     (select schedule_event_id, schedule_time, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id
-    where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0) as s on f.flight_id = s.flight_id
+    where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
