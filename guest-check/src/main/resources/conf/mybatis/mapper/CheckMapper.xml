@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.Employee">
+    <id column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="sex" jdbcType="SMALLINT" property="sex" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+  </resultMap>
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="employee_id" jdbcType="BIGINT" property="id" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getEmployeeDropdownList" resultMap="DropdownlistMap" parameterType="string">
+    select employee_id,name as value from employee where is_deleted = 0 and airport_code = #{airportCode}
+  </select>
+
+  <select id="getEmployeeDropdownListByRoleId" resultMap="DropdownlistMap" parameterType="string">
+    select e.employee_id,e.`name` as `value` from employee e
+    <if test="roleId != null">
+      RIGHT JOIN sys_user_role r ON e.employee_id = r.user_id
+    </if>
+    where e.is_deleted = 0 and e.airport_code = #{airportCode}
+    <if test="roleId != null">
+      AND r.role_id = #{roleId} and r.is_deleted=0
+    </if>
+    ORDER BY e.`name`
+  </select>
+
+
+  <select id="selectEmployeeTotal" parameterType="com.zhiweicloud.guest.model.Employee" resultType="int">
+    select count(employee_id) from employee e
+    where e.is_deleted = 0 and e.airport_code = #{airportCode}
+    <if test="name != null ">
+      and e.name like concat('%',#{name},'%')
+    </if>
+  </select>
+
+  <select id="selectEmployeeList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
+    select employee_id,e.account,e.name,e.sex from employee e
+    where e.is_deleted = 0 and e.airport_code = #{criteria.airportCode}
+    <if test="criteria.name != null ">
+      and e.name like concat('%',#{criteria.name},'%')
+    </if>
+    order by e.employee_id desc
+  </select>
+
+
+  <select id="selectByIdAndAirportCode" parameterType="map" resultType="map">
+    select e.account,e.name,e.sex
+     from employee e
+    where e.is_deleted = 0 and e.airport_code = #{airportCode} and e.employee_id = #{employeeId}
+
+  </select>
+
+  <insert id="addEmployeeAndRoleRelate">
+    insert into sys_user_role(user_id,role_id,airport_code)
+    values(#{employeeId},#{roleId},#{airportCode})
+  </insert>
+
+  <insert id="insertEmployeeRoleByExists">
+    INSERT INTO sys_user_role (user_id,role_id,airport_code)
+    SELECT #{employeeId},#{roleId},#{airportCode}
+    FROM dual
+    WHERE not exists (
+        select * from sys_user_role where user_id = #{employeeId} and role_id = #{roleId} and airport_code = #{airportCode} and is_deleted = 0
+    )
+  </insert>
+
+  <update id="deleteRoles" parameterType="map">
+    update sys_user_role set is_deleted = 1 where role_id not in (${roleIds})  and airport_code = #{airportCode} and user_id = #{employeeId}
+  </update>
+
+
+  <select id="getRoleListByUserId" resultType="map">
+    select role_id as roleId from sys_user_role where user_id = #{employeeId} and airport_code = #{airportCode} and is_deleted = 0
+
+  </select>
+
+  <insert id="insertSelectiveCustom" parameterType="com.zhiweicloud.guest.model.Employee">
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="airportCode != null">
+        airport_code
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=SMALLINT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Employee">
+    update employee
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=SMALLINT},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+    </set>
+    where employee_id = #{employeeId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+  </update>
+</mapper>

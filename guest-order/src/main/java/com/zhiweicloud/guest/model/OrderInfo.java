@@ -60,7 +60,7 @@ public class OrderInfo extends BaseEntity{
     private Short bookingWay;
 
     @ApiModelProperty(value="是否重要订单：0：重要，1：不重要",name="isImportant")
-    private Boolean isImportant;
+    private Short isImportant;
 
     @ApiModelProperty(value="产品id",name="productId")
     private Long productId;
@@ -69,7 +69,7 @@ public class OrderInfo extends BaseEntity{
     private String productName;
 
     @ApiModelProperty(value="代办登机牌 0:需要，1：不需要",name="printCheck")
-    private Boolean printCheck;
+    private Short printCheck;
 
     @ApiModelProperty(value="座位要求: 靠窗 靠走道 不要安全门 前排 后排",name="printCheckRemark")
     private String printCheckRemark;
@@ -111,7 +111,7 @@ public class OrderInfo extends BaseEntity{
     private String sitNo;
 
     @ApiModelProperty(value="服务完成：0：否,1：是",name="serverComplete")
-    private Boolean serverComplete;
+    private Short serverComplete;
 
     @ApiModelProperty(value="服务人数",name="serverPersonNum")
     private Integer serverPersonNum;
@@ -300,7 +300,7 @@ public class OrderInfo extends BaseEntity{
      * 是否重要订单：0：重要，1：不重要
      * @return is_important 是否重要订单：0：重要，1：不重要
      */
-    public Boolean getIsImportant() {
+    public Short getIsImportant() {
         return isImportant;
     }
 
@@ -308,7 +308,7 @@ public class OrderInfo extends BaseEntity{
      * 是否重要订单：0：重要，1：不重要
      * @param isImportant 是否重要订单：0：重要，1：不重要
      */
-    public void setIsImportant(Boolean isImportant) {
+    public void setIsImportant(Short isImportant) {
         this.isImportant = isImportant;
     }
 
@@ -348,7 +348,7 @@ public class OrderInfo extends BaseEntity{
      * 代办登机牌 0:需要，1：不需要
      * @return print_check 代办登机牌 0:需要，1：不需要
      */
-    public Boolean getPrintCheck() {
+    public Short getPrintCheck() {
         return printCheck;
     }
 
@@ -356,7 +356,7 @@ public class OrderInfo extends BaseEntity{
      * 代办登机牌 0:需要，1：不需要
      * @param printCheck 代办登机牌 0:需要，1：不需要
      */
-    public void setPrintCheck(Boolean printCheck) {
+    public void setPrintCheck(Short printCheck) {
         this.printCheck = printCheck;
     }
 
@@ -556,7 +556,7 @@ public class OrderInfo extends BaseEntity{
      * 服务完成：0：否,1：是
      * @return server_complete 服务完成：0：否,1：是
      */
-    public Boolean getServerComplete() {
+    public Short getServerComplete() {
         return serverComplete;
     }
 
@@ -564,7 +564,7 @@ public class OrderInfo extends BaseEntity{
      * 服务完成：0：否,1：是
      * @param serverComplete 服务完成：0：否,1：是
      */
-    public void setServerComplete(Boolean serverComplete) {
+    public void setServerComplete(Short serverComplete) {
         this.serverComplete = serverComplete;
     }
 
@@ -582,14 +582,6 @@ public class OrderInfo extends BaseEntity{
      */
     public void setServerPersonNum(Integer serverPersonNum) {
         this.serverPersonNum = serverPersonNum;
-    }
-
-    public Boolean getImportant() {
-        return isImportant;
-    }
-
-    public void setImportant(Boolean important) {
-        isImportant = important;
     }
 
     public List<OrderService> getServiceList() {
