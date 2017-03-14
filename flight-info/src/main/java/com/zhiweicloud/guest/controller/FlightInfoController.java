@@ -149,13 +149,13 @@ public class FlightInfoController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
     public String updateFlight(@RequestBody Flight flight,
-//                               @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
         try{
             if (flight == null){
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
-//            flight.setAirportCode(airportCode);
+            flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
             flightService.updateFlight(flight);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
