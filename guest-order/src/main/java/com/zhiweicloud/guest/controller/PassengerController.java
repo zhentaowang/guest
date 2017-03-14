@@ -12,10 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.List;
 
@@ -64,15 +61,9 @@ public class PassengerController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="根据航班id查询乘客信息",notes="根据航班id获取乘客信息", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
     public String getPassengerByFlightId(ContainerRequestContext request,
-                                         @QueryParam(value = "flightId") Long flightId) {
+                                         @QueryParam(value = "flightId") Long flightId,
+                                         @HeaderParam("client-id") String airportCode) {
         LZResult<List<Passenger>> result = new LZResult<>();
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
-        if(StringUtils.isEmpty(airportCode)){
-            result.setMsg(LZStatus.DATA_EMPTY.display());
-            result.setStatus(LZStatus.DATA_EMPTY.value());
-            result.setData(null);
-            return JSON.toJSONString(result);
-        }
         List<Passenger> passengerList = passengerService.getPassengerlistByFlightId(flightId,airportCode);
 
         result.setMsg(LZStatus.SUCCESS.display());
