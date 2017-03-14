@@ -135,10 +135,14 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             } else {
-                if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null) {
-                    result.setMsg("出发地三字码或者目的地三字码为空");
-                    result.setStatus(5006);
-                    result.setData(null);
+                if(order.getOrderStatus().equals("预约取消") || order.getOrderStatus().equals("服务取消")){
+
+                }else {
+                    if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null) {
+                        result.setMsg("出发地三字码或者目的地三字码为空");
+                        result.setStatus(5006);
+                        result.setData(null);
+                    }
                 }
                 String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
                 if(!res.equals("操作成功")){

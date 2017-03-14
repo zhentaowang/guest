@@ -62,6 +62,13 @@ public class OrderInfoService {
              */
             String currentOrderStatus = orderInfoMapper.getDetailById(orderInfo.getOrderId(),airportCode).getOrderStatus();
             String toOrderStatus = orderInfo.getOrderStatus();
+            if((currentOrderStatus.equals(toOrderStatus) && currentOrderStatus.equals("预约取消"))
+                    ||
+                    (currentOrderStatus.equals(toOrderStatus) && currentOrderStatus.equals("服务取消"))
+                    ){
+                return "错误的状态更新";
+            }
+
             if(currentOrderStatus.equals("预约草稿") && !toOrderStatus.equals("预约取消") && !toOrderStatus.equals("已预约")){
                 return "错误的状态更新";
             }else if(currentOrderStatus.equals("已预约") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("预约取消")){
