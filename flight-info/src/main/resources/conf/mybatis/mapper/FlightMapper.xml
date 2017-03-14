@@ -758,8 +758,8 @@
 
   <select id="isFlightExist" resultType="Long">
     SELECT flight_id FROM flight
-    WHERE flight_date = '2017-03-13' AND flight_no = #{flightNo} AND flight_depcode = #{flightDepcode}
-    AND flight_arrcode = #{flightArrcode} AND is_deleted = 0
+    WHERE flight_date = #{flightDate,jdbcType=TIMESTAMP} AND flight_no = #{flightNo,jdbcType=VARCHAR} AND flight_depcode = #{flightDepcode,jdbcType=VARCHAR}
+    AND flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND is_deleted = 0
   </select>
 
   <!--and airport_code = #{airportCode}-->
