@@ -6,6 +6,7 @@
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
     <result column="is_approach" jdbcType="SMALLINT" property="isApproach" />
   </resultMap>
   <sql id="Base_Column_List">
