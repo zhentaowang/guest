@@ -26,6 +26,7 @@ package com.zhiweicloud.guest.service;
 
 
 import com.zhiweicloud.guest.common.FlightException;
+import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.AirportInfoMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.model.Flight;
@@ -57,7 +58,7 @@ public class FlightService {
         return airportInfoMapper.queryFlightNoDropdownList(flightNo,airportCode);
     }
 
-    public Long updateFlight(Flight flight)throws Exception{
+    public void updateFlight(Flight flight)throws Exception{
         Long flightId = flightMapper.isFlightExist(flight);
         if (flightId == null || flightId.equals("") || flightId == 0){
             throw new FlightException("没有找到对应的航班信息");
@@ -65,7 +66,6 @@ public class FlightService {
             flight.setFlightId(flightId);
             flightMapper.updateFlight(flight);
         }
-        return flight.getFlightId();
     }
 
 }
