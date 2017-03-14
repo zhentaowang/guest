@@ -29,7 +29,10 @@ import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.AirportInfoMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
+import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
+import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightScheduleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +53,9 @@ public class FlightService {
     @Autowired
     private FlightMapper flightMapper;
 
+    @Autowired
+    private FlightScheduleEventMapper flightScheduleEventMapper;
+
     public List<Map<String,String>> flightInfoDropdownList(String airportNameOrCode) {
         return airportInfoMapper.queryFlightInfoDropdownList(airportNameOrCode);
     }
@@ -65,6 +71,16 @@ public class FlightService {
         }else{
             flight.setFlightId(flightId);
             flightMapper.updateFlight(flight);
+        }
+    }
+
+    public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent,Long userId) throws Exception{
+        if (flightScheduleEvent.getFlightScheduleEventId() == null || flightScheduleEvent.getFlightScheduleEventId() == 0) {
+            flightScheduleEvent.setCreateUser(userId);
+            flightScheduleEventMapper.insertSelective(flightScheduleEvent);
+        }else {
+            flightScheduleEvent.setUpdateUser(userId);
+            flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
     }
 
