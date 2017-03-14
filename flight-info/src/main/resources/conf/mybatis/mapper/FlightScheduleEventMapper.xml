@@ -5,9 +5,10 @@
     <id column="flight_schedule_event_id" jdbcType="BIGINT" property="flightScheduleEventId" />
     <result column="flight_id" jdbcType="BIGINT" property="flightId" />
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
+    <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    flight_schedule_event_id, flight_id, schedule_event_id
+    flight_schedule_event_id, flight_id, schedule_event_id, schedule_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -20,9 +21,9 @@
     where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
-    insert into flight_schedule_event (flight_schedule_event_id, flight_id, schedule_event_id
+    insert into flight_schedule_event (flight_schedule_event_id, flight_id, schedule_event_id, schedule_time
       )
-    values (#{flightScheduleEventId,jdbcType=BIGINT}, #{flightId,jdbcType=BIGINT}, #{scheduleEventId,jdbcType=BIGINT}
+    values (#{flightScheduleEventId,jdbcType=BIGINT}, #{flightId,jdbcType=BIGINT}, #{scheduleEventId,jdbcType=BIGINT}, #{scheduleTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
@@ -37,6 +38,9 @@
       <if test="scheduleEventId != null">
         schedule_event_id,
       </if>
+      <if test="scheduleTime != null">
+        schedule_time
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="flightScheduleEventId != null">
@@ -47,6 +51,9 @@
       </if>
       <if test="scheduleEventId != null">
         #{scheduleEventId,jdbcType=BIGINT},
+      </if>
+      <if test="scheduleTime != null">
+        #{scheduleTime,jdbcType=TIMESTAMP}
       </if>
     </trim>
   </insert>
@@ -59,13 +66,17 @@
       <if test="scheduleEventId != null">
         schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
       </if>
+      <if test="scheduleTime != null">
+        schedule_time = #{scheduleTime,jdbcType=TIMESTAMP}
+      </if>
     </set>
     where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
     update flight_schedule_event
     set flight_id = #{flightId,jdbcType=BIGINT},
-      schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+      schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
+      schedule_time = #{scheduleTime,jdbcType=TIMESTAMP}
     where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
   </update>
 </mapper>

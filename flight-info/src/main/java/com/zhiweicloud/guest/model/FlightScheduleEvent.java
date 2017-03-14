@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.Date;
+
 /**
  * FlightScheduleEvent.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
@@ -32,6 +34,25 @@ public class FlightScheduleEvent extends BaseEntity{
 
     @ApiModelProperty(value="调度事件id",name="scheduleEventId")
     private Long scheduleEventId;
+
+    @ApiModelProperty(value="调度时间",name="scheduleTime")
+    private Date scheduleTime;
+
+    /**
+     * 调度时间
+     * @return scheduleTime 调度时间
+     */
+    public Date getScheduleTime() {
+        return scheduleTime;
+    }
+
+    /**
+     * 调度时间
+     * @param scheduleTime 调度时间
+     */
+    public void setScheduleTime(Date scheduleTime) {
+        this.scheduleTime = scheduleTime;
+    }
 
     /**
      * 自增id

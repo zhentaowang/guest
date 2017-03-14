@@ -43,9 +43,6 @@ public class ScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="进港：1，出港：0",name="isApproach")
     private Short isApproach;
 
-    @ApiModelProperty(value="调度时间",name="scheduleTime")
-    private Date scheduleTime;
-
     /**
      * 自增id
      * @return schedule_event_id 自增id
@@ -124,21 +121,5 @@ public class ScheduleEvent extends BaseEntity{
      */
     public void setIsApproach(Short isApproach) {
         this.isApproach = isApproach;
-    }
-
-    /**
-     * 调度时间
-     * @return scheduleTime 调度时间
-     */
-    public Date getScheduleTime() {
-        return scheduleTime;
-    }
-
-    /**
-     * 调度时间
-     * @param scheduleTime 调度时间
-     */
-    public void setScheduleTime(Date scheduleTime) {
-        this.scheduleTime = scheduleTime;
     }
 }

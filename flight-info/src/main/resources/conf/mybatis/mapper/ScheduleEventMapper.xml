@@ -6,11 +6,10 @@
     <result column="no" jdbcType="VARCHAR" property="no" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
     <result column="is_approach" jdbcType="SMALLINT" property="isApproach" />
   </resultMap>
   <sql id="Base_Column_List">
-    schedule_event_id, no, type, name, is_approach, schedule_time
+    schedule_event_id, no, type, name, is_approach
   </sql>
 
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
@@ -38,8 +37,8 @@
   </select>
 
   <select id="selectByFlightId" parameterType="map" resultMap="BaseResultMap">
-    select s.schedule_event_id, s.schedule_time, s.name
-    from schedule_event as s right join (select schedule_event_id from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR}
+    select s.schedule_event_id, f.schedule_time, s.name
+    from schedule_event as s right join (select schedule_event_id, schedule_time from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR}
     and flight_id = #{flightId,jdbcType=BIGINT} and is_deleted = 0) as f
     on s.schedule_event_id = f.schedule_event_id
     where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.is_deleted = 0
