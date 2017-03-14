@@ -102,7 +102,7 @@
   </select>
 
   <select id="getServiceDropDownBoxByParam" parameterType="map" resultMap="BaseResultMap">
-    select p.protocol_product_service_id, s.name
+    select p.protocol_product_service_id, s.name, p.pricing_rule
     from protocol_product_service as p left join
     (select serv_id, no, name from v_serv
     where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{typeId,jdbcType=BIGINT} and is_deleted = 0) as s
