@@ -154,6 +154,18 @@ public class Flight extends BaseEntity{
     @ApiModelProperty(value="调度事件id",name="scheduleEventId", required=true)
     private Long scheduleEventId;
 
+    @Transient
+    @ApiModelProperty(value="服务名称",name="serviceName")
+    private String serviceName;
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
     public Long getScheduleEventId() {
         return scheduleEventId;
     }

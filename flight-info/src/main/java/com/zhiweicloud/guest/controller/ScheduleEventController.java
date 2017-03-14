@@ -102,7 +102,7 @@ public class ScheduleEventController {
             @QueryParam(value = "rows") Integer rows) {
         Map<String,Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode","LJG");
+        param.put("airportCode",airportCode);
         param.put("flightNo",flightNo);
         param.put("flightDate",flightDate);
         param.put("flightState",flightState);
@@ -132,7 +132,7 @@ public class ScheduleEventController {
     ) {
         Map<String,Object> param = new HashMap();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode","LJG");
+        param.put("airportCode",airportCode);
         param.put("flightId",flightId);
         Flight flight = scheduleEventService.getByFlightId(param);
         return JSON.toJSONString(new LZResult<>(flight), SerializerFeature.WriteMapNullValue);

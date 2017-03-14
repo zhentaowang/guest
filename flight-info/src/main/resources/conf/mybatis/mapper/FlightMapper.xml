@@ -43,6 +43,7 @@
     <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
     <result column="schedule_event_name" jdbcType="TIMESTAMP" property="scheduleEventName" />
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
+    <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
   </resultMap>
   <sql id="Base_Column_List">
     flight_id, flight_date, flight_no, flight_depcode, flight_arrcode, plan_no, flight_position,
@@ -61,7 +62,7 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="criteria.servId != null and criteria.servId != ''">
       and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
@@ -106,7 +107,7 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="servId != null and servId != ''">
       and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
@@ -142,7 +143,7 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="criteria.servId != null and criteria.servId != ''">
       and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
@@ -187,7 +188,7 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="servId != null and servId != ''">
       and service_detail->>"$.serviceDetailId" = #{servId,jdbcType=BIGINT}
