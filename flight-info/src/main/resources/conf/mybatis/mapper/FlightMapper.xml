@@ -61,37 +61,38 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.servId != null and criteria.servId.trim().equals('') and criteria.servId != ''">
+    <if test="criteria.servId != null and criteria.servId != ''">
       and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
     </if>
-    <if test="criteria.typeId != null and criteria.typeId.trim().equals('') and criteria.typeId != ''">
+    <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
-    </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0)
+    </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0
+    group by oi.flight_id)
     as o on fs.flight_id = o.flight_id
     where 0 = 0
-    <if test="criteria.flightDate != null and criteria.flightDate.trim().equals('') and criteria.flightDate != ''">
+    <if test="criteria.flightDate != null and criteria.flightDate != ''">
       and fs.flight_date = #{criteria.flightDate,jdbcType=DATE}
     </if>
-    <if test="criteria.flightNo != null and criteria.flightNo.trim().equals('') and criteria.flightNo != ''">
+    <if test="criteria.flightNo != null and criteria.flightNo != ''">
       and fs.flight_no = #{criteria.flightNo,jdbcType=VARCHAR}
     </if>
-    <if test="criteria.isInOrOut != null and criteria.isInOrOut.trim().equals('') and criteria.isInOrOut != ''">
+    <if test="criteria.isInOrOut != null and criteria.isInOrOut != ''">
       and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="criteria.flightState != null and criteria.flightState.trim().equals('') and criteria.flightState != ''">
-      and fs.flight_status = #{criteria.flightState,jdbcType=SMALLINT}
+    <if test="criteria.flightState != null and criteria.flightState != ''">
+      and fs.flight_state = #{criteria.flightState,jdbcType=SMALLINT}
     </if>
-    <if test="criteria.scheduleEventId != null and criteria.scheduleEventId.trim().equals('') and criteria.scheduleEventId != ''">
+    <if test="criteria.scheduleEventId != null and criteria.scheduleEventId != ''">
       and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
     </if>
     order by fs.schedule_time desc,
     <if test="criteria.isInOrOut == 0">
-      fs.plan_take_off_time desc,
+      fs.flight_deptime_plan_date desc,
     </if>
     <if test="criteria.isInOrOut == 1">
-      fs.plan_landing_time desc,
+      fs.flight_arrtime_plan_date desc,
     </if>
       fs.flight_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
@@ -105,29 +106,30 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="servId != null and servId.trim().equals('') and servId != ''">
+    <if test="servId != null and servId != ''">
       and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
     </if>
-    <if test="typeId != null and typeId.trim().equals('') and typeId != ''">
+    <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
-    </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0)
+    </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0
+    group by oi.flight_id)
     as o on fs.flight_id = o.flight_id
     where 0 = 0
-    <if test="flightDate != null and flightDate.trim().equals('') and flightDate != ''">
+    <if test="flightDate != null and flightDate != ''">
       and fs.flight_date = #{flightDate,jdbcType=DATE}
     </if>
-    <if test="flightNo != null and flightNo.trim().equals('') and flightNo != ''">
+    <if test="flightNo != null and flightNo != ''">
       and fs.flight_no = #{flightNo,jdbcType=VARCHAR}
     </if>
-    <if test="isInOrOut != null and isInOrOut.trim().equals('') and isInOrOut != ''">
+    <if test="isInOrOut != null and isInOrOut != ''">
       and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="flightState != null and flightState.trim().equals('') and flightState != ''">
+    <if test="flightState != null and flightState != ''">
       and fs.flight_state = #{flightState,jdbcType=SMALLINT}
     </if>
-    <if test="scheduleEventId != null and scheduleEventId.trim().equals('') and scheduleEventId != ''">
+    <if test="scheduleEventId != null and scheduleEventId != ''">
       and fs.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
     </if>
   </select>
@@ -140,38 +142,38 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.servId != null and criteria.servId.trim().equals('') and criteria.servId != ''">
+    <if test="criteria.servId != null and criteria.servId != ''">
       and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
     </if>
-    <if test="criteria.typeId != null and criteria.typeId.trim().equals('') and criteria.typeId != ''">
+    <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
     </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0
-    and server_complete = #{criteria.serverComplete,jdbcType=SMALLINT})
+    and server_complete = #{criteria.serverComplete,jdbcType=SMALLINT} group by oi.flight_id)
     as o on fs.flight_id = o.flight_id
     where 0 = 0
-    <if test="criteria.flightDate != null and criteria.flightDate.trim().equals('') and criteria.flightDate != ''">
+    <if test="criteria.flightDate != null and criteria.flightDate != ''">
       and fs.flight_date = #{criteria.flightDate,jdbcType=DATE}
     </if>
-    <if test="criteria.flightNo != null and criteria.flightNo.trim().equals('') and criteria.flightNo != ''">
+    <if test="criteria.flightNo != null and criteria.flightNo != ''">
       and fs.flight_no = #{criteria.flightNo,jdbcType=VARCHAR}
     </if>
-    <if test="criteria.isInOrOut != null and criteria.isInOrOut.trim().equals('') and criteria.isInOrOut != ''">
+    <if test="criteria.isInOrOut != null and criteria.isInOrOut != ''">
       and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="criteria.flightState != null and criteria.flightState.trim().equals('') and criteria.flightState != ''">
+    <if test="criteria.flightState != null and criteria.flightState != ''">
       and fs.flight_state = #{criteria.flightState,jdbcType=SMALLINT}
     </if>
-    <if test="criteria.scheduleEventId != null and criteria.scheduleEventId.trim().equals('') and criteria.scheduleEventId != ''">
+    <if test="criteria.scheduleEventId != null and criteria.scheduleEventId != ''">
       and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
     </if>
     order by fs.schedule_time desc,
     <if test="criteria.isInOrOut == 0">
-      fs.plan_take_off_time desc,
+      fs.flight_deptime_plan_date desc,
     </if>
     <if test="criteria.isInOrOut == 1">
-      fs.plan_landing_time desc,
+      fs.flight_arrtime_plan_date desc,
     </if>
       fs.flight_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
@@ -185,30 +187,30 @@
     as se on fse.schedule_event_id =se.schedule_event_id
     where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    right join (select oi.flight_id from order_info as oi right join (select order_id from order_service
+    inner join (select oi.flight_id from order_info as oi right join (select order_id from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="servId != null and servId.trim().equals('') and servId != ''">
+    <if test="servId != null and servId != ''">
       and service_detail->>"$.serviceDetailId" = #{servId,jdbcType=BIGINT}
     </if>
-    <if test="typeId != null and typeId.trim().equals('') and typeId != ''">
+    <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
     </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0
-    and server_complete = #{serverComplete,jdbcType=SMALLINT})
+    and server_complete = #{serverComplete,jdbcType=SMALLINT} group by oi.flight_id)
     as o on fs.flight_id = o.flight_id
     where 0 = 0
-    <if test="flightDate != null and flightDate.trim().equals('') and flightDate != ''">
+    <if test="flightDate != null and flightDate != ''">
       and fs.flight_date = #{flightDate,jdbcType=DATE}
     </if>
-    <if test="flightNo != null and flightNo.trim().equals('') and flightNo != ''">
+    <if test="flightNo != null and flightNo != ''">
       and fs.flight_no = #{flightNo,jdbcType=VARCHAR}
     </if>
-    <if test="isInOrOut != null and isInOrOut.trim().equals('') and isInOrOut != ''">
+    <if test="isInOrOut != null and isInOrOut != ''">
       and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
     </if>
-    <if test="flightState != null and flightState.trim().equals('') and flightState != ''">
+    <if test="flightState != null and flightState != ''">
       and fs.flight_state = #{flightState,jdbcType=SMALLINT}
     </if>
-    <if test="scheduleEventId != null and scheduleEventId.trim().equals('') and scheduleEventId != ''">
+    <if test="scheduleEventId != null and scheduleEventId != ''">
       and fs.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
     </if>
   </select>

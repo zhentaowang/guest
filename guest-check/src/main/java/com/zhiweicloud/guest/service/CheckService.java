@@ -24,105 +24,88 @@
 
 package com.zhiweicloud.guest.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.mapper.EmployeeMapper;
+import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.mapper.CheckMapper;
+import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Employee;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author liuzh
  * @since 2015-12-19 11:09
  */
 @Service
-public class EmployeeService {
+public class CheckService {
 
     @Autowired
-    private EmployeeMapper employeeMapper;
+    private CheckMapper checkMapper;
 
-    public LZResult<PaginationResult<Map>> getAll(Employee employeeParam, Integer page, Integer rows) {
-        BasePagination<Employee> queryCondition = new BasePagination<>(employeeParam, new PageModel(page, rows));
+    public LZResult<PaginationResult<Map>> getAll(Long userId,String airportCode,CheckQueryParam checkQueryParam, Integer page, Integer rows) throws Exception{
+        BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
 
-        int total = employeeMapper.selectEmployeeTotal(employeeParam);
-        List<Map> flightList = employeeMapper.selectEmployeeList(queryCondition);
-        PaginationResult<Map> eqr = new PaginationResult<>(total, flightList);
+        //productType 1,2,3 这种格式
+        if (checkQueryParam.getQueryProtocolType() != null && !checkQueryParam.getQueryProtocolType().equals("")) {
+            if(checkQueryParam.getQueryProtocolType().length() > 0 && checkQueryParam.getQueryProtocolType().contains(",")){
+                String protocolTypeArr[] = checkQueryParam.getQueryProtocolType().split(",");
+                for(int i = 0; i < protocolTypeArr.length;i++){
+                    List protocolIdList = this.getProtocolList(protocolTypeArr[i],userId,airportCode);
+                    if (protocolIdList.size() > 0) {
+                        checkQueryParam.setQueryProtocolId(ListUtil.List2String(protocolIdList));//协议id
+                    }
+                }
+            }else{
+                List protocolIdList = this.getProtocolList(checkQueryParam.getQueryProtocolType(),userId,airportCode);
+                if (protocolIdList.size() > 0) {
+                    checkQueryParam.setQueryProtocolId(ListUtil.List2String(protocolIdList));//协议id
+                }
+            }
+        }
+
+        int total = checkMapper.selectCheckTotal(checkQueryParam);
+        List<Map> checkList = checkMapper.selectCheckList(queryCondition);
+        PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
         return result;
     }
 
-    public List<Map> getById(Long employeeId, String airportCode) {
-        return employeeMapper.selectByIdAndAirportCode(employeeId,airportCode);
-    }
+    private List getProtocolList(String protocolType,Long userId,String airportCode) throws Exception{
+        Map<String, Object> headerMap = new HashMap();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
 
-    public void saveOrUpdate(Employee employee) {
-        try {
-            if (employee.getIsExist() != null && employee.getIsExist() == 1) { //isExist == 1 修改
-                employeeMapper.updateByPrimaryKeySelective(employee);
-
-                /**
-                 * 更新角色和菜单的关联关系：
-                 * 1：insertByExists。有就更新，没有就插入
-                 * 2：删除，用not in 来删除
-                 *   update ${tableName} set is_deleted = 1 where id not in (${ids})  and airport_code = #{airportCode} and order_id = #{orderId}
-                 */
-                if(employee.getRoleIdList() != null && employee.getRoleIdList().size() > 0){
-                    for(int i = 0; i < employee.getRoleIdList().size();i++){
-                        employeeMapper.insertEmployeeRoleByExists(employee.getEmployeeId(),employee.getRoleIdList().get(i),employee.getAirportCode());
-                    }
-                    //删除
-                    employeeMapper.deleteRoles(employee.getEmployeeId(),ListUtil.List2String(employee.getRoleIdList()),employee.getAirportCode());
-                }
-
-            } else if(employee.getIsExist() != null && employee.getIsExist() == 0) { //isExist == 1 新增
-                employeeMapper.insertSelectiveCustom(employee);
-                //同时去做用户和role的关联关系 :即：去sys_user_role表中新增一条记录
-                if(employee.getRoleIdList() != null && employee.getRoleIdList().size() > 0){
-                    for(int i = 0; i < employee.getRoleIdList().size();i++){
-                        employeeMapper.addEmployeeAndRoleRelate(employee.getEmployeeId(),employee.getRoleIdList().get(i),employee.getAirportCode());
-                    }
-                }
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("protocolType", protocolType);
+        List protocolIdList = new ArrayList();
+        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",headerMap,paramMap));
+        if (protocolParam != null) {
+            JSONArray protocolArray = protocolParam.getJSONArray("data");
+            for (int i = 0; i < protocolArray.size(); i++) {
+                JSONObject jsonObject = JSON.parseObject(protocolArray.get(i).toString());
+                protocolIdList.add(jsonObject.get("id"));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-    }
-
-    public void deleteById(List<Long> ids,Long deleteUser, String airportCode) {
-        for (int i = 0; i < ids.size(); i++) {
-            Employee temp = new Employee();
-            temp.setEmployeeId(ids.get(i));
-            temp.setIsDeleted(Constant.MARK_AS_DELETED);
-            temp.setAirportCode(airportCode);
-            temp.setUpdateUser(deleteUser);
-            temp.setUpdateTime(new Date());
-            employeeMapper.updateByPrimaryKeySelective(temp);
-        }
+        return protocolIdList;
     }
 
 
-    public List<Dropdownlist> queryEmployeeDropdownList(String airportCode) {
-        return employeeMapper.getEmployeeDropdownList(airportCode);
-    }
 
-    public List<Dropdownlist> getEmployeeDropdownListByRoleId(String airportCode, Long roleId){
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("airportCode",airportCode);
-        map.put("roleId",roleId);
-        return employeeMapper.getEmployeeDropdownListByRoleId(map);
-    }
 
-    public List<Map> getRoleListByUserId(Long employeeId, String airportCode) {
-        return employeeMapper.getRoleListByUserId(employeeId,airportCode);
-    }
+
+
+
+
+
+
 }
