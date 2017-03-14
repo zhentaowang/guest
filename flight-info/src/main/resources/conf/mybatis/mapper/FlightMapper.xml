@@ -648,20 +648,8 @@
   </update>
 
   <update id="updateFlight" parameterType="com.zhiweicloud.guest.model.Flight">
-    update flight
+    UPDATE flight
     <set>
-      <if test="flightDate != null">
-        flight_date = #{flightDate,jdbcType=DATE},
-      </if>
-      <if test="flightNo != null">
-        flight_no = #{flightNo,jdbcType=VARCHAR},
-      </if>
-      <if test="flightDepcode != null">
-        flight_depcode = #{flightDepcode,jdbcType=VARCHAR},
-      </if>
-      <if test="flightArrcode != null">
-        flight_arrcode = #{flightArrcode,jdbcType=VARCHAR},
-      </if>
       <if test="planNo != null">
         plan_no = #{planNo,jdbcType=VARCHAR},
       </if>
@@ -761,14 +749,17 @@
       <if test="boardGateTime != null">
         board_gate_time = #{boardGateTime,jdbcType=VARCHAR},
       </if>
+      update_time = now(),update_user = #{updateUser}
     </set>
-    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    WHERE flight_id = #{flightId,jdbcType=BIGINT}
   </update>
 
   <select id="isFlightExist" resultType="Long">
     select flight_id from flight
     where flight_date = #{flightDate} and flight_no = #{flightNo} and flight_depcode = #{flightDepcode}
-    and flight_arrcode = #{flightArrcode} and airport_code = #{airportCode} and is_deleted = 0
+    and flight_arrcode = #{flightArrcode} and is_deleted = 0
   </select>
+
+  <!--and airport_code = #{airportCode}-->
 
 </mapper>

@@ -22,6 +22,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,19 +148,17 @@ public class FlightInfoController {
     @Path("updateFlight")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
-    public String updateFlight(@RequestBody Flight flight, @Context final HttpHeaders headers) {
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+    public String updateFlight(@RequestBody Flight flight,
+//                               @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId) {
         try{
             if (flight == null){
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
-            flight.setAirportCode(airportCode);
-            Long data = flightService.updateFlight(flight);
-            LZResult<Long> result = new LZResult<>();
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(data);
-            return JSON.toJSONString(result);
+//            flight.setAirportCode(airportCode);
+            flight.setUpdateUser(userId);
+            flightService.updateFlight(flight);
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         }catch (FlightException e){
             e.printStackTrace();
             return JSON.toJSONString(LXResult.build(LZStatus.NOT_FOUND.value(), LZStatus.NOT_FOUND.display()));
