@@ -469,7 +469,7 @@
     </if>
     <!-- 预约订单 -->
     <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '0'.equals(criteria.queryOrderType)">
-      and o.order_type = (#{criteria.queryOrderType})
+      and o.order_type = #{criteria.queryOrderType}
       <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
         and o.order_status in (#{criteria.queryOrderStatus})
       </if>
@@ -555,7 +555,7 @@
             </if>
             <!-- 预约订单 -->
             <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '0'.equals(criteria.queryOrderType)">
-              and o.order_type = (#{criteria.queryOrderType})
+              and o.order_type = #{criteria.queryOrderType}
               <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
                 and o.order_status in (#{criteria.queryOrderStatus})
               </if>
