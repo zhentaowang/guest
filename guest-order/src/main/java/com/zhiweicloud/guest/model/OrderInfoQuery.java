@@ -48,7 +48,7 @@ public class OrderInfoQuery extends BaseEntity{
 
     @ApiModelProperty(value = "按照航班起飞时间或者降落时间排序：0：起飞顺序，1：起飞倒序，2：降落顺序，3：降落倒序", name = "queryOrderBy")
     @QueryParam("queryOrderBy")
-    private String queryOrderBy;
+    private Integer queryOrderBy;
 
     @ApiModelProperty(value = "订单状态:预约草稿，已预约，预约取消，已使用，服务草稿，服务取消", name = "queryOrderStatus")
     @QueryParam("queryOrderStatus")
@@ -65,11 +65,11 @@ public class OrderInfoQuery extends BaseEntity{
 
     @ApiModelProperty(value = "订单类型：0：预约订单，1：服务订单", name = "queryOrderType")
     @QueryParam("queryOrderType")
-    private String queryOrderType;
+    private Integer queryOrderType;
 
     @ApiModelProperty(value = "出港：0，进港1", name = "queryIsInOrOut")
     @QueryParam("queryIsInOrOut")
-    private String queryIsInOrOut;
+    private Integer queryIsInOrOut;
 
     @ApiModelProperty(value = "附加服务单:1：代表查询的是勾选了代办登机牌，或者代托行李的订单", name = "queryAttServerOrderList")
     @QueryParam("queryAttServerOrderList")
@@ -138,11 +138,11 @@ public class OrderInfoQuery extends BaseEntity{
         this.queryBookingOneDayBefore = queryBookingOneDayBefore;
     }
 
-    public String getQueryOrderBy() {
+    public Integer getQueryOrderBy() {
         return queryOrderBy;
     }
 
-    public void setQueryOrderBy(String queryOrderBy) {
+    public void setQueryOrderBy(Integer queryOrderBy) {
         this.queryOrderBy = queryOrderBy;
     }
 
@@ -170,11 +170,11 @@ public class OrderInfoQuery extends BaseEntity{
         this.queryCustomerInfo = queryCustomerInfo;
     }
 
-    public String getQueryOrderType() {
+    public Integer getQueryOrderType() {
         return queryOrderType;
     }
 
-    public void setQueryOrderType(String queryOrderType) {
+    public void setQueryOrderType(Integer queryOrderType) {
         this.queryOrderType = queryOrderType;
     }
 
@@ -186,11 +186,11 @@ public class OrderInfoQuery extends BaseEntity{
         this.queryIdentityCard = queryIdentityCard;
     }
 
-    public String getQueryIsInOrOut() {
+    public Integer getQueryIsInOrOut() {
         return queryIsInOrOut;
     }
 
-    public void setQueryIsInOrOut(String queryIsInOrOut) {
+    public void setQueryIsInOrOut(Integer queryIsInOrOut) {
         this.queryIsInOrOut = queryIsInOrOut;
     }
 

@@ -20,8 +20,8 @@ public enum ProtocolProductDetail {
         this.typeId = typeId;
     }
     // 普通方法
-    static Map<String,Object> protocolProductFieldName = new HashMap<>();
     public static Map<String,Object> getProtocolProductFieldName(Long typeId) {
+        Map<String,Object> protocolProductFieldName = new HashMap<>();
         for (ProtocolProductDetail protocolProductDetail : ProtocolProductDetail.values()) {
             if (protocolProductDetail.getTypeId() == typeId) {
                 protocolProductFieldName.put(protocolProductDetail.getName(),0);

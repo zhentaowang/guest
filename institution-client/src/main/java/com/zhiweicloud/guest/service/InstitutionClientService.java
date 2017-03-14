@@ -24,8 +24,12 @@
 
 package com.zhiweicloud.guest.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -34,6 +38,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,14 +79,46 @@ public class InstitutionClientService {
         }
     }
 
-
-
-    public void deleteById(List<Long> ids,Long deleteUser,String airportCode) {
-        for(int i = 0; i< ids.size();i++){
-            institutionClientMapper.markAsDeleted(ids.get(i),deleteUser,airportCode);
+    public String deleteByIds(List<Long> ids, Long userId, String airportCode) throws Exception{
+        List<Long> deleteIds = new ArrayList<>();
+        StringBuilder names = new StringBuilder();
+        Map<String, Object> headerMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
+        for (Long id : ids) {
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("institutionClientId", id);
+//            String s = HttpClientUtil.httpGetRequest("http://127.0.0.1:8084/protocolList", headerMap, paramMap);
+            String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
+            JSONObject protocolList = JSON.parseObject(s);
+            if (protocolList != null) {
+                JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
+                if (rows.size() > 0) {
+                    names.append(institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
+                    names.append(",");
+                }else {
+                    deleteIds.add(id);
+                }
+            }
         }
+        if (deleteIds.size() > 0){
+            Map params = new HashMap();
+            params.put("ids",deleteIds);
+            params.put("userId", userId);
+            params.put("airportCode", airportCode);
+            institutionClientMapper.deleteBatchByIdsAndUserId(params);
+        }
+        names.deleteCharAt(names.length()-1);
+        return names.toString();
+        //一条一条删除数据
+//        for (Long id : ids) {
+//            JSONObject protocolList = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocolList?institutionClientId="+ id +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
+//            if(protocolList!=null || protocolList.size()!=0){
+//                throw new InstitutionException("机构已经被协议占用，无法删除");
+//            }
+//            institutionClientMapper.markAsDeleted(id,userId,airportCode);
+//        }
     }
-
 
     public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name,String no) {
         Map<String,Object> map = new HashMap<String,Object>();

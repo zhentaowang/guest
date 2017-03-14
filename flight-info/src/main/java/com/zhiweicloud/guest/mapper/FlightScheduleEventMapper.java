@@ -24,44 +24,25 @@
 
 package com.zhiweicloud.guest.mapper;
 
-
-import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
+import com.zhiweicloud.guest.model.FlightScheduleEvent;
+import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author zhangpengfei
- * @since 2016-12-21 22:17
+ * @author wzt
+ * @since 2017-03-03 21:17
  */
-public interface CheckMapper {
-    List<Dropdownlist> getEmployeeDropdownList(String airportCode);
+public interface FlightScheduleEventMapper {
 
-    /**
-     * 跟上一个方法有重叠，
-     * getEmployeeDropdownList 不知道别的项目有没有用到，，日后可以改用当前接口
-     * @param map
-     * @return
-     */
-    List<Dropdownlist> getEmployeeDropdownListByRoleId(Map<String, Object> map);
+    ScheduleEvent selectByPrimaryKey(Map<String, Object> map);
 
-    /**
-     * 对账单分页总数
-     * @param checkQueryParam
-     * @return
-     */
-    int selectCheckTotal(CheckQueryParam checkQueryParam);
+    void deleteByPrimaryKey(Long id);
 
-    /**
-     * 对账单分页结果集
-     * @param queryCondition
-     * @return
-     */
-    List<Map> selectCheckList(BasePagination<CheckQueryParam> queryCondition);
+    void updateByPrimaryKeySelective(FlightScheduleEvent flightScheduleEvent);
 
+    void  insertSelective(FlightScheduleEvent flightScheduleEvent);
 
 }

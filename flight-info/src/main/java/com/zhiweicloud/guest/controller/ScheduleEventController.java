@@ -135,7 +135,7 @@ public class ScheduleEventController {
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
         Flight flight = scheduleEventService.getByFlightId(param);
-        return JSON.toJSONString(new LZResult<>(flight));
+        return JSON.toJSONString(new LZResult<>(flight), SerializerFeature.WriteMapNullValue);
     }
 
     @GET

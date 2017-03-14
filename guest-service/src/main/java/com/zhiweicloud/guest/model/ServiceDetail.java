@@ -21,8 +21,8 @@ public enum ServiceDetail {
         this.typeId = typeId;
     }
     // 普通方法
-    static Map<String,Object> serviceFieldName = new HashMap<>();
     public static Map<String,Object> getServiceFieldName(Long typeId) {
+        Map<String,Object> serviceFieldName = new HashMap<>();
         for (ServiceDetail serviceDetail : ServiceDetail.values()) {
             if (serviceDetail.getTypeId() == typeId) {
                 serviceFieldName.put(serviceDetail.getName(),typeId);

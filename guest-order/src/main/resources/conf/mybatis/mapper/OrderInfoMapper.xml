@@ -471,14 +471,14 @@
       and o.is_important =  #{criteria.queryIsImportant}
     </if>
     <!-- 预约订单 -->
-    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '0'.equals(criteria.queryOrderType)">
-      and o.order_type = (#{criteria.queryOrderType})
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 0">
+      and o.order_type = #{criteria.queryOrderType}
       <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
         and o.order_status in (#{criteria.queryOrderStatus})
       </if>
     </if>
     <!-- 服务订单 -->
-    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '1'.equals(criteria.queryOrderType)">
+    <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 1">
       <choose>
         <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
           and o.order_type = 1
@@ -486,7 +486,9 @@
         </when>
         <otherwise>
           and o.order_type = 1
-          and o.order_status in (#{criteria.queryOrderStatus})
+          <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+            and o.order_status in (#{criteria.queryOrderStatus})
+          </if>
         </otherwise>
       </choose>
     </if>
@@ -520,7 +522,7 @@
       and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
     </if>
     <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
-      and orderFlightClientPassengerService.is_in_or_out = #{criteria.queryIsInOrOut}
+      and orderFlightClientPassengerService.is_in_or_out in (#{criteria.queryIsInOrOut})
     </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
@@ -557,14 +559,14 @@
               and o.is_important =  #{criteria.queryIsImportant}
             </if>
             <!-- 预约订单 -->
-            <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '0'.equals(criteria.queryOrderType)">
-              and o.order_type = (#{criteria.queryOrderType})
+            <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 0">
+              and o.order_type = #{criteria.queryOrderType}
               <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
                 and o.order_status in (#{criteria.queryOrderStatus})
               </if>
             </if>
             <!-- 服务订单 -->
-            <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and '1'.equals(criteria.queryOrderType)">
+            <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 1">
               <choose>
                 <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
                   and o.order_type = 1
@@ -572,7 +574,9 @@
                 </when>
                 <otherwise>
                   and o.order_type = 1
-                  and o.order_status in (#{criteria.queryOrderStatus})
+                  <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+                    and o.order_status in (#{criteria.queryOrderStatus})
+                  </if>
                 </otherwise>
               </choose>
             </if>
@@ -607,7 +611,7 @@
       and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
     </if>
     <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
-      and orderFlightClientPassengerService.is_in_or_out = #{criteria.queryIsInOrOut}
+      and orderFlightClientPassengerService.is_in_or_out in(#{criteria.queryIsInOrOut})
     </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
@@ -615,16 +619,16 @@
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
       and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
     </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '0'.equals(criteria.queryOrderType)">
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
       order by orderFlightClientPassengerService.plan_take_off_time asc
     </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '1'.equals(criteria.queryOrderType)">
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
       order by orderFlightClientPassengerService.plan_take_off_time desc
     </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '2'.equals(criteria.queryOrderType)">
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
       order by orderFlightClientPassengerService.plan_landing_time asc
     </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and '3'.equals(criteria.queryOrderType)">
+    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
       order by orderFlightClientPassengerService.plan_landing_time desc
     </if>
 
@@ -645,7 +649,7 @@
       select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
       o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
       o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,
-    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
+    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
       from order_info o
     inner join flight f

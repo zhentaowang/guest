@@ -49,6 +49,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -178,8 +179,9 @@ public class InstitutionClientController {
         "data": [
         6,7,8
         ]
-    }
-     * @return
+     *
+     }
+     * @return 返回被引用的机构客户ID集合
      */
     @POST
     @Path(value = "delete")
@@ -187,20 +189,24 @@ public class InstitutionClientController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "机构客户管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public LXResult delete(
+    public String delete(
             @RequestBody RequsetParams<Long> params,
-            @Context final HttpHeaders headers) {
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        LZResult<String> lzResult = new LZResult();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             List<Long> ids = params.getData();
-            institutionClientService.deleteById(ids,userId,airportCode);
-            return LXResult.success();
-        } catch (Exception e) {
-            logger.error("delete employee by ids error", e);
-            return LXResult.error();
+            String res =  institutionClientService.deleteByIds(ids,userId,airportCode);
+//            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,78L,"LJG");
+            lzResult.setData(res);
+            lzResult.setMsg(LZStatus.SUCCESS.display());
+            lzResult.setStatus(LZStatus.SUCCESS.value());
+        }catch (Exception e){
+            lzResult.setData(null);
+            lzResult.setMsg(LZStatus.ERROR.display());
+            lzResult.setStatus(LZStatus.ERROR.value());
         }
+        return JSON.toJSONString(lzResult);
     }
 
     /**

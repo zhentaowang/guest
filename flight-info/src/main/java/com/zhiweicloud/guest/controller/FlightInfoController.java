@@ -9,19 +9,26 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightScheduleEvent;
+import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.service.FlightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,28 +151,54 @@ public class FlightInfoController {
      * @return
      */
     @POST
-    @Path("updateFlightById")
+    @Path("updateFlight")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
-    public String updateFlightById(@RequestBody Flight flight, @Context final HttpHeaders headers) {
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+    public String updateFlight(@RequestBody Flight flight,
+                               @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId) {
         try{
             if (flight == null){
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
             flight.setAirportCode(airportCode);
-            Long data = flightService.updateFlight(flight);
-            LZResult<Long> result = new LZResult<>();
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(data);
-            return JSON.toJSONString(result);
+            flight.setUpdateUser(userId);
+            flightService.updateFlight(flight);
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         }catch (FlightException e){
             e.printStackTrace();
             return JSON.toJSONString(LXResult.build(LZStatus.NOT_FOUND.value(), LZStatus.NOT_FOUND.display()));
         }catch (Exception e){
             e.printStackTrace();
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+    }
+
+    /**
+     * 航班调度事件管理 - 新增or更新
+     *
+     * @param params
+     * @return
+     */
+    @POST
+    @Path("saveOrUpdateFlightScheduleEvent")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value="保存 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
+    public String saveOrUpdateFlightScheduleEvent(@ApiParam(value = "flightScheduleEvent", required = true) @RequestBody RequsetParams<FlightScheduleEvent> params,
+                                                    @HeaderParam("client-id") String airportCode,
+                                                    @HeaderParam("user-id") Long userId){
+        try{
+            FlightScheduleEvent flightScheduleEvent = null;
+            if(!CollectionUtils.isEmpty(params.getData())){
+                flightScheduleEvent = params.getData().get(0);
+            }
+            flightScheduleEvent.setAirportCode(airportCode);
+            flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent,userId);
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
