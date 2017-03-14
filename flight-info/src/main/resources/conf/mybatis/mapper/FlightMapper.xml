@@ -757,9 +757,9 @@
   </update>
 
   <select id="isFlightExist" resultType="Long">
-    select flight_id from flight
-    where flight_date = #{flightDate} and flight_no = #{flightNo} and flight_depcode = #{flightDepcode}
-    and flight_arrcode = #{flightArrcode} and is_deleted = 0
+    SELECT flight_id FROM flight
+    WHERE flight_date = DATE_FORMAT(#{flightDate},'%Y-%m-%d') AND flight_no = #{flightNo} AND flight_depcode = #{flightDepcode}
+    AND flight_arrcode = #{flightArrcode} AND is_deleted = 0
   </select>
 
   <!--and airport_code = #{airportCode}-->
