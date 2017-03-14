@@ -79,7 +79,7 @@ public class Passenger extends BaseEntity{
      * 返回字段。订单状态
      */
     @Transient
-    private Short orderStatus;
+    private String orderStatus;
 
     /**
      * 返回字段。厅名
@@ -311,11 +311,11 @@ public class Passenger extends BaseEntity{
         this.serviceDetail = serviceDetail;
     }
 
-    public Short getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(Short orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

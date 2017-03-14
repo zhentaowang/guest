@@ -42,6 +42,10 @@ public class OrderServiceRecord extends BaseEntity{
     private Long agentPerson;
 
     @Transient
+    @ApiModelProperty(value="安排代办人",name="agentPersonName")
+    private String agentPersonName;
+
+    @Transient
     @ApiModelProperty(value="代办完成:1：是，0：否",name="agentComplete")
     private Short agentComplete;
 
@@ -180,5 +184,13 @@ public class OrderServiceRecord extends BaseEntity{
 
     public void setPrintCheck(Short printCheck) {
         this.printCheck = printCheck;
+    }
+
+    public String getAgentPersonName() {
+        return agentPersonName;
+    }
+
+    public void setAgentPersonName(String agentPersonName) {
+        this.agentPersonName = agentPersonName;
     }
 }

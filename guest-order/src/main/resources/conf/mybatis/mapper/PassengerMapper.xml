@@ -207,7 +207,7 @@
 
   <resultMap id="PassengerResultMap" type="com.zhiweicloud.guest.model.Passenger">
     <id column="order_id" jdbcType="BIGINT" property="orderId" />
-    <result column="orderStatus" jdbcType="VARCHAR" property="order_status" />
+    <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
     <result column="room_name" jdbcType="VARCHAR" property="roomName" />

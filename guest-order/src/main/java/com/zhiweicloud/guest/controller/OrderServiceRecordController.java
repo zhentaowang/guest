@@ -46,13 +46,11 @@ public class OrderServiceRecordController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单管理 - 更新附加服务", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public String addOrderServiceRecord(
-            @ApiParam(value = "product", required = true)
             @RequestBody RequsetParams<OrderServiceRecord> params,
-            @Context final HttpHeaders headers){
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId){
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
             OrderServiceRecord orderParam = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
                 orderParam = params.getData().get(0);
@@ -75,7 +73,8 @@ public class OrderServiceRecordController {
                 //设置代办人
                 if(orderParam.getAgentPerson() != null){
                     tempOrder.setAgentPerson(orderParam.getAgentPerson());
-                    record.setRecordDesc(OrderConstant.ORDER_SER_AGENT_PERSON + orderParam.getAgentPerson());
+                    tempOrder.setAgentPersonName(orderParam.getAgentPersonName());
+                    record.setRecordDesc(OrderConstant.ORDER_SER_AGENT_PERSON + orderParam.getAgentPersonName());
                     record.setCreateTime(new Date());
                     orderServiceRecordService.insert(record);
                 }
@@ -147,9 +146,9 @@ public class OrderServiceRecordController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "附加服务-获取服务动态", notes = "返回结果集")
     public String getOrderServiceRecord(ContainerRequestContext request,
-                       @QueryParam(value="orderId") Long orderId) {
+                       @QueryParam(value="orderId") Long orderId,
+                       @HeaderParam("client-id") String airportCode) {
         LZResult<List<OrderServiceRecord>> result = new LZResult<>();
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
         if (orderId == null || StringUtils.isEmpty(airportCode)) {
             result.setMsg(LZStatus.DATA_EMPTY.display());
             result.setStatus(LZStatus.DATA_EMPTY.value());
