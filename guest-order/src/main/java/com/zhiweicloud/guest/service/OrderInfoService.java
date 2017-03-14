@@ -43,11 +43,35 @@ public class OrderInfoService {
     }
 
 
-    public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
+    public String saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
         if (orderInfo.getOrderId() != null) {
             orderInfo.setUpdateTime(new Date());
             orderInfo.setUpdateUser(userId);
+
+            /**
+             * 通过changeOrderStatus字段为1 来判断，是修改订单状态
+             */
+            //首先根据订单拿到当前订单的状态
+            /**
+             * 只有如下的几种订单流转状态
+             * 预约草稿 to  {预约取消，已预约}
+             已预约 to  {已使用,预约取消}
+             已使用 to  {服务草稿，服务取消}
+             服务草稿 to  {已使用，服务取消}
+             */
+            String currentOrderStatus = orderInfoMapper.getDetailById(orderInfo.getOrderId(),airportCode).getOrderStatus();
+            String toOrderStatus = orderInfo.getOrderStatus();
+            if(currentOrderStatus.equals("预约草稿") && !toOrderStatus.equals("预约取消") && !toOrderStatus.equals("已预约")){
+                return "错误的状态更新";
+            }else if(currentOrderStatus.equals("已预约") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("预约取消")){
+                return "错误的状态更新";
+            }else if(currentOrderStatus.equals("已使用") && !toOrderStatus.equals("服务草稿") && !toOrderStatus.equals("服务取消")){
+                return "错误的状态更新";
+            }else if(currentOrderStatus.equals("服务草稿") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("服务取消")){
+                return "错误的状态更新";
+            }
+
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
 
             //保存订单日志
@@ -63,9 +87,9 @@ public class OrderInfoService {
             if (orderInfo.getFlight() != null) {
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
-                if (flight.getFlightArrcode() == null || flight.getFlightDepcode() == null) {
+               /* if (flight.getFlightArrcode() == null || flight.getFlightDepcode() == null) {
                     throw new CustomException("出发地三字码或者目的地三字码为空");
-                }
+                }*/
                 if (flight.getFlightId() != null) {
                     flight.setUpdateTime(new Date());
                     flight.setUpdateUser(userId);
@@ -93,6 +117,7 @@ public class OrderInfoService {
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList);
+        return "操作成功";
     }
 
     /**
