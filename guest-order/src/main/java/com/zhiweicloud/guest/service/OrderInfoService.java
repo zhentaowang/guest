@@ -87,9 +87,9 @@ public class OrderInfoService {
             if (orderInfo.getFlight() != null) {
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
-                if (flight.getFlightArrcode() == null || flight.getFlightDepcode() == null) {
+               /* if (flight.getFlightArrcode() == null || flight.getFlightDepcode() == null) {
                     throw new CustomException("出发地三字码或者目的地三字码为空");
-                }
+                }*/
                 if (flight.getFlightId() != null) {
                     flight.setUpdateTime(new Date());
                     flight.setUpdateUser(userId);
