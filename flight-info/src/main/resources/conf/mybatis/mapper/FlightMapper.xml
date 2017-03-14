@@ -758,7 +758,7 @@
 
   <select id="isFlightExist" resultType="Long">
     SELECT flight_id FROM flight
-    WHERE flight_date = DATE_FORMAT(#{flightDate},'%Y-%m-%d') AND flight_no = #{flightNo} AND flight_depcode = #{flightDepcode}
+    WHERE flight_date = '2017-03-13' AND flight_no = #{flightNo} AND flight_depcode = #{flightDepcode}
     AND flight_arrcode = #{flightArrcode} AND is_deleted = 0
   </select>
 
