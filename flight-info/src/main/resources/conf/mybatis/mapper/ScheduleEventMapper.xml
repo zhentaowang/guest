@@ -18,7 +18,7 @@
     schedule_event_id, no, type, name, is_approach
     FROM v_schedule_event
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    order by schedule_event_id asc
+    order by schedule_event_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
