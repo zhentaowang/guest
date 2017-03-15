@@ -33,8 +33,8 @@ public class CheckQueryParam extends BaseEntity{
     @QueryParam("queryCustomerName")
     private String queryCustomerName;
 
-    @ApiModelProperty(value = "协议名称", name = "queryCustomerName")
-    @QueryParam("queryCustomerName")
+    @ApiModelProperty(value = "协议名称", name = "queryProtocolName")
+    @QueryParam("queryProtocolName")
     private String queryProtocolName;
 
     @ApiModelProperty(value = "协议类型,支持多选", name = "queryProtocolType")

@@ -38,16 +38,6 @@ import java.util.Map;
  * @since 2016-12-21 22:17
  */
 public interface CheckMapper {
-    List<Dropdownlist> getEmployeeDropdownList(String airportCode);
-
-    /**
-     * 跟上一个方法有重叠，
-     * getEmployeeDropdownList 不知道别的项目有没有用到，，日后可以改用当前接口
-     * @param map
-     * @return
-     */
-    List<Dropdownlist> getEmployeeDropdownListByRoleId(Map<String, Object> map);
-
     /**
      * 对账单分页总数
      * @param checkQueryParam
@@ -62,6 +52,10 @@ public interface CheckMapper {
      */
     List<Map> selectCheckList(BasePagination<CheckQueryParam> queryCondition);
 
-
+    /**
+     * 客户对账单详情
+     * @param queryCondition
+     * @return
+     */
     List<OrderCheckDetail> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
 }
