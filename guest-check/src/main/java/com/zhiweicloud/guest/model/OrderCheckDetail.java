@@ -2,7 +2,7 @@
  * OrderCheckDetail.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-03-14 17:14:59 Created By zhangpengfei
+ * 2017-03-15 11:04:10 Created By zhangpengfei
 */
 package com.zhiweicloud.guest.model;
 
@@ -11,31 +11,26 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.ws.rs.QueryParam;
-
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * OrderCheckDetail.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-03-14 17:14:59 Created By zhangpengfei
+ * 2017-03-15 11:04:10 Created By zhangpengfei
 */
 @ApiModel(value="OrderCheckDetail",description="order_check_detail")
 public class OrderCheckDetail {
     @ApiModelProperty(value="订单号",name="orderNo")
     private String orderNo;
 
-    @ApiModelProperty(value="协议客户ids,支持选择多个客户，生成账单",name="customerIds")
-    @QueryParam("customerIds")
-    private String customerIds;
+    @ApiModelProperty(value="协议客户id",name="customerId")
+    private Long customerId;
 
     @ApiModelProperty(value="协议id",name="protocolId")
-    @QueryParam("protocolId")
     private Long protocolId;
 
     @ApiModelProperty(value="产品id",name="productId")
-    @QueryParam("productId")
     private Long productId;
 
     @ApiModelProperty(value="航班日期",name="flightDate")
@@ -65,10 +60,6 @@ public class OrderCheckDetail {
     @ApiModelProperty(value="陪同费用",name="accompanyPrice")
     private Double accompanyPrice;
 
-    @ApiModelProperty(value = "协议类型,支持多选", name = "queryProtocolType")
-    @QueryParam("queryProtocolType")
-    private String queryProtocolType;
-
     /**
      * 订单号
      * @return order_no 订单号
@@ -87,18 +78,18 @@ public class OrderCheckDetail {
 
     /**
      * 协议客户id
-     * @return customer_ids 协议客户id
+     * @return customer_id 协议客户id
      */
-    public String getCustomerIds() {
-        return customerIds;
+    public Long getCustomerId() {
+        return customerId;
     }
 
     /**
      * 协议客户id
-     * @param customerIds 协议客户id
+     * @param customerId 协议客户id
      */
-    public void setCustomerIds(String customerIds) {
-        this.customerIds = customerIds;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     /**
@@ -275,13 +266,5 @@ public class OrderCheckDetail {
      */
     public void setAccompanyPrice(Double accompanyPrice) {
         this.accompanyPrice = accompanyPrice;
-    }
-
-    public String getQueryProtocolType() {
-        return queryProtocolType;
-    }
-
-    public void setQueryProtocolType(String queryProtocolType) {
-        this.queryProtocolType = queryProtocolType;
     }
 }

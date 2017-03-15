@@ -100,10 +100,10 @@ public class CheckService {
 
     public LZResult<PaginationResult<OrderCheckDetail>> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
-        List protocolIdList = this.getProtocolList(orderCheckDetail.getQueryProtocolType(),userId,airportCode);
+        /*List protocolIdList = this.getProtocolList(orderCheckDetail.getQueryProtocolType(),userId,airportCode);
         if (protocolIdList.size() > 0) {
             orderCheckDetail.setProtocolId(ListUtil.List2String(protocolIdList));//协议id
-        }
+        }*/
 
         List<OrderCheckDetail> checkList = checkMapper.customerChecklist(queryCondition);
         PaginationResult<OrderCheckDetail> eqr = new PaginationResult<>(checkList.size(), checkList);
