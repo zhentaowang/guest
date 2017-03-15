@@ -26,13 +26,14 @@ public class OrderService extends BaseEntity{
     @GeneratedValue(generator = "JDBC")
     private Long orderServiceId;
 
-    @ApiModelProperty(value="主键自增id",name="orderId", required=true)
+    @ApiModelProperty(value="主键自增id",name="orderId")
     private Long orderId;
 
-    @ApiModelProperty(value="主键自增id",name="serviceDetail", required=true)
+    @ApiModelProperty(value="服务详情",name="serviceDetail")
     private String serviceDetail;
 
-
+    @ApiModelProperty(value="价格详情",name="serviceDetail")
+    private String priceRule;
 
     /**
      * 主键自增id
@@ -82,4 +83,11 @@ public class OrderService extends BaseEntity{
         this.serviceDetail = serviceDetail;
     }
 
+    public String getPriceRule() {
+        return priceRule;
+    }
+
+    public void setPriceRule(String priceRule) {
+        this.priceRule = priceRule;
+    }
 }

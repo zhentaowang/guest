@@ -619,18 +619,26 @@
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
       and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
     </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
-      order by orderFlightClientPassengerService.plan_take_off_time asc
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
-      order by orderFlightClientPassengerService.plan_take_off_time desc
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
-      order by orderFlightClientPassengerService.plan_landing_time asc
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
-      order by orderFlightClientPassengerService.plan_landing_time desc
-    </if>
+    <choose>
+      <when test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy)">
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
+          order by orderFlightClientPassengerService.plan_take_off_time asc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
+          order by orderFlightClientPassengerService.plan_take_off_time desc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
+          order by orderFlightClientPassengerService.plan_landing_time asc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
+          order by orderFlightClientPassengerService.plan_landing_time desc
+        </if>
+      </when>
+      <otherwise>
+        order by orderFlightClientPassengerService.order_id desc
+      </otherwise>
+    </choose>
+
 
 
   </select>
