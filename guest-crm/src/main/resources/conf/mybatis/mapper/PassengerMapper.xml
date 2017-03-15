@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.PassengerMapper">
+  <resultMap id="PassengerResultMap" type="com.zhiweicloud.guest.model.Passenger">
+    <id column="passenger_id" jdbcType="BIGINT" property="passengerId" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="flight_id" jdbcType="BIGINT" property="flightId" />
+    <result column="client_id" jdbcType="BIGINT" property="clientId" />
+    <result column="client_name" jdbcType="VARCHAR" property="clientName" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="BIGINT" property="phone" />
+    <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
+    <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+    <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
+    <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
+    <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+
+
+  </resultMap>
+
+
+  <sql id="Query_Passenger_List">
+    passenger_id, name, phone, identity_card,create_time, GROUP_CONCAT(distinct client_name) as client_name, airport_code, protocol_type, protocol_name,GROUP_CONCAT(DISTINCT protocol_type) as types
+  </sql>
+
+
+  <select id="queryPassengerList" resultMap="PassengerResultMap" parameterType="map">
+    SELECT * FROM (
+      SELECT
+        <include refid="Query_Passenger_List"/>
+      FROM
+        (SELECT
+          <include refid="Query_Passenger_List"/>
+        FROM v_passenger
+        GROUP BY identity_card DESC,phone DESC) t
+      WHERE phone IS NOT NULL
+      GROUP BY t.phone
+
+      UNION ALL
+      SELECT
+        <include refid="Query_Passenger_List"/>
+      FROM v_passenger
+      WHERE phone is null AND (identity_card is NOT NULL and identity_card != '') GROUP BY identity_card desc
+
+      UNION ALL
+      SELECT
+        passenger_id, name, phone, identity_card,create_time, client_name as client_name, airport_code, protocol_type, protocol_name,protocol_type as types
+      FROM v_passenger
+      WHERE phone is null AND (identity_card is NULL or identity_card = '')
+    ) p
+
+    WHERE p.airport_Code = #{passengerQuery.airportCode}
+    <if test="passengerQuery.passengerId != null">
+      AND p.passenger_id = #{passengerQuery.passengerId}
+    </if>
+    <if test="passengerQuery.name != null and !''.equals(passengerQuery.name)">
+      AND p.`name` = #{passengerQuery.name}
+    </if>
+    <if test="passengerQuery.phone != null">
+      AND p.phone = #{passengerQuery.phone}
+    </if>
+    <if test="passengerQuery.identityCard != null and !''.equals(passengerQuery.identityCard)">
+      AND p.identity_card = #{passengerQuery.identityCard}
+    </if>
+    <if test="passengerQuery.clientName != null and !''.equals(passengerQuery.clientName)">
+      AND p.client_name LIKE concat('%',#{passengerQuery.clientName},'%')
+    </if>
+    <if test="passengerQuery.protocolName != null and !''.equals(passengerQuery.protocolName)">
+      AND p.protocol_name = #{passengerQuery.protocolName}
+    </if>
+    <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
+      AND p.protocol_type IN (#{passengerQuery.types})
+    </if>
+    <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
+      AND p.create_time &gt; #{passengerQuery.queryDateBegin}
+    </if>
+    <if test="passengerQuery.queryDateEnd != null and !''.equals(passengerQuery.queryDateEnd)">
+      AND p.create_time &lt; #{passengerQuery.queryDateEnd}
+    </if>
+    ORDER BY p.phone DESC
+    LIMIT #{begin},#{rows}
+  </select>
+
+  <select id="getListCount" parameterType="String" resultType="int">
+    SELECT count(p.passenger_id) FROM (
+      SELECT
+        <include refid="Query_Passenger_List"/>
+      FROM
+        (SELECT
+          <include refid="Query_Passenger_List"/>
+        FROM v_passenger
+        GROUP BY identity_card DESC,phone DESC) t
+        WHERE phone IS NOT NULL
+      GROUP BY t.phone
+
+      UNION ALL
+      SELECT
+        <include refid="Query_Passenger_List"/>
+      FROM v_passenger
+      WHERE phone is null AND (identity_card is NOT NULL and identity_card != '') GROUP BY identity_card desc
+
+      UNION ALL
+      SELECT
+      passenger_id, name, phone, identity_card,create_time, client_name as client_name, airport_code, protocol_type, protocol_name,protocol_type as types
+      FROM v_passenger
+      WHERE phone is null AND (identity_card is NULL or identity_card = '')
+    ) p
+
+    WHERE p.airport_Code = #{passengerQuery.airportCode}
+    <if test="passengerQuery.passengerId != null">
+      AND p.passenger_id = #{passengerQuery.passengerId}
+    </if>
+    <if test="passengerQuery.name != null and !''.equals(passengerQuery.name)">
+      AND p.`name` = #{passengerQuery.name}
+    </if>
+    <if test="passengerQuery.phone != null">
+      AND p.phone = #{passengerQuery.phone}
+    </if>
+    <if test="passengerQuery.identityCard != null and !''.equals(passengerQuery.identityCard)">
+      AND p.identity_card = #{passengerQuery.identityCard}
+    </if>
+    <if test="passengerQuery.clientName != null and !''.equals(passengerQuery.clientName)">
+      AND p.client_name LIKE concat('%',#{passengerQuery.clientName},'%')
+    </if>
+    <if test="passengerQuery.protocolName != null and !''.equals(passengerQuery.protocolName)">
+      AND p.protocol_name = #{passengerQuery.protocolName}
+    </if>
+    <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
+      AND p.protocol_type IN (#{passengerQuery.types})
+    </if>
+    <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
+      AND p.create_time &gt; #{passengerQuery.queryDateBegin}
+    </if>
+    <if test="passengerQuery.queryDateEnd != null and !''.equals(passengerQuery.queryDateEnd)">
+      AND p.create_time &lt; #{passengerQuery.queryDateEnd}
+    </if>
+    ORDER BY p.phone DESC
+  </select>
+
+  <select id="queryBuyTimes" resultType="int">
+    SELECT
+      count(passenger_id)
+    FROM
+      v_passenger
+    WHERE airport_code = #{airportCode} AND (phone = #{phone} OR identity_card = #{identityCard})
+  </select>
+
+
+
+
+  
+</mapper>

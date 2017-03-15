@@ -1,0 +1,44 @@
+package com.zhiweicloud.guest.service;
+
+import com.zhiweicloud.guest.APIUtil.LZResult;
+import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.mapper.PassengerMapper;
+import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.PassengerQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by zhengyiyin on 2017/2/23.
+ */
+@Service
+public class PassengerService {
+
+    @Autowired
+    private PassengerMapper passengerMapper;
+
+    public LZResult<PaginationResult<Passenger>> getPassengerList(PassengerQuery passengerQuery, int page, int rows) throws Exception{
+        int total = passengerMapper.getListCount(passengerQuery);
+        List<Passenger> passengerList = passengerMapper.queryPassengerList(passengerQuery,(page-1)*rows,rows);
+        if(!CollectionUtils.isEmpty(passengerList)){
+            for(Passenger p : passengerList){
+                //电话或身份证任一不为空，查询使用次数
+                if(p.getPhone() != null || !StringUtils.isEmpty(p.getIdentityCard())){
+                    int count = passengerMapper.queryBuyTimes(p.getPhone(),p.getIdentityCard(),p.getAirportCode());
+                    p.setBuyTimes(count);
+                }else{
+                    p.setBuyTimes(1);
+                }
+            }
+        }
+        PaginationResult<Passenger> eqr = new PaginationResult<>(total, passengerList);
+        LZResult<PaginationResult<Passenger>> result = new LZResult<>(eqr);
+        return result;
+    }
+
+}
