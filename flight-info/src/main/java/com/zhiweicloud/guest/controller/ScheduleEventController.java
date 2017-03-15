@@ -2,6 +2,8 @@ package com.zhiweicloud.guest.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dragon.sign.DragonSignature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
@@ -12,6 +14,7 @@ import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightScheduleEvent;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.service.FlightService;
 import com.zhiweicloud.guest.service.ScheduleEventService;
@@ -54,20 +57,20 @@ public class ScheduleEventController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="航班管理 - 修改航班", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult flightUpdate(@ApiParam(value = "flight", required = true) @RequestBody RequsetParams<Flight> params,
+    public String flightUpdate(@ApiParam(value = "flight", required = true) @RequestBody String params,
                          @Context final HttpHeaders headers){
         try{
-            Flight flight = null;
-            if(!CollectionUtils.isEmpty(params.getData())){
-                flight = params.getData().get(0);
-            }
+            JSONArray param = JSON.parseObject(params).getJSONArray("data");
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            flight.setAirportCode(airportCode);
-            scheduleEventService.flightUpdate(flight);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            for (int i = 0; i < param.size(); i++) {
+                Flight flight = JSONObject.toJavaObject(JSON.parseObject(param.get(i).toString()),Flight.class);
+                flight.setAirportCode(airportCode);
+                scheduleEventService.flightUpdate(flight);
+            }
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
