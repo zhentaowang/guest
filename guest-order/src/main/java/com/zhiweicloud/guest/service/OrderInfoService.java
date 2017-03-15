@@ -123,7 +123,7 @@ public class OrderInfoService {
             orderInfo.setCreateUser(userId);
             orderInfoMapper.insertSelective(orderInfo);
         }
-        this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList);
+        this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList,userId,airportCode);
         return "操作成功";
     }
 
@@ -134,7 +134,7 @@ public class OrderInfoService {
      * @param passengerList
      * @param orderServiceList
      */
-    private void addPassengerAndServiceDetails(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList) throws Exception {
+    private void addPassengerAndServiceDetails(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList,Long userId,String airportCode) throws Exception {
         List passengerIds = new ArrayList<>();
         List serverDetailsList = new ArrayList();
         /**
@@ -167,6 +167,29 @@ public class OrderInfoService {
             os.setUpdateUser(orderInfo.getUpdateUser());
             String detail = os.getServiceDetail();
             JSONObject jsonObject = JSON.parseObject(detail);
+
+            //
+            Map<String, Object> headerMap = new HashMap<>();
+            Map<String, Object> paramMap = new HashMap<>();
+            headerMap.put("user-id", userId);
+            headerMap.put("client-id", airportCode);
+            paramMap.put("protocolProductId", orderInfo.getProductId());
+            paramMap.put("typeId", jsonObject.get("serviceId"));
+
+            if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
+                //JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
+                JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/get-service-box-by-type-and-protocol-product-id?access_token=CMiKDhjuZbGJnWXAi9za1CzjDvVf91EiGhHnEVhb&protocolProductId="+ orderInfo.getProductId() +"&typeId=" + jsonObject.get("serviceId")));
+                if (jsonObject1 != null) {
+                    JSONArray jsonArray = jsonObject1.getJSONArray("data");
+                    for(int k = 0; k < jsonArray.size();k++){
+                        if(jsonArray.getJSONObject(k).get("protocolProductServiceId").equals(jsonObject.get("serviceDetailId"))){
+                            os.setPriceRule(jsonArray.getJSONObject(k).get("pricingRule").toString());
+                        }
+                    }
+                }
+            }
+            //
+
             os.setServiceDetail(jsonObject.toJSONString());
             if (os.getOrderServiceId() != null) {
                 serverDetailsList.add(os.getOrderServiceId());
