@@ -73,6 +73,23 @@ public class CheckService {
 
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
+        for(int i = 0; i < checkList.size(); i++){
+            Map<String, Object> headerMap = new HashMap();
+            headerMap.put("user-id", userId);
+            headerMap.put("client-id", airportCode);
+
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("protocolId", checkList.get(i).get("protocolId"));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
+            if (protocolObject != null) {
+                JSONArray protocolArray = protocolObject.getJSONArray("data");
+                for (int k = 0; k < protocolArray.size(); i++) {
+                    JSONObject jsonObject = JSON.parseObject(protocolArray.get(k).toString());
+                    checkList.get(i).put("protocolType",jsonObject.get("protocolTypeName"));
+                }
+            }
+        }
+
         PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
         return result;
