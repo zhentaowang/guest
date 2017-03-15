@@ -62,20 +62,55 @@ public class OrderInfoService {
              */
             String currentOrderStatus = orderInfoMapper.getDetailById(orderInfo.getOrderId(),airportCode).getOrderStatus();
             String toOrderStatus = orderInfo.getOrderStatus();
-            if((currentOrderStatus.equals(toOrderStatus) && currentOrderStatus.equals("预约取消"))
-                    ||
-                    (currentOrderStatus.equals(toOrderStatus) && currentOrderStatus.equals("服务取消"))
-                    ){
-                return "错误的状态更新";
+            boolean flag = false;
+
+            /**
+             * 预约草稿-》预约草稿
+             *          已预约
+             *          预约取消
+             */
+            if(currentOrderStatus.equals("预约草稿") && (toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已预约") || toOrderStatus.equals("预约取消"))){
+                flag = true;
+            }
+            /**
+             * 已预约-》  已预约
+             *          预约草稿
+             *          已使用
+             *          预约取消
+             */
+            if(currentOrderStatus.equals("已预约") && (toOrderStatus.equals("已预约") || toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消"))){
+                flag = true;
+            }
+            /**
+             * 已使用-》  已使用
+             *          服务草稿
+             *          服务取消
+             */
+            if(currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))){
+                flag = true;
+            }
+            /**
+             * 服务草稿-》 服务草稿
+             *          已使用
+             *          服务取消
+             */
+            if(currentOrderStatus.equals("服务草稿") && (toOrderStatus.equals("服务草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("服务取消"))){
+                flag = true;
+            }
+            /**
+             * 预约取消-》预约取消
+             */
+            if(currentOrderStatus.equals("预约取消") && toOrderStatus.equals("预约取消")){
+                flag = true;
+            }
+            /**
+             * 服务取消-》服务取消
+             */
+            if(currentOrderStatus.equals("服务取消") && toOrderStatus.equals("服务取消")){
+                flag = true;
             }
 
-            if(currentOrderStatus.equals("预约草稿") && !toOrderStatus.equals("预约取消") && !toOrderStatus.equals("已预约")){
-                return "错误的状态更新";
-            }else if(currentOrderStatus.equals("已预约") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("预约取消")){
-                return "错误的状态更新";
-            }else if(currentOrderStatus.equals("已使用") && !toOrderStatus.equals("服务草稿") && !toOrderStatus.equals("服务取消")){
-                return "错误的状态更新";
-            }else if(currentOrderStatus.equals("服务草稿") && !toOrderStatus.equals("已使用") && !toOrderStatus.equals("服务取消")){
+            if(!flag){
                 return "错误的状态更新";
             }
 
