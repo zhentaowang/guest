@@ -25,37 +25,32 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.OrderCheckDetail;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
+import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.PassengerQuery;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author zhangpengfei
- * @since 2016-12-21 22:17
+ * Created by zhengyiyin on 2017/2/23.
  */
-public interface CheckMapper {
+public interface PassengerMapper {
     /**
-     * 对账单分页总数
-     * @param checkQueryParam
+     * crm列表
      * @return
      */
-    int selectCheckTotal(CheckQueryParam checkQueryParam);
+    List<Passenger> queryPassengerList(@Param("passengerQuery") PassengerQuery passengerQuery, @Param("begin") int begin, @Param("rows") int rows);
 
     /**
-     * 对账单分页结果集
-     * @param queryCondition
-     * @return
+     * 根据 手机号或身份证 查询用户使用次数
      */
-    List<Map> selectCheckList(BasePagination<CheckQueryParam> queryCondition);
+    int queryBuyTimes(@Param("phone") Long phone, @Param("identityCard") String identityCard, @Param("airportCode") String airportCode);
 
     /**
-     * 客户对账单详情
-     * @param queryCondition
+     * 分页总条数
+     * @param passengerQuery
      * @return
      */
-    List<OrderCheckDetail> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
+    int getListCount(@Param("passengerQuery") PassengerQuery passengerQuery);
 }
