@@ -67,4 +67,48 @@
     GROUP BY o.customer_id
     limit #{page.startPageNo},#{page.pCount}
   </select>
+
+
+  <resultMap id="OrderCheckDetailMap" type="com.zhiweicloud.guest.model.OrderCheckDetail">
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+    <result column="flight_dep_airport" jdbcType="VARCHAR" property="flightDepAirport" />
+    <result column="flight_arr_airport" jdbcType="VARCHAR" property="flightArrAirport" />
+    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+    <result column="vip_person_num" jdbcType="INTEGER" property="vipPersonNum" />
+    <result column="vip_price" jdbcType="DOUBLE" property="vipPrice" />
+    <result column="accompany_person_num" jdbcType="INTEGER" property="accompanyPersonNum" />
+    <result column="accompany_price" jdbcType="DOUBLE" property="accompanyPrice" />
+  </resultMap>
+
+
+  <select id="customerChecklist" resultMap="OrderCheckDetailMap">
+    select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.customer_id,o.protocol_id,o.product_id,
+    f.flight_date,f.plan_no,f.flight_dep_airport,f.flight_arr_airport,f.is_in_or_out,
+    (select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vip_person_num,
+    (select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vip_price,
+
+    (select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompany_person_num,
+    (select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompany_price
+
+
+    from order_info o
+    inner join flight f on f.flight_id = o.flight_id
+    <if test="criteria.customerId != null and !''.equals(criteria.customerId)">
+      and o.customer_id in (#{criteria.customerIds})
+    </if>
+    <if test="criteria.productId != null and !''.equals(criteria.productId)">
+      and o.product_id in (#{criteria.productId})
+    </if>
+    <if test="criteria.protocolId != null and !''.equals(criteria.protocolId)">
+      and o.protocol_id in (#{criteria.protocolId})
+    </if>
+
+
+  </select>
+
 </mapper>

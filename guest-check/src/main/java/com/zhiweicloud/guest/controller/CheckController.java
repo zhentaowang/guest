@@ -25,30 +25,20 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.zhiweicloud.guest.APIUtil.LXResult;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
+import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,6 +69,29 @@ public class CheckController {
         try {
             LZResult<PaginationResult<Map>> result = checkService.getAll(userId,airportCode,checkQueryParam, page, rows);
             return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LZResult result = new LZResult<>();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
+    }
+
+    @GET
+    @Path("customer-checklist")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "服务账单详情列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    public String customerChecklist(
+            @DefaultValue("1") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @BeanParam final OrderCheckDetail orderCheckDetail,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        try {
+            LZResult<PaginationResult<OrderCheckDetail>> result = checkService.customerChecklist(userId,airportCode,orderCheckDetail, page, rows);
+            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();

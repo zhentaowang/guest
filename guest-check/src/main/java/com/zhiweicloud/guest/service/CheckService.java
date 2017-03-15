@@ -29,12 +29,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
+import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,12 +98,16 @@ public class CheckService {
     }
 
 
+    public LZResult<PaginationResult<OrderCheckDetail>> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
+        BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
+        /*List protocolIdList = this.getProtocolList(orderCheckDetail.getQueryProtocolType(),userId,airportCode);
+        if (protocolIdList.size() > 0) {
+            orderCheckDetail.setProtocolId(ListUtil.List2String(protocolIdList));//协议id
+        }*/
 
-
-
-
-
-
-
-
+        List<OrderCheckDetail> checkList = checkMapper.customerChecklist(queryCondition);
+        PaginationResult<OrderCheckDetail> eqr = new PaginationResult<>(checkList.size(), checkList);
+        LZResult<PaginationResult<OrderCheckDetail>> result = new LZResult<>(eqr);
+        return result;
+    }
 }
