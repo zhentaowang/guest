@@ -443,6 +443,8 @@
     where order_id = #{orderId,jdbcType=BIGINT} and airport_code=#{airportCode,jdbcType=VARCHAR}
   </update>
 
+
+
   <select id="selectOrderInfoTotal" resultType="int" parameterType="com.zhiweicloud.guest.model.OrderInfoQuery">
     select count(DISTINCT(orderFlightClientPassengerService.order_id)) from
     (
@@ -453,10 +455,8 @@
     select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
     o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
     o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
-
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
-
     from order_info o
     inner join flight f
     on o.flight_id = f.flight_id
@@ -508,30 +508,50 @@
     <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
       and o.server_complete is not null
     </if>
+    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
+      and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
+    </if>
+    <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
+      and f.flight_date = str_to_date(#{criteria.queryFlightDate}, '%Y-%m-%d')
+    </if>
+    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
+      and f.is_in_or_out in(#{criteria.queryIsInOrOut})
+    </if>
+    limit #{page.startPageNo},#{page.pCount}
     ) as orderFlightClient
     left join passenger p on orderFlightClient.order_id = p.order_id
+    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+      and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
+    </if>
+    <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
+      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+    </if>
     )as orderFlightClientPassenger
     left join order_service orderService
     on orderService.order_id = orderFlightClientPassenger.order_id
     ) as orderFlightClientPassengerService
     where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
-    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
-      and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.queryFlightNo},'%')
-    </if>
-    <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
-      and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
-    </if>
-    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
-      and orderFlightClientPassengerService.is_in_or_out in (#{criteria.queryIsInOrOut})
-    </if>
-    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
-      and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
-    </if>
-    <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
-      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
-    </if>
-
+    <choose>
+      <when test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy)">
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
+          order by orderFlightClientPassengerService.plan_take_off_time asc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
+          order by orderFlightClientPassengerService.plan_take_off_time desc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
+          order by orderFlightClientPassengerService.plan_landing_time asc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
+          order by orderFlightClientPassengerService.plan_landing_time desc
+        </if>
+      </when>
+      <otherwise>
+        order by orderFlightClientPassengerService.order_id desc
+      </otherwise>
+    </choose>
   </select>
+
 
   <select id="selectOrderInfoList" resultMap="BaseResultMap">
     select orderFlightClientPassengerService.* from
@@ -596,43 +616,48 @@
             <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
               and o.server_complete is not null
             </if>
+            <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
+              and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
+            </if>
+            <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
+              and f.flight_date = str_to_date(#{criteria.queryFlightDate}, '%Y-%m-%d')
+            </if>
+            <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
+              and f.is_in_or_out in(#{criteria.queryIsInOrOut})
+            </if>
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
 		left join passenger p on orderFlightClient.order_id = p.order_id
+        <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+          and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
+        </if>
+        <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
+          and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+        </if>
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id
 ) as orderFlightClientPassengerService
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
-    <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
-      and orderFlightClientPassengerService.flight_no like concat('%',#{criteria.queryFlightNo},'%')
-    </if>
-    <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
-      and orderFlightClientPassengerService.flight_date = #{criteria.queryFlightDate}
-    </if>
-    <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
-      and orderFlightClientPassengerService.is_in_or_out in(#{criteria.queryIsInOrOut})
-    </if>
-    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
-      and orderFlightClientPassengerService.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
-    </if>
-    <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
-      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
-      order by orderFlightClientPassengerService.plan_take_off_time asc
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
-      order by orderFlightClientPassengerService.plan_take_off_time desc
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
-      order by orderFlightClientPassengerService.plan_landing_time asc
-    </if>
-    <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
-      order by orderFlightClientPassengerService.plan_landing_time desc
-    </if>
-
-
+    <choose>
+      <when test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy)">
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
+          order by orderFlightClientPassengerService.plan_take_off_time asc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
+          order by orderFlightClientPassengerService.plan_take_off_time desc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
+          order by orderFlightClientPassengerService.plan_landing_time asc
+        </if>
+        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
+          order by orderFlightClientPassengerService.plan_landing_time desc
+        </if>
+      </when>
+      <otherwise>
+        order by orderFlightClientPassengerService.order_id desc
+      </otherwise>
+    </choose>
   </select>
 
 

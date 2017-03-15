@@ -5,11 +5,12 @@
     <id column="order_service_id" jdbcType="BIGINT" property="orderServiceId" />
     <result column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
+    <result column="price_rule" jdbcType="VARCHAR" property="priceRule" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
   </resultMap>
   <sql id="Base_Column_List">
-    order_service_id, order_id, service_detail, create_user, update_user
+    order_service_id, order_id, service_detail,price_rule, create_user, update_user
   </sql>
 
   <update id="updateByOrderServiceIdAndAirportCodeKeySelective" parameterType="com.zhiweicloud.guest.model.OrderService">
@@ -20,6 +21,9 @@
       </if>
       <if test="serviceDetail != null">
         service_detail = #{serviceDetail,jdbcType=VARCHAR} ,
+      </if>
+      <if test="priceRule != null">
+        price_rule = #{priceRule,jdbcType=VARCHAR} ,
       </if>
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
@@ -49,6 +53,9 @@
       <if test="serviceDetail != null">
         service_detail,
       </if>
+      <if test="priceRule != null">
+        price_rule,
+      </if>
       <if test="createUser != null">
         create_user,
       </if>
@@ -65,6 +72,9 @@
       </if>
       <if test="serviceDetail != null">
         #{serviceDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="priceRule != null">
+        #{priceRule,jdbcType=VARCHAR},
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=BIGINT},

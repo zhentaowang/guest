@@ -2,6 +2,8 @@ package com.zhiweicloud.guest.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.dragon.sign.DragonSignature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
@@ -28,12 +30,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
+import java.util.*;
 
 
 /**
@@ -185,16 +182,16 @@ public class FlightInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="保存 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public String saveOrUpdateFlightScheduleEvent(@ApiParam(value = "flightScheduleEvent", required = true) @RequestBody RequsetParams<FlightScheduleEvent> params,
+    public String saveOrUpdateFlightScheduleEvent(@ApiParam(value = "flightScheduleEvent", required = true) @RequestBody String params,
                                                     @HeaderParam("client-id") String airportCode,
                                                     @HeaderParam("user-id") Long userId){
         try{
-            FlightScheduleEvent flightScheduleEvent = null;
-            if(!CollectionUtils.isEmpty(params.getData())){
-                flightScheduleEvent = params.getData().get(0);
+            JSONArray param = JSON.parseObject(params).getJSONArray("data");
+            for (int i = 0; i < param.size(); i++) {
+                FlightScheduleEvent flightScheduleEvent = JSONObject.toJavaObject(JSON.parseObject(param.get(i).toString()),FlightScheduleEvent.class);
+                flightScheduleEvent.setAirportCode(airportCode);
+                flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent,userId);
             }
-            flightScheduleEvent.setAirportCode(airportCode);
-            flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent,userId);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
             e.printStackTrace();

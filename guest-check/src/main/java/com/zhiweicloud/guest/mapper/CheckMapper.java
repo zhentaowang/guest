@@ -27,9 +27,8 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Employee;
+import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -64,4 +63,5 @@ public interface CheckMapper {
     List<Map> selectCheckList(BasePagination<CheckQueryParam> queryCondition);
 
 
+    List<OrderCheckDetail> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
 }

@@ -43,6 +43,18 @@ public class ScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="进港：1，出港：0",name="isApproach")
     private Short isApproach;
 
+    @Transient
+    @ApiModelProperty(value="调度时间",name="scheduleTime")
+    private Date scheduleTime;
+
+    public Date getScheduleTime() {
+        return scheduleTime;
+    }
+
+    public void setScheduleTime(Date scheduleTime) {
+        this.scheduleTime = scheduleTime;
+    }
+
     /**
      * 自增id
      * @return schedule_event_id 自增id
