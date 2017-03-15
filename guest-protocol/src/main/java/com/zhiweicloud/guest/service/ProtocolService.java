@@ -200,7 +200,15 @@ public class ProtocolService {
      * @param param
      */
     public Protocol getById(Map<String,Object> param) {
-        Protocol protocol = protocolMapper.selectById(param);
+        return protocolMapper.selectById(param);
+    }
+
+    /**
+     * 获取协议产品等详细信息
+     * @param param
+     * @param protocol
+     */
+    public void getDetialById(Map<String,Object> param,Protocol protocol) {
         if(protocol != null){
             List<Authorizer> authorizerList = authorizerMapper.selectByProtocolId(param);
             if(authorizerList.size() != 0){
@@ -220,7 +228,6 @@ public class ProtocolService {
                 protocol.setProtocolProductList(protocolProductList);
             }
         }
-        return protocol;
     }
 
     /**

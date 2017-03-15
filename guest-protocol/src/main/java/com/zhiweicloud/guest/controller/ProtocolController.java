@@ -171,6 +171,30 @@ public class ProtocolController {
         param.put("airportCode", airportCode);
         param.put("protocolId", protocolId);
         Protocol protocol = protocolService.getById(param);
+        protocolService.getDetialById(param,protocol);
+        return JSON.toJSONString(new LZResult<>(protocol));
+    }
+
+    /**
+     * 协议管理 - 根据id查询
+     *
+     * @param protocolId
+     * @return
+     */
+    @GET
+    @Path("getById")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议 - 根据id仅查询协议信息 ", notes = "返回协议详情", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", defaultValue = "188", required = true, paramType = "query")
+    })
+    public String getById(@HeaderParam("client-id") String airportCode,
+                       @QueryParam(value = "protocolId") Long protocolId
+    ) {
+        Map<String, Object> param = new HashMap();
+        param.put("airportCode", airportCode);
+        param.put("protocolId", protocolId);
+        Protocol protocol = protocolService.getById(param);
         return JSON.toJSONString(new LZResult<>(protocol));
     }
 
