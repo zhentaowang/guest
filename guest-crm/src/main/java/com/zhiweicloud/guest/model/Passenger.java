@@ -2,39 +2,47 @@
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-02-28 17:39:03 Created By zhangpengfei
+ * 2017-03-13 20:46:33 Created By Administrator
 */
 package com.zhiweicloud.guest.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import java.util.Date;
-import java.util.List;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.util.StringUtils;
 
 /**
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-02-28 17:39:03 Created By zhangpengfei
+ * 2017-03-13 20:46:33 Created By Administrator
 */
 @ApiModel(value="Passenger",description="passenger")
 public class Passenger extends BaseEntity{
     @ApiModelProperty(value="主键自增id",name="passengerId", required=true)
-    @Id
-    @GeneratedValue(generator = "JDBC")
+    @NotEmpty
     private Long passengerId;
 
     @ApiModelProperty(value="订单id",name="orderId", required=true)
     @NotEmpty
     private Long orderId;
 
-    @ApiModelProperty(value="航班id",name="orderId")
+    @ApiModelProperty(value="航班id",name="flightId")
     private Long flightId;
+
+    @ApiModelProperty(value="协议客户id",name="clientId")
+    private Long clientId;
+
+    @ApiModelProperty(value="协议客户名称",name="clientName")
+    private String clientName;
 
     @ApiModelProperty(value="旅客姓名",name="name")
     private String name;
@@ -63,42 +71,83 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="卡号",name="cardNo")
     private String cardNo;
 
-    @ApiModelProperty(value="0：金卡，1：银卡",name="cardType")
+    @ApiModelProperty(value="卡类别:0：金卡，1：银卡",name="cardType")
     private Short cardType;
 
     @ApiModelProperty(value="有效期",name="expireTime")
     private Date expireTime;
 
     /**
-     * 返回字段。详细服务
+     * 返回字段，使用次数
      */
     @Transient
-    private String serviceDetail;
+    private int buyTimes;
 
     /**
-     * 返回字段。订单状态
+     * 返回字段，协议类型（不重复）
      */
     @Transient
-    private String orderStatus;
+    private String types;
 
     /**
-     * 返回字段。厅名
+     * 返回字段，标签名
      */
     @Transient
-    private String roomName;
+    private List<String> labalsName;
 
     /**
-     * 返回字段。旅客姓名
+     * 返回字段，用户编号
+     * @return
      */
-    @Transient
-    private List<String> passengerList;
+    private String passengerNo;
 
-    /**
-     * 返回字段，订单编号
-     */
-    @Transient
-    private String orderNo;
+    public List<String> getLabalsName() {
+        List<String> list = new ArrayList<>();
+        if(!StringUtils.isEmpty(this.types)){
+            String[] typeArr = types.split(",");
+            for(int i=0; i <typeArr.length; i++){
+                switch (typeArr[i]){
+                    case "10" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("头等舱");
+                                }
+                                break;
+                    case "9" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("金银卡");
+                                }
+                                break;
+                    case "4" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("地方政要");
+                                }
+                                break;
+                    case "5" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("地方政要");
+                                }
+                                break;
+                    case "6" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("副部级vip");
+                                }
+                                break;
+                    case "1" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("银行领导");
+                                }
+                                break;
+                    case "7" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("持卡用户");
+                                }
+                                break;
+                    case "2" : if(list.toString().indexOf("头等舱") == -1){
+                                    list.add("持卡用户");
+                                }
+                                break;
+                }
+            }
+        }
+        return list;
+    }
 
+    public void setLabalsName(List<String> labalsName) {
+        this.labalsName = labalsName;
+    }
 
     /**
      * 主键自增id
@@ -130,6 +179,54 @@ public class Passenger extends BaseEntity{
      */
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    /**
+     * 航班id
+     * @return flight_id 航班id
+     */
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    /**
+     * 航班id
+     * @param flightId 航班id
+     */
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    /**
+     * 协议客户id
+     * @return client_id 协议客户id
+     */
+    public Long getClientId() {
+        return clientId;
+    }
+
+    /**
+     * 协议客户id
+     * @param clientId 协议客户id
+     */
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    /**
+     * 协议客户名称
+     * @return client_name 协议客户名称
+     */
+    public String getClientName() {
+        return clientName;
+    }
+
+    /**
+     * 协议客户名称
+     * @param clientName 协议客户名称
+     */
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     /**
@@ -277,16 +374,16 @@ public class Passenger extends BaseEntity{
     }
 
     /**
-     * 0：金卡，1：银卡
-     * @return card_type 0：金卡，1：银卡
+     * 卡类别:0：金卡，1：银卡
+     * @return card_type 卡类别:0：金卡，1：银卡
      */
     public Short getCardType() {
         return cardType;
     }
 
     /**
-     * 0：金卡，1：银卡
-     * @param cardType 0：金卡，1：银卡
+     * 卡类别:0：金卡，1：银卡
+     * @param cardType 卡类别:0：金卡，1：银卡
      */
     public void setCardType(Short cardType) {
         this.cardType = cardType;
@@ -308,51 +405,27 @@ public class Passenger extends BaseEntity{
         this.expireTime = expireTime;
     }
 
-    public String getServiceDetail() {
-        return serviceDetail;
+    public int getBuyTimes() {
+        return buyTimes;
     }
 
-    public void setServiceDetail(String serviceDetail) {
-        this.serviceDetail = serviceDetail;
+    public void setBuyTimes(int buyTimes) {
+        this.buyTimes = buyTimes;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    public String getTypes() {
+        return types;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setTypes(String types) {
+        this.types = types;
     }
 
-    public List<String> getPassengerList() {
-        return passengerList;
+    public String getPassengerNo() {
+        return passengerNo;
     }
 
-    public void setPassengerList(List<String> passengerList) {
-        this.passengerList = passengerList;
-    }
-
-    public String getRoomName() {
-        return roomName;
-    }
-
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    public Long getFlightId() {
-        return flightId;
-    }
-
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
-
-    public String getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
+    public void setPassengerNo(String passengerNo) {
+        this.passengerNo = passengerNo;
     }
 }

@@ -22,40 +22,18 @@
  * THE SOFTWARE.
  */
 
-package com.zhiweicloud.guest.mapper;
+package com.zhiweicloud.guest.common;
 
-
-import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.OrderCheckDetail;
-import com.zhiweicloud.guest.pageUtil.BasePagination;
-
-import java.util.List;
-import java.util.Map;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.common.MySqlMapper;
 
 /**
- * @author zhangpengfei
- * @since 2016-12-21 22:17
+ * 继承自己的MyMapper
+ *
+ * @author liuzh
+ * @since 2015-09-06 21:53
  */
-public interface CheckMapper {
-    /**
-     * 对账单分页总数
-     * @param checkQueryParam
-     * @return
-     */
-    int selectCheckTotal(CheckQueryParam checkQueryParam);
-
-    /**
-     * 对账单分页结果集
-     * @param queryCondition
-     * @return
-     */
-    List<Map> selectCheckList(BasePagination<CheckQueryParam> queryCondition);
-
-    /**
-     * 客户对账单详情
-     * @param queryCondition
-     * @return
-     */
-    List<OrderCheckDetail> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
+public interface MyMapper<T> extends Mapper<T>, MySqlMapper<T> {
+    //TODO
+    //FIXME 特别注意，该接口不能被扫描到，否则会出错
 }

@@ -143,6 +143,9 @@
       <if test="updateUser != null">
         update_user = #{updateUser,jdbcType=BIGINT},
       </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted},
+      </if>
     </set>
     where employee_id = #{employeeId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>

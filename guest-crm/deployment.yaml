@@ -1,21 +1,21 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: guest-check
+  name: guest-crm
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: guest-check
+        app: guest-crm
     spec:
       containers:
-        - name: guest-check
+        - name: guest-crm
           image: tomcat:9.0
           volumeMounts:
           - mountPath: "/usr/local/tomcat/webapps"
             name: code
-            subPath: guest/guest-check
+            subPath: guest/guest-crm
           ports:
             - containerPort: 8080
       volumes:
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: guest-check
+  name: guest-crm
 spec:
   type: ClusterIP
   ports:
@@ -34,4 +34,4 @@ spec:
     targetPort: 8080
     protocol: TCP
   selector:
-    app: guest-check
+    app: guest-crm

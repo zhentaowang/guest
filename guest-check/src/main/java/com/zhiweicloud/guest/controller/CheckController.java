@@ -49,7 +49,7 @@ import java.util.Map;
  */
 @Component
 @Path("/")
-@Api(value = "员工管理", description = "", tags = {"Employee"})
+@Api(value = "对账单管理", description = "", tags = {"对账单管理"})
 public class CheckController {
     private static final Logger logger = LoggerFactory.getLogger(CheckController.class);
 
