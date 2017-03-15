@@ -25,6 +25,7 @@
 package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightMatch;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 
@@ -46,5 +47,6 @@ public interface FlightMapper {
     Integer updateByPrimaryKeySelective(Flight flight);
 
     Long isFlightExist(Flight flight);
+
     Long updateFlight(Flight flight);
 }

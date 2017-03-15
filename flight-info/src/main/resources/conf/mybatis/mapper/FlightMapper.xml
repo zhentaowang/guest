@@ -757,7 +757,7 @@
     WHERE flight_id = #{flightId,jdbcType=BIGINT}
   </update>
 
-  <select id="isFlightExist" resultType="Long">
+  <select id="isFlightExist" resultType="Long" parameterType="com.zhiweicloud.guest.model.Flight">
     SELECT flight_id FROM flight
     WHERE flight_date = #{flightDate,jdbcType=DATE} AND flight_no = #{flightNo,jdbcType=VARCHAR} AND flight_depcode = #{flightDepcode,jdbcType=VARCHAR}
     AND flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND is_deleted = 0

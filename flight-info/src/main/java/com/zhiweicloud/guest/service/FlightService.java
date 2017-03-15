@@ -32,6 +32,7 @@ import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
 import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightMatch;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author zhangpengfei
@@ -82,6 +84,13 @@ public class FlightService {
             flightScheduleEvent.setUpdateUser(userId);
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
+    }
+
+    public Flight queryFlightById(Long id,String airportCode) throws Exception{
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightId", id);
+        params.put("airportCode", airportCode);
+        return flightMapper.selectByPrimaryKey(params);
     }
 
 }
