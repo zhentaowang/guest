@@ -243,12 +243,12 @@ public class ServController {
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "typeId") Long typeId,
-            @Context final HttpHeaders headers) {
+            @QueryParam(value = "isShowAll") boolean isShowAll,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         LZResult<List<Serv>> result = new LZResult<>();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
         try {
-            List<Serv> list = servService.getServNameAndPositionNum(typeId, userId, airportCode, page, rows);
+            List<Serv> list = servService.getServNameAndPositionNum(typeId, userId, airportCode, page, rows, isShowAll);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);

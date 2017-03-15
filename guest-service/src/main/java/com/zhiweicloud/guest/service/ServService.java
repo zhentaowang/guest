@@ -211,10 +211,13 @@ public class ServService {
      * @param airportCode
      * @return
      */
-    public List<Serv> getServNameAndPositionNum(Long typeId, Long userId, String airportCode, Integer page, Integer rows) throws Exception{
-
+    public List<Serv> getServNameAndPositionNum(Long typeId, Long userId, String airportCode, Integer page, Integer rows, boolean isShowAll) throws Exception{
+        List<Serv> servList = new ArrayList<>();
         //查该用户默认选择的 服务厅
-        List<Serv> servList = servMapper.getServNameAndPositionNum(typeId,userId,airportCode,(page-1)*rows,rows,true);
+        if(!isShowAll){
+            servList = servMapper.getServNameAndPositionNum(typeId,userId,airportCode,(page-1)*rows,rows,true);
+
+        }
 
         //若没有设置默认，查询全部
         if(CollectionUtils.isEmpty(servList)){
