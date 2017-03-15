@@ -46,6 +46,7 @@
     <if test="scheduleEventId != null">
       and s.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
     </if>
+    order by s.schedule_event_id desc
   </select>
 
   <select id="getScheduleEventBox" parameterType="map" resultMap="BaseResultMap">
