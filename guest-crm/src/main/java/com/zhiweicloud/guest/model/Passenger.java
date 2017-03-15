@@ -78,23 +78,28 @@ public class Passenger extends BaseEntity{
     private Date expireTime;
 
     /**
-     * 返回参数，使用次数
+     * 返回字段，使用次数
      */
     @Transient
     private int buyTimes;
 
     /**
-     * 返回参数，协议类型（不重复）
+     * 返回字段，协议类型（不重复）
      */
     @Transient
     private String types;
 
     /**
-     * 返回参数，标签名
+     * 返回字段，标签名
      */
     @Transient
     private List<String> labalsName;
 
+    /**
+     * 返回字段，用户编号
+     * @return
+     */
+    private String passengerNo;
 
     public List<String> getLabalsName() {
         List<String> list = new ArrayList<>();
@@ -406,5 +411,21 @@ public class Passenger extends BaseEntity{
 
     public void setBuyTimes(int buyTimes) {
         this.buyTimes = buyTimes;
+    }
+
+    public String getTypes() {
+        return types;
+    }
+
+    public void setTypes(String types) {
+        this.types = types;
+    }
+
+    public String getPassengerNo() {
+        return passengerNo;
+    }
+
+    public void setPassengerNo(String passengerNo) {
+        this.passengerNo = passengerNo;
     }
 }

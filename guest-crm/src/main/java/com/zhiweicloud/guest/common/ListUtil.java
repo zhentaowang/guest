@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest.common;
 
+import org.springframework.util.StringUtils;
+
 import java.util.List;
 
 public class ListUtil {
@@ -36,6 +38,23 @@ public class ListUtil {
 				return List2String(list);
 			}
 			return List2String(list)+","+List2String(list2);
+		}
+
+	}
+
+	/**
+	 * 两个String连接，以“，”分割
+	 * @param <E>
+	 * @param <E>
+	 */
+	public static <E> String StringFormat(String str, String str2){
+		if(StringUtils.isEmpty(str)){
+			return str2;
+		}else{
+			if(StringUtils.isEmpty(str2)){
+				return str;
+			}
+			return str + "," + str2;
 		}
 
 	}

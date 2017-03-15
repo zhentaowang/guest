@@ -54,9 +54,8 @@ public class PassengerController {
             ){
         LZResult<PaginationResult<Passenger>> result = new LZResult<>();
         try{
-            Map<String,Object> map = new HashMap<String,Object>();
             passengerQuery.setAirportCode("LJG");
-            passengerQuery.setTypes(ListUtil.List2String(passengerQuery.getProtocolTypes(),passengerQuery.getLabels()));
+            passengerQuery.setTypes(ListUtil.StringFormat(passengerQuery.getProtocolTypes(),passengerQuery.getLabels()));
 
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());

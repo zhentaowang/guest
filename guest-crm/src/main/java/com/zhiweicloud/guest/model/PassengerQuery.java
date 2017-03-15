@@ -23,10 +23,9 @@ import java.util.List;
 */
 @ApiModel(value="PassengerQuery",description="仅用crm条件查询使用")
 public class PassengerQuery extends BaseEntity{
-    @ApiModelProperty(value="主键自增id",name="passengerId", required=true)
-    @QueryParam("passengerId")
-    private Long passengerId;
 
+    @QueryParam("passengerNo")
+    private String passengerNo;
 
     @ApiModelProperty(value="旅客姓名",name="name")
     @QueryParam("name")
@@ -51,11 +50,11 @@ public class PassengerQuery extends BaseEntity{
 
     @ApiModelProperty(value="协议类型",name="protocolTypes")
     @QueryParam("protocolTypes")
-    private List<Long> protocolTypes;
+    private String protocolTypes;
 
     @ApiModelProperty(value="标签",name="labels")
     @QueryParam("labels")
-    private List<Long> labels;
+    private String labels;
 
     @ApiModelProperty(value="查询开始日期",name="queryDateBegin")
     @QueryParam("queryDateBegin")
@@ -65,25 +64,11 @@ public class PassengerQuery extends BaseEntity{
     @QueryParam("queryDateEnd")
     private String queryDateEnd;
 
-    @ApiModelProperty(value="查询协议类型",name="queryDateEnd")
+    @ApiModelProperty(value="查询协议类型",name="types")
+    @QueryParam("types")
     private String types;
 
 
-    /**
-     * 主键自增id
-     * @return passenger_id 主键自增id
-     */
-    public Long getPassengerId() {
-        return passengerId;
-    }
-
-    /**
-     * 主键自增id
-     * @param passengerId 主键自增id
-     */
-    public void setPassengerId(Long passengerId) {
-        this.passengerId = passengerId;
-    }
 
 
     /**
@@ -158,19 +143,19 @@ public class PassengerQuery extends BaseEntity{
         this.protocolName = protocolName;
     }
 
-    public List<Long> getProtocolTypes() {
+    public String getProtocolTypes() {
         return protocolTypes;
     }
 
-    public void setProtocolTypes(List<Long> protocolTypes) {
+    public void setProtocolTypes(String protocolTypes) {
         this.protocolTypes = protocolTypes;
     }
 
-    public List<Long> getLabels() {
+    public String getLabels() {
         return labels;
     }
 
-    public void setLabels(List<Long> labels) {
+    public void setLabels(String labels) {
         this.labels = labels;
     }
 
@@ -196,5 +181,13 @@ public class PassengerQuery extends BaseEntity{
 
     public void setTypes(String types) {
         this.types = types;
+    }
+
+    public String getPassengerNo() {
+        return passengerNo;
+    }
+
+    public void setPassengerNo(String passengerNo) {
+        this.passengerNo = passengerNo;
     }
 }
