@@ -461,5 +461,5 @@ public class FlightMatch extends BaseEntity {
                 ", boardGateTime='" + boardGateTime + '\'' +
                 '}';
     }
-    
+
 }
