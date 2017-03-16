@@ -39,7 +39,7 @@ public class PassengerController {
     private static Logger logger = LoggerFactory.getLogger(PassengerController.class);
 
     @Autowired
-    private PassengerService crmInfoService;
+    private PassengerService passengerService;
 
     @GET
     @Path(value="getPassengerList")
@@ -49,23 +49,46 @@ public class PassengerController {
     public String getPassengerList(
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-//            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("client-id") String airportCode,
             @BeanParam final PassengerQuery passengerQuery
             ){
         LZResult<PaginationResult<Passenger>> result = new LZResult<>();
         try{
-            passengerQuery.setAirportCode("LJG");
+            passengerQuery.setAirportCode(airportCode);
             passengerQuery.setTypes(ListUtil.StringFormat(passengerQuery.getProtocolTypes(),passengerQuery.getLabels()));
 
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
-            result = crmInfoService.getPassengerList(passengerQuery, page, rows);
+            result = passengerService.getPassengerList(passengerQuery, page, rows);
         } catch (Exception e) {
-            logger.error("CrmInfoController.getPassengerList:", e);
+            logger.error("PassengerController.getPassengerList:", e);
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
         return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+    }
+
+    @GET
+    @Path(value = "getPassengerById")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value="客户管理 - 详情", notes ="返回结果")
+    public String getPassengerById(
+            @HeaderParam("client-id") String airportCode,
+            @QueryParam("passengerId") Long passengerId){
+        LZResult<Passenger> result = new LZResult<>();
+        try{
+            Passenger passenger = passengerService.getPassengerById(passengerId,"LJG");
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(passenger);
+        }catch (Exception e){
+            logger.error("PassengerController.getPassengerById:", e);
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 }
