@@ -35,10 +35,7 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.OrderInfo;
-import com.zhiweicloud.guest.model.OrderInfoQuery;
-import com.zhiweicloud.guest.model.OrderService;
-import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -389,23 +386,24 @@ public class OrderInfoController {
     @Path("queryProtocolIdsInOrderInfoByCustomId")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "查询协议 - 判断协议是否被订单引用 ", notes = "返回协议信息", httpMethod = "GET", produces = "application/json")
-    public LZResult queryProtocolIdsInOrderInfoByCustomId(
+    public LZResult<List<ProtocolList>> queryProtocolIdsInOrderInfoByCustomId(
             @QueryParam("customerIds") String customerIds,
             @HeaderParam("client-id") String airportCode) {
-        LZResult<String> result = new LZResult();
+        List<ProtocolList> protocolLists;
+        LZResult<List<ProtocolList>> result = new LZResult<>();
         try {
-            String resultJson = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(resultJson);
+            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
         } catch (Exception e) {
+            e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            e.printStackTrace();
+            return result;
         }
+        result.setMsg(LZStatus.SUCCESS.display());
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setData(protocolLists);
         return result;
     }
-
 
 }

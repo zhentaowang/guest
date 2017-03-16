@@ -378,7 +378,7 @@ public class OrderInfoService {
      * @param customIds
      * @param airportCode
      */
-    public String queryProtocolIdsInOrderInfoByCustomId(String customIds, String airportCode) throws Exception {
+    public List<ProtocolList> queryProtocolIdsInOrderInfoByCustomId(String customIds, String airportCode) throws Exception {
         String[] customIdArray = customIds.split(",");
         List<ProtocolList> protocolLists = new ArrayList<>();
         for (String s : customIdArray) {
@@ -388,6 +388,6 @@ public class OrderInfoService {
             protocolList.setDropdownlistList(dropdownlists);
             protocolLists.add(protocolList);
         }
-        return JSON.toJSONString(protocolLists, SerializerFeature.WriteNonStringKeyAsString);
+        return protocolLists;
     }
 }
