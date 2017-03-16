@@ -65,7 +65,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="criteria.servIds != null and criteria.servIds != ''">
-      and service_detail->>"$.serviceDetailId" in (${criteria.servIds})
+      and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
@@ -110,7 +110,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="servIds != null and servIds != ''">
-      and service_detail->>"$.serviceDetailId" in (${servIds})
+      and service_detail->>"$.servId" in (${servIds})
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
@@ -146,7 +146,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="criteria.servIds != null and criteria.servIds != ''">
-      and service_detail->>"$.serviceDetailId" in (${criteria.servIds})
+      and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
@@ -191,7 +191,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="servIds != null and servIds != ''">
-      and service_detail->>"$.serviceDetailId" in (${servIds})
+      and service_detail->>"$.servId" in (${servIds})
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
