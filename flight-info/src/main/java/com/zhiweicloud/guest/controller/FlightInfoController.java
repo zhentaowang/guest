@@ -41,6 +41,7 @@ import static com.zhiweicloud.guest.common.Global.privateKey;
 @Path("/")
 @Api(value = "航班信息", description = "航班信息desc ", tags = {"flight-info"})
 public class FlightInfoController {
+
     @Autowired
     private FlightService flightService;
 
@@ -88,13 +89,11 @@ public class FlightInfoController {
             e.printStackTrace();
             return "error...";
         }
-
-
     }
 
     /**
      * 产品品类下拉框 数据
-     *
+     * @param airportNameOrCode 机场名或机场码
      * @return
      */
     @GET
@@ -119,17 +118,19 @@ public class FlightInfoController {
 
     /**
      * 航班号信息下拉框 数据
-     *
-     * @param headers 请求头
+     * @param flightNo 航班号
+     * @param airportCode 机场码
+     * @param userId 用户ID
      * @return
      */
     @GET
     @Path("flightNoDropdownList")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "航班号下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-    public String flightNoDropdownList(@QueryParam(value = "flightNo") String flightNo, @Context final HttpHeaders headers) {
+    public String flightNoDropdownList(@QueryParam(value = "flightNo") String flightNo,
+                                       @HeaderParam("client-id") String airportCode,
+                                       @HeaderParam("user-id") Long userId) {
         LZResult<List<Map<String, String>>> result = new LZResult<>();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         try {
             List<Map<String, String>> list = flightService.flightNoDropdownList(flightNo, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
@@ -145,19 +146,23 @@ public class FlightInfoController {
     }
 
     /**
-     * 更新航班信息 根据航班对象的航班ID（flight_id）
-     *
+     * 更新航班信息
+     * @param data 龙腾推送航班信息
+     * @param sign 签名
+     * @param airportCode 机场码
+     * @param userId 用户ID
      * @return
      */
     @POST
     @Path("updateFlight")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
-    public String updateFlight(@RequestBody String json,
+    public String updateFlight(String data,
+                               String sign,
                                @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
         try {
-            FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(json), FlightMatch.class);
+            FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
             Flight flight = new Flight();
             BeanUtils.copyProperties(flight, flightMatch);
             if (flight == null) {
