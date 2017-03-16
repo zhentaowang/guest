@@ -6,5 +6,6 @@
     <settings>
         <setting name="logImpl" value="LOG4J" />
         <setting name="cacheEnabled" value="true" /> <!--使用mybatis缓存-->
+        <setting name="callSettersOnNulls" value="true"/> <!-- 解决 mybatis 在查询的时候，可以返回Map，但是一旦这个字段为null的时候，map里就没有了 -->
     </settings>
 </configuration>
