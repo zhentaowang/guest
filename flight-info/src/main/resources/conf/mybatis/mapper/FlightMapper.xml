@@ -65,7 +65,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="criteria.servIds != null and criteria.servIds != ''">
-      and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
+      and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
@@ -110,7 +110,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="servIds != null and servIds != ''">
-      and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
+      and service_detail->>"$.servId" in (${servIds})
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
@@ -146,7 +146,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="criteria.servIds != null and criteria.servIds != ''">
-      and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
+      and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
@@ -167,7 +167,7 @@
       and fs.flight_state = #{criteria.flightState,jdbcType=SMALLINT}
     </if>
     <if test="criteria.scheduleEventId != null and criteria.scheduleEventId != ''">
-      and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
+      and fs.schedule_event_id = (#{criteria.scheduleEventId,jdbcType=BIGINT})
     </if>
     order by fs.schedule_time desc,
     <if test="criteria.isInOrOut == 0">
@@ -191,7 +191,7 @@
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
     <if test="servIds != null and servIds != ''">
-      and service_detail->>"$.serviceDetailId" in #{servIds,jdbcType=VARCHAR}
+      and service_detail->>"$.servId" in (${servIds})
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
@@ -751,10 +751,15 @@
     WHERE flight_id = #{flightId,jdbcType=BIGINT}
     </update>
 
-    <select id="isFlightExist" resultType="Long" parameterType="com.zhiweicloud.guest.model.Flight">
-    SELECT flight_id FROM flight
-    WHERE flight_date = #{flightDate,jdbcType=DATE} AND flight_no = #{flightNo,jdbcType=VARCHAR} AND flight_depcode = #{flightDepcode,jdbcType=VARCHAR}
-    AND flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND is_deleted = 0
+    <select id="isFlightExist" parameterType="com.zhiweicloud.guest.model.Flight" resultMap="BaseResultMap">
+      SELECT
+      <include refid="Base_Column_List" />
+      FROM flight WHERE
+      flight_date = #{flightDate,jdbcType=DATE} AND
+      flight_no = #{flightNo,jdbcType=VARCHAR} AND
+      flight_depcode = #{flightDepcode,jdbcType=VARCHAR} AND
+      flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND
+      is_deleted = 0
     </select>
 
         <!--and airport_code = #{airportCode}-->

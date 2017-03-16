@@ -290,6 +290,11 @@ public class ScheduleEventController {
         try {
             List<Long> ids = params.getData();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            for (int i = 0; i < ids.size(); i++) {
+                if (scheduleEventService.selectFlightByScheduleEventId(ids.get(i), airportCode) == true) {
+                    return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
+                }
+            }
             scheduleEventService.deleteById(ids,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
