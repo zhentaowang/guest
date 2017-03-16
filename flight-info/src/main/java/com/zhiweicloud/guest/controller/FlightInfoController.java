@@ -164,19 +164,30 @@ public class FlightInfoController {
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
             Flight flight = new Flight();
             BeanUtils.copyProperties(flight, flightMatch);
+            Map<String, Object> result = new HashMap<>();
             if (flight == null) {
-                return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
+                result.put("state",-1);
+                result.put("info", "推送航班信息为空");
+                return JSON.toJSONString(result);
             }
             flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
             flightService.updateFlight(flight);
-            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+            result.put("state",1);
+            result.put("info", "接收并处理成功");
+            return JSON.toJSONString(result);
         } catch (FlightException e) {
             e.printStackTrace();
-            return JSON.toJSONString(LXResult.build(LZStatus.NOT_FOUND.value(), LZStatus.NOT_FOUND.display()));
+            Map<String, Object> result = new HashMap<>();
+            result.put("state",2);
+            result.put("info", e.getMessage());
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             e.printStackTrace();
-            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+            Map<String, Object> result = new HashMap<>();
+            result.put("state",-1);
+            result.put("info", "操作失败");
+            return JSON.toJSONString(result);
         }
     }
 
