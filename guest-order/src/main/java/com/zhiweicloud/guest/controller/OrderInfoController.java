@@ -389,7 +389,7 @@ public class OrderInfoController {
     @Path("queryProtocolIdsInOrderInfoByCustomId")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "查询协议 - 判断协议是否被订单引用 ", notes = "返回协议信息", httpMethod = "GET", produces = "application/json")
-    public String queryProtocolIdsInOrderInfoByCustomId(
+    public LZResult queryProtocolIdsInOrderInfoByCustomId(
             @QueryParam("customerIds") String customerIds,
             @HeaderParam("client-id") String airportCode) {
         LZResult<String> result = new LZResult();
@@ -404,7 +404,7 @@ public class OrderInfoController {
             result.setData(null);
             e.printStackTrace();
         }
-        return JSON.toJSONString(result);
+        return result;
     }
 
 
