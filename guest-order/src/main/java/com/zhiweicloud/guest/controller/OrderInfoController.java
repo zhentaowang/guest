@@ -379,5 +379,33 @@ public class OrderInfoController {
         return JSON.toJSONString(result);
     }
 
+    /**
+     * 查找客户下有订单的协议ID
+     * @param customerIds 客户ID串
+     * @param airportCode 机场码
+     * @return
+     */
+    @GET
+    @Path("queryProtocolIdsInOrderInfoByCustomId")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "查询协议 - 判断协议是否被订单引用 ", notes = "返回协议信息", httpMethod = "GET", produces = "application/json")
+    public String queryProtocolIdsInOrderInfoByCustomId(
+            @QueryParam("customerIds") String customerIds,
+            @HeaderParam("client-id") String airportCode) {
+        LZResult<String> result = new LZResult();
+        try {
+            String resultJson = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(resultJson);
+        } catch (Exception e) {
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(result);
+    }
+
 
 }
