@@ -29,6 +29,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.zhiweicloud.guest.common.Global.privateKey;
@@ -63,27 +64,27 @@ public class FlightInfoController {
     public String view(@QueryParam(value = "fnum") String fnum,
                        @QueryParam(value = "date") String date) {
         try {
+//            测试环境
+//            String sysCode = "dpctest";
+//            生产环境
+            String sysCode = "vip_cloud";
             String privateKey = Global.getPrivateKey();
             Map<String, String> params = new HashMap<>();
             params.put("date", date);
             params.put("fnum", fnum);
-
             params.put("lg", "zh-cn");
-            params.put("sysCode", "dpctest");
-
+            params.put("sysCode", sysCode);
 
             String sign = DragonSignature.rsaSign(params, privateKey, "UTF-8");
-            //System.out.print("sign:" + sign);
-
-
             Map<String, Object> p = new HashMap<>();
             p.put("date", date);
             p.put("fnum", fnum);
             p.put("lg", "zh-cn");
-            p.put("sysCode", "dpctest");
+            p.put("sysCode", sysCode);
             p.put("sign", sign);
 
-            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
+//            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
+            String ret = HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
             return new String(ret.getBytes("ISO-8859-1"), "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,8 +148,7 @@ public class FlightInfoController {
 
     /**
      * 更新航班信息
-     * @param data 龙腾推送航班信息
-     * @param sign 签名
+     * @param dataStr 龙腾推送航班信息
      * @param airportCode 机场码
      * @param userId 用户ID
      * @return
@@ -156,12 +156,13 @@ public class FlightInfoController {
     @POST
     @Path("updateFlight")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
-    public String updateFlight(String data,
-                               String sign,
+    @Consumes("text/plain;charset=utf8")
+    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json",consumes = "text/plain",tags = {"flight-info"})
+    public String updateFlight(String dataStr,
                                @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
         try {
+            String data = dataStr.substring(dataStr.indexOf("{"),dataStr.indexOf("}")+1);
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
             Flight flight = new Flight();
             BeanUtils.copyProperties(flight, flightMatch);
@@ -209,13 +210,13 @@ public class FlightInfoController {
         }
     }
 
-
     /**
      * 定制航班信息
-     *
-     * @param flightId
+     * 调用了龙腾的接口
+     * @param flightId 航班ID
      * @return
      */
+    @GET
     @Path("customFlight")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
@@ -223,30 +224,36 @@ public class FlightInfoController {
     public String customFlight(@QueryParam(value = "flightId") Long flightId,
                                @HeaderParam("client-id") String airportCode) {
         try {
+//            测试环境
+//            String sysCode = "dpctest";
+//            生产环境
+            String sysCode = "vip_cloud";
+
             Flight flight = flightService.queryFlightById(flightId, airportCode);
             // 获得数字签名
             String privateKey = Global.getPrivateKey();
             Map<String, String> params = new HashMap<>();
-            params.put("date", "2017-03-15");
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+            params.put("date", sdf.format(flight.getFlightDate()));
             params.put("fnum", flight.getFlightNo());
             params.put("dep", flight.getFlightDepcode());
             params.put("arr", flight.getFlightArrcode());
-//            params.put("lg", "zh-cn");
-            params.put("sysCode", "dpctest");
+            params.put("sysCode", sysCode);
             String sign = DragonSignature.rsaSign(params, privateKey, "UTF-8");
 
             Map<String, Object> p = new HashMap<>();
-            p.put("date", "2017-03-15");
+            p.put("date", sdf.format(flight.getFlightDate()));
             p.put("fnum", flight.getFlightNo());
             p.put("dep", flight.getFlightDepcode());
             p.put("arr", flight.getFlightArrcode());
-            p.put("sysCode", "dpctest");
+            p.put("sysCode", sysCode);
             p.put("sign", sign);
-            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
+//            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
+            String ret = HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
             String result = new String(ret.getBytes("ISO-8859-1"), "UTF-8");
 
             JSONObject resultObject = JSON.parseObject(result);
-            String state = resultObject.getString("state");
+            String state = resultObject.getString("State");
             if ("1".equals(state)) {
                 return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
             }

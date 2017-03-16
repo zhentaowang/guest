@@ -419,4 +419,47 @@ public class FlightMatch extends BaseEntity {
         this.boardGateTime = boardGateTime;
     }
 
+    @Override
+    public String toString() {
+        return "FlightMatch{" +
+                "flightId=" + flightId +
+                ", flightDate=" + flightDate +
+                ", flightNo='" + flightNo + '\'' +
+                ", flightDepcode='" + flightDepcode + '\'' +
+                ", flightArrcode='" + flightArrcode + '\'' +
+                ", planNo='" + planNo + '\'' +
+                ", flightPosition='" + flightPosition + '\'' +
+                ", boardInOut=" + boardInOut +
+                ", isInOrOut=" + isInOrOut +
+                ", isNearOrFar=" + isNearOrFar +
+                ", fdId='" + fdId + '\'' +
+                ", flightCompany='" + flightCompany + '\'' +
+                ", flightDeptimePlanDate=" + flightDeptimePlanDate +
+                ", flightArrtimePlanDate=" + flightArrtimePlanDate +
+                ", flightDeptimeReadyDate=" + flightDeptimeReadyDate +
+                ", flightArrtimeReadyDate=" + flightArrtimeReadyDate +
+                ", flightDeptimeDate=" + flightDeptimeDate +
+                ", flightArrtimeDate=" + flightArrtimeDate +
+                ", stopFlag=" + stopFlag +
+                ", shareFlag=" + shareFlag +
+                ", shareFlightNo='" + shareFlightNo + '\'' +
+                ", fillFlightNo='" + fillFlightNo + '\'' +
+                ", boardGate='" + boardGate + '\'' +
+                ", boardState='" + boardState + '\'' +
+                ", flightState='" + flightState + '\'' +
+                ", flightHterminal='" + flightHterminal + '\'' +
+                ", flightTerminal='" + flightTerminal + '\'' +
+                ", flightDep='" + flightDep + '\'' +
+                ", flightArr='" + flightArr + '\'' +
+                ", flightDepAirport='" + flightDepAirport + '\'' +
+                ", flightArrAirport='" + flightArrAirport + '\'' +
+                ", alternateInfo='" + alternateInfo + '\'' +
+                ", orgTimezone='" + orgTimezone + '\'' +
+                ", dstTimezone='" + dstTimezone + '\'' +
+                ", fcategory='" + fcategory + '\'' +
+                ", fid='" + fid + '\'' +
+                ", boardGateTime='" + boardGateTime + '\'' +
+                '}';
+    }
+    
 }

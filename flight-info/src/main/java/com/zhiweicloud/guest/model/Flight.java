@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Flight.java
