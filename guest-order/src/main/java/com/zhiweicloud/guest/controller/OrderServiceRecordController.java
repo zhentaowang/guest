@@ -110,9 +110,9 @@ public class OrderServiceRecordController {
                 if(orderParam.getAgentComplete() != null){
                     tempOrder.setAgentComplete(orderParam.getAgentComplete());
                     if(Constant.MARK_AS_BUSS_DATA == orderParam.getAgentComplete()){
-                        record.setRecordDesc(OrderConstant.ORDER_SER_SERVER_COMPLETE);
-                    }else{
                         record.setRecordDesc(OrderConstant.ORDER_SER_SERVER_RESTART);
+                    }else{
+                        record.setRecordDesc(OrderConstant.ORDER_SER_SERVER_COMPLETE);
                     }
                     record.setCreateTime(new Date());
                     orderServiceRecordService.insert(record);

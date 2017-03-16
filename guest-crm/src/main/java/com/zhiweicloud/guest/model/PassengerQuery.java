@@ -47,7 +47,6 @@ public class PassengerQuery extends BaseEntity{
     @QueryParam("protocolName")
     private String protocolName;
 
-
     @ApiModelProperty(value="协议类型",name="protocolTypes")
     @QueryParam("protocolTypes")
     private String protocolTypes;

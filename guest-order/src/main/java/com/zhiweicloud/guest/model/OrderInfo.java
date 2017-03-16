@@ -89,7 +89,7 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="订单类型：0：预约订单，1：服务订单",name="orderType")
     private Short orderType;
 
-    @ApiModelProperty(value="代办完成：0：是，1：否",name="agentComplete")
+    @ApiModelProperty(value="代办完成：1：是，0：否",name="agentComplete")
     private Short agentComplete;
 
     @ApiModelProperty(value="安排代办人",name="agentPerson")

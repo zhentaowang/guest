@@ -5,6 +5,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.mapper.PassengerMapper;
 import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.model.PassengerQuery;
+import com.zhiweicloud.guest.model.ServiceInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,16 @@ public class PassengerService {
             return passenger;
         }
         return null;
+    }
+
+    /**
+     * 获取手机或者身份证匹配的 服务信息
+     * 手机号 身份证为空的话 获取 crmPassengerId 的服务信息
+     * @param param
+     * @return
+     */
+    public List<ServiceInfo> getServiceInfoList(Map<String, Object> param){
+        return passengerMapper.queryServiceInfoList(param);
     }
 
 }

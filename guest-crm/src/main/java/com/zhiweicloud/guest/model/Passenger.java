@@ -12,8 +12,6 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -23,7 +21,7 @@ import org.springframework.util.StringUtils;
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-03-13 20:46:33 Created By Administrator
+ * 2017-03-13 20:46:33 Created By zhengyiyin
 */
 @ApiModel(value="Passenger",description="passenger")
 public class Passenger extends BaseEntity{
@@ -100,6 +98,14 @@ public class Passenger extends BaseEntity{
      * @return
      */
     private String passengerNo;
+
+    /**
+     * 返回字段，服务信息
+     * @return
+     */
+    private List<ServiceInfo> serviceInfoList;
+
+
 
     public List<String> getLabalsName() {
         List<String> list = new ArrayList<>();
@@ -427,5 +433,13 @@ public class Passenger extends BaseEntity{
 
     public void setPassengerNo(String passengerNo) {
         this.passengerNo = passengerNo;
+    }
+
+    public List<ServiceInfo> getServiceInfoList() {
+        return serviceInfoList;
+    }
+
+    public void setServiceInfoList(List<ServiceInfo> serviceInfoList) {
+        this.serviceInfoList = serviceInfoList;
     }
 }

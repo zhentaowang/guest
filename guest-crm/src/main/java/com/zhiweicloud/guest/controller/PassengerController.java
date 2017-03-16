@@ -9,22 +9,19 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.ListUtil;
-import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.model.PassengerQuery;
+import com.zhiweicloud.guest.model.ServiceInfo;
 import com.zhiweicloud.guest.service.PassengerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,22 +66,76 @@ public class PassengerController {
         return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 
+    /**
+     * 客户详情信息，以及 服务信息
+     * @param crmPassengerId
+     * @return
+     */
     @GET
     @Path(value = "getPassengerById")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="客户管理 - 详情", notes ="返回结果")
     public String getPassengerById(
-            @HeaderParam("client-id") String airportCode,
-            @QueryParam("passengerId") Long passengerId){
+//            @HeaderParam("client-id") String airportCode,
+            @QueryParam("passengerId") Long crmPassengerId){
         LZResult<Passenger> result = new LZResult<>();
         try{
-            Passenger passenger = passengerService.getPassengerById(passengerId,"LJG");
+            String airportCode = "LJG";
+            Passenger passenger = passengerService.getPassengerById(crmPassengerId,airportCode);
+            if(passenger != null){
+                Map<String, Object> param = new HashMap();
+                param.put("airportCode", airportCode);
+                param.put("crmPassengerId", crmPassengerId);
+                param.put("phone", passenger.getPhone());
+                param.put("identityCard", passenger.getIdentityCard());
+                List<ServiceInfo>  serviceInfoList = passengerService.getServiceInfoList(param);
+                passenger.setServiceInfoList(serviceInfoList);
+            }
+
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(passenger);
         }catch (Exception e){
             logger.error("PassengerController.getPassengerById:", e);
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
+    }
+
+
+    @GET
+    @Path(value = "getLabelInfo")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value="客户详情 - 标签信息", notes ="返回结果")
+    public String getLableInfo(
+//            @HeaderParam("client-id") String airportCode,
+            @QueryParam("passengerId") Long crmPassengerId,
+            @QueryParam("phone") Long phone,
+            @QueryParam("identityCard") String identityCard,
+            @QueryParam("protocolTypes") String protocolTypes
+            ){
+        LZResult<List<ServiceInfo>> result = new LZResult<>();
+        try{
+            String airportCode = "LJG";
+
+            Map<String, Object> param = new HashMap();
+            param.put("airportCode", airportCode);
+            param.put("crmPassengerId", crmPassengerId);
+            param.put("phone", phone);
+            param.put("identityCard", identityCard);
+            param.put("protocolTypes", protocolTypes);
+
+            List<ServiceInfo> serviceInfoList = passengerService.getServiceInfoList(param);
+
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(serviceInfoList);
+        }catch (Exception e){
+            logger.error("PassengerController.getLableInfo:", e);
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);

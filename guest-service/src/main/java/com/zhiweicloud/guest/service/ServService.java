@@ -245,7 +245,7 @@ public class ServService {
 
                 paramMap.put("serviceDetailId", serviceDetailId);
                 JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServiceDetailId", headerMap, paramMap));
-                //解析协议产品服务对象
+                //解析协议产品服务对象,统计人数
                 servNum = servNum + Integer.valueOf(orderServiceJSONObject.get("data").toString());
             }
             serv.setServerNum(servNum);
