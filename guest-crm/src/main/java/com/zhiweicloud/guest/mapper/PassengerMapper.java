@@ -53,4 +53,11 @@ public interface PassengerMapper {
      * @return
      */
     int getListCount(@Param("passengerQuery") PassengerQuery passengerQuery);
+
+    /**
+     * 根据id查询，为防止结果集出现重复id，返回list
+     * @param passengerId
+     * @return
+     */
+    List<Passenger> queryById(@Param("passengerId") Long passengerId, @Param("airportCode") String airportCode);
 }
