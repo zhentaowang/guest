@@ -51,7 +51,7 @@ public interface FlightMapper {
 
     Integer updateByPrimaryKeySelective(Flight flight);
 
-    Long isFlightExist(Flight flight);
+    Flight isFlightExist(Flight flight);
 
     void updateFlight(Flight flight);
 }

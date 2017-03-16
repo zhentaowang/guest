@@ -36,7 +36,7 @@ public class FlightMatch extends BaseEntity {
 
     private Short isNearOrFar;
 
-    @JSONField(name = "FD_ID")
+    @JSONField(name = "fd_id")
     private String fdId;
 
     @JSONField(name = "FlightCompany")

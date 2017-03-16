@@ -26,13 +26,10 @@ package com.zhiweicloud.guest.service;
 
 
 import com.zhiweicloud.guest.common.FlightException;
-import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.AirportInfoMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
-import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
-import com.zhiweicloud.guest.model.FlightMatch;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +37,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author zhangpengfei
@@ -67,12 +63,17 @@ public class FlightService {
     }
 
     public void updateFlight(Flight flight) throws Exception {
-        Long flightId = flightMapper.isFlightExist(flight);
-        if (flightId == null || flightId.equals("") || flightId == 0) {
+        Flight queryFlight = flightMapper.isFlightExist(flight);
+        Long flightId = queryFlight.getFlightId();
+        if (queryFlight == null || queryFlight.getFlightId() == 0) {
             throw new FlightException("没有找到对应的航班信息");
         } else {
-            flight.setFlightId(flightId);
-            flightMapper.updateFlight(flight);
+            if (Long.valueOf(queryFlight.getFdId()) < Long.valueOf(flight.getFdId())) {
+                flight.setFlightId(flightId);
+                flightMapper.updateFlight(flight);
+            } else {
+                throw new FlightException("无需更新");
+            }
         }
     }
 
