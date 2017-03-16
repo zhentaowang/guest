@@ -5,6 +5,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.mapper.PassengerMapper;
 import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.model.PassengerQuery;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,6 +40,21 @@ public class PassengerService {
         PaginationResult<Passenger> eqr = new PaginationResult<>(total, passengerList);
         LZResult<PaginationResult<Passenger>> result = new LZResult<>(eqr);
         return result;
+    }
+
+    /**
+     * 根据id 获取用户信息
+     * @param passengerId
+     * @return
+     */
+    public Passenger getPassengerById(Long passengerId,String airportCode) throws Exception{
+        List<Passenger> passengerList = passengerMapper.queryById(passengerId,airportCode);
+        if(!CollectionUtils.isEmpty(passengerList)){
+            Passenger passenger = passengerList.get(0);
+
+            return passenger;
+        }
+        return null;
     }
 
 }
