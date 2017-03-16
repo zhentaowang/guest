@@ -12,14 +12,13 @@ import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.Flight;
-import com.zhiweicloud.guest.model.FlightScheduleEvent;
-import com.zhiweicloud.guest.model.ScheduleEvent;
+import com.zhiweicloud.guest.mapper.FlightMapper;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.FlightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +30,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
+
+import static com.zhiweicloud.guest.common.Global.privateKey;
 
 
 /**
@@ -63,8 +64,8 @@ public class FlightInfoController {
         try {
             String privateKey = Global.getPrivateKey();
             Map<String, String> params = new HashMap<>();
-            params.put("date",date);
-            params.put("fnum",fnum);
+            params.put("date", date);
+            params.put("fnum", fnum);
 
             params.put("lg", "zh-cn");
             params.put("sysCode", "dpctest");
@@ -75,15 +76,15 @@ public class FlightInfoController {
 
 
             Map<String, Object> p = new HashMap<>();
-            p.put("date",date);
-            p.put("fnum",fnum);
+            p.put("date", date);
+            p.put("fnum", fnum);
             p.put("lg", "zh-cn");
             p.put("sysCode", "dpctest");
             p.put("sign", sign);
 
             String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
-            return new String(ret.getBytes("ISO-8859-1"),"UTF-8");
-        }catch (Exception e){
+            return new String(ret.getBytes("ISO-8859-1"), "UTF-8");
+        } catch (Exception e) {
             e.printStackTrace();
             return "error...";
         }
@@ -101,13 +102,13 @@ public class FlightInfoController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "航段下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     public String flightInfoDropdownList(@QueryParam(value = "airportNameOrCode") String airportNameOrCode) {
-        LZResult<List<Map<String,String>>> result = new LZResult<>();
+        LZResult<List<Map<String, String>>> result = new LZResult<>();
         try {
-            List<Map<String,String>> list = flightService.flightInfoDropdownList(airportNameOrCode);
+            List<Map<String, String>> list = flightService.flightInfoDropdownList(airportNameOrCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
@@ -118,6 +119,7 @@ public class FlightInfoController {
 
     /**
      * 航班号信息下拉框 数据
+     *
      * @param headers 请求头
      * @return
      */
@@ -125,15 +127,15 @@ public class FlightInfoController {
     @Path("flightNoDropdownList")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "航班号下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-    public String flightNoDropdownList(@QueryParam(value = "flightNo") String flightNo,@Context final HttpHeaders headers) {
-        LZResult<List<Map<String,String>>> result = new LZResult<>();
+    public String flightNoDropdownList(@QueryParam(value = "flightNo") String flightNo, @Context final HttpHeaders headers) {
+        LZResult<List<Map<String, String>>> result = new LZResult<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         try {
-            List<Map<String,String>> list = flightService.flightNoDropdownList(flightNo,airportCode);
+            List<Map<String, String>> list = flightService.flightNoDropdownList(flightNo, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
@@ -151,21 +153,24 @@ public class FlightInfoController {
     @Path("updateFlight")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
-    public String updateFlight(@RequestBody Flight flight,
+    public String updateFlight(@RequestBody String json,
                                @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
-        try{
-            if (flight == null){
+        try {
+            FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(json), FlightMatch.class);
+            Flight flight = new Flight();
+            BeanUtils.copyProperties(flight, flightMatch);
+            if (flight == null) {
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
             flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
             flightService.updateFlight(flight);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
-        }catch (FlightException e){
+        } catch (FlightException e) {
             e.printStackTrace();
             return JSON.toJSONString(LXResult.build(LZStatus.NOT_FOUND.value(), LZStatus.NOT_FOUND.display()));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
@@ -181,21 +186,69 @@ public class FlightInfoController {
     @Path("saveOrUpdateFlightScheduleEvent")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value="保存 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
+    @ApiOperation(value = "保存 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public String saveOrUpdateFlightScheduleEvent(@ApiParam(value = "flightScheduleEvent", required = true) @RequestBody String params,
-                                                    @HeaderParam("client-id") String airportCode,
-                                                    @HeaderParam("user-id") Long userId){
-        try{
+                                                  @HeaderParam("client-id") String airportCode,
+                                                  @HeaderParam("user-id") Long userId) {
+        try {
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for (int i = 0; i < param.size(); i++) {
-                FlightScheduleEvent flightScheduleEvent = JSONObject.toJavaObject(JSON.parseObject(param.get(i).toString()),FlightScheduleEvent.class);
+                FlightScheduleEvent flightScheduleEvent = JSONObject.toJavaObject(JSON.parseObject(param.get(i).toString()), FlightScheduleEvent.class);
                 flightScheduleEvent.setAirportCode(airportCode);
-                flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent,userId);
+                flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent, userId);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
             e.printStackTrace();
-            return  JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+    }
+
+
+    /**
+     * 定制航班信息
+     *
+     * @param flightId
+     * @return
+     */
+    @Path("customFlight")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "定制航班 - 推送给龙腾", notes = "返回成功还是失败", httpMethod = "GET", produces = "application/json")
+    public String customFlight(@QueryParam(value = "flightId") Long flightId,
+                               @HeaderParam("client-id") String airportCode) {
+        try {
+            Flight flight = flightService.queryFlightById(flightId, airportCode);
+            // 获得数字签名
+            String privateKey = Global.getPrivateKey();
+            Map<String, String> params = new HashMap<>();
+            params.put("date", "2017-03-15");
+            params.put("fnum", flight.getFlightNo());
+            params.put("dep", flight.getFlightDepcode());
+            params.put("arr", flight.getFlightArrcode());
+//            params.put("lg", "zh-cn");
+            params.put("sysCode", "dpctest");
+            String sign = DragonSignature.rsaSign(params, privateKey, "UTF-8");
+
+            Map<String, Object> p = new HashMap<>();
+            p.put("date", "2017-03-15");
+            p.put("fnum", flight.getFlightNo());
+            p.put("dep", flight.getFlightDepcode());
+            p.put("arr", flight.getFlightArrcode());
+            p.put("sysCode", "dpctest");
+            p.put("sign", sign);
+            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
+            String result = new String(ret.getBytes("ISO-8859-1"), "UTF-8");
+
+            JSONObject resultObject = JSON.parseObject(result);
+            String state = resultObject.getString("state");
+            if ("1".equals(state)) {
+                return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+            }
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 

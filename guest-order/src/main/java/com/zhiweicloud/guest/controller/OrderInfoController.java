@@ -135,24 +135,21 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             } else {
-                if(order.getOrderStatus().equals("预约取消") || order.getOrderStatus().equals("服务取消")){
-
-                }else {
-                    if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null) {
-                        result.setMsg("出发地三字码或者目的地三字码为空");
-                        result.setStatus(5006);
+                if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null || order.getFlight().getFlightArrcode().equals("") || order.getFlight().getFlightDepcode().equals("")) {
+                    result.setMsg("出发地三字码或者目的地三字码为空");
+                    result.setStatus(5006);
+                    result.setData(null);
+                }else{
+                    String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
+                    if(!res.equals("操作成功")){
+                        result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
+                        result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
+                        result.setData(res);
+                    }else{
+                        result.setMsg(LZStatus.SUCCESS.display());
+                        result.setStatus(LZStatus.SUCCESS.value());
                         result.setData(null);
                     }
-                }
-                String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
-                if(!res.equals("操作成功")){
-                    result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
-                    result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
-                    result.setData(res);
-                }else{
-                    result.setMsg(LZStatus.SUCCESS.display());
-                    result.setStatus(LZStatus.SUCCESS.value());
-                    result.setData(null);
                 }
             }
         } catch (Exception e) {

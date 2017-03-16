@@ -64,8 +64,8 @@
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.servId != null and criteria.servId != ''">
-      and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
+    <if test="criteria.servIds != null and criteria.servIds != ''">
+      and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
@@ -109,8 +109,8 @@
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="servId != null and servId != ''">
-      and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
+    <if test="servIds != null and servIds != ''">
+      and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
@@ -145,8 +145,8 @@
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.servId != null and criteria.servId != ''">
-      and service_detail->>"$.serviceDetailId" = #{criteria.servId,jdbcType=BIGINT}
+    <if test="criteria.servIds != null and criteria.servIds != ''">
+      and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
@@ -190,8 +190,8 @@
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="servId != null and servId != ''">
-      and service_detail->>"$.serviceDetailId" = #{servId,jdbcType=BIGINT}
+    <if test="servIds != null and servIds != ''">
+      and service_detail->>"$.serviceDetailId" in #{servIds,jdbcType=VARCHAR}
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
@@ -650,119 +650,113 @@
     where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 
-  <update id="updateFlight" parameterType="com.zhiweicloud.guest.model.Flight">
-    UPDATE flight
-    <set>
-      <if test="planNo != null">
-        plan_no = #{planNo,jdbcType=VARCHAR},
-      </if>
-      <if test="flightPosition != null">
+<update id="updateFlight" parameterType="com.zhiweicloud.guest.model.Flight">
+UPDATE flight
+<set>
+    <if test="flightPosition != null">
         flight_position = #{flightPosition,jdbcType=VARCHAR},
-      </if>
-      <if test="boardInOut != null">
+    </if>
+    <if test="boardInOut != null">
         board_in_out = #{boardInOut,jdbcType=SMALLINT},
-      </if>
-      <if test="isInOrOut != null">
+    </if>
+    <if test="isInOrOut != null">
         is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},
-      </if>
-      <if test="isNearOrFar != null">
+    </if>
+    <if test="isNearOrFar != null">
         is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},
-      </if>
-      <if test="serverTime != null">
-        server_time = #{serverTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="fdId != null">
+    </if>
+    <if test="fdId != null">
         fd_id = #{fdId,jdbcType=VARCHAR},
-      </if>
-      <if test="flightCompany != null">
+    </if>
+    <if test="flightCompany != null">
         flight_company = #{flightCompany,jdbcType=VARCHAR},
-      </if>
-      <if test="flightDeptimePlanDate != null">
-        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=DATE},
-      </if>
-      <if test="flightArrtimePlanDate != null">
-        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=DATE},
-      </if>
-      <if test="flightDeptimeReadyDate != null">
-        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=DATE},
-      </if>
-      <if test="flightArrtimeReadyDate != null">
-        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=DATE},
-      </if>
-      <if test="flightDeptimeDate != null">
-        flight_deptime_date = #{flightDeptimeDate,jdbcType=DATE},
-      </if>
-      <if test="flightArrtimeDate != null">
-        flight_arrtime_date = #{flightArrtimeDate,jdbcType=DATE},
-      </if>
-      <if test="stopFlag != null">
+    </if>
+    <if test="flightDeptimePlanDate != null">
+        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="flightArrtimePlanDate != null">
+        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="flightDeptimeReadyDate != null">
+        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="flightArrtimeReadyDate != null">
+        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="flightDeptimeDate != null">
+        flight_deptime_date = #{flightDeptimeDate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="flightArrtimeDate != null">
+        flight_arrtime_date = #{flightArrtimeDate,jdbcType=TIMESTAMP},
+    </if>
+    <if test="stopFlag != null">
         stop_flag = #{stopFlag,jdbcType=SMALLINT},
-      </if>
-      <if test="shareFlag != null">
+    </if>
+    <if test="shareFlag != null">
         share_flag = #{shareFlag,jdbcType=SMALLINT},
-      </if>
-      <if test="shareFlightNo != null">
+    </if>
+    <if test="shareFlightNo != null">
         share_flight_no = #{shareFlightNo,jdbcType=VARCHAR},
-      </if>
-      <if test="fillFlightNo != null">
+    </if>
+    <if test="fillFlightNo != null">
         fill_flight_no = #{fillFlightNo,jdbcType=VARCHAR},
-      </if>
-      <if test="boardGate != null">
+    </if>
+    <if test="boardGate != null">
         board_gate = #{boardGate,jdbcType=VARCHAR},
-      </if>
-      <if test="boardState != null">
+    </if>
+    <if test="boardState != null">
         board_state = #{boardState,jdbcType=VARCHAR},
-      </if>
-      <if test="flightState != null">
+    </if>
+    <if test="flightState != null">
         flight_state = #{flightState,jdbcType=VARCHAR},
-      </if>
-      <if test="flightHterminal != null">
+    </if>
+    <if test="flightHterminal != null">
         flight_hterminal = #{flightHterminal,jdbcType=VARCHAR},
-      </if>
-      <if test="flightTerminal != null">
+    </if>
+    <if test="flightTerminal != null">
         flight_terminal = #{flightTerminal,jdbcType=VARCHAR},
-      </if>
-      <if test="flightDep != null">
+    </if>
+    <if test="flightDep != null">
         flight_dep = #{flightDep,jdbcType=VARCHAR},
-      </if>
-      <if test="flightArr != null">
+    </if>
+    <if test="flightArr != null">
         flight_arr = #{flightArr,jdbcType=VARCHAR},
-      </if>
-      <if test="flightDepAirport != null">
+    </if>
+    <if test="flightDepAirport != null">
         flight_dep_airport = #{flightDepAirport,jdbcType=VARCHAR},
-      </if>
-      <if test="flightArrAirport != null">
+    </if>
+    <if test="flightArrAirport != null">
         flight_arr_airport = #{flightArrAirport,jdbcType=VARCHAR},
-      </if>
-      <if test="alternateInfo != null">
+    </if>
+    <if test="alternateInfo != null">
         alternate_info = #{alternateInfo,jdbcType=VARCHAR},
-      </if>
-      <if test="orgTimezone != null">
+    </if>
+    <if test="orgTimezone != null">
         org_timezone = #{orgTimezone,jdbcType=VARCHAR},
-      </if>
-      <if test="dstTimezone != null">
+    </if>
+    <if test="dstTimezone != null">
         dst_timezone = #{dstTimezone,jdbcType=VARCHAR},
-      </if>
-      <if test="fcategory != null">
+    </if>
+    <if test="fcategory != null">
         fcategory = #{fcategory,jdbcType=VARCHAR},
-      </if>
-      <if test="fid != null">
+    </if>
+    <if test="fid != null">
         fid = #{fid,jdbcType=VARCHAR},
-      </if>
-      <if test="boardGateTime != null">
+    </if>
+    <if test="boardGateTime != null">
         board_gate_time = #{boardGateTime,jdbcType=VARCHAR},
-      </if>
-      update_time = now(),update_user = #{updateUser}
-    </set>
-    WHERE flight_id = #{flightId,jdbcType=BIGINT}
-  </update>
+    </if>
+    update_time = now(),update_user = #{updateUser}
+</set>
+WHERE flight_id = #{flightId,jdbcType=BIGINT}
+</update>
 
-  <select id="isFlightExist" resultType="Long">
-    SELECT flight_id FROM flight
-    WHERE flight_date = #{flightDate,jdbcType=DATE} AND flight_no = #{flightNo,jdbcType=VARCHAR} AND flight_depcode = #{flightDepcode,jdbcType=VARCHAR}
-    AND flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND is_deleted = 0
-  </select>
+<select id="isFlightExist" resultType="Long" parameterType="com.zhiweicloud.guest.model.Flight">
+SELECT flight_id FROM flight
+WHERE flight_date = #{flightDate,jdbcType=DATE} AND flight_no = #{flightNo,jdbcType=VARCHAR} AND flight_depcode = #{flightDepcode,jdbcType=VARCHAR}
+AND flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND is_deleted = 0
+</select>
 
-  <!--and airport_code = #{airportCode}-->
+        <!--and airport_code = #{airportCode}-->
 
-</mapper>
+        </mapper>
