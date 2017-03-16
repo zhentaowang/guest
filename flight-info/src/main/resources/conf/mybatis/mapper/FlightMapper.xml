@@ -246,6 +246,198 @@
         </if>
     </select>
 
+    <select id="getFlightListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination"
+            resultMap="BaseResultMap">
+        select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr,
+        f.flight_deptime_date, f.flight_arrtime_date,
+        f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state,
+        f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+        from flight as f right join (select fse.flight_id, se.schedule_event_id, max(fse.schedule_time) as
+        schedule_time, se.name from flight_schedule_event as fse left join
+        (select schedule_event_id, name from schedule_event where airport_code =
+        #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+        as se on fse.schedule_event_id =se.schedule_event_id
+        where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id)
+        as s on f.flight_id = s.flight_id
+        where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
+        inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id,
+        service_detail->>"$.serviceDetailName" as serviceName from order_service
+        where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
+        <if test="criteria.servIds != null and criteria.servIds != ''">
+            and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
+        </if>
+        <if test="criteria.typeId != null and criteria.typeId != ''">
+            and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
+        </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and
+        oi.is_deleted = 0
+        group by oi.flight_id)
+        as o on fs.flight_id = o.flight_id
+        where 0 = 0
+        <if test="criteria.flightDate != null and criteria.flightDate != ''">
+            and fs.flight_date = #{criteria.flightDate,jdbcType=DATE}
+        </if>
+        <if test="criteria.flightNo != null and criteria.flightNo != ''">
+            and fs.flight_no = #{criteria.flightNo,jdbcType=VARCHAR}
+        </if>
+        <if test="criteria.isInOrOut != null and criteria.isInOrOut != ''">
+            and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
+        </if>
+        <if test="criteria.flightState != null and criteria.flightState != ''">
+            and fs.flight_state = #{criteria.flightState,jdbcType=SMALLINT}
+        </if>
+        <if test="criteria.scheduleEventId != null and criteria.scheduleEventId != ''">
+            and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
+        </if>
+        order by fs.schedule_time desc,
+        <if test="criteria.isInOrOut == 0">
+            fs.flight_deptime_plan_date desc,
+        </if>
+        <if test="criteria.isInOrOut == 1">
+            fs.flight_arrtime_plan_date desc,
+        </if>
+        fs.flight_id desc
+        LIMIT #{page.startPageNo},#{page.pCount}
+    </select>
+
+    <select id="getFlightListCount" parameterType="map" resultType="int">
+        select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr,
+        f.flight_deptime_date, f.flight_arrtime_date,
+        f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state,
+        f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+        from flight as f right join (select fse.flight_id, se.schedule_event_id, max(fse.schedule_time) as
+        schedule_time, se.name from flight_schedule_event as fse left join
+        (select schedule_event_id, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and
+        is_deleted = 0)
+        as se on fse.schedule_event_id =se.schedule_event_id
+        where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on
+        f.flight_id = s.flight_id
+        where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
+        inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id,
+        service_detail->>"$.serviceDetailName" as serviceName from order_service
+        where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+        <if test="servIds != null and servIds != ''">
+            and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
+        </if>
+        <if test="typeId != null and typeId != ''">
+            and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
+        </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{airportCode,jdbcType=VARCHAR} and
+        oi.is_deleted = 0
+        group by oi.flight_id)
+        as o on fs.flight_id = o.flight_id
+        where 0 = 0
+        <if test="flightDate != null and flightDate != ''">
+            and fs.flight_date = #{flightDate,jdbcType=DATE}
+        </if>
+        <if test="flightNo != null and flightNo != ''">
+            and fs.flight_no = #{flightNo,jdbcType=VARCHAR}
+        </if>
+        <if test="isInOrOut != null and isInOrOut != ''">
+            and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
+        </if>
+        <if test="flightState != null and flightState != ''">
+            and fs.flight_state = #{flightState,jdbcType=SMALLINT}
+        </if>
+        <if test="scheduleEventId != null and scheduleEventId != ''">
+            and fs.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+        </if>
+    </select>
+
+    <select id="getFlightListByOrderStatus" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination"
+            resultMap="BaseResultMap">
+        select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr,
+        f.flight_deptime_date, f.flight_arrtime_date,
+        f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state,
+        f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+        from flight as f right join (select fse.flight_id, se.schedule_event_id, max(fse.schedule_time) as
+        schedule_time, se.name from flight_schedule_event as fse left join
+        (select schedule_event_id, name from schedule_event where airport_code =
+        #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
+        as se on fse.schedule_event_id =se.schedule_event_id
+        where fse.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id)
+        as s on f.flight_id = s.flight_id
+        where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
+        inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id,
+        service_detail->>"$.serviceDetailName" as serviceName from order_service
+        where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
+        <if test="criteria.servIds != null and criteria.servIds != ''">
+            and service_detail->>"$.serviceDetailId" in #{criteria.servIds,jdbcType=VARCHAR}
+        </if>
+        <if test="criteria.typeId != null and criteria.typeId != ''">
+            and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
+        </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and
+        oi.is_deleted = 0
+        and server_complete = #{criteria.serverComplete,jdbcType=SMALLINT} group by oi.flight_id)
+        as o on fs.flight_id = o.flight_id
+        where 0 = 0
+        <if test="criteria.flightDate != null and criteria.flightDate != ''">
+            and fs.flight_date = #{criteria.flightDate,jdbcType=DATE}
+        </if>
+        <if test="criteria.flightNo != null and criteria.flightNo != ''">
+            and fs.flight_no = #{criteria.flightNo,jdbcType=VARCHAR}
+        </if>
+        <if test="criteria.isInOrOut != null and criteria.isInOrOut != ''">
+            and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
+        </if>
+        <if test="criteria.flightState != null and criteria.flightState != ''">
+            and fs.flight_state = #{criteria.flightState,jdbcType=SMALLINT}
+        </if>
+        <if test="criteria.scheduleEventId != null and criteria.scheduleEventId != ''">
+            and fs.schedule_event_id = #{criteria.scheduleEventId,jdbcType=BIGINT}
+        </if>
+        order by fs.schedule_time desc,
+        <if test="criteria.isInOrOut == 0">
+            fs.flight_deptime_plan_date desc,
+        </if>
+        <if test="criteria.isInOrOut == 1">
+            fs.flight_arrtime_plan_date desc,
+        </if>
+        fs.flight_id desc
+        LIMIT #{page.startPageNo},#{page.pCount}
+    </select>
+
+    <select id="getFlightListCountByOrderStatus" parameterType="map" resultType="int">
+        select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr,
+        f.flight_deptime_date, f.flight_arrtime_date,
+        f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state,
+        f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+        from flight as f right join (select fse.flight_id, se.schedule_event_id, max(fse.schedule_time) as
+        schedule_time, se.name from flight_schedule_event as fse left join
+        (select schedule_event_id, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and
+        is_deleted = 0)
+        as se on fse.schedule_event_id =se.schedule_event_id
+        where fse.airport_code = #{airportCode,jdbcType=VARCHAR} and fse.is_deleted = 0 group by fse.flight_id) as s on
+        f.flight_id = s.flight_id
+        where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
+        inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id,
+        service_detail->>"$.serviceDetailName" as serviceName from order_service
+        where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+        <if test="servIds != null and servIds != ''">
+            and service_detail->>"$.serviceDetailId" in #{servIds,jdbcType=VARCHAR}
+        </if>
+        <if test="typeId != null and typeId != ''">
+            and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
+        </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{airportCode,jdbcType=VARCHAR} and
+        oi.is_deleted = 0
+        and server_complete = #{serverComplete,jdbcType=SMALLINT} group by oi.flight_id)
+        as o on fs.flight_id = o.flight_id
+        where 0 = 0
+        <if test="flightDate != null and flightDate != ''">
+            and fs.flight_date = #{flightDate,jdbcType=DATE}
+        </if>
+        <if test="flightNo != null and flightNo != ''">
+            and fs.flight_no = #{flightNo,jdbcType=VARCHAR}
+        </if>
+        <if test="isInOrOut != null and isInOrOut != ''">
+            and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
+        </if>
+        <if test="flightState != null and flightState != ''">
+            and fs.flight_state = #{flightState,jdbcType=SMALLINT}
+        </if>
+        <if test="scheduleEventId != null and scheduleEventId != ''">
+            and fs.schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+        </if>
+    </select>
+
     <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -253,10 +445,12 @@
         where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted
         = 0
     </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from flight
     where flight_id = #{flightId,jdbcType=BIGINT}
   </delete>
+
     <insert id="insert" parameterType="com.zhiweicloud.guest.model.Flight">
     insert into flight (flight_id, flight_date, flight_no,
       flight_depcode, flight_arrcode, plan_no,
@@ -287,6 +481,7 @@
       #{fcategory,jdbcType=VARCHAR}, #{fid,jdbcType=VARCHAR}, #{boardGateTime,jdbcType=VARCHAR}
       )
   </insert>
+
     <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.Flight">
         insert into flight
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -522,6 +717,7 @@
             </if>
         </trim>
     </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Flight">
         update flight
         <set>
@@ -639,6 +835,7 @@
         </set>
         where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
     </update>
+
     <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
     set flight_date = #{flightDate,jdbcType=DATE},
