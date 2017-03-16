@@ -133,4 +133,9 @@
       uupdate_user = #{uupdateUser,jdbcType=BIGINT}
     where schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectFlightByScheduleEventId"  parameterType="java.util.Map"  resultType="java.lang.Long">
+    select count(flight_id) from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    and schedule_event_id = #{scheduleEventId,jdbcType=BIGINT}
+  </select>
 </mapper>

@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -159,6 +160,24 @@ public class ScheduleEventService {
             scheduleEvent.setScheduleEventId(ids.get(i));
             scheduleEvent.setIsDeleted(Constant.MARK_AS_DELETED);
             scheduleEventMapper.updateByPrimaryKeySelective(scheduleEvent);
+        }
+    }
+
+    /**
+     * 删除调度事件时判断是否有航班已经引用
+     * @param scheduleEventId
+     * @return boolean
+     */
+    public boolean selectFlightByScheduleEventId(Long scheduleEventId,String airportCode) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("airportCode",airportCode);
+        params.put("scheduleEventId",scheduleEventId);
+        Long count = scheduleEventMapper.selectFlightByScheduleEventId(params);
+        if(count > 0){//count大于0，说明有航班已经引用该调度事件
+            return true;
+        }
+        else{
+            return false;
         }
     }
 }

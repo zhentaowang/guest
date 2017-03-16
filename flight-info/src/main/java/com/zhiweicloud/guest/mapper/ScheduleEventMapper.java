@@ -42,4 +42,5 @@ public interface ScheduleEventMapper {
     Integer getListCount(Map<String, Object> map);
     Integer updateByPrimaryKeySelective(ScheduleEvent scheduleEvent);
     void insertSelective(ScheduleEvent scheduleEvent);
+    Long selectFlightByScheduleEventId(Map<String, Object> map);
 }
