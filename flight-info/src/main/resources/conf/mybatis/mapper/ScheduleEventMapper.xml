@@ -106,7 +106,7 @@
     update schedule_event
     <set>
       <if test="no != null">
-        #{no,jdbcType=VARCHAR},
+        no = #{no,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
