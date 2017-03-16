@@ -58,35 +58,35 @@ public class FlightService {
     @Autowired
     private FlightScheduleEventMapper flightScheduleEventMapper;
 
-    public List<Map<String,String>> flightInfoDropdownList(String airportNameOrCode) {
+    public List<Map<String, String>> flightInfoDropdownList(String airportNameOrCode) {
         return airportInfoMapper.queryFlightInfoDropdownList(airportNameOrCode);
     }
 
-    public List<Map<String,String>> flightNoDropdownList(String flightNo,String airportCode) {
-        return airportInfoMapper.queryFlightNoDropdownList(flightNo,airportCode);
+    public List<Map<String, String>> flightNoDropdownList(String flightNo, String airportCode) {
+        return airportInfoMapper.queryFlightNoDropdownList(flightNo, airportCode);
     }
 
-    public void updateFlight(Flight flight)throws Exception{
+    public void updateFlight(Flight flight) throws Exception {
         Long flightId = flightMapper.isFlightExist(flight);
-        if (flightId == null || flightId.equals("") || flightId == 0){
+        if (flightId == null || flightId.equals("") || flightId == 0) {
             throw new FlightException("没有找到对应的航班信息");
-        }else{
+        } else {
             flight.setFlightId(flightId);
             flightMapper.updateFlight(flight);
         }
     }
 
-    public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent,Long userId) throws Exception{
+    public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent, Long userId) throws Exception {
         if (flightScheduleEvent.getFlightScheduleEventId() == null || flightScheduleEvent.getFlightScheduleEventId() == 0) {
             flightScheduleEvent.setCreateUser(userId);
             flightScheduleEventMapper.insertSelective(flightScheduleEvent);
-        }else {
+        } else {
             flightScheduleEvent.setUpdateUser(userId);
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
     }
 
-    public Flight queryFlightById(Long id,String airportCode) throws Exception{
+    public Flight queryFlightById(Long id, String airportCode) throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("flightId", id);
         params.put("airportCode", airportCode);
