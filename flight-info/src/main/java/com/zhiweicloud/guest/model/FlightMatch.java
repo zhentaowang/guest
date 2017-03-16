@@ -9,21 +9,21 @@ import java.util.Date;
 /**
  * Created by tc on 2017/3/15.
  */
-public class FlightMatch extends BaseEntity{
+public class FlightMatch extends BaseEntity {
 
     private Long flightId;
 
-    @JSONField(name="FlightDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @JSONField(name = "FlightDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date flightDate;
 
-    @JSONField(name="FlightNo")
+    @JSONField(name = "FlightNo")
     private String flightNo;
 
-    @JSONField(name="FlightDepcode")
+    @JSONField(name = "FlightDepcode")
     private String flightDepcode;
 
-    @JSONField(name="FlightArrcode")
+    @JSONField(name = "FlightArrcode")
     private String flightArrcode;
 
     private String planNo;
@@ -36,90 +36,91 @@ public class FlightMatch extends BaseEntity{
 
     private Short isNearOrFar;
 
-    @JSONField(name="FD_ID")
+    @JSONField(name = "FD_ID")
     private String fdId;
 
+    @JSONField(name = "FlightCompany")
     private String flightCompany;
 
-    @JSONField(name="FlightDeptimePlanDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "FlightDeptimePlanDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date flightDeptimePlanDate;
 
-    @JSONField(name="FlightArrtimePlanDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "FlightArrtimePlanDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date flightArrtimePlanDate;
 
-    @JSONField(name="FlightDeptimeReadyDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "FlightDeptimeReadyDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date flightDeptimeReadyDate;
 
-    @JSONField(name="FlightArrtimeReadyDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "FlightArrtimeReadyDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date flightArrtimeReadyDate;
 
-    @JSONField(name="FlightDeptimeDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "FlightDeptimeDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date flightDeptimeDate;
 
-    @JSONField(name="FlightArrtimeDate")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "FlightArrtimeDate")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date flightArrtimeDate;
 
-    @JSONField(name="stopFlag")
+    @JSONField(name = "stopFlag")
     private Short stopFlag;
 
-    @JSONField(name="shareFlag")
+    @JSONField(name = "shareFlag")
     private Short shareFlag;
 
-    @JSONField(name="ShareFlightNo")
+    @JSONField(name = "ShareFlightNo")
     private String shareFlightNo;
 
-    @JSONField(name="FillFlightNo")
+    @JSONField(name = "FillFlightNo")
     private String fillFlightNo;
 
-    @JSONField(name="BoardGate")
+    @JSONField(name = "BoardGate")
     private String boardGate;
 
-    @JSONField(name="BoardState")
+    @JSONField(name = "BoardState")
     private String boardState;
 
-    @JSONField(name="FlightState")
+    @JSONField(name = "FlightState")
     private String flightState;
 
-    @JSONField(name="FlightHTerminal")
+    @JSONField(name = "FlightHTerminal")
     private String flightHterminal;
 
-    @JSONField(name="FlightTerminal")
+    @JSONField(name = "FlightTerminal")
     private String flightTerminal;
 
-    @JSONField(name="FlightDep")
+    @JSONField(name = "FlightDep")
     private String flightDep;
 
-    @JSONField(name="FlightArr")
+    @JSONField(name = "FlightArr")
     private String flightArr;
 
-    @JSONField(name="FlightDepAirport")
+    @JSONField(name = "FlightDepAirport")
     private String flightDepAirport;
 
-    @JSONField(name="FlightArrAirport")
+    @JSONField(name = "FlightArrAirport")
     private String flightArrAirport;
 
-    @JSONField(name="alternate_info")
+    @JSONField(name = "alternate_info")
     private String alternateInfo;
 
-    @JSONField(name="org_timezone")
+    @JSONField(name = "org_timezone")
     private String orgTimezone;
 
-    @JSONField(name="dst_timezone")
+    @JSONField(name = "dst_timezone")
     private String dstTimezone;
 
-    @JSONField(name="fcategory")
+    @JSONField(name = "fcategory")
     private String fcategory;
 
-    @JSONField(name="fid")
+    @JSONField(name = "fid")
     private String fid;
 
-    @JSONField(name="BoardGateTime")
+    @JSONField(name = "BoardGateTime")
     private String boardGateTime;
 
     public Long getFlightId() {
@@ -416,6 +417,49 @@ public class FlightMatch extends BaseEntity{
 
     public void setBoardGateTime(String boardGateTime) {
         this.boardGateTime = boardGateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "FlightMatch{" +
+                "flightId=" + flightId +
+                ", flightDate=" + flightDate +
+                ", flightNo='" + flightNo + '\'' +
+                ", flightDepcode='" + flightDepcode + '\'' +
+                ", flightArrcode='" + flightArrcode + '\'' +
+                ", planNo='" + planNo + '\'' +
+                ", flightPosition='" + flightPosition + '\'' +
+                ", boardInOut=" + boardInOut +
+                ", isInOrOut=" + isInOrOut +
+                ", isNearOrFar=" + isNearOrFar +
+                ", fdId='" + fdId + '\'' +
+                ", flightCompany='" + flightCompany + '\'' +
+                ", flightDeptimePlanDate=" + flightDeptimePlanDate +
+                ", flightArrtimePlanDate=" + flightArrtimePlanDate +
+                ", flightDeptimeReadyDate=" + flightDeptimeReadyDate +
+                ", flightArrtimeReadyDate=" + flightArrtimeReadyDate +
+                ", flightDeptimeDate=" + flightDeptimeDate +
+                ", flightArrtimeDate=" + flightArrtimeDate +
+                ", stopFlag=" + stopFlag +
+                ", shareFlag=" + shareFlag +
+                ", shareFlightNo='" + shareFlightNo + '\'' +
+                ", fillFlightNo='" + fillFlightNo + '\'' +
+                ", boardGate='" + boardGate + '\'' +
+                ", boardState='" + boardState + '\'' +
+                ", flightState='" + flightState + '\'' +
+                ", flightHterminal='" + flightHterminal + '\'' +
+                ", flightTerminal='" + flightTerminal + '\'' +
+                ", flightDep='" + flightDep + '\'' +
+                ", flightArr='" + flightArr + '\'' +
+                ", flightDepAirport='" + flightDepAirport + '\'' +
+                ", flightArrAirport='" + flightArrAirport + '\'' +
+                ", alternateInfo='" + alternateInfo + '\'' +
+                ", orgTimezone='" + orgTimezone + '\'' +
+                ", dstTimezone='" + dstTimezone + '\'' +
+                ", fcategory='" + fcategory + '\'' +
+                ", fid='" + fid + '\'' +
+                ", boardGateTime='" + boardGateTime + '\'' +
+                '}';
     }
 
 }

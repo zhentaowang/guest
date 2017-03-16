@@ -20,43 +20,27 @@
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
 
+    <result column="passenger_no" jdbcType="VARCHAR" property="passengerNo" />
+
 
   </resultMap>
 
 
   <sql id="Query_Passenger_List">
-    passenger_id, name, phone, identity_card,create_time, GROUP_CONCAT(distinct client_name) as client_name, airport_code, protocol_type, protocol_name,GROUP_CONCAT(DISTINCT protocol_type) as types
+    concat(airport_code,lpad(passenger_id,6,'0')) AS passenger_no,passenger_id, name, phone, identity_card,create_time,
+    GROUP_CONCAT(distinct client_name) as client_name, airport_code, protocol_type, protocol_name,GROUP_CONCAT(DISTINCT protocol_type) as types
   </sql>
 
+  <select id="queryById" resultMap="PassengerResultMap">
+    SELECT * FROM v_passenger_crm p WHERE passenger_id = #{passengerId} AND airport_code = #{airportCode}
+  </select>
 
   <select id="queryPassengerList" resultMap="PassengerResultMap" parameterType="map">
-    SELECT * FROM (
-      SELECT
-        <include refid="Query_Passenger_List"/>
-      FROM
-        (SELECT
-          <include refid="Query_Passenger_List"/>
-        FROM v_passenger
-        GROUP BY identity_card DESC,phone DESC) t
-      WHERE phone IS NOT NULL
-      GROUP BY t.phone
-
-      UNION ALL
-      SELECT
-        <include refid="Query_Passenger_List"/>
-      FROM v_passenger
-      WHERE phone is null AND (identity_card is NOT NULL and identity_card != '') GROUP BY identity_card desc
-
-      UNION ALL
-      SELECT
-        passenger_id, name, phone, identity_card,create_time, client_name as client_name, airport_code, protocol_type, protocol_name,protocol_type as types
-      FROM v_passenger
-      WHERE phone is null AND (identity_card is NULL or identity_card = '')
-    ) p
+    SELECT * FROM v_passenger_crm p
 
     WHERE p.airport_Code = #{passengerQuery.airportCode}
-    <if test="passengerQuery.passengerId != null">
-      AND p.passenger_id = #{passengerQuery.passengerId}
+    <if test="passengerQuery.passengerNo != null and !''.equals(passengerQuery.passengerNo)">
+      AND p.passenger_no = #{passengerQuery.passengerNo}
     </if>
     <if test="passengerQuery.name != null and !''.equals(passengerQuery.name)">
       AND p.`name` = #{passengerQuery.name}
@@ -87,33 +71,11 @@
   </select>
 
   <select id="getListCount" parameterType="String" resultType="int">
-    SELECT count(p.passenger_id) FROM (
-      SELECT
-        <include refid="Query_Passenger_List"/>
-      FROM
-        (SELECT
-          <include refid="Query_Passenger_List"/>
-        FROM v_passenger
-        GROUP BY identity_card DESC,phone DESC) t
-        WHERE phone IS NOT NULL
-      GROUP BY t.phone
-
-      UNION ALL
-      SELECT
-        <include refid="Query_Passenger_List"/>
-      FROM v_passenger
-      WHERE phone is null AND (identity_card is NOT NULL and identity_card != '') GROUP BY identity_card desc
-
-      UNION ALL
-      SELECT
-      passenger_id, name, phone, identity_card,create_time, client_name as client_name, airport_code, protocol_type, protocol_name,protocol_type as types
-      FROM v_passenger
-      WHERE phone is null AND (identity_card is NULL or identity_card = '')
-    ) p
+    SELECT count(p.passenger_id) FROM v_passenger_crm p
 
     WHERE p.airport_Code = #{passengerQuery.airportCode}
-    <if test="passengerQuery.passengerId != null">
-      AND p.passenger_id = #{passengerQuery.passengerId}
+    <if test="passengerQuery.passengerNo != null and !''.equals(passengerQuery.passengerNo)">
+      AND p.passenger_no = #{passengerQuery.passengerNo}
     </if>
     <if test="passengerQuery.name != null and !''.equals(passengerQuery.name)">
       AND p.`name` = #{passengerQuery.name}
