@@ -16,7 +16,7 @@
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     SELECT
     schedule_event_id, no, type, name, is_approach
-    FROM v_schedule_event
+    FROM schedule_event
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
     order by schedule_event_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
@@ -25,14 +25,14 @@
   <select id="getListCount" parameterType="map" resultType="int">
     SELECT
     count(schedule_event_id)
-    FROM v_schedule_event
+    FROM schedule_event
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
   </select>
 
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from v_schedule_event
+    from schedule_event
     where airport_code = #{airportCode,jdbcType=VARCHAR}
     and schedule_event_id = #{scheduleEventId,jdbcType=BIGINT} and is_deleted = 0
   </select>
