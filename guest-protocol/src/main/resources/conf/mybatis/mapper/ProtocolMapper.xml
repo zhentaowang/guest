@@ -329,9 +329,9 @@
     </if>
   </select>
 
-  <select id="getProtocolNameDropdownList" resultMap="DropdownlistMap" parameterType="map">
+  <select id="getProtocolNameDropdownList" resultType="map" parameterType="map">
     SELECT
-      p.protocol_id,p.`name` AS `value`
+      p.protocol_id as id,p.`name` AS `value`,type
     FROM
       v_protocol p
     <if test="authorizerName != null and !authorizerName.trim().equals('') or authorizerId != null" >

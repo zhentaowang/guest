@@ -437,7 +437,7 @@ public class ProtocolService {
      * @param map
      * @return
      */
-    public List<Dropdownlist> getProtocolNameDropdownList(Map<String,Object> map){
+    public List<Map> getProtocolNameDropdownList(Map<String,Object> map){
         return protocolMapper.getProtocolNameDropdownList(map);
     }
 
