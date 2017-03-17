@@ -1,6 +1,5 @@
 package com.zhiweicloud.guest.controller;
 
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -8,8 +7,8 @@ import com.dragon.sign.DragonSignature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.FlightException;
-import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightMatch;
@@ -31,7 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by zhangpengfei on 2017/1/22.
+ * FlightInfoController.java
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * @url https://www.zhiweicloud.com
+ * @date 2017/3/17 17:44 
+ * @author tiecheng
  */
 @Component
 @Path("/")
@@ -56,31 +59,28 @@ public class FlightInfoController {
             @ApiImplicitParam(name = "fnum", value = "航班号", dataType = "String", required = true, paramType = "query",defaultValue = "CA1352"),
             @ApiImplicitParam(name = "date", value = "航班日期", dataType = "String", required = true, paramType = "query",defaultValue = "2017-02-03")
     })*/
-    public String view(@QueryParam(value = "fnum") String fnum,
-                       @QueryParam(value = "date") String date) {
+    public String view(
+            @QueryParam(value = "fnum") String fnum,
+            @QueryParam(value = "date") String date) {
         try {
 //            测试环境
 //            String sysCode = "dpctest";
-//            生产环境
-            String sysCode = "vip_cloud";
-            String privateKey = Global.getPrivateKey();
             Map<String, String> params = new HashMap<>();
             params.put("date", date);
             params.put("fnum", fnum);
-            params.put("lg", "zh-cn");
-            params.put("sysCode", sysCode);
-
-            String sign = DragonSignature.rsaSign(params, privateKey, "UTF-8");
+            params.put("lg", Dictionary.LG);
+            params.put("sysCode", Dictionary.SYSCODE);
+            String sign = DragonSignature.rsaSign(params, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
+            params.put("sign", sign);
             Map<String, Object> p = new HashMap<>();
             p.put("date", date);
             p.put("fnum", fnum);
-            p.put("lg", "zh-cn");
-            p.put("sysCode", sysCode);
+            p.put("lg", Dictionary.LG);
+            p.put("sysCode", Dictionary.SYSCODE);
             p.put("sign", sign);
-
 //            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
             String ret = HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
-            return new String(ret.getBytes("ISO-8859-1"), "UTF-8");
+            return new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
             return "error...";
@@ -97,7 +97,8 @@ public class FlightInfoController {
     @Path("flightInfoDropdownList")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "航段下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-    public String flightInfoDropdownList(@QueryParam(value = "airportNameOrCode") String airportNameOrCode) {
+    public String flightInfoDropdownList(
+            @QueryParam(value = "airportNameOrCode") String airportNameOrCode) {
         LZResult<List<Map<String, String>>> result = new LZResult<>();
         try {
             List<Map<String, String>> list = flightService.flightInfoDropdownList(airportNameOrCode);
@@ -125,9 +126,10 @@ public class FlightInfoController {
     @Path("flightNoDropdownList")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "航班号下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-    public String flightNoDropdownList(@QueryParam(value = "flightNo") String flightNo,
-                                       @HeaderParam("client-id") String airportCode,
-                                       @HeaderParam("user-id") Long userId) {
+    public String flightNoDropdownList(
+            @QueryParam(value = "flightNo") String flightNo,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         LZResult<List<Map<String, String>>> result = new LZResult<>();
         try {
             List<Map<String, String>> list = flightService.flightNoDropdownList(flightNo, airportCode);
@@ -202,9 +204,10 @@ public class FlightInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "保存 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String saveOrUpdateFlightScheduleEvent(@ApiParam(value = "flightScheduleEvent", required = true) @RequestBody String params,
-                                                  @HeaderParam("client-id") String airportCode,
-                                                  @HeaderParam("user-id") Long userId) {
+    public String saveOrUpdateFlightScheduleEvent(
+            @ApiParam(value = "flightScheduleEvent", required = true) @RequestBody String params,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         try {
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for (int i = 0; i < param.size(); i++) {
@@ -237,31 +240,25 @@ public class FlightInfoController {
 //            测试环境
 //            String sysCode = "dpctest";
 //            生产环境
-            String sysCode = "vip_cloud";
-
             Flight flight = flightService.queryFlightById(flightId, airportCode);
-            System.out.println(flight.toString());
-            // 获得数字签名
-            String privateKey = Global.getPrivateKey();
             Map<String, String> params = new HashMap<>();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             params.put("date", sdf.format(flight.getFlightDate()));
             params.put("fnum", flight.getFlightNo());
             params.put("dep", flight.getFlightDepcode());
             params.put("arr", flight.getFlightArrcode());
-            params.put("sysCode", sysCode);
-            String sign = DragonSignature.rsaSign(params, privateKey, "UTF-8");
-
+            params.put("sysCode", Dictionary.SYSCODE);
+            String sign = DragonSignature.rsaSign(params, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
             Map<String, Object> p = new HashMap<>();
             p.put("date", sdf.format(flight.getFlightDate()));
             p.put("fnum", flight.getFlightNo());
             p.put("dep", flight.getFlightDepcode());
             p.put("arr", flight.getFlightArrcode());
-            p.put("sysCode", sysCode);
+            p.put("sysCode", Dictionary.SYSCODE);
             p.put("sign", sign);
 //            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
             String ret = HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
-            return new String(ret.getBytes("ISO-8859-1"), "UTF-8");
+            return new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
             return "error...";

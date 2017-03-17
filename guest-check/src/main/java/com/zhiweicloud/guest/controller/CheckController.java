@@ -26,17 +26,20 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
 import java.util.HashMap;
@@ -52,6 +55,7 @@ import java.util.Map;
 @Path("/")
 @Api(value = "对账单管理", description = "", tags = {"对账单管理"})
 public class CheckController {
+
     private static final Logger logger = LoggerFactory.getLogger(CheckController.class);
 
     @Autowired
@@ -105,9 +109,30 @@ public class CheckController {
         }
     }
 
-
-
-
-
+    /**
+     * 导出文件
+     * Excel
+     * @param json 需要导出的Json数据
+     * @param airportCode 机场码
+     * @param userId 用户ID
+     * @return
+     */
+    @POST
+    @Path("exportFile")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "POST", produces = "application/json")
+    public String exportFile(
+            @QueryParam(value = "fileName") String fileName,
+            @RequestBody String json,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        try {
+            checkService.exportExcel(fileName,json);
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+    }
 
 }

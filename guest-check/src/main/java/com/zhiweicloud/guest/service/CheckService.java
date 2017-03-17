@@ -27,9 +27,12 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
+import com.zhiweicloud.guest.common.ExcelUtils;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
@@ -40,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.alibaba.fastjson.parser.Feature.OrderedField;
 
 /**
  * @author liuzh
@@ -122,20 +127,96 @@ public class CheckService {
 
 
     public Map<String,Object> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
+        Map<String,Object> map = new HashMap();
+        //所有 - VIP接送机/异地服务
+        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("VIP接送机")
+                ||
+                orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("异地服务")){
+            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("VIP_LONG_DISTANCE_QUERY_COLUMN"));
+            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("VIP_LONG_DISTANCE_QUERY_COLUMN"));
+            map.put("column", checkDynamicColumn.getHeader("VIP_LONG_DISTANCE_QUERY_COLUMN"));
+            //where customer_id = ? and product_name = VIP接送机
+        }
+
+
+        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("两舱休息室")){
+            //头等舱 - 两舱休息室
+            if(orderCheckDetail.getQueryProductType() != null && orderCheckDetail.getQueryProductType() == 10){//10 代表协议类型是 头等舱
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("FIRST_CABINS_QUERY_COLUMN"));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("FIRST_CABINS_QUERY_COLUMN"));
+                map.put("column", checkDynamicColumn.getHeader("FIRST_CABINS_QUERY_COLUMN"));
+
+                //where customer_id = ? and o.protocolType = 10 and product_name = 两舱休息室
+            }else if(orderCheckDetail.getQueryProductType() != null && orderCheckDetail.getQueryProductType() == 9){//9 代表协议类型是 金银卡
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
+                map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
+
+               // where customer_id = ? and o.protocolType = 9 and product_name = 两舱休息室
+            }else{
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
+                map.put("column", checkDynamicColumn.getHeader("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
+                // where customer_id = ? and o.protocolType not in (9,10) and product_name = 两舱休息室
+            }
+        }
+
+        //所有 - 独立安检通道
+        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("独立安检通道")){
+            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
+            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
+            map.put("column", checkDynamicColumn.getHeader("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
+            //where customer_id = ? and product_name = '独立安检通道'
+        }
+
         orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
         orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
 
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
 
 
-        Map<String,Object> map = new HashMap();
+
 
 
         List<Map> checkList = checkMapper.customerChecklist(queryCondition);
 
         map.put("total",checkList.size());
         map.put("rows",checkList);
-        map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
+
         return map;
     }
+
+    public void exportExcel(String fileName,String json){
+        // 按顺序解析传入的json串
+        JSONObject jsonObject = JSON.parseObject(json, OrderedField);
+        JSONObject data = jsonObject.getJSONObject("data");
+
+        // 需要导出行数据集合
+        JSONArray rows = data.getJSONArray("rows");
+
+        // 解析一行数据，拿到列的顺序List
+        JSONObject row = rows.getJSONObject(0);
+        List<String> titleList = new ArrayList<>();
+        for (String s : row.keySet()) {
+            titleList.add(s);
+        }
+
+        // 解析标题列的中英文映射Map
+        Map<String, String> titleMap = new HashMap<>();
+        JSONArray column = data.getJSONArray("column");
+        column.forEach(x->{
+            String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
+            Map<String,String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
+            String[] strArray = new String[2];
+            int i = 0;
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                strArray[i] = entry.getValue();
+                i++;
+            }
+            titleMap.put(strArray[1],strArray[0] );
+        });
+
+        ExcelUtils.export(fileName,"sheetName",rows,titleList,titleMap);
+    }
+
 }

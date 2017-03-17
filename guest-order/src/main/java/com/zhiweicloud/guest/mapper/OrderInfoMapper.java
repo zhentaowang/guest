@@ -28,6 +28,7 @@ package com.zhiweicloud.guest.mapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.OrderInfo;
 import com.zhiweicloud.guest.model.OrderInfoQuery;
+import com.zhiweicloud.guest.model.ProtocolVo;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
 
@@ -93,6 +94,6 @@ public interface OrderInfoMapper{
      * @param airportCode
      * @return
      */
-    List<Dropdownlist> queryProtocolIdsInOrderInfoByCustomId(@Param("customId")Long customId, @Param("airportCode")String airportCode);
+    List<ProtocolVo> queryProtocolIdsInOrderInfoByCustomId(@Param("customId")Long customId, @Param("airportCode")String airportCode);
 
 }
