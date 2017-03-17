@@ -122,8 +122,9 @@ public class CheckService {
 
 
     public Map<String,Object> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
-        orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("VIP_QUERY_COLUMN"));
-        orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("VIP_QUERY_COLUMN"));
+        orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
+        orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
+
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
 
 
@@ -134,7 +135,7 @@ public class CheckService {
 
         map.put("total",checkList.size());
         map.put("rows",checkList);
-        map.put("column", checkDynamicColumn.getHeader("VIP_QUERY_COLUMN"));
+        map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
         return map;
     }
 }
