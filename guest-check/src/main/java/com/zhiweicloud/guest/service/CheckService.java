@@ -122,20 +122,62 @@ public class CheckService {
 
 
     public Map<String,Object> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
+        Map<String,Object> map = new HashMap();
+        //所有 - VIP接送机/异地服务
+        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("VIP接送机")
+                ||
+                orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("异地服务")){
+            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("VIP_LONG_DISTANCE_QUERY_COLUMN"));
+            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("VIP_LONG_DISTANCE_QUERY_COLUMN"));
+            map.put("column", checkDynamicColumn.getHeader("VIP_LONG_DISTANCE_QUERY_COLUMN"));
+            //where customer_id = ? and product_name = VIP接送机
+        }
+
+
+        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("两舱休息室")){
+            //头等舱 - 两舱休息室
+            if(orderCheckDetail.getQueryProductType() != null && orderCheckDetail.getQueryProductType() == 10){//10 代表协议类型是 头等舱
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("FIRST_CABINS_QUERY_COLUMN"));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("FIRST_CABINS_QUERY_COLUMN"));
+                map.put("column", checkDynamicColumn.getHeader("FIRST_CABINS_QUERY_COLUMN"));
+
+                //where customer_id = ? and o.protocolType = 10 and product_name = 两舱休息室
+            }else if(orderCheckDetail.getQueryProductType() != null && orderCheckDetail.getQueryProductType() == 9){//9 代表协议类型是 金银卡
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
+                map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
+
+               // where customer_id = ? and o.protocolType = 9 and product_name = 两舱休息室
+            }else{
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
+                map.put("column", checkDynamicColumn.getHeader("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
+                // where customer_id = ? and o.protocolType not in (9,10) and product_name = 两舱休息室
+            }
+        }
+
+        //所有 - 独立安检通道
+        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("独立安检通道")){
+            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
+            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
+            map.put("column", checkDynamicColumn.getHeader("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
+            //where customer_id = ? and product_name = '独立安检通道'
+        }
+
         orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
         orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
 
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
 
 
-        Map<String,Object> map = new HashMap();
+
 
 
         List<Map> checkList = checkMapper.customerChecklist(queryCondition);
 
         map.put("total",checkList.size());
         map.put("rows",checkList);
-        map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
+
         return map;
     }
 }
