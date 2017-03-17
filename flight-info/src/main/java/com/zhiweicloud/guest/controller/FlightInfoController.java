@@ -9,7 +9,6 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.FlightException;
-import com.zhiweicloud.guest.common.Global;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightMatch;
