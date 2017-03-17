@@ -77,11 +77,10 @@ public class PassengerController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="客户管理 - 详情", notes ="返回结果")
     public String getPassengerById(
-//            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("client-id") String airportCode,
             @QueryParam("passengerId") Long crmPassengerId){
         LZResult<Passenger> result = new LZResult<>();
         try{
-            String airportCode = "LJG";
             Passenger passenger = passengerService.getPassengerById(crmPassengerId,airportCode);
             if(passenger != null){
                 Map<String, Object> param = new HashMap();
@@ -112,7 +111,7 @@ public class PassengerController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="客户详情 - 标签信息", notes ="返回结果")
     public String getLableInfo(
-//            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("client-id") String airportCode,
             @QueryParam("passengerId") Long crmPassengerId,
             @QueryParam("phone") Long phone,
             @QueryParam("identityCard") String identityCard,
@@ -120,7 +119,6 @@ public class PassengerController {
             ){
         LZResult<List<ServiceInfo>> result = new LZResult<>();
         try{
-            String airportCode = "LJG";
 
             Map<String, Object> param = new HashMap();
             param.put("airportCode", airportCode);

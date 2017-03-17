@@ -12,6 +12,9 @@ import java.util.Date;
 @ApiModel(value="ServiceInfo",description="serviceInfo")
 public class ServiceInfo {
 
+    @ApiModelProperty(value="用户id",name="crmPassengerId")
+    private Long crmPassengerId;
+
     @ApiModelProperty(value="航班时间",name="flightDate")
     private Date flightDate;
 
@@ -148,5 +151,13 @@ public class ServiceInfo {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public Long getCrmPassengerId() {
+        return crmPassengerId;
+    }
+
+    public void setCrmPassengerId(Long crmPassengerId) {
+        this.crmPassengerId = crmPassengerId;
     }
 }

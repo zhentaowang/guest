@@ -21,6 +21,7 @@
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
 
     <result column="passenger_no" jdbcType="VARCHAR" property="passengerNo" />
+    <result column="types" jdbcType="VARCHAR" property="types" />
 
 
   </resultMap>
@@ -93,7 +94,7 @@
       AND p.protocol_name = #{passengerQuery.protocolName}
     </if>
     <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
-      AND p.protocol_type IN (#{passengerQuery.types})
+      AND p.protocol_type IN (${passengerQuery.types})
     </if>
     <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
       AND p.create_time &gt; #{passengerQuery.queryDateBegin}
@@ -106,9 +107,9 @@
 
   <select id="queryBuyTimes" resultType="int">
     SELECT
-      count(passenger_id)
+      count(crm_passenger_id)
     FROM
-      v_passenger
+      crm_passenger
     WHERE airport_code = #{airportCode} AND (phone = #{phone} OR identity_card = #{identityCard})
   </select>
 
@@ -136,9 +137,9 @@
   </resultMap>
   <select id="queryServiceInfoList" resultMap="ServiceInfoResultMap" parameterType="map">
     SELECT
-        flight_date, concat(airport_code,lpad(order_id, 6, '0')) AS order_no,product_name,
+      crm_passenger_id,flight_date, concat(airport_code,lpad(order_id, 6, '0')) AS order_no,product_name,
 	    client_name,concat(airport_code,'H',lpad(`protocol_id`, 4, '0')) AS protocol_no,protocol_type,
-    company_name,card_type,card_no,expire_time,work_unit,position
+    company_name,card_type,card_no,expire_time,work_unit,`position`
 
     FROM
 	  crm_passenger
@@ -151,7 +152,7 @@
         AND crm_passenger_id = #{crmPassengerId}
       </if>
       <if test="protocolTypes != null and !''.equals(protocolTypes)">
-        AND protocol_type IN (#{protocolTypes})
+        AND protocol_type IN (${protocolTypes})
       </if>
   </select>
 
