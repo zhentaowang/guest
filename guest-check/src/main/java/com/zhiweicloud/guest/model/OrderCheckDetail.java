@@ -36,8 +36,14 @@ public class OrderCheckDetail {
     @ApiModelProperty(value="航班日期",name="flightDate")
     private Date flightDate;
 
+    @ApiModelProperty(value="航班号",name="flightNo")
+    private String flightNo;
+
     @ApiModelProperty(value="航班号",name="planNo")
     private String planNo;
+
+    @ApiModelProperty(value="航段",name="routeSegment")
+    private String routeSegment;
 
     @ApiModelProperty(value="出发机场名",name="flightDepAirport")
     private String flightDepAirport;
@@ -45,8 +51,8 @@ public class OrderCheckDetail {
     @ApiModelProperty(value="到达机场名",name="flightArrAirport")
     private String flightArrAirport;
 
-    @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
-    private Short isInOrOut;
+    @ApiModelProperty(value="出港,进港",name="isInOrOut")
+    private String isInOrOut;
 
     @ApiModelProperty(value="贵宾厅人次",name="vipPersonNum")
     private Integer vipPersonNum;
@@ -59,6 +65,20 @@ public class OrderCheckDetail {
 
     @ApiModelProperty(value="陪同费用",name="accompanyPrice")
     private Double accompanyPrice;
+
+    @ApiModelProperty(value="费用合计",name="feeTotal")
+    private Double feeTotal;
+
+    @ApiModelProperty(value="列头",name="column")
+    private String column;
+
+    @ApiModelProperty(value="查询列",name="selectFields")
+    private String selectFields;
+
+    @ApiModelProperty(value="总价",name="totalAmount")
+    private String totalAmount;
+
+
 
     /**
      * 订单号
@@ -189,22 +209,6 @@ public class OrderCheckDetail {
     }
 
     /**
-     * 出港：0，进港1
-     * @return is_in_or_out 出港：0，进港1
-     */
-    public Short getIsInOrOut() {
-        return isInOrOut;
-    }
-
-    /**
-     * 出港：0，进港1
-     * @param isInOrOut 出港：0，进港1
-     */
-    public void setIsInOrOut(Short isInOrOut) {
-        this.isInOrOut = isInOrOut;
-    }
-
-    /**
      * 贵宾厅人次
      * @return vip_person_num 贵宾厅人次
      */
@@ -266,5 +270,59 @@ public class OrderCheckDetail {
      */
     public void setAccompanyPrice(Double accompanyPrice) {
         this.accompanyPrice = accompanyPrice;
+    }
+
+    public String getColumn() {
+        return column;
+    }
+
+    public void setColumn(String column) {
+        this.column = column;
+    }
+
+    public String getSelectFields() {
+        return selectFields;
+    }
+
+    public String getFlightNo() {
+        return flightNo;
+    }
+
+    public void setFlightNo(String flightNo) {
+        this.flightNo = flightNo;
+    }
+
+    public void setSelectFields(String selectFields) {
+        this.selectFields = selectFields;
+
+    }
+
+    public String getRouteSegment() {
+        return routeSegment;
+    }
+
+    public void setRouteSegment(String routeSegment) {
+        this.routeSegment = routeSegment;
+    }
+
+    public void setIsInOrOut(String isInOrOut) {
+        this.isInOrOut = isInOrOut;
+    }
+
+    public Double getFeeTotal() {
+        return feeTotal;
+    }
+
+    public void setFeeTotal(Double feeTotal) {
+        this.feeTotal = feeTotal;
+    }
+
+
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

@@ -86,29 +86,23 @@
   </resultMap>
 
 
-  <select id="customerChecklist" resultMap="OrderCheckDetailMap">
-    select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.customer_id,o.protocol_id,o.product_id,
-    f.flight_date,f.plan_no,f.flight_dep_airport,f.flight_arr_airport,f.is_in_or_out,
-    (select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vip_person_num,
-    (select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vip_price,
-
-    (select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompany_person_num,
-    (select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompany_price
-
-
-    from order_info o
-    inner join flight f on f.flight_id = o.flight_id
-    <if test="criteria.customerId != null and !''.equals(criteria.customerId)">
-      and o.customer_id in (#{criteria.customerIds})
-    </if>
-    <if test="criteria.productId != null and !''.equals(criteria.productId)">
-      and o.product_id in (#{criteria.productId})
-    </if>
-    <if test="criteria.protocolId != null and !''.equals(criteria.protocolId)">
-      and o.protocol_id in (#{criteria.protocolId})
-    </if>
-
-
+  <select id="customerChecklist" resultType="map">
+    select *,${criteria.totalAmount} from (
+      select ${criteria.selectFields}
+      from order_info o
+      inner join flight f on f.flight_id = o.flight_id
+      inner join passenger p on p.order_id = o.order_id
+      GROUP BY o.order_id
+      <if test="criteria.customerId != null and !''.equals(criteria.customerId)">
+        and o.customer_id in (#{criteria.customerIds})
+      </if>
+      <if test="criteria.productId != null and !''.equals(criteria.productId)">
+        and o.product_id in (#{criteria.productId})
+      </if>
+      <if test="criteria.protocolId != null and !''.equals(criteria.protocolId)">
+        and o.protocol_id in (#{criteria.protocolId})
+      </if>
+    ) t
   </select>
 
 </mapper>

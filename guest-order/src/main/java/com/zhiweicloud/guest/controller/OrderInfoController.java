@@ -393,17 +393,17 @@ public class OrderInfoController {
         LZResult<List<ProtocolList>> result = new LZResult<>();
         try {
             protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(protocolLists);
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
+        }finally {
             return result;
         }
-        result.setMsg(LZStatus.SUCCESS.display());
-        result.setStatus(LZStatus.SUCCESS.value());
-        result.setData(protocolLists);
-        return result;
     }
 
 }

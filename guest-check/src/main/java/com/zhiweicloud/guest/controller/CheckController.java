@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -90,8 +91,10 @@ public class CheckController {
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
         try {
-            LZResult<PaginationResult<OrderCheckDetail>> result = checkService.customerChecklist(userId,airportCode,orderCheckDetail, page, rows);
-            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+            Map result = checkService.customerChecklist(userId,airportCode,orderCheckDetail, page, rows);
+            Map map = new HashMap();
+            map.put("data",result);
+            return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();

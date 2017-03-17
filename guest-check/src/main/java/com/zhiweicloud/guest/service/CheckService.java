@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
@@ -47,8 +48,14 @@ import java.util.*;
 @Service
 public class CheckService {
 
+    private final CheckMapper checkMapper;
+    private final CheckDynamicColumn checkDynamicColumn;
+
     @Autowired
-    private CheckMapper checkMapper;
+    public CheckService(CheckMapper checkMapper, CheckDynamicColumn checkDynamicColumn) {
+        this.checkMapper = checkMapper;
+        this.checkDynamicColumn = checkDynamicColumn;
+    }
 
     public LZResult<PaginationResult<Map>> getAll(Long userId,String airportCode,CheckQueryParam checkQueryParam, Integer page, Integer rows) throws Exception{
         BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
@@ -74,18 +81,18 @@ public class CheckService {
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
         for(int i = 0; i < checkList.size(); i++){
+
             Map<String, Object> headerMap = new HashMap();
             headerMap.put("user-id", userId);
             headerMap.put("client-id", airportCode);
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolId", checkList.get(i).get("protocolId"));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
-            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getById?access_token=3A3MhKkdsOyvxZWYnMPTlnmCHSzfV3iGob4Uhvy7&protocolId=" + checkList.get(i).get("protocolId")));
+            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getById?access_token=3A3MhKkdsOyvxZWYnMPTlnmCHSzfV3iGob4Uhvy7&protocolId=" + checkList.get(i).get("protocolId")));
             if (protocolObject != null) {
                 JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
                 checkList.get(i).put("protocolType",protocolObj.get("protocolTypeName"));
-
             }
         }
 
@@ -114,16 +121,21 @@ public class CheckService {
     }
 
 
-    public LZResult<PaginationResult<OrderCheckDetail>> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
-        BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
-        /*List protocolIdList = this.getProtocolList(orderCheckDetail.getQueryProtocolType(),userId,airportCode);
-        if (protocolIdList.size() > 0) {
-            orderCheckDetail.setProtocolId(ListUtil.List2String(protocolIdList));//协议id
-        }*/
+    public Map<String,Object> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
+        orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
+        orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
 
-        List<OrderCheckDetail> checkList = checkMapper.customerChecklist(queryCondition);
-        PaginationResult<OrderCheckDetail> eqr = new PaginationResult<>(checkList.size(), checkList);
-        LZResult<PaginationResult<OrderCheckDetail>> result = new LZResult<>(eqr);
-        return result;
+        BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
+
+
+        Map<String,Object> map = new HashMap();
+
+
+        List<Map> checkList = checkMapper.customerChecklist(queryCondition);
+
+        map.put("total",checkList.size());
+        map.put("rows",checkList);
+        map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
+        return map;
     }
 }
