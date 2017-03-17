@@ -88,21 +88,13 @@
 
   <select id="customerChecklist" resultType="map">
     select *,${criteria.totalAmount} from (
-      select ${criteria.selectFields}
+      select ${criteria.selectFields},o.customer_id,o.product_name,o.protocol_type
       from order_info o
       inner join flight f on f.flight_id = o.flight_id
       inner join passenger p on p.order_id = o.order_id
+      where o.airport_code = #{criteria.airportCode}
       GROUP BY o.order_id
-      <if test="criteria.customerId != null and !''.equals(criteria.customerId)">
-        and o.customer_id in (#{criteria.customerIds})
-      </if>
-      <if test="criteria.productId != null and !''.equals(criteria.productId)">
-        and o.product_id in (#{criteria.productId})
-      </if>
-      <if test="criteria.protocolId != null and !''.equals(criteria.protocolId)">
-        and o.protocol_id in (#{criteria.protocolId})
-      </if>
-    ) t
+    ) t where 1 = 1 ${criteria.queryWhere}
   </select>
 
 </mapper>

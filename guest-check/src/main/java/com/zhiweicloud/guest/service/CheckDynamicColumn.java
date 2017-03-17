@@ -58,34 +58,40 @@ public class CheckDynamicColumn {
 
     public final Map<String, ColumnType> COLUMN = new HashMap<String, ColumnType>() {{
         /**
-         *所有-VIP接送机、所有-异地服务 LONG_DISTANCE
+         *所有-VIP接送机 LONG_DISTANCE
          * @ 订单号，航班日期，航班号，航段，进出港，贵宾厅人次，贵宾厅费用，陪同人次，陪同费用
          */
-        put("VIP_LONG_DISTANCE_QUERY_COLUMN", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
+        put("VIP接送机", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
+
+        /**
+         *所有-异地服务 LONG_DISTANCE
+         * @ 订单号，航班日期，航班号，航段，进出港，贵宾厅人次，贵宾厅费用，陪同人次，陪同费用
+         */
+        put("异地服务", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
 
         /**
          * 除头等舱，金银卡 - 两舱休息室 FIRST_CABINS_AND_GOLD_SILVER_CARD
          * @ 订单号，航班日期，航班号，航段，进出港，休息室人次，休息室费用，安检人次，安检费用
          */
-        put("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"}, "restRoomPersonNum * restRoomPrice + securityCheckPersonNum * securityCheckPrice AS totalAmount"));
+        put("两舱休息室", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"}, "restRoomPersonNum * restRoomPrice + securityCheckPersonNum * securityCheckPrice AS totalAmount"));
 
         /**
          * 头等舱 - 两舱休息室
          * @ 订单号，航班日期，航班号，航段，机号，旅客姓名，客票号，座位，休息室人次，休息室费用
          */
-        put("FIRST_CABINS_QUERY_COLUMN", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","sitNo","restRoomPersonNum", "restRoomPrice"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
+        put("两舱休息室10", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","sitNo","restRoomPersonNum", "restRoomPrice"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
 
         /**
          * 金银卡 - 两舱休息室 GOLD_SILVER_CARD
          * @ 订单号，航班日期，航班号，航段，机号，旅客姓名，客票号，金银卡类型，卡号，有效期，随行人次，休息室人次，休息室费用
          */
-        put("GOLD_SILVER_CARD_QUERY_COLUMN", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","cardType","expireTime","alongTotal","restRoomPersonNum", "restRoomPrice"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
+        put("两舱休息室9", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","cardType","expireTime","alongTotal","restRoomPersonNum", "restRoomPrice"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
 
         /**
          * 所有 - 独立安检通道
          * @ 订单号，航班日期，航班号，航段，进出港，安检人次，安检费用
          */
-        put("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","securityCheckPersonNum", "securityCheckPrice"}, "securityCheckPersonNum * securityCheckPrice AS totalAmount"));
+        put("独立安检通道", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","securityCheckPersonNum", "securityCheckPrice"}, "securityCheckPersonNum * securityCheckPrice AS totalAmount"));
     }};
 
     /**
