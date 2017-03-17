@@ -379,10 +379,10 @@ public class OrderInfoService {
         String[] customIdArray = customIds.split(",");
         List<ProtocolList> protocolLists = new ArrayList<>();
         for (String s : customIdArray) {
-            List<Dropdownlist> dropdownlists = orderInfoMapper.queryProtocolIdsInOrderInfoByCustomId(Long.valueOf(s), airportCode);
+            List<ProtocolVo> protocolVos = orderInfoMapper.queryProtocolIdsInOrderInfoByCustomId(Long.valueOf(s), airportCode);
             ProtocolList protocolList = new ProtocolList();
             protocolList.setCustomerId(Long.valueOf(s));
-            protocolList.setDropdownlistList(dropdownlists);
+            protocolList.setProtocolVos(protocolVos);
             protocolLists.add(protocolList);
         }
         return protocolLists;

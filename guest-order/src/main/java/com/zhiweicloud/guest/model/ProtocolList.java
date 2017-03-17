@@ -9,7 +9,7 @@ public class ProtocolList {
 
     private Long customerId;
 
-    private List<Dropdownlist> dropdownlistList;
+    private List<ProtocolVo> protocolVos;
 
     public Long getCustomerId() {
         return customerId;
@@ -19,12 +19,12 @@ public class ProtocolList {
         this.customerId = customerId;
     }
 
-    public List<Dropdownlist> getDropdownlistList() {
-        return dropdownlistList;
+    public List<ProtocolVo> getProtocolVos() {
+        return protocolVos;
     }
 
-    public void setDropdownlistList(List<Dropdownlist> dropdownlistList) {
-        this.dropdownlistList = dropdownlistList;
+    public void setProtocolVos(List<ProtocolVo> protocolVos) {
+        this.protocolVos = protocolVos;
     }
 
 }
