@@ -32,9 +32,16 @@
         <swagger.version>1.5.9</swagger.version>
         <springfox.version>2.2.2</springfox.version>
         <httpcore.version>4.5.2</httpcore.version>
+        <!--<poi.version>3.15</poi.version>-->
     </properties>
 
     <dependencies>
+        <!-- poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.15</version>
+        </dependency>
         <!-- jersey -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
