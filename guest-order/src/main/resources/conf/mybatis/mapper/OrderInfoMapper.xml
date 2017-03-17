@@ -97,6 +97,8 @@
         <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
         <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
         <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+        <result column="passenger_type" jdbcType="SMALLINT" property="passengerType" />
+
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
         <result column="create_user" jdbcType="BIGINT" property="createUser" />
         <result column="update_user" jdbcType="BIGINT" property="updateUser" />
