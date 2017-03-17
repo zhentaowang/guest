@@ -27,9 +27,12 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
+import com.zhiweicloud.guest.common.ExcelUtils;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
@@ -40,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.alibaba.fastjson.parser.Feature.OrderedField;
 
 /**
  * @author liuzh
@@ -138,4 +143,38 @@ public class CheckService {
         map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
         return map;
     }
+
+    public void exportExcel(String fileName,String json){
+        // 按顺序解析传入的json串
+        JSONObject jsonObject = JSON.parseObject(json, OrderedField);
+        JSONObject data = jsonObject.getJSONObject("data");
+
+        // 需要导出行数据集合
+        JSONArray rows = data.getJSONArray("rows");
+
+        // 解析一行数据，拿到列的顺序List
+        JSONObject row = rows.getJSONObject(0);
+        List<String> titleList = new ArrayList<>();
+        for (String s : row.keySet()) {
+            titleList.add(s);
+        }
+
+        // 解析标题列的中英文映射Map
+        Map<String, String> titleMap = new HashMap<>();
+        JSONArray column = data.getJSONArray("column");
+        column.forEach(x->{
+            String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
+            Map<String,String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
+            String[] strArray = new String[2];
+            int i = 0;
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                strArray[i] = entry.getValue();
+                i++;
+            }
+            titleMap.put(strArray[1],strArray[0] );
+        });
+
+        ExcelUtils.export(fileName,"sheetName",rows,titleList,titleMap);
+    }
+
 }
