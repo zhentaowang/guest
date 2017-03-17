@@ -47,6 +47,9 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="协议名称",name="protocolName")
     private String protocolName;
 
+    @ApiModelProperty(value="协议类型",name="protocolType")
+    private Long protocolType;
+
     @ApiModelProperty(value="预约人",name="bookingPerson")
     private Long bookingPerson;
 
@@ -135,6 +138,11 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value = "创建人姓名", name = "createUserName")
     @Transient
     private String createUserName;
+
+
+    @ApiModelProperty(value = "随行人数", name = "alongTotal")
+    private String alongTotal;
+
 
     /**
      * 主键自增id
@@ -638,5 +646,21 @@ public class OrderInfo extends BaseEntity{
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public String getAlongTotal() {
+        return alongTotal;
+    }
+
+    public void setAlongTotal(String alongTotal) {
+        this.alongTotal = alongTotal;
+    }
+
+    public Long getProtocolType() {
+        return protocolType;
+    }
+
+    public void setProtocolType(Long protocolType) {
+        this.protocolType = protocolType;
     }
 }

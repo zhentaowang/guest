@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.ws.rs.QueryParam;
 
 /**
- * GuestOrder.java
+ *
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017-01-04 17:01:53 Created By zhangpengfei

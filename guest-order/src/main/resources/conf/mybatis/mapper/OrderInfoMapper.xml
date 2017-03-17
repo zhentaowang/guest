@@ -9,6 +9,7 @@
       <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
       <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
       <result column="protocol_name" jdbcType="VARCHAR" property="protocolName" />
+      <result column="protocol_type" jdbcType="BIGINT" property="protocolType" />
       <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
       <result column="booking_person_name" jdbcType="VARCHAR" property="bookingPersonName" />
       <result column="notice_person" jdbcType="VARCHAR" property="noticePerson" />
@@ -32,6 +33,7 @@
       <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
       <result column="server_complete" jdbcType="BIT" property="serverComplete" />
       <result column="server_person_num" jdbcType="INTEGER" property="serverPersonNum" />
+      <result column="along_total" jdbcType="INTEGER" property="alongTotal" />
       <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
       <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
       <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -142,6 +144,9 @@
       <if test="protocolName != null">
         protocol_name,
       </if>
+      <if test="protocolType != null">
+        protocol_type,
+      </if>
       <if test="bookingPerson != null">
         booking_person,
       </if>
@@ -208,6 +213,9 @@
       <if test="serverPersonNum != null">
         server_person_num,
       </if>
+      <if test="alongTotal != null">
+        along_total,
+      </if>
       <if test="isDeleted != null">
         is_deleted,
       </if>
@@ -245,6 +253,9 @@
       </if>
       <if test="protocolName != null">
         #{protocolName,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolType != null">
+        #{protocolType,jdbcType=BIGINT},
       </if>
       <if test="bookingPerson != null">
         #{bookingPerson,jdbcType=BIGINT},
@@ -312,6 +323,9 @@
       <if test="serverPersonNum != null">
         #{serverPersonNum,jdbcType=INTEGER},
       </if>
+      <if test="alongTotal != null">
+        #{alongTotal,jdbcType=INTEGER},
+      </if>
       <if test="isDeleted != null">
         #{isDeleted,jdbcType=SMALLINT},
       </if>
@@ -351,6 +365,9 @@
       </if>
       <if test="protocolName != null">
         protocol_name = #{protocolName,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolType != null">
+        protocol_type = #{protocolType,jdbcType=VARCHAR},
       </if>
       <if test="bookingPerson != null">
         booking_person = #{bookingPerson,jdbcType=BIGINT},
@@ -421,6 +438,9 @@
       <if test="serverPersonNum != null">
         server_person_num = #{serverPersonNum,jdbcType=INTEGER},
       </if>
+      <if test="alongTotal != null">
+        along_total = #{alongTotal,jdbcType=INTEGER},
+      </if>
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
@@ -453,8 +473,8 @@
     select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
     (
     select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
-    o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
+    o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
+    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
     from order_info o
@@ -562,7 +582,7 @@
 		(
             select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
                 o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-                o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
+                o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,o.protocol_type,
                 f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
                 f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
 			from order_info o
@@ -672,8 +692,8 @@
     select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
     (
       select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
-      o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-      o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,
+      o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
+      o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,o.along_total,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
       from order_info o
