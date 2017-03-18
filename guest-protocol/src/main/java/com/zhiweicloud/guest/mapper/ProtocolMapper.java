@@ -42,5 +42,5 @@ public interface ProtocolMapper {
      * @param map
      * @return
      */
-    List<Dropdownlist> getProtocolNameDropdownList(Map<String, Object> map);
+    List<Map> getProtocolNameDropdownList(Map<String, Object> map);
 }

@@ -26,11 +26,9 @@ package com.zhiweicloud.guest.service;
 
 
 import com.zhiweicloud.guest.common.FlightException;
-import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.AirportInfoMapper;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
-import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,32 +54,44 @@ public class FlightService {
     @Autowired
     private FlightScheduleEventMapper flightScheduleEventMapper;
 
-    public List<Map<String,String>> flightInfoDropdownList(String airportNameOrCode) {
+    public List<Map<String, String>> flightInfoDropdownList(String airportNameOrCode) {
         return airportInfoMapper.queryFlightInfoDropdownList(airportNameOrCode);
     }
 
-    public List<Map<String,String>> flightNoDropdownList(String flightNo,String airportCode) {
-        return airportInfoMapper.queryFlightNoDropdownList(flightNo,airportCode);
+    public List<Map<String, String>> flightNoDropdownList(String flightNo, String airportCode) {
+        return airportInfoMapper.queryFlightNoDropdownList(flightNo, airportCode);
     }
 
-    public void updateFlight(Flight flight)throws Exception{
-        Long flightId = flightMapper.isFlightExist(flight);
-        if (flightId == null || flightId.equals("") || flightId == 0){
+    public void updateFlight(Flight flight) throws Exception {
+        Flight queryFlight = flightMapper.isFlightExist(flight);
+        Long flightId = queryFlight.getFlightId();
+        if (queryFlight == null || queryFlight.getFlightId() == 0) {
             throw new FlightException("没有找到对应的航班信息");
-        }else{
-            flight.setFlightId(flightId);
-            flightMapper.updateFlight(flight);
+        } else {
+            if (Long.valueOf(queryFlight.getFdId()) < Long.valueOf(flight.getFdId())) {
+                flight.setFlightId(flightId);
+                flightMapper.updateFlight(flight);
+            } else {
+                throw new FlightException("无需更新");
+            }
         }
     }
 
-    public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent,Long userId) throws Exception{
+    public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent, Long userId) throws Exception {
         if (flightScheduleEvent.getFlightScheduleEventId() == null || flightScheduleEvent.getFlightScheduleEventId() == 0) {
             flightScheduleEvent.setCreateUser(userId);
             flightScheduleEventMapper.insertSelective(flightScheduleEvent);
-        }else {
+        } else {
             flightScheduleEvent.setUpdateUser(userId);
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
+    }
+
+    public Flight queryFlightById(Long id, String airportCode) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightId", id);
+        params.put("airportCode", airportCode);
+        return flightMapper.selectByPrimaryKey(params);
     }
 
 }

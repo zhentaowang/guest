@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.ws.rs.QueryParam;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -20,251 +22,111 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 2017-03-15 11:04:10 Created By zhangpengfei
 */
 @ApiModel(value="OrderCheckDetail",description="order_check_detail")
-public class OrderCheckDetail {
-    @ApiModelProperty(value="订单号",name="orderNo")
-    private String orderNo;
+public class OrderCheckDetail extends BaseEntity{
+    @ApiModelProperty(value="列头",name="column")
+    private String column;
 
-    @ApiModelProperty(value="协议客户id",name="customerId")
-    private Long customerId;
+    @ApiModelProperty(value="查询列",name="selectFields")
+    private String selectFields;
 
-    @ApiModelProperty(value="协议id",name="protocolId")
-    private Long protocolId;
+    @ApiModelProperty(value="总价",name="totalAmount")
+    private String totalAmount;
 
-    @ApiModelProperty(value="产品id",name="productId")
-    private Long productId;
+    @ApiModelProperty(value="产品名称",name="productName")
+    @QueryParam("queryProductName")
+    private String queryProductName;
 
-    @ApiModelProperty(value="航班日期",name="flightDate")
-    private Date flightDate;
+    @ApiModelProperty(value="客户id",name="queryCustomerId")
+    @QueryParam("queryCustomerId")
+    private Long queryCustomerId;
 
-    @ApiModelProperty(value="航班号",name="planNo")
-    private String planNo;
+    @ApiModelProperty(value="协议id",name="queryProtocolId")
+    @QueryParam("queryProtocolId")
+    private Long queryProtocolId;
 
-    @ApiModelProperty(value="出发机场名",name="flightDepAirport")
-    private String flightDepAirport;
+    @ApiModelProperty(value="协议类型",name="queryProtocolType")
+    @QueryParam("queryProtocolType")
+    private Long queryProtocolType;
 
-    @ApiModelProperty(value="到达机场名",name="flightArrAirport")
-    private String flightArrAirport;
+    @ApiModelProperty(value="查询条件",name="queryProductType")
+    private String queryWhere;
 
-    @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
-    private Short isInOrOut;
+    @ApiModelProperty(value="文件名",name="fileName")
+    @QueryParam("fileName")
+    private String fileName;
 
-    @ApiModelProperty(value="贵宾厅人次",name="vipPersonNum")
-    private Integer vipPersonNum;
 
-    @ApiModelProperty(value="贵宾厅费用",name="vipPrice")
-    private Double vipPrice;
 
-    @ApiModelProperty(value="陪同人次",name="accompanyPersonNum")
-    private Integer accompanyPersonNum;
 
-    @ApiModelProperty(value="陪同费用",name="accompanyPrice")
-    private Double accompanyPrice;
-
-    /**
-     * 订单号
-     * @return order_no 订单号
-     */
-    public String getOrderNo() {
-        return orderNo;
+    public String getTotalAmount() {
+        return totalAmount;
     }
 
-    /**
-     * 订单号
-     * @param orderNo 订单号
-     */
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
-    /**
-     * 协议客户id
-     * @return customer_id 协议客户id
-     */
-    public Long getCustomerId() {
-        return customerId;
+    public String getColumn() {
+        return column;
     }
 
-    /**
-     * 协议客户id
-     * @param customerId 协议客户id
-     */
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setColumn(String column) {
+        this.column = column;
     }
 
-    /**
-     * 协议id
-     * @return protocol_id 协议id
-     */
-    public Long getProtocolId() {
-        return protocolId;
+    public String getSelectFields() {
+        return selectFields;
     }
 
-    /**
-     * 协议id
-     * @param protocolId 协议id
-     */
-    public void setProtocolId(Long protocolId) {
-        this.protocolId = protocolId;
+    public void setSelectFields(String selectFields) {
+        this.selectFields = selectFields;
     }
 
-    /**
-     * 产品id
-     * @return product_id 产品id
-     */
-    public Long getProductId() {
-        return productId;
+    public String getQueryProductName() {
+        return queryProductName;
     }
 
-    /**
-     * 产品id
-     * @param productId 产品id
-     */
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setQueryProductName(String queryProductName) {
+        this.queryProductName = queryProductName;
     }
 
-    /**
-     * 航班日期
-     * @return flight_date 航班日期
-     */
-    public Date getFlightDate() {
-        return flightDate;
+    public Long getQueryCustomerId() {
+        return queryCustomerId;
     }
 
-    /**
-     * 航班日期
-     * @param flightDate 航班日期
-     */
-    public void setFlightDate(Date flightDate) {
-        this.flightDate = flightDate;
+    public Long getQueryProtocolType() {
+        return queryProtocolType;
     }
 
-    /**
-     * 航班号
-     * @return plan_no 航班号
-     */
-    public String getPlanNo() {
-        return planNo;
+    public void setQueryProtocolType(Long queryProtocolType) {
+        this.queryProtocolType = queryProtocolType;
     }
 
-    /**
-     * 航班号
-     * @param planNo 航班号
-     */
-    public void setPlanNo(String planNo) {
-        this.planNo = planNo;
+    public void setQueryCustomerId(Long queryCustomerId) {
+        this.queryCustomerId = queryCustomerId;
     }
 
-    /**
-     * 出发机场名
-     * @return flight_dep_airport 出发机场名
-     */
-    public String getFlightDepAirport() {
-        return flightDepAirport;
+    public String getQueryWhere() {
+        return queryWhere;
     }
 
-    /**
-     * 出发机场名
-     * @param flightDepAirport 出发机场名
-     */
-    public void setFlightDepAirport(String flightDepAirport) {
-        this.flightDepAirport = flightDepAirport;
+    public void setQueryWhere(String queryWhere) {
+        this.queryWhere = queryWhere;
     }
 
-    /**
-     * 到达机场名
-     * @return flight_arr_airport 到达机场名
-     */
-    public String getFlightArrAirport() {
-        return flightArrAirport;
+    public Long getQueryProtocolId() {
+        return queryProtocolId;
     }
 
-    /**
-     * 到达机场名
-     * @param flightArrAirport 到达机场名
-     */
-    public void setFlightArrAirport(String flightArrAirport) {
-        this.flightArrAirport = flightArrAirport;
+    public void setQueryProtocolId(Long queryProtocolId) {
+        this.queryProtocolId = queryProtocolId;
     }
 
-    /**
-     * 出港：0，进港1
-     * @return is_in_or_out 出港：0，进港1
-     */
-    public Short getIsInOrOut() {
-        return isInOrOut;
+    public String getFileName() {
+        return fileName;
     }
 
-    /**
-     * 出港：0，进港1
-     * @param isInOrOut 出港：0，进港1
-     */
-    public void setIsInOrOut(Short isInOrOut) {
-        this.isInOrOut = isInOrOut;
-    }
-
-    /**
-     * 贵宾厅人次
-     * @return vip_person_num 贵宾厅人次
-     */
-    public Integer getVipPersonNum() {
-        return vipPersonNum;
-    }
-
-    /**
-     * 贵宾厅人次
-     * @param vipPersonNum 贵宾厅人次
-     */
-    public void setVipPersonNum(Integer vipPersonNum) {
-        this.vipPersonNum = vipPersonNum;
-    }
-
-    /**
-     * 贵宾厅费用
-     * @return vip_price 贵宾厅费用
-     */
-    public Double getVipPrice() {
-        return vipPrice;
-    }
-
-    /**
-     * 贵宾厅费用
-     * @param vipPrice 贵宾厅费用
-     */
-    public void setVipPrice(Double vipPrice) {
-        this.vipPrice = vipPrice;
-    }
-
-    /**
-     * 陪同人次
-     * @return accompany_person_num 陪同人次
-     */
-    public Integer getAccompanyPersonNum() {
-        return accompanyPersonNum;
-    }
-
-    /**
-     * 陪同人次
-     * @param accompanyPersonNum 陪同人次
-     */
-    public void setAccompanyPersonNum(Integer accompanyPersonNum) {
-        this.accompanyPersonNum = accompanyPersonNum;
-    }
-
-    /**
-     * 陪同费用
-     * @return accompany_price 陪同费用
-     */
-    public Double getAccompanyPrice() {
-        return accompanyPrice;
-    }
-
-    /**
-     * 陪同费用
-     * @param accompanyPrice 陪同费用
-     */
-    public void setAccompanyPrice(Double accompanyPrice) {
-        this.accompanyPrice = accompanyPrice;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

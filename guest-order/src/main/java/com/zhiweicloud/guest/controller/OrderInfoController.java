@@ -35,10 +35,7 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.model.OrderInfo;
-import com.zhiweicloud.guest.model.OrderInfoQuery;
-import com.zhiweicloud.guest.model.OrderService;
-import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -135,24 +132,91 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             } else {
-                if(order.getOrderStatus().equals("预约取消") || order.getOrderStatus().equals("服务取消")){
+                if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null || order.getFlight().getFlightArrcode().equals("") || order.getFlight().getFlightDepcode().equals("")) {
+                    result.setMsg("出发地三字码或者目的地三字码为空");
+                    result.setStatus(5006);
+                    result.setData(null);
+                }else{
+                    if(order.getOrderId() != null){
+                        /**
+                         * 通过changeOrderStatus字段为1 来判断，是修改订单状态
+                         */
+                        //首先根据订单拿到当前订单的状态
+                        /**
+                         * 只有如下的几种订单流转状态
+                         * 预约草稿 to  {预约取消，已预约}
+                         已预约 to  {已使用,预约取消}
+                         已使用 to  {服务草稿，服务取消}
+                         服务草稿 to  {已使用，服务取消}
+                         */
 
-                }else {
-                    if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null) {
-                        result.setMsg("出发地三字码或者目的地三字码为空");
-                        result.setStatus(5006);
+                        String currentOrderStatus =  orderInfoService.getById(order.getOrderId(), userId, airportCode).getOrderStatus();
+                        String toOrderStatus = order.getOrderStatus();
+                        boolean flag = false;
+
+                        /**
+                         * 预约草稿-》预约草稿
+                         *          已预约
+                         *          预约取消
+                         */
+                        if(currentOrderStatus.equals("预约草稿") && (toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已预约") || toOrderStatus.equals("预约取消"))){
+                            flag = true;
+                        }
+                        /**
+                         * 已预约-》  已预约
+                         *          预约草稿
+                         *          已使用
+                         *          预约取消
+                         */
+                        if(currentOrderStatus.equals("已预约") && (toOrderStatus.equals("已预约") || toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消"))){
+                            flag = true;
+                        }
+                        /**
+                         * 已使用-》  已使用
+                         *          服务草稿
+                         *          服务取消
+                         */
+                        if(currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))){
+                            flag = true;
+                        }
+                        /**
+                         * 服务草稿-》 服务草稿
+                         *          已使用
+                         *          服务取消
+                         */
+                        if(currentOrderStatus.equals("服务草稿") && (toOrderStatus.equals("服务草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("服务取消"))){
+                            flag = true;
+                        }
+                        /**
+                         * 预约取消-》预约取消
+                         */
+                        if(currentOrderStatus.equals("预约取消") && toOrderStatus.equals("预约取消")){
+                            flag = true;
+                        }
+                        /**
+                         * 服务取消-》服务取消
+                         */
+                        if(currentOrderStatus.equals("服务取消") && toOrderStatus.equals("服务取消")){
+                            flag = true;
+                        }
+
+                        if(!flag){
+                            result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
+                            result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
+                            result.setData("错误的状态更新");
+                            return JSON.toJSONString(result);
+                        }
+                    }
+                    String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
+                    if(!res.equals("操作成功")){
+                        result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
+                        result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
+                        result.setData(res);
+                    }else{
+                        result.setMsg(LZStatus.SUCCESS.display());
+                        result.setStatus(LZStatus.SUCCESS.value());
                         result.setData(null);
                     }
-                }
-                String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
-                if(!res.equals("操作成功")){
-                    result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
-                    result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
-                    result.setData(res);
-                }else{
-                    result.setMsg(LZStatus.SUCCESS.display());
-                    result.setStatus(LZStatus.SUCCESS.value());
-                    result.setData(null);
                 }
             }
         } catch (Exception e) {
@@ -315,5 +379,34 @@ public class OrderInfoController {
         return JSON.toJSONString(result);
     }
 
+    /**
+     * 查找客户下有订单的协议ID
+     * @param customerIds 客户ID串
+     * @param airportCode 机场码
+     * @return
+     */
+    @GET
+    @Path("queryProtocolIdsInOrderInfoByCustomId")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "查询协议 - 判断协议是否被订单引用 ", notes = "返回协议信息", httpMethod = "GET", produces = "application/json")
+    public LZResult<List<ProtocolList>> queryProtocolIdsInOrderInfoByCustomId(
+            @QueryParam("customerIds") String customerIds,
+            @HeaderParam("client-id") String airportCode) {
+        List<ProtocolList> protocolLists;
+        LZResult<List<ProtocolList>> result = new LZResult<>();
+        try {
+            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(protocolLists);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }finally {
+            return result;
+        }
+    }
 
 }

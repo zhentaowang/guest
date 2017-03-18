@@ -66,6 +66,10 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="0：金卡，1：银卡",name="cardType")
     private Short cardType;
 
+    @ApiModelProperty(value="乘客类型：0，乘客，1：随行",name="passengerType")
+    private Short passengerType;
+
+
     @ApiModelProperty(value="有效期",name="expireTime")
     private Date expireTime;
 
@@ -93,6 +97,11 @@ public class Passenger extends BaseEntity{
     @Transient
     private List<String> passengerList;
 
+    /**
+     * 返回字段，订单编号
+     */
+    @Transient
+    private String orderNo;
 
 
     /**
@@ -341,5 +350,21 @@ public class Passenger extends BaseEntity{
 
     public void setFlightId(Long flightId) {
         this.flightId = flightId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public Short getPassengerType() {
+        return passengerType;
+    }
+
+    public void setPassengerType(Short passengerType) {
+        this.passengerType = passengerType;
     }
 }

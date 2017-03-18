@@ -32,9 +32,16 @@
     <swagger.version>1.5.9</swagger.version>
     <springfox.version>2.2.2</springfox.version>
     <httpcore.version>4.5.2</httpcore.version>
+    <beanutils.version>1.9.2</beanutils.version>
   </properties>
 
   <dependencies>
+    <!-- dbUtils -->
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${beanutils.version}</version>
+    </dependency>
     <!-- jersey -->
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>

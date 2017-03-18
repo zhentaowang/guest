@@ -26,19 +26,23 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -51,6 +55,7 @@ import java.util.Map;
 @Path("/")
 @Api(value = "对账单管理", description = "", tags = {"对账单管理"})
 public class CheckController {
+
     private static final Logger logger = LoggerFactory.getLogger(CheckController.class);
 
     @Autowired
@@ -90,8 +95,10 @@ public class CheckController {
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
         try {
-            LZResult<PaginationResult<OrderCheckDetail>> result = checkService.customerChecklist(userId,airportCode,orderCheckDetail, page, rows);
-            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+            Map result = checkService.customerChecklist(airportCode,orderCheckDetail, page, rows);
+            Map map = new HashMap();
+            map.put("data",result);
+            return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
@@ -102,9 +109,30 @@ public class CheckController {
         }
     }
 
-
-
-
-
+    /**
+     * 导出文件
+     * Excel
+     * @param orderCheckDetail 参数
+     * @param airportCode 机场码
+     * @param userId 用户ID
+     * @return
+     */
+    @GET
+    @Path("exportFile")
+    @Produces("application/x-msdownload;charset=utf8")
+    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
+    public String exportFile(
+            @BeanParam final OrderCheckDetail orderCheckDetail,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        try {
+            Map result = checkService.customerChecklist(airportCode,orderCheckDetail, 1, 10);
+            checkService.exportExcel(orderCheckDetail,result);
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+    }
 
 }

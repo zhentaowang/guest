@@ -9,6 +9,7 @@
       <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
       <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
       <result column="protocol_name" jdbcType="VARCHAR" property="protocolName" />
+      <result column="protocol_type" jdbcType="BIGINT" property="protocolType" />
       <result column="booking_person" jdbcType="BIGINT" property="bookingPerson" />
       <result column="booking_person_name" jdbcType="VARCHAR" property="bookingPersonName" />
       <result column="notice_person" jdbcType="VARCHAR" property="noticePerson" />
@@ -32,6 +33,7 @@
       <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
       <result column="server_complete" jdbcType="BIT" property="serverComplete" />
       <result column="server_person_num" jdbcType="INTEGER" property="serverPersonNum" />
+      <result column="along_total" jdbcType="INTEGER" property="alongTotal" />
       <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
       <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
       <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -95,6 +97,8 @@
         <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
         <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
         <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+        <result column="passenger_type" jdbcType="SMALLINT" property="passengerType" />
+
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
         <result column="create_user" jdbcType="BIGINT" property="createUser" />
         <result column="update_user" jdbcType="BIGINT" property="updateUser" />
@@ -141,6 +145,9 @@
       </if>
       <if test="protocolName != null">
         protocol_name,
+      </if>
+      <if test="protocolType != null">
+        protocol_type,
       </if>
       <if test="bookingPerson != null">
         booking_person,
@@ -208,6 +215,9 @@
       <if test="serverPersonNum != null">
         server_person_num,
       </if>
+      <if test="alongTotal != null">
+        along_total,
+      </if>
       <if test="isDeleted != null">
         is_deleted,
       </if>
@@ -245,6 +255,9 @@
       </if>
       <if test="protocolName != null">
         #{protocolName,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolType != null">
+        #{protocolType,jdbcType=BIGINT},
       </if>
       <if test="bookingPerson != null">
         #{bookingPerson,jdbcType=BIGINT},
@@ -312,6 +325,9 @@
       <if test="serverPersonNum != null">
         #{serverPersonNum,jdbcType=INTEGER},
       </if>
+      <if test="alongTotal != null">
+        #{alongTotal,jdbcType=INTEGER},
+      </if>
       <if test="isDeleted != null">
         #{isDeleted,jdbcType=SMALLINT},
       </if>
@@ -351,6 +367,9 @@
       </if>
       <if test="protocolName != null">
         protocol_name = #{protocolName,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolType != null">
+        protocol_type = #{protocolType,jdbcType=VARCHAR},
       </if>
       <if test="bookingPerson != null">
         booking_person = #{bookingPerson,jdbcType=BIGINT},
@@ -421,6 +440,9 @@
       <if test="serverPersonNum != null">
         server_person_num = #{serverPersonNum,jdbcType=INTEGER},
       </if>
+      <if test="alongTotal != null">
+        along_total = #{alongTotal,jdbcType=INTEGER},
+      </if>
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
@@ -453,8 +475,8 @@
     select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
     (
     select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
-    o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
+    o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
+    o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
     from order_info o
@@ -519,7 +541,7 @@
     </if>
     limit #{page.startPageNo},#{page.pCount}
     ) as orderFlightClient
-    left join passenger p on orderFlightClient.order_id = p.order_id
+    left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
@@ -528,7 +550,7 @@
     </if>
     )as orderFlightClientPassenger
     left join order_service orderService
-    on orderService.order_id = orderFlightClientPassenger.order_id
+    on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
     ) as orderFlightClientPassengerService
     where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <choose>
@@ -562,7 +584,7 @@
 		(
             select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
                 o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-                o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,
+                o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,o.protocol_type,
                 f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
                 f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
 			from order_info o
@@ -627,7 +649,7 @@
             </if>
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
-		left join passenger p on orderFlightClient.order_id = p.order_id
+		left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
         <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
           and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
         </if>
@@ -636,7 +658,7 @@
         </if>
 	)as orderFlightClientPassenger
 	left join order_service orderService
-	on orderService.order_id = orderFlightClientPassenger.order_id
+	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
 ) as orderFlightClientPassengerService
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <choose>
@@ -669,21 +691,21 @@
     (
     select orderFlightClientPassenger.*,orderService.order_service_id,orderService.service_detail from
     (
-    select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time from
+    select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.vip_card as passenger_vip_card,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time,p.passenger_type from
     (
       select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
-      o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
-      o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,
+      o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
+      o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,o.along_total,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
       from order_info o
     inner join flight f
-    on o.flight_id = f.flight_id
+    on o.flight_id = f.flight_id and o.is_deleted = 0 and f.is_deleted = 0
     ) as orderFlightClient
-    left join passenger p on orderFlightClient.order_id = p.order_id
+    left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
     )as orderFlightClientPassenger
     left join order_service orderService
-    on orderService.order_id = orderFlightClientPassenger.order_id
+    on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
     ) as orderFlightClientPassengerService
     where orderFlightClientPassengerService.airport_code = #{airportCode}
 
@@ -713,11 +735,15 @@
       (SELECT ifnull(service_detail->>'$.serverNum',0) as serverNum, order_id FROM order_service
         WHERE service_detail->'$.serviceDetailId' = #{serviceDetailId} AND is_deleted = 0 AND airport_code = #{airportCode}) sd
     ON sd.order_id = o.order_id
-    WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete = 0 and airport_code = #{airportCode}
+    WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete != 1 and airport_code = #{airportCode}
   </select>
 
   <select id="getOrderCountByProtocolId" resultType="int">
     SELECT count(order_id) FROM order_info WHERE airport_code = #{airportCode} AND is_deleted = 0 AND protocol_id = #{protocolId}
+  </select>
+
+  <select id="queryProtocolIdsInOrderInfoByCustomId" resultType="com.zhiweicloud.guest.model.ProtocolVo">
+    SELECT DISTINCT protocol_id id,protocol_name value,protocol_type type FROM order_info WHERE customer_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
   </select>
 
 </mapper>

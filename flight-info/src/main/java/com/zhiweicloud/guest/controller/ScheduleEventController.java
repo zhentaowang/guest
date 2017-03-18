@@ -87,7 +87,7 @@ public class ScheduleEventController {
                     @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "servId", value = "服务id", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "servIds", value = "服务id", dataType = "String", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "typeId", value = "服务类型id", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "serverComplete", value = "订单是否为服务完成状态", dataType = "Long", required = false, paramType = "query")
             })
@@ -98,7 +98,7 @@ public class ScheduleEventController {
             @QueryParam(value = "flightState") Long flightState,
             @QueryParam(value = "isInOrOut") Long isInOrOut,
             @QueryParam(value = "scheduleEventId") Long scheduleEventId,
-            @QueryParam(value = "servId") Long servId,
+            @QueryParam(value = "servIds") String servIds,
             @QueryParam(value = "typeId") Long typeId,
             @QueryParam(value = "serverComplete") Long serverComplete,
             @QueryParam(value = "page") Integer page,
@@ -110,8 +110,9 @@ public class ScheduleEventController {
         param.put("flightDate",flightDate);
         param.put("flightState",flightState);
         param.put("isInOrOut",isInOrOut);
+
         param.put("scheduleEventId",scheduleEventId);
-        param.put("servId",servId);
+        param.put("servIds",servIds);
         param.put("serverComplete",serverComplete);
         LZResult<PaginationResult<Flight>> result  = scheduleEventService.getFlightList(param,page,rows);
         return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
@@ -289,6 +290,11 @@ public class ScheduleEventController {
         try {
             List<Long> ids = params.getData();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            for (int i = 0; i < ids.size(); i++) {
+                if (scheduleEventService.selectFlightByScheduleEventId(ids.get(i), airportCode) == true) {
+                    return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
+                }
+            }
             scheduleEventService.deleteById(ids,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {

@@ -101,7 +101,7 @@ public class CommonController {
             @QueryParam(value = "authorizerName") String authorizerName,
             @QueryParam(value = "reservationNum") String reservationNum){
         String airportCode = request.getHeaders().getFirst("client-id").toString();
-        LZResult<List<Dropdownlist>> result = new LZResult<>();
+        LZResult<List<Map>> result = new LZResult<>();
         try{
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("airportCode",airportCode);
@@ -111,7 +111,7 @@ public class CommonController {
             map.put("authorizerId",authorizerId);
             map.put("authorizerName",authorizerName);//预约人
             map.put("reservationNum",reservationNum);//预约号
-            List<Dropdownlist> list = protocolService.getProtocolNameDropdownList(map);
+            List<Map> list = protocolService.getProtocolNameDropdownList(map);
 
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());

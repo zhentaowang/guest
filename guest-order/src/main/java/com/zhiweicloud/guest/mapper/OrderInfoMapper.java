@@ -25,12 +25,15 @@
 package com.zhiweicloud.guest.mapper;
 
 
+import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.OrderInfo;
 import com.zhiweicloud.guest.model.OrderInfoQuery;
+import com.zhiweicloud.guest.model.ProtocolVo;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -85,5 +88,12 @@ public interface OrderInfoMapper{
     int getOrderCountByProtocolId(@Param("protocolId") Long protocolId, @Param("airportCode")String airportCode);
 
 
+    /**
+     * 根据客户ID集合查询客户下被订单引用的协议集合
+     * @param customId
+     * @param airportCode
+     * @return
+     */
+    List<ProtocolVo> queryProtocolIdsInOrderInfoByCustomId(@Param("customId")Long customId, @Param("airportCode")String airportCode);
 
 }
