@@ -42,6 +42,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.OutputStream;
 import java.util.*;
 
 import static com.alibaba.fastjson.parser.Feature.OrderedField;
@@ -178,7 +179,7 @@ public class CheckService {
         return map;
     }
 
-    public void exportExcel(OrderCheckDetail orderCheckDetail,Map result){
+    public void exportExcel(OrderCheckDetail orderCheckDetail, Map result){
         JSONArray column = (JSONArray) result.get("column");
         List rows = (List) result.get("rows");
         Map<String, String> titleMap = new HashMap<>();

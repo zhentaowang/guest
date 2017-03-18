@@ -119,8 +119,8 @@ public class CheckController {
      */
     @GET
     @Path("exportFile")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @Produces("application/x-msdownload;charset=utf8")
+    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
     public String exportFile(
             @BeanParam final OrderCheckDetail orderCheckDetail,
             @HeaderParam("client-id") String airportCode,
