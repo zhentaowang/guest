@@ -180,4 +180,14 @@
     where role_id = #{roleId} and airport_code = #{airportCode}
   </update>
 
+
+  <select id="judgeRepeat" resultType="int">
+    select count(role_id) from sys_role
+    where is_deleted = 0 and airport_code = #{airportCode}
+    <if test="roleId != null and !''.equals(roleId)">
+      and role_id != #{roleId}
+    </if>
+  </select>
+
+
 </mapper>

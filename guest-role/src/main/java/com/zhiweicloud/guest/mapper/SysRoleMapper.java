@@ -66,4 +66,6 @@ public interface SysRoleMapper{
     void insertSelective(SysRole sysRole);
 
     void updateByPrimaryKeySelective(SysRole temp);
+
+    int judgeRepeat(SysRole sysRole);
 }
