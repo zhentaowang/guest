@@ -18,6 +18,7 @@
     FROM protocol_product as pp left join
     (select product_id, product_name, product_no from v_product where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p on pp.product_id = p.product_id
     where pp.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and pp.is_deleted = 0 and pp.protocol_id = #{criteria.protocolId,jdbcType=BIGINT}
+    order by pp.protocol_product_id desc
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
