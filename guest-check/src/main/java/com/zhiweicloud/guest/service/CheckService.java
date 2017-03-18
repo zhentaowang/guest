@@ -150,7 +150,28 @@ public class CheckService {
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
 
 
-        List<Map> checkList = checkMapper.customerChecklist(queryCondition);
+        List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
+        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","vipPrice","accompanyPersonNum","accompanyPrice","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"));
+        Map<String, Object> totalRow = new HashMap<>();
+
+        for(int k = 0; k < checkList.size();k++){
+            Map<String,Object> singleRow = checkList.get(k);
+
+            for(String dataKey : singleRow.keySet()){
+                if (key.contains(dataKey) && singleRow.get(dataKey) != null){
+                    Float value = Float.parseFloat(singleRow.get(dataKey).toString());
+                    if (totalRow.containsKey(dataKey)){
+                        totalRow.put(dataKey, value + Float.parseFloat(totalRow.get(dataKey).toString()));
+                    } else {
+                        totalRow.put(dataKey, value);
+                    }
+                }
+            }
+        }
+
+        checkList.add(totalRow);
+
+
 
         map.put("total", checkList.size());
         map.put("rows", checkList);
