@@ -735,7 +735,7 @@
       (SELECT ifnull(service_detail->>'$.serverNum',0) as serverNum, order_id FROM order_service
         WHERE service_detail->'$.serviceDetailId' = #{serviceDetailId} AND is_deleted = 0 AND airport_code = #{airportCode}) sd
     ON sd.order_id = o.order_id
-    WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete = 0 and airport_code = #{airportCode}
+    WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete != 1 and airport_code = #{airportCode}
   </select>
 
   <select id="getOrderCountByProtocolId" resultType="int">
