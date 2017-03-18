@@ -159,6 +159,18 @@ public class Flight extends BaseEntity{
     @ApiModelProperty(value="服务名称",name="serviceName")
     private String serviceName;
 
+    @Transient
+    @ApiModelProperty(value="服务完成状态",name="serverComplete")
+    private String serverComplete;
+
+    public String getServerComplete() {
+        return serverComplete;
+    }
+
+    public void setServerComplete(String serverComplete) {
+        this.serverComplete = serverComplete;
+    }
+
     public String getServiceName() {
         return serviceName;
     }
