@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import org.apache.ibatis.executor.ReuseExecutor;
 import org.jvnet.hk2.annotations.Service;
 import org.springframework.stereotype.Component;
 
@@ -31,29 +32,30 @@ public class CheckDynamicColumn {
     }
     /**
      * 定义全部的查询字段
+     * 最后一个字段：0：不需要求和，1：需要求和
      */
     public final Map<String, String[]> ALL_COLUMN = new HashMap<String, String[]>() {{
-        put("orderNo", new String[]{"订单号", "concat(o.airport_code,lpad(o.order_id,6,'0')) AS orderNo"});
-        put("flightDate", new String[]{"航班日期", "date_format(f.flight_date, '%Y-%m-%d')  AS flightDate"});
-        put("flightNo", new String[]{"航班号", "f.flight_no AS flightNo"});
-        put("routeSegment", new String[]{"航段", "concat(f.flight_dep_airport,' - ',flight_arr_airport) AS routeSegment"});
-        put("isInOrOut", new String[]{"进出港", "if(f.is_in_or_out=0,'出港','进港') as isInOrOut"});
-        put("planNo", new String[]{"机号", "f.plan_no as planNo"});
-        put("vipPersonNum", new String[]{"贵宾厅人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vipPersonNum"});
-        put("vipPrice", new String[]{"贵宾厅费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vipPrice"});
-        put("passengerName", new String[]{"旅客姓名", "group_concat(p.name) as passengerName"});
-        put("accompanyPersonNum", new String[]{"陪同人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompanyPersonNum"});
-        put("accompanyPrice", new String[]{"陪同费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompanyPrice"});
-        put("restRoomPersonNum", new String[]{"休息室人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5) as restRoomPersonNum"});
-        put("restRoomPrice", new String[]{"休息室费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5) as restRoomPrice"});
-        put("securityCheckPersonNum", new String[]{"安检人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6) as securityCheckPersonNum"});
-        put("securityCheckPrice", new String[]{"安检费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6) as securityCheckPrice"});
-        put("vipCard", new String[]{"卡号", "group_concat(p.vip_card) as vipCard"});
-        put("ticketNo", new String[]{"客票号", "group_concat(p.ticket_no) as ticketNo"});
-        put("cardType", new String[]{"金银卡类别", "group_concat(DISTINCT(if(p.card_type=0,'金卡','银卡'))) as cardType"});
-        put("sitNo", new String[]{"座位号", "group_concat(p.sit_no) as sitNo"});
-        put("expireTime", new String[]{"有效期", "group_concat(date_format(p.expire_time, '%Y-%m-%d')) as expireTime"});
-        put("alongTotal", new String[]{"随行人次", "o.along_total as alongTotal"});
+        put("orderNo", new String[]{"订单号", "concat(o.airport_code,lpad(o.order_id,6,'0')) AS orderNo", "0"});
+        put("flightDate", new String[]{"航班日期", "date_format(f.flight_date, '%Y-%m-%d')  AS flightDate","0"});
+        put("flightNo", new String[]{"航班号", "f.flight_no AS flightNo", "0"});
+        put("routeSegment", new String[]{"航段", "concat(f.flight_dep_airport,' - ',flight_arr_airport) AS routeSegment","0"});
+        put("isInOrOut", new String[]{"进出港", "if(f.is_in_or_out=0,'出港','进港') as isInOrOut","0"});
+        put("planNo", new String[]{"机号", "f.plan_no as planNo","0"});
+        put("vipPersonNum", new String[]{"贵宾厅人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vipPersonNum","1"});
+        put("vipPrice", new String[]{"贵宾厅费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vipPrice","1"});
+        put("passengerName", new String[]{"旅客姓名", "group_concat(p.name) as passengerName","0"});
+        put("accompanyPersonNum", new String[]{"陪同人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompanyPersonNum","1"});
+        put("accompanyPrice", new String[]{"陪同费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompanyPrice","1"});
+        put("restRoomPersonNum", new String[]{"休息室人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5) as restRoomPersonNum","1"});
+        put("restRoomPrice", new String[]{"休息室费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5) as restRoomPrice","1"});
+        put("securityCheckPersonNum", new String[]{"安检人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6) as securityCheckPersonNum","1"});
+        put("securityCheckPrice", new String[]{"安检费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6) as securityCheckPrice","1"});
+        put("vipCard", new String[]{"卡号", "group_concat(p.vip_card) as vipCard","0"});
+        put("ticketNo", new String[]{"客票号", "group_concat(p.ticket_no) as ticketNo","0"});
+        put("cardType", new String[]{"金银卡类别", "group_concat(DISTINCT(if(p.card_type=0,'金卡','银卡'))) as cardType","0"});
+        put("sitNo", new String[]{"座位号", "group_concat(p.sit_no) as sitNo", "0"});
+        put("expireTime", new String[]{"有效期", "group_concat(date_format(p.expire_time, '%Y-%m-%d')) as expireTime","0"});
+        put("alongTotal", new String[]{"随行人次", "o.along_total as alongTotal","1"});
     }};
 
     public final Map<String, ColumnType> COLUMN = new HashMap<String, ColumnType>() {{
@@ -109,12 +111,20 @@ public class CheckDynamicColumn {
     }
 
     public String getColumn(String tableName) {
-        String result = "";
-        ColumnType columnType = COLUMN.get(tableName);
-        for (String column : columnType.column) {
-            result += ALL_COLUMN.get(column)[1] + ",";
+        try {
+            String result = "";
+            ColumnType columnType = COLUMN.get(tableName);
+            for (String column : columnType.column) {
+                result += ALL_COLUMN.get(column)[1] + ",";
+               /* if(ALL_COLUMN.get(column)[2].equals("1")){
+                    result += "sum(" + ALL_COLUMN.get(column)[1] + ")" + ",";
+                }*/
+            }
+            return result.substring(0, result.length() - 1);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
-        return result.substring(0, result.length() - 1);
     }
 
     public String getTotalAmount(String tableName) {

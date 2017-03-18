@@ -57,5 +57,5 @@ public interface CheckMapper {
      * @param queryCondition
      * @return
      */
-    List<Map> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
+    List<Map<String, Object>> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
 }
