@@ -107,7 +107,7 @@ public class InstitutionClientService {
             params.put("airportCode", airportCode);
             institutionClientMapper.deleteBatchByIdsAndUserId(params);
         }
-        names.deleteCharAt(names.length()-1);
+        //names.deleteCharAt(names.length()-1);
         return names.toString();
     }
 
