@@ -142,8 +142,7 @@ public class OrderInfoService {
             paramMap.put("typeId", jsonObject.get("serviceId"));
 
             if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
-                //JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
-                JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/get-service-box-by-type-and-protocol-product-id?access_token=CMiKDhjuZbGJnWXAi9za1CzjDvVf91EiGhHnEVhb&protocolProductId=" + orderInfo.getProductId() + "&typeId=" + jsonObject.get("serviceId")));
+                JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
                 if (jsonObject1 != null) {
                     JSONArray jsonArray = jsonObject1.getJSONArray("data");
                     for (int k = 0; k < jsonArray.size(); k++) {
