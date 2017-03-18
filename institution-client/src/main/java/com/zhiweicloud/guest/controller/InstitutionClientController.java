@@ -199,8 +199,8 @@ public class InstitutionClientController {
             String res =  institutionClientService.deleteByIds(ids,userId,airportCode);
 //            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,78L,"LJG");
             lzResult.setData(res);
-            lzResult.setMsg(LZStatus.SUCCESS.display());
-            lzResult.setStatus(LZStatus.SUCCESS.value());
+            lzResult.setMsg(LZStatus.DATA_REF_ERROR.display());
+            lzResult.setStatus(LZStatus.DATA_REF_ERROR.value());
         }catch (Exception e){
             lzResult.setData(null);
             lzResult.setMsg(LZStatus.ERROR.display());

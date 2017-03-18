@@ -21,6 +21,7 @@
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
 
     <result column="passenger_no" jdbcType="VARCHAR" property="passengerNo" />
+    <result column="types" jdbcType="VARCHAR" property="types" />
 
 
   </resultMap>
@@ -58,7 +59,7 @@
       AND p.protocol_name = #{passengerQuery.protocolName}
     </if>
     <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
-      AND p.protocol_type IN (#{passengerQuery.types})
+      AND p.types IN (${passengerQuery.types})
     </if>
     <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
       AND p.create_time &gt; #{passengerQuery.queryDateBegin}
@@ -93,7 +94,7 @@
       AND p.protocol_name = #{passengerQuery.protocolName}
     </if>
     <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
-      AND p.protocol_type IN (#{passengerQuery.types})
+      AND p.types IN (${passengerQuery.types})
     </if>
     <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
       AND p.create_time &gt; #{passengerQuery.queryDateBegin}
@@ -106,12 +107,54 @@
 
   <select id="queryBuyTimes" resultType="int">
     SELECT
-      count(passenger_id)
+      count(crm_passenger_id)
     FROM
-      v_passenger
+      crm_passenger
     WHERE airport_code = #{airportCode} AND (phone = #{phone} OR identity_card = #{identityCard})
   </select>
 
+
+
+  <resultMap id="ServiceInfoResultMap" type="com.zhiweicloud.guest.model.ServiceInfo">
+    <id column="crm_passenger_id" jdbcType="BIGINT" property="crmPassengerId" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+
+
+    <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="client_name" jdbcType="VARCHAR" property="clientName" />
+    <result column="protocol_no" jdbcType="VARCHAR" property="protocolNo" />
+    <result column="protocol_type" jdbcType="SMALLINT" property="protocolType" />
+
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+    <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+  </resultMap>
+  <select id="queryServiceInfoList" resultMap="ServiceInfoResultMap" parameterType="map">
+    SELECT
+      crm_passenger_id,flight_date, concat(airport_code,lpad(order_id, 6, '0')) AS order_no,product_name,
+	    client_name,concat(airport_code,'H',lpad(`protocol_id`, 4, '0')) AS protocol_no,protocol_type,
+    company_name,card_type,card_no,expire_time,work_unit,`position`
+
+    FROM
+	  crm_passenger
+	WHERE
+	  is_deleted=0 AND airport_code = #{airportCode}
+	  <if test="phone != null or (identity_card != null and !''.equals(identityCard))">
+        AND (phone = #{phone} or identity_card = #{identityCard})
+      </if>
+      <if test="phone == null and (identity_card == null or ''.equals(identityCard))">
+        AND crm_passenger_id = #{crmPassengerId}
+      </if>
+      <if test="protocolTypes != null and !''.equals(protocolTypes)">
+        AND protocol_type IN (${protocolTypes})
+      </if>
+  </select>
 
 
 

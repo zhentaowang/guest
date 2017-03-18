@@ -15,6 +15,7 @@
     <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
     <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
     <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+    <result column="passenger_type" jdbcType="SMALLINT" property="passengerType" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
@@ -23,7 +24,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     passenger_id, order_id,flight_id, name, phone, identity_card, work_unit, vip_card, sit_no,
-    cabin_no, ticket_no, card_no, card_type, expire_time, create_user, update_user
+    cabin_no, ticket_no, card_no, card_type, expire_time, create_user, update_user,passenger_type
   </sql>
 
 
@@ -71,6 +72,9 @@
       </if>
       <if test="cardType != null">
         card_type,
+      </if>
+      <if test="passengerType != null">
+        passenger_type,
       </if>
       <if test="expireTime != null">
         expire_time,
@@ -121,6 +125,9 @@
       </if>
       <if test="cardType != null">
         #{cardType,jdbcType=SMALLINT},
+      </if>
+      <if test="passengerType != null">
+        #{passengerType,jdbcType=SMALLINT},
       </if>
       <if test="expireTime != null">
         #{expireTime,jdbcType=TIMESTAMP},
@@ -192,6 +199,9 @@
       </if>
       <if test="cardType != null">
         card_type = #{cardType,jdbcType=SMALLINT},
+      </if>
+      <if test="passengerType != null">
+        passenger_type = #{passengerType,jdbcType=SMALLINT},
       </if>
       <if test="expireTime != null">
         expire_time = #{expireTime,jdbcType=TIMESTAMP},

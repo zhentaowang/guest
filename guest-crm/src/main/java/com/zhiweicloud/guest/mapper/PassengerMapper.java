@@ -27,6 +27,7 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.model.PassengerQuery;
+import com.zhiweicloud.guest.model.ServiceInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -60,4 +61,13 @@ public interface PassengerMapper {
      * @return
      */
     List<Passenger> queryById(@Param("passengerId") Long passengerId, @Param("airportCode") String airportCode);
+
+    /**
+     * 获取手机或者身份证匹配的 服务信息
+     * @param phone
+     * @param identityCard
+     * @param airportCode
+     * @return
+     */
+    List<ServiceInfo> queryServiceInfoList(Map<String,Object> map);
 }

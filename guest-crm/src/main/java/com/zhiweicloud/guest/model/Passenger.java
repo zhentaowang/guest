@@ -6,14 +6,13 @@
 */
 package com.zhiweicloud.guest.model;
 
+import com.zhiweicloud.guest.common.CrmConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -23,7 +22,7 @@ import org.springframework.util.StringUtils;
  * Passenger.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2017-03-13 20:46:33 Created By Administrator
+ * 2017-03-13 20:46:33 Created By zhengyiyin
 */
 @ApiModel(value="Passenger",description="passenger")
 public class Passenger extends BaseEntity{
@@ -99,7 +98,19 @@ public class Passenger extends BaseEntity{
      * 返回字段，用户编号
      * @return
      */
+    @Transient
     private String passengerNo;
+
+    /**
+     * 返回字段，服务信息
+     * @return
+     */
+    @Transient
+    private List<ServiceInfo> serviceInfoList;
+
+    @Transient
+    private String cardTypeName;
+
 
     public List<String> getLabalsName() {
         List<String> list = new ArrayList<>();
@@ -107,42 +118,56 @@ public class Passenger extends BaseEntity{
             String[] typeArr = types.split(",");
             for(int i=0; i <typeArr.length; i++){
                 switch (typeArr[i]){
-                    case "10" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("头等舱");
+                    case "10" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_1) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_1);
                                 }
                                 break;
-                    case "9" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("金银卡");
+                    case "9" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_2) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_2);
                                 }
                                 break;
-                    case "4" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("地方政要");
+                    case "4" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_3) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_3);
                                 }
                                 break;
-                    case "5" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("地方政要");
+                    case "5" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_3) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_3);
                                 }
                                 break;
-                    case "6" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("副部级vip");
+                    case "6" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_4) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_4);
                                 }
                                 break;
-                    case "1" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("银行领导");
+                    case "1" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_5) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_5);
                                 }
                                 break;
-                    case "7" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("持卡用户");
+                    case "7" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_6) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_6);
                                 }
                                 break;
-                    case "2" : if(list.toString().indexOf("头等舱") == -1){
-                                    list.add("持卡用户");
+                    case "2" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_6) == -1){
+                                    list.add(CrmConstant.LABEL_NAME_6);
                                 }
                                 break;
                 }
             }
         }
         return list;
+    }
+
+    public String getCardTypeName() {
+        if(this.cardType != null && CrmConstant.CARD_TYPE_GOLD.equals(this.cardType)){
+            return CrmConstant.CARD_TYPE_GOLD_NAME;//2.金卡
+
+        } else if(CrmConstant.CARD_TYPE_SILVER.equals(this.cardType)){
+            return CrmConstant.CARD_TYPE_SILVER_NAME;//1.银卡
+        }
+        return cardTypeName;
+    }
+
+    public void setCardTypeName(String cardTypeName) {
+        this.cardTypeName = cardTypeName;
     }
 
     public void setLabalsName(List<String> labalsName) {
@@ -427,5 +452,13 @@ public class Passenger extends BaseEntity{
 
     public void setPassengerNo(String passengerNo) {
         this.passengerNo = passengerNo;
+    }
+
+    public List<ServiceInfo> getServiceInfoList() {
+        return serviceInfoList;
+    }
+
+    public void setServiceInfoList(List<ServiceInfo> serviceInfoList) {
+        this.serviceInfoList = serviceInfoList;
     }
 }

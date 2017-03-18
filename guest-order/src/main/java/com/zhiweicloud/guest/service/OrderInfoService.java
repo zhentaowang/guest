@@ -3,10 +3,10 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.CustomException;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.OrderInfoMapper;
@@ -26,6 +26,7 @@ import java.util.*;
  */
 @Service
 public class OrderInfoService {
+
     private final OrderInfoMapper orderInfoMapper;
 
     private final PassengerMapper passengerMapper;
@@ -41,7 +42,6 @@ public class OrderInfoService {
         this.orderServiceMapper = orderServiceMapper;
         this.flightMapper = flightMapper;
     }
-
 
     public String saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
@@ -62,9 +62,6 @@ public class OrderInfoService {
             if (orderInfo.getFlight() != null) {
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
-               /* if (flight.getFlightArrcode() == null || flight.getFlightDepcode() == null) {
-                    throw new CustomException("出发地三字码或者目的地三字码为空");
-                }*/
                 if (flight.getFlightId() != null) {
                     flight.setUpdateTime(new Date());
                     flight.setUpdateUser(userId);
@@ -91,7 +88,7 @@ public class OrderInfoService {
             orderInfo.setCreateUser(userId);
             orderInfoMapper.insertSelective(orderInfo);
         }
-        this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList,userId,airportCode);
+        this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
         return "操作成功";
     }
 
@@ -102,7 +99,7 @@ public class OrderInfoService {
      * @param passengerList
      * @param orderServiceList
      */
-    private void addPassengerAndServiceDetails(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList,Long userId,String airportCode) throws Exception {
+    private void addPassengerAndServiceDetails(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         List passengerIds = new ArrayList<>();
         List serverDetailsList = new ArrayList();
         /**
@@ -146,11 +143,11 @@ public class OrderInfoService {
 
             if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
                 //JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
-                JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/get-service-box-by-type-and-protocol-product-id?access_token=CMiKDhjuZbGJnWXAi9za1CzjDvVf91EiGhHnEVhb&protocolProductId="+ orderInfo.getProductId() +"&typeId=" + jsonObject.get("serviceId")));
+                JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/get-service-box-by-type-and-protocol-product-id?access_token=CMiKDhjuZbGJnWXAi9za1CzjDvVf91EiGhHnEVhb&protocolProductId=" + orderInfo.getProductId() + "&typeId=" + jsonObject.get("serviceId")));
                 if (jsonObject1 != null) {
                     JSONArray jsonArray = jsonObject1.getJSONArray("data");
-                    for(int k = 0; k < jsonArray.size();k++){
-                        if(jsonArray.getJSONObject(k).get("protocolProductServiceId").equals(jsonObject.get("serviceDetailId"))){
+                    for (int k = 0; k < jsonArray.size(); k++) {
+                        if (jsonArray.getJSONObject(k).get("protocolProductServiceId").equals(jsonObject.get("serviceDetailId"))) {
                             os.setPriceRule(jsonArray.getJSONObject(k).get("pricingRule").toString());
                         }
                     }
@@ -210,7 +207,7 @@ public class OrderInfoService {
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolName", orderInfoQuery.getQueryCustomerInfo());
-            JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",headerMap,paramMap));
+            JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", headerMap, paramMap));
             if (protocolParam != null) {
                 JSONArray protocolArray = protocolParam.getJSONArray("data");
                 for (int i = 0; i < protocolArray.size(); i++) {
@@ -227,7 +224,7 @@ public class OrderInfoService {
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("reservationNum", orderInfoQuery.getQueryCustomerInfo());
-            JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",paramMap,headerMap));
+            JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", paramMap, headerMap));
             if (reservationNumObject != null) {
                 JSONArray reservationNumArray = reservationNumObject.getJSONArray("data");
                 for (int i = 0; i < reservationNumArray.size(); i++) {
@@ -244,7 +241,7 @@ public class OrderInfoService {
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("authorizerName", orderInfoQuery.getQueryCustomerInfo());
-            JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",paramMap,headerMap));
+            JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", paramMap, headerMap));
             if (authorizerNameObject != null) {
                 JSONArray authorizerNameArray = authorizerNameObject.getJSONArray("data");
 
@@ -287,7 +284,7 @@ public class OrderInfoService {
             //保存订单日志
             orderInfo.setOrderStatus("删除订单");
             orderInfoMapper.insertIntoOrderStatusRecord(orderInfo);
-            this.deletePassengerAndOrderServiceDeatil(ids.get(i), userId,airportCode);
+            this.deletePassengerAndOrderServiceDeatil(ids.get(i), userId, airportCode);
         }
     }
 
@@ -296,7 +293,7 @@ public class OrderInfoService {
      *
      * @param orderId
      */
-    private void deletePassengerAndOrderServiceDeatil(Long orderId,Long userId, String airportCode) throws Exception {
+    private void deletePassengerAndOrderServiceDeatil(Long orderId, Long userId, String airportCode) throws Exception {
         try {
             /**
              * 逻辑删除旅客
@@ -371,5 +368,23 @@ public class OrderInfoService {
      */
     public int getOrderCountByProtocolId(Long protocolId, String airportCode) throws Exception {
         return orderInfoMapper.getOrderCountByProtocolId(protocolId, airportCode);
+    }
+
+    /**
+     * 根据客户ID和机场码获取客户下被订单引用的协议
+     * @param customIds
+     * @param airportCode
+     */
+    public List<ProtocolList> queryProtocolIdsInOrderInfoByCustomId(String customIds, String airportCode) throws Exception {
+        String[] customIdArray = customIds.split(",");
+        List<ProtocolList> protocolLists = new ArrayList<>();
+        for (String s : customIdArray) {
+            List<ProtocolVo> protocolVos = orderInfoMapper.queryProtocolIdsInOrderInfoByCustomId(Long.valueOf(s), airportCode);
+            ProtocolList protocolList = new ProtocolList();
+            protocolList.setCustomerId(Long.valueOf(s));
+            protocolList.setProtocolVos(protocolVos);
+            protocolLists.add(protocolList);
+        }
+        return protocolLists;
     }
 }
