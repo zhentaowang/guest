@@ -127,9 +127,6 @@ public class CheckController {
             @HeaderParam("user-id") Long userId) {
         try {
             Map result = checkService.customerChecklist(airportCode,orderCheckDetail, 1, 10);
-//            Map map = new HashMap();
-//            map.put("data",result);
-//            checkService.exportExcel(orderCheckDetail.getFileName(),JSON.toJSONString(map, SerializerFeature.WriteMapNullValue));
             checkService.exportExcel(orderCheckDetail,result);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {

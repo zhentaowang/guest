@@ -160,8 +160,6 @@ public class CheckService {
     public void exportExcel(OrderCheckDetail orderCheckDetail,Map result){
         JSONArray column = (JSONArray) result.get("column");
         List rows = (List) result.get("rows");
-
-        // 获取title顺序 带顺序
         Map<String, String> titleMap = new HashMap<>();
         column.forEach(x -> {
             String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
@@ -174,45 +172,9 @@ public class CheckService {
             }
             titleMap.put(strArray[1], strArray[0]);
         });
-
         String fileName = orderCheckDetail.getFileName()== null?(orderCheckDetail.getQueryProductName()+ System.currentTimeMillis()):(orderCheckDetail.getFileName());
         String sheetName = orderCheckDetail.getQueryProductName();
-
         ExcelUtils.export(fileName,sheetName,rows,titleMap);
-
-    }
-
-    public void exportExcel(String fileName, String json) {
-        // 按顺序解析传入的json串
-        JSONObject jsonObject = JSON.parseObject(json, OrderedField);
-        JSONObject data = jsonObject.getJSONObject("data");
-
-        // 需要导出行数据集合
-        JSONArray rows = data.getJSONArray("rows");
-
-        // 解析一行数据，拿到列的顺序List
-        JSONObject row = rows.getJSONObject(0);
-        List<String> titleList = new ArrayList<>();
-        for (String s : row.keySet()) {
-            titleList.add(s);
-        }
-
-        // 解析标题列的中英文映射Map
-        Map<String, String> titleMap = new HashMap<>();
-        JSONArray column = data.getJSONArray("column");
-        column.forEach(x -> {
-            String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
-            Map<String, String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
-            String[] strArray = new String[2];
-            int i = 0;
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                strArray[i] = entry.getValue();
-                i++;
-            }
-            titleMap.put(strArray[1], strArray[0]);
-        });
-
-        ExcelUtils.export(fileName, "sheetName", rows, titleList, titleMap);
     }
 
 }
