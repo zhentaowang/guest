@@ -95,7 +95,7 @@ public class CheckController {
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
         try {
-            Map result = checkService.customerChecklist(userId,airportCode,orderCheckDetail, page, rows);
+            Map result = checkService.customerChecklist(airportCode,orderCheckDetail, page, rows);
             Map map = new HashMap();
             map.put("data",result);
             return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);

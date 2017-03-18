@@ -126,7 +126,7 @@ public class CheckService {
     }
 
 
-    public Map<String, Object> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception {
+    public Map<String, Object> customerChecklist(String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception {
         Map<String, Object> map = new HashMap();
         orderCheckDetail.setAirportCode(airportCode);
         String productName = orderCheckDetail.getQueryProductName();
@@ -142,6 +142,7 @@ public class CheckService {
 
             orderCheckDetail.setQueryWhere("and customer_id = " + orderCheckDetail.getQueryCustomerId() +
                     " and protocol_type = " + orderCheckDetail.getQueryProtocolType() +
+                    " and protocol_id = " + orderCheckDetail.getQueryProtocolId() +
                     " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");
         }
 

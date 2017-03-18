@@ -88,7 +88,7 @@
 
   <select id="customerChecklist" resultType="map">
     select *,${criteria.totalAmount} from (
-      select ${criteria.selectFields},o.customer_id,o.product_name,o.protocol_type
+      select ${criteria.selectFields},o.customer_id,o.product_name,o.protocol_id,o.protocol_type
       from order_info o
       inner join flight f on f.flight_id = o.flight_id
       inner join passenger p on p.order_id = o.order_id
