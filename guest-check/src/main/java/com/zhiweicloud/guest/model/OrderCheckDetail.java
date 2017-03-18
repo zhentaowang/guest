@@ -51,7 +51,9 @@ public class OrderCheckDetail extends BaseEntity{
     @ApiModelProperty(value="查询条件",name="queryProductType")
     private String queryWhere;
 
-
+    @ApiModelProperty(value="文件名",name="fileName")
+    @QueryParam("fileName")
+    private String fileName;
 
 
 
@@ -118,5 +120,13 @@ public class OrderCheckDetail extends BaseEntity{
 
     public void setQueryProtocolId(Long queryProtocolId) {
         this.queryProtocolId = queryProtocolId;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

@@ -9,11 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Excel导出工具类
@@ -62,7 +58,7 @@ public class ExcelUtils {
         initHSSFWorkbook(sheetName);
         createFirstRow(titleMap);
         createContentRow(dataList, titleMap);
-        out(getFilePath());
+        out(getFileName());
     }
 
     /**
@@ -75,7 +71,21 @@ public class ExcelUtils {
         initHSSFWorkbook(sheetName);
         createFirstRow(titleList);
         createContentRow(dataList, titleList);
-        out(getFilePath());
+        out(getFileName());
+    }
+
+    /**
+     * 导出Excel *目前项目中使用的*
+     * @param fileName
+     * @param sheetName
+     * @param rows
+     * @param titleMap
+     */
+    public static void export(String fileName, String sheetName, List rows, Map<String, String> titleMap) {
+        initHSSFWorkbook(sheetName);
+        createFirstRow(titleMap);
+        createContentRow(rows, titleMap);
+        out(getFilePath(fileName));
     }
 
     /**
@@ -123,17 +133,28 @@ public class ExcelUtils {
      */
     private static void createFirstRow(Map<String, String> titleMap) {
         HSSFRow row = sheet.createRow(TITLE_START_POSITION);
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        HSSFFont font = workbook.createFont();
+        font.setBold(true);
+        cellStyle.setFont(font);
 //        int i = 0;
 //        for (String s : titleMap.keySet()) {
 //            HSSFCell textcell = row.createCell(i);
 //            textcell.setCellValue(s);
 //            i++;
 //        }
-        for (int i = 0; i < titleMap.size(); i++) {
+        // 中间版本用过
+//        for (int i = 0; i < titleMap.size(); i++) {
+//            HSSFCell textcell = row.createCell(i);
+//            textcell.setCellValue(titleMap.get(i));
+//        }
+        int i = 0;
+        for (Map.Entry<String, String> entry : titleMap.entrySet()) {
             HSSFCell textcell = row.createCell(i);
-            textcell.setCellValue(titleMap.get(i));
+            textcell.setCellStyle(cellStyle);
+            textcell.setCellValue(entry.getValue());
+            i++;
         }
-
     }
 
     /**
@@ -176,27 +197,41 @@ public class ExcelUtils {
      * @param dataList 对象数据集合
      * @param titleMap 标题栏map
      */
+//    private static void createContentRow(List dataList, Map<String, String> titleMap) {
+//        try {
+//            int i = 0;
+//            for (Object obj : dataList) {
+//                HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
+//                for (int j = 0; j < titleMap.size(); j++) {
+//                    String s = titleMap.get(j);
+//                    String method = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
+//                    Method m = obj.getClass().getMethod(method, null);
+//                    String value =   m.invoke(obj, null).toString();
+//                    HSSFCell textcell = row.createCell(j);
+//                    textcell.setCellValue(value);
+//                }
+//                i++;
+//            }
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     private static void createContentRow(List dataList, Map<String, String> titleMap) {
-        try {
-            int i = 0;
-            for (Object obj : dataList) {
-                HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
-                for (int j = 0; j < titleMap.size(); j++) {
-                    String s = titleMap.get(j);
-                    String method = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
-                    Method m = obj.getClass().getMethod(method, null);
-                    String value =   m.invoke(obj, null).toString();
-                    HSSFCell textcell = row.createCell(j);
-                    textcell.setCellValue(value);
-                }
-                i++;
+        for (int i = 0,size = dataList.size(); i < size; i++) {
+            HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
+            Map<String,Object> rowMap = (HashMap) dataList.get(i);
+            int j = 0;
+            for (Map.Entry<String, String> entry : titleMap.entrySet()) {
+                HSSFCell textcell = row.createCell(j);
+                String value = (String) rowMap.get(entry.getKey());
+                textcell.setCellValue(value);
+                j++;
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
     }
-
+    
     /**
      * 创建excel内容
      * @param dataList 对象数据集合
@@ -251,12 +286,19 @@ public class ExcelUtils {
         }
     }
 
-    private static String getFilePath(String filePath){
-        filePath = filePath == null ? getFilePath() : filePath;
-        return filePath;
+    private static String getFilePath(String fileName){
+        return fileName == null ? (DEFAULT_PATH + "\\" + getDefaultFilePath()): checkFileName(fileName);
     }
 
-    private static String getFilePath(){
+    private static String checkFileName(String fileName){
+        if (fileName.contains(".xls")|| fileName.contains(".xlsx")) {
+            return DEFAULT_PATH + "\\" + fileName;
+        }else {
+            return DEFAULT_PATH + "\\" + fileName + ".xls";
+        }
+    }
+
+    private static String getDefaultFilePath(){
         return DEFAULT_PATH + "\\" + getFileName();
     }
 
@@ -267,392 +309,6 @@ public class ExcelUtils {
 
     private static String getSheetName(){
         return String.valueOf(System.currentTimeMillis());
-    }
-
-    public static void main(String[] args) {
-        String json = "{\n" +
-                "  \"data\": {\n" +
-                "    \"total\": 34,\n" +
-                "    \"column\": [\n" +
-                "      {\n" +
-                "        \"displayName\": \"订单号\",\n" +
-                "        \"columnName\": \"orderNo\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"displayName\": \"航班日期\",\n" +
-                "        \"columnName\": \"flightDate\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"displayName\": \"贵宾厅人次\",\n" +
-                "        \"columnName\": \"vipPersonNum\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"displayName\": \"贵宾厅费用\",\n" +
-                "        \"columnName\": \"vipPrice\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"displayName\": \"陪同人次\",\n" +
-                "        \"columnName\": \"accompanyPersonNum\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"displayName\": \"总数\",\n" +
-                "        \"columnName\": \"totalAmount\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"displayName\": \"陪同费用\",\n" +
-                "        \"columnName\": \"accompanyPrice\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"rows\": [\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000076\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489363200000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"333\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000077\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489363200000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"222\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000078\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489363200000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"222\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000079\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489363200000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"222\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000080\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000081\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000082\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"33\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000083\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"222\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000084\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000085\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000086\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000087\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000088\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"20\",\n" +
-                "        \"accompanyPersonNum\": \"30\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000089\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000090\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"10\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000091\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"10\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000092\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000093\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000094\",\n" +
-                "        \"accompanyPrice\": \"114\",\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": \"112\",\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000095\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"11\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": 13794,\n" +
-                "        \"orderNo\": \"LJG000096\",\n" +
-                "        \"accompanyPrice\": \"114\",\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": \"114\",\n" +
-                "        \"vipPersonNum\": \"55\",\n" +
-                "        \"accompanyPersonNum\": \"66\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000097\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"2000\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000098\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"333\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000099\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"333\",\n" +
-                "        \"accompanyPersonNum\": \"444\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000100\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"333\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000101\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"444\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000102\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"555\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000103\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489449600000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000104\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489536000000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000105\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489622400000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000106\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489622400000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"11\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000107\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489622400000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000108\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489622400000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": null,\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"totalAmount\": null,\n" +
-                "        \"orderNo\": \"LJG000109\",\n" +
-                "        \"accompanyPrice\": null,\n" +
-                "        \"flightDate\": 1489622400000,\n" +
-                "        \"vipPrice\": null,\n" +
-                "        \"vipPersonNum\": \"333\",\n" +
-                "        \"accompanyPersonNum\": null\n" +
-                "      }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "}";
-//
-//        JSONObject jsonObject = JSON.parseObject(json, OrderedField);
-//        JSONObject data = jsonObject.getJSONObject("data");
-//
-//
-//        // 获得数据集合
-//        List<Map<String, Object>> dataList = new ArrayList<>();
-//        JSONArray rows = data.getJSONArray("rows");
-//
-//        rows.forEach(x->{
-//            String row = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
-//            Map<String,Object> map = JSON.parseObject(row, LinkedHashMap.class,Feature.OrderedField);
-//            dataList.add(map);
-//        });
-//
-//        // 标题的顺序集合
-//        List<String> titleList = new ArrayList<>();
-//        JSONObject row = rows.getJSONObject(0);
-//        for (String s : row.keySet()) {
-//            titleList.add(s);
-//        }
-//
-//        // 获得标题集合
-//        Map<String, String> titleMap = new HashMap<>();
-//        JSONArray column = data.getJSONArray("column");
-//        column.forEach(x->{
-//            String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
-//            Map<String,String> map = JSON.parseObject(row1, LinkedHashMap.class,Feature.OrderedField);
-//            String[] strArray = new String[2];
-//            int i = 0;
-//            for (Map.Entry<String, String> entry : map.entrySet()) {
-//                strArray[i] = entry.getValue();
-//                i++;
-//            }
-//            titleMap.put(strArray[1],strArray[0] );
-//        });
-//
-//        export("C:\\excel\\test.xls","demo",rows,titleList,titleMap);
-//
-////        export("demo",rows,titleList);
     }
 
 }

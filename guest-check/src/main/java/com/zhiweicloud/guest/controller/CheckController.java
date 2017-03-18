@@ -112,22 +112,22 @@ public class CheckController {
     /**
      * 导出文件
      * Excel
-     * @param json 需要导出的Json数据
+     * @param orderCheckDetail 参数
      * @param airportCode 机场码
      * @param userId 用户ID
      * @return
      */
-    @POST
+    @GET
     @Path("exportFile")
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "POST", produces = "application/json")
+    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     public String exportFile(
-            @QueryParam(value = "fileName") String fileName,
-            @RequestBody String json,
+            @BeanParam final OrderCheckDetail orderCheckDetail,
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
         try {
-            checkService.exportExcel(fileName,json);
+            Map result = checkService.customerChecklist(airportCode,orderCheckDetail, 1, 10);
+            checkService.exportExcel(orderCheckDetail,result);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
             e.printStackTrace();
