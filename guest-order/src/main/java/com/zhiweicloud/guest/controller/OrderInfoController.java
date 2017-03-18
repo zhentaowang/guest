@@ -201,7 +201,10 @@ public class OrderInfoController {
                         }
 
                         if(!flag){
-                            return "错误的状态更新";
+                            result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
+                            result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
+                            result.setData("错误的状态更新");
+                            return JSON.toJSONString(result);
                         }
                     }
                     String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
