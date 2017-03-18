@@ -62,21 +62,21 @@ public class CheckService {
         this.checkDynamicColumn = checkDynamicColumn;
     }
 
-    public LZResult<PaginationResult<Map>> getAll(Long userId,String airportCode,CheckQueryParam checkQueryParam, Integer page, Integer rows) throws Exception{
+    public LZResult<PaginationResult<Map>> getAll(Long userId, String airportCode, CheckQueryParam checkQueryParam, Integer page, Integer rows) throws Exception {
         BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
 
         //productType 1,2,3 这种格式
         if (checkQueryParam.getQueryProtocolType() != null && !checkQueryParam.getQueryProtocolType().equals("")) {
-            if(checkQueryParam.getQueryProtocolType().length() > 0 && checkQueryParam.getQueryProtocolType().contains(",")){
+            if (checkQueryParam.getQueryProtocolType().length() > 0 && checkQueryParam.getQueryProtocolType().contains(",")) {
                 String protocolTypeArr[] = checkQueryParam.getQueryProtocolType().split(",");
-                for(int i = 0; i < protocolTypeArr.length;i++){
-                    List protocolIdList = this.getProtocolList(protocolTypeArr[i],userId,airportCode);
+                for (int i = 0; i < protocolTypeArr.length; i++) {
+                    List protocolIdList = this.getProtocolList(protocolTypeArr[i], userId, airportCode);
                     if (protocolIdList.size() > 0) {
                         checkQueryParam.setQueryProtocolId(ListUtil.List2String(protocolIdList));//协议id
                     }
                 }
-            }else{
-                List protocolIdList = this.getProtocolList(checkQueryParam.getQueryProtocolType(),userId,airportCode);
+            } else {
+                List protocolIdList = this.getProtocolList(checkQueryParam.getQueryProtocolType(), userId, airportCode);
                 if (protocolIdList.size() > 0) {
                     checkQueryParam.setQueryProtocolId(ListUtil.List2String(protocolIdList));//协议id
                 }
@@ -85,7 +85,7 @@ public class CheckService {
 
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
-        for(int i = 0; i < checkList.size(); i++){
+        for (int i = 0; i < checkList.size(); i++) {
 
             Map<String, Object> headerMap = new HashMap();
             headerMap.put("user-id", userId);
@@ -97,7 +97,7 @@ public class CheckService {
             JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getById?access_token=3A3MhKkdsOyvxZWYnMPTlnmCHSzfV3iGob4Uhvy7&protocolId=" + checkList.get(i).get("protocolId")));
             if (protocolObject != null) {
                 JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
-                checkList.get(i).put("protocolType",protocolObj.get("protocolTypeName"));
+                checkList.get(i).put("protocolType", protocolObj.get("protocolTypeName"));
             }
         }
 
@@ -106,7 +106,7 @@ public class CheckService {
         return result;
     }
 
-    private List getProtocolList(String protocolType,Long userId,String airportCode) throws Exception{
+    private List getProtocolList(String protocolType, Long userId, String airportCode) throws Exception {
         Map<String, Object> headerMap = new HashMap();
         headerMap.put("user-id", userId);
         headerMap.put("client-id", airportCode);
@@ -114,7 +114,7 @@ public class CheckService {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("protocolType", protocolType);
         List protocolIdList = new ArrayList();
-        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList",headerMap,paramMap));
+        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", headerMap, paramMap));
         if (protocolParam != null) {
             JSONArray protocolArray = protocolParam.getJSONArray("data");
             for (int i = 0; i < protocolArray.size(); i++) {
@@ -126,67 +126,38 @@ public class CheckService {
     }
 
 
-    public Map<String,Object> customerChecklist(Long userId, String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception{
-        Map<String,Object> map = new HashMap();
-        //所有 - VIP接送机/异地服务
-        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("VIP接送机")
-                ||
-                orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("异地服务")){
-            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("VIP_LONG_DISTANCE_QUERY_COLUMN"));
-            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("VIP_LONG_DISTANCE_QUERY_COLUMN"));
-            map.put("column", checkDynamicColumn.getHeader("VIP_LONG_DISTANCE_QUERY_COLUMN"));
-            //where customer_id = ? and product_name = VIP接送机
-        }
+    public Map<String, Object> customerChecklist(String airportCode, OrderCheckDetail orderCheckDetail, Integer page, Integer rows) throws Exception {
+        Map<String, Object> map = new HashMap();
+        orderCheckDetail.setAirportCode(airportCode);
+        String productName = orderCheckDetail.getQueryProductName();
 
-
-        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("两舱休息室")){
-            //头等舱 - 两舱休息室
-            if(orderCheckDetail.getQueryProductType() != null && orderCheckDetail.getQueryProductType() == 10){//10 代表协议类型是 头等舱
-                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("FIRST_CABINS_QUERY_COLUMN"));
-                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("FIRST_CABINS_QUERY_COLUMN"));
-                map.put("column", checkDynamicColumn.getHeader("FIRST_CABINS_QUERY_COLUMN"));
-
-                //where customer_id = ? and o.protocolType = 10 and product_name = 两舱休息室
-            }else if(orderCheckDetail.getQueryProductType() != null && orderCheckDetail.getQueryProductType() == 9){//9 代表协议类型是 金银卡
-                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
-                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
-                map.put("column", checkDynamicColumn.getHeader("GOLD_SILVER_CARD_QUERY_COLUMN"));
-
-               // where customer_id = ? and o.protocolType = 9 and product_name = 两舱休息室
-            }else{
-                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
-                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
-                map.put("column", checkDynamicColumn.getHeader("EXCEPT_FIRST_CABINS_AND_GOLD_SILVER_CARD__QUERY_COLUMN"));
-                // where customer_id = ? and o.protocolType not in (9,10) and product_name = 两舱休息室
+        if (productName != null) {
+            if (productName.equals("两舱休息室") &&
+                    (orderCheckDetail.getQueryProtocolType() == 9 || orderCheckDetail.getQueryProtocolType() == 10)) {
+                productName += orderCheckDetail.getQueryProtocolType().toString();
             }
-        }
+            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn(productName));
+            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount(productName));
+            map.put("column", checkDynamicColumn.getHeader(productName));
 
-        //所有 - 独立安检通道
-        if(orderCheckDetail.getQueryProductName()!= null && orderCheckDetail.getQueryProductName().equals("独立安检通道")){
-            orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
-            orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
-            map.put("column", checkDynamicColumn.getHeader("INDEPTENDENT_SECURITY_CHECK_QUERY_COLUMN"));
-            //where customer_id = ? and product_name = '独立安检通道'
+            orderCheckDetail.setQueryWhere("and customer_id = " + orderCheckDetail.getQueryCustomerId() +
+                    " and protocol_type = " + orderCheckDetail.getQueryProtocolType() +
+                    " and protocol_id = " + orderCheckDetail.getQueryProtocolId() +
+                    " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");
         }
-
-        orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn("GOLD_SILVER_CARD_QUERY_COLUMN"));
-        orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount("GOLD_SILVER_CARD_QUERY_COLUMN"));
 
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
 
 
-
-
-
         List<Map> checkList = checkMapper.customerChecklist(queryCondition);
 
-        map.put("total",checkList.size());
-        map.put("rows",checkList);
+        map.put("total", checkList.size());
+        map.put("rows", checkList);
 
         return map;
     }
 
-    public void exportExcel(String fileName,String json){
+    public void exportExcel(String fileName, String json) {
         // 按顺序解析传入的json串
         JSONObject jsonObject = JSON.parseObject(json, OrderedField);
         JSONObject data = jsonObject.getJSONObject("data");
@@ -204,19 +175,19 @@ public class CheckService {
         // 解析标题列的中英文映射Map
         Map<String, String> titleMap = new HashMap<>();
         JSONArray column = data.getJSONArray("column");
-        column.forEach(x->{
+        column.forEach(x -> {
             String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
-            Map<String,String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
+            Map<String, String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
             String[] strArray = new String[2];
             int i = 0;
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 strArray[i] = entry.getValue();
                 i++;
             }
-            titleMap.put(strArray[1],strArray[0] );
+            titleMap.put(strArray[1], strArray[0]);
         });
 
-        ExcelUtils.export(fileName,"sheetName",rows,titleList,titleMap);
+        ExcelUtils.export(fileName, "sheetName", rows, titleList, titleMap);
     }
 
 }
