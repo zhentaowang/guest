@@ -110,14 +110,6 @@ public class InstitutionClientService {
         }
         names.deleteCharAt(names.length()-1);
         return names.toString();
-        //一条一条删除数据
-//        for (Long id : ids) {
-//            JSONObject protocolList = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocolList?institutionClientId="+ id +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
-//            if(protocolList!=null || protocolList.size()!=0){
-//                throw new InstitutionException("机构已经被协议占用，无法删除");
-//            }
-//            institutionClientMapper.markAsDeleted(id,userId,airportCode);
-//        }
     }
 
     public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name,String no) {
