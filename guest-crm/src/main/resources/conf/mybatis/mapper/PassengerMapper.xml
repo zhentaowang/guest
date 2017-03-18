@@ -59,7 +59,7 @@
       AND p.protocol_name = #{passengerQuery.protocolName}
     </if>
     <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
-      AND p.protocol_type IN (#{passengerQuery.types})
+      AND p.types IN (${passengerQuery.types})
     </if>
     <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
       AND p.create_time &gt; #{passengerQuery.queryDateBegin}
@@ -94,7 +94,7 @@
       AND p.protocol_name = #{passengerQuery.protocolName}
     </if>
     <if test="passengerQuery.types != null and !''.equals(passengerQuery.types)">
-      AND p.protocol_type IN (${passengerQuery.types})
+      AND p.types IN (${passengerQuery.types})
     </if>
     <if test="passengerQuery.queryDateBegin != null and !''.equals(passengerQuery.queryDateBegin)">
       AND p.create_time &gt; #{passengerQuery.queryDateBegin}
