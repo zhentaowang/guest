@@ -108,8 +108,7 @@ public class Passenger extends BaseEntity{
     @Transient
     private List<ServiceInfo> serviceInfoList;
 
-    @Transient
-    private String cardTypeName;
+
 
 
     public List<String> getLabalsName() {
@@ -118,35 +117,35 @@ public class Passenger extends BaseEntity{
             String[] typeArr = types.split(",");
             for(int i=0; i <typeArr.length; i++){
                 switch (typeArr[i]){
-                    case "10" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_1) == -1){
+                    case CrmConstant.protocol_type_10 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_1) == -1){
                                     list.add(CrmConstant.LABEL_NAME_1);
                                 }
                                 break;
-                    case "9" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_2) == -1){
+                    case CrmConstant.protocol_type_9 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_2) == -1){
                                     list.add(CrmConstant.LABEL_NAME_2);
                                 }
                                 break;
-                    case "4" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_3) == -1){
+                    case CrmConstant.protocol_type_4 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_3) == -1){
                                     list.add(CrmConstant.LABEL_NAME_3);
                                 }
                                 break;
-                    case "5" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_3) == -1){
+                    case CrmConstant.protocol_type_5 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_3) == -1){
                                     list.add(CrmConstant.LABEL_NAME_3);
                                 }
                                 break;
-                    case "6" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_4) == -1){
+                    case CrmConstant.protocol_type_6 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_4) == -1){
                                     list.add(CrmConstant.LABEL_NAME_4);
                                 }
                                 break;
-                    case "1" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_5) == -1){
+                    case CrmConstant.protocol_type_1 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_5) == -1){
                                     list.add(CrmConstant.LABEL_NAME_5);
                                 }
                                 break;
-                    case "7" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_6) == -1){
+                    case CrmConstant.protocol_type_7 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_6) == -1){
                                     list.add(CrmConstant.LABEL_NAME_6);
                                 }
                                 break;
-                    case "2" : if(list.toString().indexOf(CrmConstant.LABEL_NAME_6) == -1){
+                    case CrmConstant.protocol_type_2 : if(list.toString().indexOf(CrmConstant.LABEL_NAME_6) == -1){
                                     list.add(CrmConstant.LABEL_NAME_6);
                                 }
                                 break;
@@ -156,19 +155,8 @@ public class Passenger extends BaseEntity{
         return list;
     }
 
-    public String getCardTypeName() {
-        if(this.cardType != null && CrmConstant.CARD_TYPE_GOLD.equals(this.cardType)){
-            return CrmConstant.CARD_TYPE_GOLD_NAME;//2.金卡
 
-        } else if(CrmConstant.CARD_TYPE_SILVER.equals(this.cardType)){
-            return CrmConstant.CARD_TYPE_SILVER_NAME;//1.银卡
-        }
-        return cardTypeName;
-    }
 
-    public void setCardTypeName(String cardTypeName) {
-        this.cardTypeName = cardTypeName;
-    }
 
     public void setLabalsName(List<String> labalsName) {
         this.labalsName = labalsName;
