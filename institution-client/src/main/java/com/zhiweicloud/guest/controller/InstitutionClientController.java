@@ -224,6 +224,7 @@ public class InstitutionClientController {
                 lzResult.setStatus(LZStatus.SUCCESS.value());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             lzResult.setData(null);
             lzResult.setMsg(LZStatus.ERROR.display());
             lzResult.setStatus(LZStatus.ERROR.value());

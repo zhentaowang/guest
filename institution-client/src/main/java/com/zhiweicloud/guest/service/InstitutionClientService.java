@@ -88,7 +88,6 @@ public class InstitutionClientService {
         for (Long id : ids) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("institutionClientId", id);
-//            String s = HttpClientUtil.httpGetRequest("http://127.0.0.1:8084/protocolList", headerMap, paramMap);
             String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
             JSONObject protocolList = JSON.parseObject(s);
             if (protocolList != null) {
