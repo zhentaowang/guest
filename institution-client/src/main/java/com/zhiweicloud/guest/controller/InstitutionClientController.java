@@ -59,7 +59,7 @@ import java.util.Map;
  */
 @Component
 @Path("/")
-@Api(value="机构客户管理",description="", tags={"InstitutionClientModel"})
+@Api(value = "机构客户管理", description = "", tags = {"InstitutionClientModel"})
 public class InstitutionClientController {
     private static final Logger logger = LoggerFactory.getLogger(InstitutionClientController.class);
 
@@ -67,13 +67,13 @@ public class InstitutionClientController {
     private InstitutionClientService institutionClientService;
 
     @GET
-    @Path(value ="list")
+    @Path(value = "list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "机构客户管理 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "参数错误"),
             @ApiResponse(code = 405, message = "请求方式不对"),
-            @ApiResponse(code = 200, message = "请求成功",response = InstitutionClient.class)
+            @ApiResponse(code = 200, message = "请求成功", response = InstitutionClient.class)
     })
     public String list(
             @DefaultValue("1") @Value("起始页") @QueryParam(value = "page") Integer page,
@@ -90,65 +90,81 @@ public class InstitutionClientController {
             param.setType(type);
             String airportCode = request.getHeaders().getFirst("client-id").toString();
             param.setAirportCode(airportCode);
-            LZResult<PaginationResult<InstitutionClient>> result  = institutionClientService.getAll(param,page,rows);
+            LZResult<PaginationResult<InstitutionClient>> result = institutionClientService.getAll(param, page, rows);
             return JSON.toJSONString(result);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return  JSON.toJSONString(result);
+            return JSON.toJSONString(result);
         }
 
     }
 
     /**
      * 机构客户管理 - 新增or更新
+     *
      * @return
      */
     @POST
-    @Path(value="saveOrUpdate")
+    @Path(value = "saveOrUpdate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value="机构客户管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public LXResult save(@ApiParam(value = "institutionClient", required = true) @RequestBody RequsetParams<InstitutionClient> params,@Context final HttpHeaders headers){
-        try{
+    @ApiOperation(value = "机构客户管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
+    public String save(@ApiParam(value = "institutionClient", required = true) @RequestBody RequsetParams<InstitutionClient> params, @Context final HttpHeaders headers) {
+        LZResult<String> result = new LZResult<>();
+        try {
             InstitutionClient institutionClient = null;
             Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-            if(!CollectionUtils.isEmpty(params.getData())){
+            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            if (!CollectionUtils.isEmpty(params.getData())) {
                 institutionClient = params.getData().get(0);
             }
 
-            if (institutionClient == null) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
-            }
-            if (institutionClient.getName() == null || "".equals(institutionClient.getName())
+            if (institutionClient == null || institutionClient.getName() == null || "".equals(institutionClient.getName())
                     || institutionClient.getEmployeeId() == null || "".equals(institutionClient.getEmployeeId())
                     || institutionClient.getType() == null || "".equals(institutionClient.getType())) {
-                return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
             }
             institutionClient.setAirportCode(airportCode);
-            if(institutionClient.getInstitutionClientId() != null){
+            //判断是否重名
+            int exists = institutionClientService.judgeRepeat(institutionClient);
+            if (institutionClient.getInstitutionClientId() != null) {
                 institutionClient.setUpdateUser(userId);
                 institutionClient.setUpdateTime(new Date());
-            }else{
+            } else {
                 institutionClient.setCreateUser(userId);
                 institutionClient.setCreateTime(new Date());
             }
-
+            if (exists > 0) {
+                result.setMsg(LZStatus.REPNAM.display());
+                result.setStatus(LZStatus.REPNAM.value());
+                result.setData(institutionClient.getName());
+                return JSON.toJSONString(result);
+            }
             institutionClientService.saveOrUpdate(institutionClient);
-            return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             e.printStackTrace();
-            return LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
         }
     }
 
 
     /**
      * 机构客户管理 - 根据id查询协议客户管理
+     *
      * @param institutionClientId
      * @return
      */
@@ -161,9 +177,9 @@ public class InstitutionClientController {
             ContainerRequestContext request) {
         try {
             String airportCode = request.getHeaders().getFirst("client-id").toString();
-            InstitutionClient institutionClient = institutionClientService.getById(institutionClientId,airportCode);
+            InstitutionClient institutionClient = institutionClientService.getById(institutionClientId, airportCode);
             return JSON.toJSONString(new LZResult<>(institutionClient));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             LZResult<InstitutionClient> result = new LZResult<>();
             result.setMsg(LZStatus.ERROR.display());
@@ -176,11 +192,12 @@ public class InstitutionClientController {
     /**
      * 机构客户管理 - 删除
      * {
-        "data": [
-        6,7,8
-        ]
+     * "data": [
+     * 6,7,8
+     * ]
+     * <p>
+     * }
      *
-     }
      * @return 返回被引用的机构客户ID集合
      */
     @POST
@@ -196,12 +213,12 @@ public class InstitutionClientController {
         LZResult<String> lzResult = new LZResult();
         try {
             List<Long> ids = params.getData();
-            String res =  institutionClientService.deleteByIds(ids,userId,airportCode);
+            String res = institutionClientService.deleteByIds(ids, userId, airportCode);
 //            List<Map<Long,String>> res =  institutionClientService.deleteByIds(ids,78L,"LJG");
             lzResult.setData(res);
             lzResult.setMsg(LZStatus.DATA_REF_ERROR.display());
             lzResult.setStatus(LZStatus.DATA_REF_ERROR.value());
-        }catch (Exception e){
+        } catch (Exception e) {
             lzResult.setData(null);
             lzResult.setMsg(LZStatus.ERROR.display());
             lzResult.setStatus(LZStatus.ERROR.value());
@@ -211,12 +228,13 @@ public class InstitutionClientController {
 
     /**
      * 产品品类下拉框 数据
+     *
      * @return
      */
     @GET
-    @Path(value="queryInstitutionClientDropdownList")
+    @Path(value = "queryInstitutionClientDropdownList")
     @Produces("application/json;charset=utf-8")
-    @ApiOperation(value="系统中用到机构客户信息下来框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
+    @ApiOperation(value = "系统中用到机构客户信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "模糊查询name", dataType = "String", required = false, paramType = "query"),
             @ApiImplicitParam(name = "no", value = "模糊查询编号", dataType = "String", required = false, paramType = "query"),
@@ -227,11 +245,9 @@ public class InstitutionClientController {
             @QueryParam(value = "name") String name,
             @QueryParam(value = "no") String no) {
         String airportCode = request.getHeaders().getFirst("client-id").toString();
-        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode,name,no);
+        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode, name, no);
         return new LZResult<>(list);
     }
-
-
 
 
 }
