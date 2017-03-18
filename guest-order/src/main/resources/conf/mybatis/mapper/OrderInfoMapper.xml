@@ -546,7 +546,7 @@
       and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
-      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+      and p.identity_card = #{criteria.queryIdentityCard}
     </if>
     )as orderFlightClientPassenger
     left join order_service orderService
@@ -654,7 +654,7 @@
           and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
         </if>
         <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
-          and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+          and p.identity_card = #{criteria.queryIdentityCard}
         </if>
 	)as orderFlightClientPassenger
 	left join order_service orderService
