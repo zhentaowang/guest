@@ -9,11 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Excel导出工具类
@@ -62,7 +58,7 @@ public class ExcelUtils {
         initHSSFWorkbook(sheetName);
         createFirstRow(titleMap);
         createContentRow(dataList, titleMap);
-        out(getFilePath());
+        out(getFileName());
     }
 
     /**
@@ -75,7 +71,21 @@ public class ExcelUtils {
         initHSSFWorkbook(sheetName);
         createFirstRow(titleList);
         createContentRow(dataList, titleList);
-        out(getFilePath());
+        out(getFileName());
+    }
+
+    /**
+     * 导出Excel 目前项目中使用的
+     * @param fileName
+     * @param sheetName
+     * @param rows
+     * @param titleMap
+     */
+    public static void export(String fileName, String sheetName, List rows, Map<String, String> titleMap) {
+        initHSSFWorkbook(sheetName);
+        createFirstRow(titleMap);
+        createContentRow(rows, titleMap);
+        out(getFilePath(fileName));
     }
 
     /**
@@ -129,11 +139,17 @@ public class ExcelUtils {
 //            textcell.setCellValue(s);
 //            i++;
 //        }
-        for (int i = 0; i < titleMap.size(); i++) {
+        // 中间版本用过
+//        for (int i = 0; i < titleMap.size(); i++) {
+//            HSSFCell textcell = row.createCell(i);
+//            textcell.setCellValue(titleMap.get(i));
+//        }
+        int i = 0;
+        for (Map.Entry<String, String> entry : titleMap.entrySet()) {
             HSSFCell textcell = row.createCell(i);
-            textcell.setCellValue(titleMap.get(i));
+            textcell.setCellValue(entry.getValue());
+            i++;
         }
-
     }
 
     /**
@@ -176,27 +192,41 @@ public class ExcelUtils {
      * @param dataList 对象数据集合
      * @param titleMap 标题栏map
      */
+//    private static void createContentRow(List dataList, Map<String, String> titleMap) {
+//        try {
+//            int i = 0;
+//            for (Object obj : dataList) {
+//                HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
+//                for (int j = 0; j < titleMap.size(); j++) {
+//                    String s = titleMap.get(j);
+//                    String method = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
+//                    Method m = obj.getClass().getMethod(method, null);
+//                    String value =   m.invoke(obj, null).toString();
+//                    HSSFCell textcell = row.createCell(j);
+//                    textcell.setCellValue(value);
+//                }
+//                i++;
+//            }
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     private static void createContentRow(List dataList, Map<String, String> titleMap) {
-        try {
-            int i = 0;
-            for (Object obj : dataList) {
-                HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
-                for (int j = 0; j < titleMap.size(); j++) {
-                    String s = titleMap.get(j);
-                    String method = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
-                    Method m = obj.getClass().getMethod(method, null);
-                    String value =   m.invoke(obj, null).toString();
-                    HSSFCell textcell = row.createCell(j);
-                    textcell.setCellValue(value);
-                }
-                i++;
+        for (int i = 0,size = dataList.size(); i < size; i++) {
+            HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
+            Map<String,Object> rowMap = (HashMap) dataList.get(i);
+            int j = 0;
+            for (Map.Entry<String, String> entry : titleMap.entrySet()) {
+                HSSFCell textcell = row.createCell(j);
+                String value = (String) rowMap.get(entry.getKey());
+                textcell.setCellValue(value);
+                j++;
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
     }
-
+    
     /**
      * 创建excel内容
      * @param dataList 对象数据集合
@@ -251,12 +281,19 @@ public class ExcelUtils {
         }
     }
 
-    private static String getFilePath(String filePath){
-        filePath = filePath == null ? getFilePath() : filePath;
-        return filePath;
+    private static String getFilePath(String fileName){
+        return fileName == null ? (DEFAULT_PATH + "\\" + getDefaultFilePath()): checkFileName(fileName);
     }
 
-    private static String getFilePath(){
+    private static String checkFileName(String fileName){
+        if (fileName.contains(".xls")|| fileName.contains(".xlsx")) {
+            return DEFAULT_PATH + "\\" + fileName;
+        }else {
+            return DEFAULT_PATH + "\\" + fileName + ".xls";
+        }
+    }
+
+    private static String getDefaultFilePath(){
         return DEFAULT_PATH + "\\" + getFileName();
     }
 
@@ -653,6 +690,10 @@ public class ExcelUtils {
 //        export("C:\\excel\\test.xls","demo",rows,titleList,titleMap);
 //
 ////        export("demo",rows,titleList);
+        Object o = null;
+        String s = (String) o;
+        System.out.println(s + "測試");
     }
+
 
 }
