@@ -122,8 +122,11 @@ public class RoleController {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
+                return JSON.toJSONString(result);
             }else{
                 sysRole.setAirportCode(airportCode);
+                //判断是否重名
+                int exists = sysRoleService.judgeRepeat(sysRole);
                 if(sysRole.getRoleId() != null){
                     sysRole.setUpdateUser(userId);
                     sysRole.setUpdateTime(new Date());
@@ -131,18 +134,26 @@ public class RoleController {
                     sysRole.setCreateUser(userId);
                     sysRole.setCreateTime(new Date());
                 }
+                if (exists > 0) {
+                    result.setMsg(LZStatus.REPNAM.display());
+                    result.setStatus(LZStatus.REPNAM.value());
+                    result.setData(sysRole.getName());
+                    return JSON.toJSONString(result);
+                }
                 sysRoleService.saveOrUpdate(sysRole);
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
                 result.setData(null);
+                return JSON.toJSONString(result);
             }
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
+            return JSON.toJSONString(result);
         }
-        return JSON.toJSONString(result);
+
     }
 
 

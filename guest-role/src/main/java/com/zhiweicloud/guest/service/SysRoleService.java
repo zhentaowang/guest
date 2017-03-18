@@ -140,4 +140,7 @@ public class SysRoleService {
         return sysRoleMapper.getSysRoleDropdownList(airportCode);
     }
 
+    public int judgeRepeat(SysRole sysRole) {
+        return sysRoleMapper.judgeRepeat(sysRole);
+    }
 }

@@ -231,4 +231,14 @@
     </foreach>
   </update>
 
+
+
+  <select id="judgeRepeat" resultType="int">
+    select count(institution_client_id) from institution_client
+    where is_deleted = 0 and airport_code = #{airportCode} and name = #{name}
+    <if test="institutionClientId != null and !''.equals(institutionClientId)">
+      and institution_client_id != #{institutionClientId}
+    </if>
+  </select>
+
 </mapper>

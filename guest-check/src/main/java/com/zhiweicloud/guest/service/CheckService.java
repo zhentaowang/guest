@@ -42,6 +42,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.OutputStream;
 import java.util.*;
 
 import static com.alibaba.fastjson.parser.Feature.OrderedField;
@@ -149,7 +150,28 @@ public class CheckService {
         BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(page, rows));
 
 
-        List<Map> checkList = checkMapper.customerChecklist(queryCondition);
+        List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
+        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","vipPrice","accompanyPersonNum","accompanyPrice","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"));
+        Map<String, Object> totalRow = new HashMap<>();
+
+        for(int k = 0; k < checkList.size();k++){
+            Map<String,Object> singleRow = checkList.get(k);
+
+            for(String dataKey : singleRow.keySet()){
+                if (key.contains(dataKey) && singleRow.get(dataKey) != null){
+                    Float value = Float.parseFloat(singleRow.get(dataKey).toString());
+                    if (totalRow.containsKey(dataKey)){
+                        totalRow.put(dataKey, value + Float.parseFloat(totalRow.get(dataKey).toString()));
+                    } else {
+                        totalRow.put(dataKey, value);
+                    }
+                }
+            }
+        }
+
+        checkList.add(totalRow);
+
+
 
         map.put("total", checkList.size());
         map.put("rows", checkList);
@@ -157,24 +179,10 @@ public class CheckService {
         return map;
     }
 
-    public void exportExcel(String fileName, String json) {
-        // 按顺序解析传入的json串
-        JSONObject jsonObject = JSON.parseObject(json, OrderedField);
-        JSONObject data = jsonObject.getJSONObject("data");
-
-        // 需要导出行数据集合
-        JSONArray rows = data.getJSONArray("rows");
-
-        // 解析一行数据，拿到列的顺序List
-        JSONObject row = rows.getJSONObject(0);
-        List<String> titleList = new ArrayList<>();
-        for (String s : row.keySet()) {
-            titleList.add(s);
-        }
-
-        // 解析标题列的中英文映射Map
+    public void exportExcel(OrderCheckDetail orderCheckDetail, Map result){
+        JSONArray column = (JSONArray) result.get("column");
+        List rows = (List) result.get("rows");
         Map<String, String> titleMap = new HashMap<>();
-        JSONArray column = data.getJSONArray("column");
         column.forEach(x -> {
             String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
             Map<String, String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
@@ -186,8 +194,9 @@ public class CheckService {
             }
             titleMap.put(strArray[1], strArray[0]);
         });
-
-        ExcelUtils.export(fileName, "sheetName", rows, titleList, titleMap);
+        String fileName = orderCheckDetail.getFileName()== null?(orderCheckDetail.getQueryProductName()+ System.currentTimeMillis()):(orderCheckDetail.getFileName());
+        String sheetName = orderCheckDetail.getQueryProductName();
+        ExcelUtils.export(fileName,sheetName,rows,titleMap);
     }
 
 }

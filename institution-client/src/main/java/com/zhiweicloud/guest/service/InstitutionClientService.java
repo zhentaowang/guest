@@ -129,4 +129,13 @@ public class InstitutionClientService {
         return institutionClientMapper.getInstitutionClientDropdownList(map);
     }
 
+    /**
+     * 新增的时候，没有id。需要判断数据库记录里面
+     * 更新的时候，有id。需要判断数据库除本身记录之外 是否有重复的字段值
+     * @param institutionClient
+     * @return
+     */
+    public int judgeRepeat(InstitutionClient institutionClient) {
+        return institutionClientMapper.judgeRepeat(institutionClient);
+    }
 }
