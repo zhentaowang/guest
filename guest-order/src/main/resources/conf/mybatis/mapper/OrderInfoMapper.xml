@@ -614,14 +614,17 @@
             <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 1">
               <choose>
                 <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
-                  and o.order_type = 1
                   and o.order_status in (#{criteria.queryOrderStatus})
                 </when>
                 <otherwise>
-                  and o.order_type = 1
-                  <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
-                    and o.order_status in (#{criteria.queryOrderStatus})
-                  </if>
+                  <choose>
+                    <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+                      and o.order_type = 1 and o.order_status in (#{criteria.queryOrderStatus})
+                    </when>
+                    <otherwise>
+                      and (o.order_type = 1 or o.order_status = '已使用')
+                    </otherwise>
+                  </choose>
                 </otherwise>
               </choose>
             </if>
