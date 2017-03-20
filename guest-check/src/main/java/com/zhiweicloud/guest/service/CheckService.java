@@ -39,9 +39,13 @@ import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ContainerResponseContext;
 import java.io.OutputStream;
 import java.util.*;
 
@@ -179,7 +183,7 @@ public class CheckService {
         return map;
     }
 
-    public void exportExcel(OrderCheckDetail orderCheckDetail, Map result){
+    public void exportExcel(OrderCheckDetail orderCheckDetail, Map result, HttpServletResponse response){
         JSONArray column = (JSONArray) result.get("column");
         List rows = (List) result.get("rows");
         Map<String, String> titleMap = new HashMap<>();
@@ -194,9 +198,10 @@ public class CheckService {
             }
             titleMap.put(strArray[1], strArray[0]);
         });
-        String fileName = orderCheckDetail.getFileName()== null?(orderCheckDetail.getQueryProductName()+ System.currentTimeMillis()):(orderCheckDetail.getFileName());
+        String fileName = orderCheckDetail.getQueryProductName() + "_" + System.currentTimeMillis() + ".xls";
         String sheetName = orderCheckDetail.getQueryProductName();
-        ExcelUtils.export(fileName,sheetName,rows,titleMap);
+        ExcelUtils.export(fileName, sheetName, rows, titleMap);
+        ExcelUtils.download(fileName, response);
     }
 
 }

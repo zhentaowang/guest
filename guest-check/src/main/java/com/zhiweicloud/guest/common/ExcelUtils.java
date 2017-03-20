@@ -3,12 +3,15 @@ package com.zhiweicloud.guest.common;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ContainerResponseContext;
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -23,10 +26,30 @@ public class ExcelUtils {
     private ExcelUtils() {
     }
 
+    public static void readExcel(File file) throws IOException{
+        String fileName = file.getName();
+        String extension = fileName.lastIndexOf(".")==-1?"":fileName.substring(fileName.lastIndexOf(".")+1);
+        if("xls".equals(extension)){
+            read2003Excel(file);
+        }else if("xlsx".equals(extension)){
+            read2007Excel(file);
+        }
+    }
+
+    private static List<List<Object>> read2007Excel(File file) {
+        return null;
+    }
+
+    private static List<List<Object>> read2003Excel(File file) {
+        return null;
+    }
+
+
     /**
      * 默认的导出路径
      */
-    private static final String DEFAULT_PATH = "C:\\excel";
+    private static final String DEFAULT_PATH = "/home/nfs-share/excel";
+//    private static final String DEFAULT_PATH = "C:/excel";
 
     /**
      * 工作簿
@@ -287,19 +310,20 @@ public class ExcelUtils {
     }
 
     private static String getFilePath(String fileName){
-        return fileName == null ? (DEFAULT_PATH + "\\" + getDefaultFilePath()): checkFileName(fileName);
+        String path = fileName == null ? (DEFAULT_PATH + "/" + getDefaultFilePath()): checkFileName(fileName);
+        return path;
     }
 
     private static String checkFileName(String fileName){
         if (fileName.contains(".xls")|| fileName.contains(".xlsx")) {
-            return DEFAULT_PATH + "\\" + fileName;
+            return DEFAULT_PATH + "/" + fileName;
         }else {
-            return DEFAULT_PATH + "\\" + fileName + ".xls";
+            return DEFAULT_PATH + "/" + fileName + ".xls";
         }
     }
 
     private static String getDefaultFilePath(){
-        return DEFAULT_PATH + "\\" + getFileName();
+        return DEFAULT_PATH + "/" + getFileName();
     }
 
     private static String getFileName(){
@@ -309,6 +333,33 @@ public class ExcelUtils {
 
     private static String getSheetName(){
         return String.valueOf(System.currentTimeMillis());
+    }
+
+    /**
+     * 下载
+     *
+     * @param downloadPath 下载路径
+     * @param response 响应
+     */
+    public static void download(String downloadPath, HttpServletResponse response) {
+        File file = new File(getFilePath(downloadPath));
+        String filename = file.getName();
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(getFilePath(downloadPath)));
+             OutputStream toClient = new BufferedOutputStream(response.getOutputStream())) {
+            byte[] buffer = new byte[inputStream.available()];
+            inputStream.read(buffer);
+            // 清空response
+            response.reset();
+            // 设置response的Header
+            response.addHeader("Content-Disposition", "attachment;filename="
+                    + new String(filename.getBytes()));
+            response.addHeader("Content-Length", "" + file.length());
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            toClient.write(buffer);
+            toClient.flush();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

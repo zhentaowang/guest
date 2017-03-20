@@ -30,18 +30,25 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.ExcelUtils;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,17 +128,16 @@ public class CheckController {
     @Path("exportFile")
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
-    public String exportFile(
+    public void exportFile(
             @BeanParam final OrderCheckDetail orderCheckDetail,
             @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId) {
+            @HeaderParam("user-id") Long userId,
+            @Context HttpServletResponse response) {
         try {
-            Map result = checkService.customerChecklist(airportCode,orderCheckDetail, 1, 10);
-            checkService.exportExcel(orderCheckDetail,result);
-            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+            Map result = checkService.customerChecklist("LJG",orderCheckDetail, 1, 10);
+            checkService.exportExcel(orderCheckDetail,result,response);
         } catch (Exception e) {
             e.printStackTrace();
-            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
