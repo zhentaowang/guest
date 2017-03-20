@@ -49,21 +49,22 @@ public class OrderInfoService {
             orderInfo.setUpdateTime(new Date());
             orderInfo.setUpdateUser(userId);
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-            Flight flight = orderInfo.getFlight();
-            flight.setAirportCode(airportCode);
+            if (orderInfo.getFlight() != null) {
+                Flight flight = orderInfo.getFlight();
+                flight.setAirportCode(airportCode);
 
-            if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                flight.setIsInOrOut((short) 0);//出港
-            } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                flight.setIsInOrOut((short) 1);//进港
+                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+                    flight.setIsInOrOut((short) 0);//出港
+                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+                    flight.setIsInOrOut((short) 1);//进港
+                }
+
+                if (flight.getFlightId() != null) {
+                    flight.setUpdateTime(new Date());
+                    flight.setUpdateUser(userId);
+                    flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
+                }
             }
-
-            if (flight.getFlightId() != null) {
-                flight.setUpdateTime(new Date());
-                flight.setUpdateUser(userId);
-                flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
-            }
-
             //保存订单日志
             if (!StringUtils.isEmpty(orderInfo.getOrderStatus())) {
                 orderInfoMapper.insertIntoOrderStatusRecord(orderInfo);
@@ -81,7 +82,7 @@ public class OrderInfoService {
                     flight.setIsInOrOut((short) 0);//出港
                 } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
                     flight.setIsInOrOut((short) 1);//进港
-                }else{
+                } else {
                     flight.setIsInOrOut((short) 0);//出港
                 }
                 if (flightId != null && !flightId.equals("")) {

@@ -38,6 +38,7 @@ import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -409,5 +410,7 @@ public class OrderInfoController {
             return result;
         }
     }
+
+
 
 }
