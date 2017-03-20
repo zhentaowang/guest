@@ -77,39 +77,7 @@ public class MainTest {
     }
 
     public static void main(String[] args) throws Exception {
-        String data = "data = {" +
-                "\"fd_id\": \"2139\"," +
-                "\"FlightNo\": \"MU2474\"," +
-                "\"FlightDate\": \"2017-03-20\"," +
-                "\"FlightCompany\": \"上海东方航空公司\"," +
-                "\"FlightDepcode\": \"NGB\"," +
-                "\"FlightArrcode\": \"LHW\"," +
-                "\"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\"," +
-                "\"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\"," +
-                "\"FlightDeptimeReadyDate\": \"\"," +
-                "\"FlightArrtimeReadyDate\": \"\"," +
-                "\"FlightDeptimeDate\": \"2017-03-18 12:30:45\"," +
-                "\"FlightArrtimeDate\": \"\"," +
-                "\"stopFlag\": \"\"," +
-                "\"shareFlag\": \"\"," +
-                "\"ShareFlightNo\": \"\"," +
-                "\"FillFlightNo\": \"\"," +
-                "\"BoardGate\": \"\"," +
-                "\"BoardState\": \"\"," +
-                "\"FlightState\": \"Plan\"," +
-                "\"FlightHTerminal\": \"\"," +
-                "\"FlightTerminal\": \"T2\"," +
-                "\"FlightDep\": \"宁波市\"," +
-                "\"FlightArr\": \"兰州市\"," +
-                "\"FlightDepAirport\": \"宁波栎社国际机场\"," +
-                "\"FlightArrAirport\": \"兰州中川机场\"," +
-                "\"alternate_info\": \"\"," +
-                "\"org_timezone\": \"\"," +
-                "\"dst_timezone\": \"\"," +
-                "\"fcategory\": \"\"," +
-                "\"fid\": \"\"," +
-                "\"BoardGateTime\": \"\"" +
-                "}";
+        String data = "data={\"fd_id\":\"902990\",\"FlightNo\":\"MU2474\",\"FlightDate\":\"2017-03-21\",\"FlightCompany\":\"中国东方航空股份有限公司\",\"FlightDepcode\":\"NGB\",\"FlightArrcode\":\"LHW\",\"FlightDeptimePlanDate\":\"2017-03-21 15:10:00\",\"FlightArrtimePlanDate\":\"2017-03-21 20:10:00\",\"FlightDeptimeReadyDate\":\"\",\"FlightArrtimeReadyDate\":\"\",\"FlightDeptimeDate\":\"\",\"FlightArrtimeDate\":\"\",\"stopFlag\":\"\",\"shareFlag\":\"\",\"ShareFlightNo\":\"\",\"FillFlightNo\":\"\",\"BoardGate\":\"\",\"BoardState\":\"\",\"FlightState\":\"Plan\",\"FlightHTerminal\":\"\",\"FlightTerminal\":\"T2\",\"FlightDep\":\"宁波市\",\"FlightArr\":\"兰州市\",\"FlightDepAirport\":\"宁波栎社国际机场\",\"FlightArrAirport\":\"兰州中川机场\",\"alternate_info\":\"\",\"org_timezone\":\"\",\"dst_timezone\":\"\",\"fcategory\":\"\",\"fid\":\"\",\"BoardGateTime\":\"\"}";
         System.out.println(DragonSignature.rsaSign(data.replace(" ",""), Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
         System.out.println(DragonSignature.rsaSign(data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
 
