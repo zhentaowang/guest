@@ -2,6 +2,8 @@ package com.zhiweicloud.guest.common;
 
 import com.dragon.sign.DragonSignature;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ import java.util.Map;
  */
 public class MainTest {
 
-    public static void main(String[] args) throws Exception {
+    public static void tt() throws Exception{
         String filepath = "C:/excel/";
 
         System.out.println("--------------公钥加密私钥解密过程-------------------");
@@ -72,41 +74,53 @@ public class MainTest {
         System.out.println(RSAEncrypt.loadPublicKeyByFile(filepath));
         System.out.println("验签结果：" + FengShuSignature.doCheck(params, signstr, RSAEncrypt.loadPublicKeyByFile(filepath)));
         System.out.println();
+    }
 
+    public static void main(String[] args) throws Exception {
         String data = "data = {" +
-                "    \"fd_id\": \"2139\"," +
-                "    \"FlightNo\": \"MU2474\"," +
-                "    \"FlightDate\": \"2017-03-20\"," +
-                "    \"FlightCompany\": \"上海东方航空公司\"," +
-                "    \"FlightDepcode\": \"NGB\"," +
-                "    \"FlightArrcode\": \"LHW\"," +
-                "    \"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\"," +
-                "    \"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\"," +
-                "    \"FlightDeptimeReadyDate\": \"\"," +
-                "    \"FlightArrtimeReadyDate\": \"\"," +
-                "    \"FlightDeptimeDate\": \"2017-03-18 12:30:45\"," +
-                "    \"FlightArrtimeDate\": \"\"," +
-                "    \"stopFlag\": \"\"," +
-                "    \"shareFlag\": \"\"," +
-                "    \"ShareFlightNo\": \"\"," +
-                "    \"FillFlightNo\": \"\"," +
-                "    \"BoardGate\": \"\"," +
-                "    \"BoardState\": \"\"," +
-                "    \"FlightState\": \"Plan\"," +
-                "    \"FlightHTerminal\": \"\"," +
-                "    \"FlightTerminal\": \"T2\"," +
-                "    \"FlightDep\": \"宁波市\"," +
-                "    \"FlightArr\": \"兰州市\"," +
-                "    \"FlightDepAirport\": \"宁波栎社国际机场\"," +
-                "    \"FlightArrAirport\": \"兰州中川机场\"," +
-                "    \"alternate_info\": \"\"," +
-                "    \"org_timezone\": \"\"," +
-                "    \"dst_timezone\": \"\"," +
-                "    \"fcategory\": \"\"," +
-                "    \"fid\": \"\"," +
-                "    \"BoardGateTime\": \"\"" +
+                "\"fd_id\": \"2139\"," +
+                "\"FlightNo\": \"MU2474\"," +
+                "\"FlightDate\": \"2017-03-20\"," +
+                "\"FlightCompany\": \"上海东方航空公司\"," +
+                "\"FlightDepcode\": \"NGB\"," +
+                "\"FlightArrcode\": \"LHW\"," +
+                "\"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\"," +
+                "\"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\"," +
+                "\"FlightDeptimeReadyDate\": \"\"," +
+                "\"FlightArrtimeReadyDate\": \"\"," +
+                "\"FlightDeptimeDate\": \"2017-03-18 12:30:45\"," +
+                "\"FlightArrtimeDate\": \"\"," +
+                "\"stopFlag\": \"\"," +
+                "\"shareFlag\": \"\"," +
+                "\"ShareFlightNo\": \"\"," +
+                "\"FillFlightNo\": \"\"," +
+                "\"BoardGate\": \"\"," +
+                "\"BoardState\": \"\"," +
+                "\"FlightState\": \"Plan\"," +
+                "\"FlightHTerminal\": \"\"," +
+                "\"FlightTerminal\": \"T2\"," +
+                "\"FlightDep\": \"宁波市\"," +
+                "\"FlightArr\": \"兰州市\"," +
+                "\"FlightDepAirport\": \"宁波栎社国际机场\"," +
+                "\"FlightArrAirport\": \"兰州中川机场\"," +
+                "\"alternate_info\": \"\"," +
+                "\"org_timezone\": \"\"," +
+                "\"dst_timezone\": \"\"," +
+                "\"fcategory\": \"\"," +
+                "\"fid\": \"\"," +
+                "\"BoardGateTime\": \"\"" +
                 "}";
         System.out.println(DragonSignature.rsaSign(data.replace(" ",""), Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
+        System.out.println(DragonSignature.rsaSign(data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        long time = 1490074398000l;
+
+
+        String s = "{\"FD_ID\": \"0\",\"FlightNo\": \"MU2474\",\"FlightDate\": \"2017-03-20\",\"FlightCompany\": \"中国东方航空股份有限公司\",\"FlightDepcode\": \"NGB\",\"FlightArrcode\": \"LHW\",\"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\",\"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\",\"FlightDeptimeReadyDate\": \"\",\"FlightArrtimeReadyDate\": \"\",\"FlightDeptimeDate\": \"\",\"FlightArrtimeDate\": \"\",\"StopFlag\": \"\",\"ShareFlag\": \"\",\"ShareFlightNo\": \"\",\"FillFlightNo\": \"\",\"BoardGate\": \"\",\"BoardState\": \"\",\"FlightState\": \"Plan\",\"FlightHTerminal\": \"\",\"FlightTerminal\": \"T2\",\"FlightDep\": \"宁波市\",\"FlightArr\": \"兰州市\",\"FlightDepAirport\": \"宁波栎社国际机场\",\"FlightArrAirport\": \"兰州中川机场\",\"Fcategory\": \"\",\"BoardGateTime\": \"\"}";
+        System.out.println(s.replace(" ","").toString());
+        System.out.println(simpleDateFormat.format(new Date(time)));
 
     }
 

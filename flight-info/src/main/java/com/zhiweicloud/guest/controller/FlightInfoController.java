@@ -22,23 +22,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * FlightInfoController.java
+ * FlightInfoController.java.
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * @url https://www.zhiweicloud.com
- * @date 2017/3/17 17:44 
+ * https://www.zhiweicloud.com
+ * 2017/3/17 17:44
  * @author tiecheng
  */
 @Component
@@ -46,11 +44,14 @@ import java.util.Map;
 @Api(value = "航班信息", description = "航班信息desc ", tags = {"flight-info"})
 public class FlightInfoController {
 
+    /**
+     * FlightService.
+     */
     @Autowired
     private FlightService flightService;
 
     /**
-     * 订单管理 - 根据id查询
+     * 订单管理 - 根据id查询.
      *
      * @param date
      * @param fnum
