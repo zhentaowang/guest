@@ -49,6 +49,13 @@ public class OrderInfoService {
             orderInfo.setUpdateTime(new Date());
             orderInfo.setUpdateUser(userId);
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            Flight flight = orderInfo.getFlight();
+            flight.setAirportCode(airportCode);
+            if (flight.getFlightId() != null) {
+                flight.setUpdateTime(new Date());
+                flight.setUpdateUser(userId);
+                flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
+            }
 
             //保存订单日志
             if (!StringUtils.isEmpty(orderInfo.getOrderStatus())) {
@@ -60,13 +67,15 @@ public class OrderInfoService {
              * 新增修改航班信息
              */
             if (orderInfo.getFlight() != null) {
-                Flight flight = orderInfo.getFlight();
+                /*Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
                 if (flight.getFlightId() != null) {
                     flight.setUpdateTime(new Date());
                     flight.setUpdateUser(userId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
-                } else {
+                } else {*/
+                    Flight flight = orderInfo.getFlight();
+                    flight.setAirportCode(airportCode);
                     Long flightId = flightMapper.isFlightExist(flight);
                     if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
                         flight.setIsInOrOut((short) 0);//出港
@@ -81,7 +90,7 @@ public class OrderInfoService {
                         flight.setCreateUser(userId);
                         flightMapper.insertSelective(flight);
                     }
-                }
+                /*}*/
                 orderInfo.setFlightId(flight.getFlightId());
             }
             orderInfo.setCreateTime(new Date());
