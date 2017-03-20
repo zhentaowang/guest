@@ -1,5 +1,14 @@
 package com.zhiweicloud.guest.common;
 
+import com.dragon.security.Base64;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+
 /**
  * Dictionary.java
  * 航班模块字典类
@@ -28,5 +37,33 @@ public class Dictionary {
     public static final String ENCODING_UTF_8 = "UTF-8";
 
     public static final String ENCODING_ISO8859_1 = "ISO-8859-1";
+
+    /**
+     * 字节数据转字符串专用集合
+     */
+    private static final char[] HEX_CHAR = { '0', '1', '2', '3', '4', '5', '6',
+            '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    public static void getKeyPari() {
+        // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象
+        KeyPairGenerator keyPairGen = null;
+        try {
+            keyPairGen = KeyPairGenerator.getInstance("RSA");
+            keyPairGen.initialize(1024,new SecureRandom());
+            KeyPair keyPair = keyPairGen.generateKeyPair(); // 生成一个密钥对，保存在keyPair中
+            // 得到私钥
+            RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+            // 得到公钥
+            RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+            // 得到公钥字符串
+            String publicKeyString = Base64.encode(publicKey.getEncoded());
+            // 得到私钥字符串
+            String privateKeyString = Base64.encode(privateKey.getEncoded());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

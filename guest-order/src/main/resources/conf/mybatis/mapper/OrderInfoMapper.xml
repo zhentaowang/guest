@@ -541,16 +541,16 @@
     </if>
     limit #{page.startPageNo},#{page.pCount}
     ) as orderFlightClient
-    left join passenger p on orderFlightClient.order_id = p.order_id
+    left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
-      and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+      and p.identity_card = #{criteria.queryIdentityCard}
     </if>
     )as orderFlightClientPassenger
     left join order_service orderService
-    on orderService.order_id = orderFlightClientPassenger.order_id
+    on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
     ) as orderFlightClientPassengerService
     where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <choose>
@@ -649,16 +649,16 @@
             </if>
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
-		left join passenger p on orderFlightClient.order_id = p.order_id
+		left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
         <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
           and p.passenger_name like concat('%',#{criteria.queryPassengerName},'%')
         </if>
         <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
-          and orderFlightClientPassengerService.identity_card = #{criteria.queryIdentityCard}
+          and p.identity_card = #{criteria.queryIdentityCard}
         </if>
 	)as orderFlightClientPassenger
 	left join order_service orderService
-	on orderService.order_id = orderFlightClientPassenger.order_id
+	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
 ) as orderFlightClientPassengerService
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <choose>
@@ -700,12 +700,12 @@
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
       from order_info o
     inner join flight f
-    on o.flight_id = f.flight_id
+    on o.flight_id = f.flight_id and o.is_deleted = 0 and f.is_deleted = 0
     ) as orderFlightClient
-    left join passenger p on orderFlightClient.order_id = p.order_id
+    left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
     )as orderFlightClientPassenger
     left join order_service orderService
-    on orderService.order_id = orderFlightClientPassenger.order_id
+    on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
     ) as orderFlightClientPassengerService
     where orderFlightClientPassengerService.airport_code = #{airportCode}
 
