@@ -12,6 +12,9 @@
     <result column="is_pricing" jdbcType="BIT" property="isPricing" />
     <result column="is_prioritized" jdbcType="BIT" property="isPrioritized" />
     <result column="is_availabled" jdbcType="BIT" property="isAvailabled" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="free_retinue_num" jdbcType="BIGINT" property="freeRetinueNum" />
+    <result column="over_staff_unit_price" jdbcType="DOUBLE" property="overStaffUnitPrice" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
