@@ -77,7 +77,7 @@ public class FlightService {
             fdId = fdId == null ? "-1" : fdId;
             log.info("当前的fdId:" + fdId);
             log.info("推送的fdId:" + flight.getFdId());
-            if (Long.valueOf(fdId) < Long.valueOf(flight.getFdId())) {
+            if (Long.valueOf(fdId) <= Long.valueOf(flight.getFdId())) {
                 flight.setFlightId(flightId);
                 log.info("更新航班");
                 flightMapper.updateFlight(flight);
