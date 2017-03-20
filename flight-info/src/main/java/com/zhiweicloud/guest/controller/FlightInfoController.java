@@ -10,6 +10,7 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.common.UpdateFlightFilter;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightMatch;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
@@ -18,6 +19,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +46,8 @@ import java.util.Map;
 @Path("/")
 @Api(value = "航班信息", description = "航班信息desc ", tags = {"flight-info"})
 public class FlightInfoController {
+
+    private static final Log log = LogFactory.getLog(FlightInfoController.class);
 
     /**
      * FlightService.
@@ -185,13 +190,13 @@ public class FlightInfoController {
             result.put("info", "接收并处理成功");
             return JSON.toJSONString(result);
         } catch (FlightException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             Map<String, Object> result = new HashMap<>();
             result.put("state",2);
             result.put("info", e.getMessage());
             return JSON.toJSONString(result);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             Map<String, Object> result = new HashMap<>();
             result.put("state",-1);
             result.put("info", "操作失败");

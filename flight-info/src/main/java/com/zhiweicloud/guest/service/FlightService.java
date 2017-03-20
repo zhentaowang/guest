@@ -31,6 +31,8 @@ import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +46,8 @@ import java.util.Map;
  */
 @Service
 public class FlightService {
+
+    private static final Log log = LogFactory.getLog(FlightService.class);
 
     @Autowired
     private AirportInfoMapper airportInfoMapper;
@@ -70,9 +74,13 @@ public class FlightService {
             Long flightId = queryFlight.getFlightId();
             String fdId = queryFlight.getFdId();
             fdId = fdId == null ? "-1" : fdId;
+            log.info("当前的fdId:" + fdId);
+            log.info("推送的fdId:" + flight.getFdId());
             if (Long.valueOf(fdId) < Long.valueOf(flight.getFdId())) {
                 flight.setFlightId(flightId);
+                log.info("更新航班");
                 flightMapper.updateFlight(flight);
+                log.info("更新结束");
             } else {
                 throw new FlightException("无需更新");
             }
