@@ -521,7 +521,7 @@
       and datediff(now(),o.create_time) &gt; 0
     </if>
     <if test="criteria.queryAttServerOrderList != null and !''.equals(criteria.queryAttServerOrderList)">
-      and (o.print_check is not null or  o.consign is not null)
+      and (o.print_check = 1 or o.consign = 1)
     </if>
     <!-- 附加服务单 订单是否被安排，0：未安排与agent_person 比较，1：已安排 agent_person 比较，2：已完成,与server_complete比较 -->
     <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '0'.equals(criteria.queryAgentPerson)">
@@ -614,14 +614,17 @@
             <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 1">
               <choose>
                 <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
-                  and o.order_type = 1
                   and o.order_status in (#{criteria.queryOrderStatus})
                 </when>
                 <otherwise>
-                  and o.order_type = 1
-                  <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
-                    and o.order_status in (#{criteria.queryOrderStatus})
-                  </if>
+                  <choose>
+                    <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+                      and o.order_type = 1 and o.order_status in (#{criteria.queryOrderStatus})
+                    </when>
+                    <otherwise>
+                      and (o.order_type = 1 or o.order_status = '已使用')
+                    </otherwise>
+                  </choose>
                 </otherwise>
               </choose>
             </if>
@@ -629,7 +632,7 @@
               and datediff(now(),o.create_time) &gt; 0
             </if>
             <if test="criteria.queryAttServerOrderList != null and !''.equals(criteria.queryAttServerOrderList)">
-              and (o.print_check is not null or  o.consign is not null)
+              and (o.print_check = 1 or o.consign = 1)
             </if>
             <!-- 附加服务单 订单是否被安排，0：未安排与agent_person 比较，1：已安排 agent_person 比较，2：已完成,与server_complete比较 -->
             <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '0'.equals(criteria.queryAgentPerson)">
