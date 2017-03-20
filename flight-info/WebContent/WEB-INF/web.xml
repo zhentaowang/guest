@@ -81,7 +81,6 @@
     </filter>
     <filter-mapping>
         <filter-name>UpdateFlight</filter-name>
-        <!--<url-pattern>/flight-info/updateFlight</url-pattern>-->
         <url-pattern>/updateFlight</url-pattern>
     </filter-mapping>
 
