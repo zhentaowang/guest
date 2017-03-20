@@ -34,6 +34,7 @@ public class UpdateFlightFilter implements Filter{
             String signIn = dataStr.substring(dataStr.indexOf("&") + 1);
             signIn = signIn.substring(signIn.indexOf("=") + 1);
             System.out.println("参数携带的" + signIn);
+            signIn = signIn.replace("%2B", "+");
             String signRsa = DragonSignature.rsaSign("data=" + data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
             System.out.println("未去除空格" + signRsa);
             if (signIn.equals(signRsa)){
