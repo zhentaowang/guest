@@ -48,8 +48,11 @@ public class OrderServiceRecordController {
     public String addOrderServiceRecord(
             @RequestBody RequsetParams<OrderServiceRecord> params,
             @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId){
+            @HeaderParam("user-id") Long userId
+ ){
         LZResult<String> result = new LZResult<>();
+//        String airportCode = "LJG";
+//        Long userId=0L;
         try {
             OrderServiceRecord orderParam = null;
             if (!CollectionUtils.isEmpty(params.getData())) {

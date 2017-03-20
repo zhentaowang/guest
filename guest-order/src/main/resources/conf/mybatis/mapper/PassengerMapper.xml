@@ -233,7 +233,7 @@
 
   <select id="getPassengerlistByFlightId" resultMap="PassengerResultMap">
     SELECT
-      p.name,sd.order_id,concat(sd.airport_code,lpad(sd.order_id,6,'0')) AS order_no,sd.serviceDetailId,o.order_status,o.create_time ,o.order_id,o.flight_id,se.room_name
+      p.name,p.flight_id,p.order_id,concat(p.airport_code,lpad(p.order_id,6,'0')) AS order_no,sd.serviceDetailId,o.order_status,o.create_time ,se.room_name
     FROM  passenger p
     LEFT JOIN
       (SELECT service_detail->>"$.serviceDetailId" AS serviceDetailId,service_detail->>"$.serviceName",order_id,airport_code
@@ -249,7 +249,7 @@
         FROM v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
     ON pps.service_id = se.serv_id
 
-    WHERE o.flight_id = #{flightId}
+    WHERE p.flight_id = #{flightId}
 
   </select>
 
