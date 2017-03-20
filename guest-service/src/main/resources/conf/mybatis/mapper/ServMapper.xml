@@ -12,6 +12,9 @@
     <result column="is_pricing" jdbcType="BIT" property="isPricing" />
     <result column="is_prioritized" jdbcType="BIT" property="isPrioritized" />
     <result column="is_availabled" jdbcType="BIT" property="isAvailabled" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="free_retinue_num" jdbcType="BIGINT" property="freeRetinueNum" />
+    <result column="over_staff_unit_price" jdbcType="DOUBLE" property="overStaffUnitPrice" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -102,7 +105,7 @@
 
   <select id="getServListByCondition" parameterType="map" resultMap="BaseResultMap">
     SELECT s.serv_id, s.airport_code, s.service_type_allocation_id, s.no, s.name
-    FROM v_serv as s left join
+    FROM v_serv as s right join
     (select service_type_id from product_service_type
     where airport_code = #{airportCode,jdbcType=VARCHAR} and product_id = #{productId,jdbcType=BIGINT}
     and is_deleted = 0) as p
@@ -113,7 +116,7 @@
 
   <select id="getServListCount" parameterType="map" resultType="int">
     SELECT count(s.serv_id)
-    FROM v_serv as s left join
+    FROM v_serv as s right join
     (select service_type_id from product_service_type
     where airport_code = #{airportCode,jdbcType=VARCHAR} and product_id = #{productId,jdbcType=BIGINT}
     and is_deleted = 0 and service_type_id = #{typeId,jdbcType=BIGINT}) as p

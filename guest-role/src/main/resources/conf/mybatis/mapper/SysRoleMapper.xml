@@ -12,7 +12,9 @@
   </resultMap>
 
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.SysRole">
-    insert into sys_role
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="roleId">
+      insert into sys_role
+    </selectKey>
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="roleId != null">
         role_id,
