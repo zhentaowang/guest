@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -277,7 +278,7 @@ public class ServController {
         param.put("airportCode", airportCode);
         LZResult<PaginationResult<ProductServiceType>> result = servService.getProductAndServiceList(param, page, rows);
 
-        return JSON.toJSONString(result);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 
     /**
