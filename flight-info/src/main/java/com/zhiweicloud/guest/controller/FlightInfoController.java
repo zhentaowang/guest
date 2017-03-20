@@ -10,6 +10,7 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.common.UpdateFlightFilter;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightMatch;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
@@ -18,6 +19,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +46,8 @@ import java.util.Map;
 @Path("/")
 @Api(value = "航班信息", description = "航班信息desc ", tags = {"flight-info"})
 public class FlightInfoController {
+
+    private static final Log log = LogFactory.getLog(FlightInfoController.class);
 
     /**
      * FlightService.
@@ -162,12 +167,12 @@ public class FlightInfoController {
     @POST
     @Path("updateFlight")
     @Produces("application/json;charset=utf8")
-    @Consumes("text/plain;charset=utf8")
-    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", consumes = "text/plain", tags = {"flight-info"})
+    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
     public String updateFlight(@HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId,
                                @Context HttpServletRequest request) {
         try {
+            System.out.println("航班更新接口");
             String data = (String) request.getAttribute("data");
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
             Flight flight = new Flight();
@@ -180,18 +185,19 @@ public class FlightInfoController {
             }
             flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
+            log.info("推送过来的flight: " + flight.toString());
             flightService.updateFlight(flight);
             result.put("state",1);
             result.put("info", "接收并处理成功");
             return JSON.toJSONString(result);
         } catch (FlightException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             Map<String, Object> result = new HashMap<>();
             result.put("state",2);
             result.put("info", e.getMessage());
             return JSON.toJSONString(result);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             Map<String, Object> result = new HashMap<>();
             result.put("state",-1);
             result.put("info", "操作失败");
