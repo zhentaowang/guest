@@ -88,7 +88,6 @@ public class InstitutionClientService {
         for (Long id : ids) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("institutionClientId", id);
-//            String s = HttpClientUtil.httpGetRequest("http://127.0.0.1:8084/protocolList", headerMap, paramMap);
             String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
             JSONObject protocolList = JSON.parseObject(s);
             if (protocolList != null) {
@@ -108,16 +107,8 @@ public class InstitutionClientService {
             params.put("airportCode", airportCode);
             institutionClientMapper.deleteBatchByIdsAndUserId(params);
         }
-        names.deleteCharAt(names.length()-1);
+        //names.deleteCharAt(names.length()-1);
         return names.toString();
-        //一条一条删除数据
-//        for (Long id : ids) {
-//            JSONObject protocolList = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/protocolList?institutionClientId="+ id +"&access_token=grvRY7bhYS8BzC0dO1k3NfZ4d0o32peJtyCr4emx"));
-//            if(protocolList!=null || protocolList.size()!=0){
-//                throw new InstitutionException("机构已经被协议占用，无法删除");
-//            }
-//            institutionClientMapper.markAsDeleted(id,userId,airportCode);
-//        }
     }
 
     public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name,String no) {
@@ -129,4 +120,13 @@ public class InstitutionClientService {
         return institutionClientMapper.getInstitutionClientDropdownList(map);
     }
 
+    /**
+     * 新增的时候，没有id。需要判断数据库记录里面
+     * 更新的时候，有id。需要判断数据库除本身记录之外 是否有重复的字段值
+     * @param institutionClient
+     * @return
+     */
+    public int judgeRepeat(InstitutionClient institutionClient) {
+        return institutionClientMapper.judgeRepeat(institutionClient);
+    }
 }

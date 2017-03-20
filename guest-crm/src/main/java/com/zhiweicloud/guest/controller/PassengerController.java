@@ -101,7 +101,7 @@ public class PassengerController {
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
-        return JSON.toJSONString(result);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 
 
@@ -138,6 +138,6 @@ public class PassengerController {
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
-        return JSON.toJSONString(result);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 }

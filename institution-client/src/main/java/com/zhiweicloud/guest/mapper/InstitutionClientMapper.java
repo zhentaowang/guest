@@ -59,4 +59,5 @@ public interface InstitutionClientMapper{
     // 测试批量删除
     void deleteBatchByIdsAndUserId(Map params);
 
+    int judgeRepeat(InstitutionClient institutionClient);
 }
