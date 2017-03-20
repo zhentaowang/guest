@@ -15,12 +15,12 @@
     <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
     <result column="fd_id" jdbcType="VARCHAR" property="fdId" />
     <result column="flight_company" jdbcType="VARCHAR" property="flightCompany" />
-    <result column="flight_deptime_plan_date" jdbcType="DATE" property="flightDeptimePlanDate" />
-    <result column="flight_arrtime_plan_date" jdbcType="DATE" property="flightArrtimePlanDate" />
-    <result column="flight_deptime_ready_date" jdbcType="DATE" property="flightDeptimeReadyDate" />
-    <result column="flight_arrtime_ready_date" jdbcType="DATE" property="flightArrtimeReadyDate" />
-    <result column="flight_deptime_date" jdbcType="DATE" property="flightDeptimeDate" />
-    <result column="flight_arrtime_date" jdbcType="DATE" property="flightArrtimeDate" />
+    <result column="flight_deptime_plan_date" jdbcType="TIMESTAMP" property="flightDeptimePlanDate" />
+    <result column="flight_arrtime_plan_date" jdbcType="TIMESTAMP" property="flightArrtimePlanDate" />
+    <result column="flight_deptime_ready_date" jdbcType="TIMESTAMP" property="flightDeptimeReadyDate" />
+    <result column="flight_arrtime_ready_date" jdbcType="TIMESTAMP" property="flightArrtimeReadyDate" />
+    <result column="flight_deptime_date" jdbcType="TIMESTAMP" property="flightDeptimeDate" />
+    <result column="flight_arrtime_date" jdbcType="TIMESTAMP" property="flightArrtimeDate" />
     <result column="stop_flag" jdbcType="SMALLINT" property="stopFlag" />
     <result column="share_flag" jdbcType="SMALLINT" property="shareFlag" />
     <result column="share_flight_no" jdbcType="VARCHAR" property="shareFlightNo" />
@@ -255,9 +255,9 @@
       #{flightDepcode,jdbcType=VARCHAR}, #{flightArrcode,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR},
       #{flightPosition,jdbcType=VARCHAR}, #{boardInOut,jdbcType=SMALLINT}, #{isInOrOut,jdbcType=SMALLINT}, #{isNearOrFar,jdbcType=SMALLINT},
       #{serverTime,jdbcType=TIMESTAMP}, #{fdId,jdbcType=VARCHAR}, #{flightCompany,jdbcType=VARCHAR},
-      #{flightDeptimePlanDate,jdbcType=DATE}, #{flightArrtimePlanDate,jdbcType=DATE},
-      #{flightDeptimeReadyDate,jdbcType=DATE}, #{flightArrtimeReadyDate,jdbcType=DATE},
-      #{flightDeptimeDate,jdbcType=DATE}, #{flightArrtimeDate,jdbcType=DATE}, #{stopFlag,jdbcType=SMALLINT},
+      #{flightDeptimePlanDate,jdbcType=TIMESTAMP}, #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
+      #{flightDeptimeReadyDate,jdbcType=TIMESTAMP}, #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
+      #{flightDeptimeDate,jdbcType=TIMESTAMP}, #{flightArrtimeDate,jdbcType=TIMESTAMP}, #{stopFlag,jdbcType=SMALLINT},
       #{shareFlag,jdbcType=SMALLINT}, #{shareFlightNo,jdbcType=VARCHAR}, #{fillFlightNo,jdbcType=VARCHAR},
       #{boardGate,jdbcType=VARCHAR}, #{boardState,jdbcType=VARCHAR}, #{flightState,jdbcType=VARCHAR},
       #{flightHterminal,jdbcType=VARCHAR}, #{flightTerminal,jdbcType=VARCHAR}, #{flightDep,jdbcType=VARCHAR},
@@ -425,22 +425,22 @@
         #{flightCompany,jdbcType=VARCHAR},
       </if>
       <if test="flightDeptimePlanDate != null">
-        #{flightDeptimePlanDate,jdbcType=DATE},
+        #{flightDeptimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimePlanDate != null">
-        #{flightArrtimePlanDate,jdbcType=DATE},
+        #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeReadyDate != null">
-        #{flightDeptimeReadyDate,jdbcType=DATE},
+        #{flightDeptimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeReadyDate != null">
-        #{flightArrtimeReadyDate,jdbcType=DATE},
+        #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeDate != null">
-        #{flightDeptimeDate,jdbcType=DATE},
+        #{flightDeptimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeDate != null">
-        #{flightArrtimeDate,jdbcType=DATE},
+        #{flightArrtimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="stopFlag != null">
         #{stopFlag,jdbcType=SMALLINT},
@@ -541,22 +541,22 @@
         flight_company = #{flightCompany,jdbcType=VARCHAR},
       </if>
       <if test="flightDeptimePlanDate != null">
-        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=DATE},
+        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimePlanDate != null">
-        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=DATE},
+        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeReadyDate != null">
-        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=DATE},
+        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeReadyDate != null">
-        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=DATE},
+        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeDate != null">
-        flight_deptime_date = #{flightDeptimeDate,jdbcType=DATE},
+        flight_deptime_date = #{flightDeptimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeDate != null">
-        flight_arrtime_date = #{flightArrtimeDate,jdbcType=DATE},
+        flight_arrtime_date = #{flightArrtimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="stopFlag != null">
         stop_flag = #{stopFlag,jdbcType=SMALLINT},
@@ -632,12 +632,12 @@
       server_time = #{serverTime,jdbcType=TIMESTAMP},
       fd_id = #{fdId,jdbcType=VARCHAR},
       flight_company = #{flightCompany,jdbcType=VARCHAR},
-      flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=DATE},
-      flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=DATE},
-      flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=DATE},
-      flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=DATE},
-      flight_deptime_date = #{flightDeptimeDate,jdbcType=DATE},
-      flight_arrtime_date = #{flightArrtimeDate,jdbcType=DATE},
+      flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=TIMESTAMP},
+      flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
+      flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=TIMESTAMP},
+      flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
+      flight_deptime_date = #{flightDeptimeDate,jdbcType=TIMESTAMP},
+      flight_arrtime_date = #{flightArrtimeDate,jdbcType=TIMESTAMP},
       stop_flag = #{stopFlag,jdbcType=SMALLINT},
       share_flag = #{shareFlag,jdbcType=SMALLINT},
       share_flight_no = #{shareFlightNo,jdbcType=VARCHAR},

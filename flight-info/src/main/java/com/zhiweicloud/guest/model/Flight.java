@@ -9,6 +9,8 @@ package com.zhiweicloud.guest.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.sql.Timestamp;
 import java.util.Date;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -69,22 +71,22 @@ public class Flight extends BaseEntity{
     private String flightCompany;
 
     @ApiModelProperty(value="计划起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimePlanDate")
-    private Date flightDeptimePlanDate;
+    private Timestamp flightDeptimePlanDate;
 
     @ApiModelProperty(value="计划到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimePlanDate")
-    private Date flightArrtimePlanDate;
+    private Timestamp flightArrtimePlanDate;
 
     @ApiModelProperty(value="预计起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimeReadyDate")
-    private Date flightDeptimeReadyDate;
+    private Timestamp flightDeptimeReadyDate;
 
     @ApiModelProperty(value="预计到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimeReadyDate")
-    private Date flightArrtimeReadyDate;
+    private Timestamp flightArrtimeReadyDate;
 
     @ApiModelProperty(value="实际起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimeDate")
-    private Date flightDeptimeDate;
+    private Timestamp flightDeptimeDate;
 
     @ApiModelProperty(value="实际到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimeDate")
-    private Date flightArrtimeDate;
+    private Timestamp flightArrtimeDate;
 
     @ApiModelProperty(value="是否 经停 （0:不经停;1:经停 ）",name="stopFlag")
     private Short stopFlag;
@@ -415,7 +417,7 @@ public class Flight extends BaseEntity{
      * 计划起飞时间（yyyy-mm-dd hh-mm-ss格式）
      * @return flight_deptime_plan_date 计划起飞时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public Date getFlightDeptimePlanDate() {
+    public Timestamp getFlightDeptimePlanDate() {
         return flightDeptimePlanDate;
     }
 
@@ -423,7 +425,7 @@ public class Flight extends BaseEntity{
      * 计划起飞时间（yyyy-mm-dd hh-mm-ss格式）
      * @param flightDeptimePlanDate 计划起飞时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public void setFlightDeptimePlanDate(Date flightDeptimePlanDate) {
+    public void setFlightDeptimePlanDate(Timestamp flightDeptimePlanDate) {
         this.flightDeptimePlanDate = flightDeptimePlanDate;
     }
 
@@ -431,7 +433,7 @@ public class Flight extends BaseEntity{
      * 计划到达时间（yyyy-mm-dd hh-mm-ss格式）
      * @return flight_arrtime_plan_date 计划到达时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public Date getFlightArrtimePlanDate() {
+    public Timestamp getFlightArrtimePlanDate() {
         return flightArrtimePlanDate;
     }
 
@@ -439,7 +441,7 @@ public class Flight extends BaseEntity{
      * 计划到达时间（yyyy-mm-dd hh-mm-ss格式）
      * @param flightArrtimePlanDate 计划到达时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public void setFlightArrtimePlanDate(Date flightArrtimePlanDate) {
+    public void setFlightArrtimePlanDate(Timestamp flightArrtimePlanDate) {
         this.flightArrtimePlanDate = flightArrtimePlanDate;
     }
 
@@ -447,7 +449,7 @@ public class Flight extends BaseEntity{
      * 预计起飞时间（yyyy-mm-dd hh-mm-ss格式）
      * @return flight_deptime_ready_date 预计起飞时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public Date getFlightDeptimeReadyDate() {
+    public Timestamp getFlightDeptimeReadyDate() {
         return flightDeptimeReadyDate;
     }
 
@@ -455,7 +457,7 @@ public class Flight extends BaseEntity{
      * 预计起飞时间（yyyy-mm-dd hh-mm-ss格式）
      * @param flightDeptimeReadyDate 预计起飞时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public void setFlightDeptimeReadyDate(Date flightDeptimeReadyDate) {
+    public void setFlightDeptimeReadyDate(Timestamp flightDeptimeReadyDate) {
         this.flightDeptimeReadyDate = flightDeptimeReadyDate;
     }
 
@@ -463,7 +465,7 @@ public class Flight extends BaseEntity{
      * 预计到达时间（yyyy-mm-dd hh-mm-ss格式）
      * @return flight_arrtime_ready_date 预计到达时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public Date getFlightArrtimeReadyDate() {
+    public Timestamp getFlightArrtimeReadyDate() {
         return flightArrtimeReadyDate;
     }
 
@@ -471,7 +473,7 @@ public class Flight extends BaseEntity{
      * 预计到达时间（yyyy-mm-dd hh-mm-ss格式）
      * @param flightArrtimeReadyDate 预计到达时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public void setFlightArrtimeReadyDate(Date flightArrtimeReadyDate) {
+    public void setFlightArrtimeReadyDate(Timestamp flightArrtimeReadyDate) {
         this.flightArrtimeReadyDate = flightArrtimeReadyDate;
     }
 
@@ -479,7 +481,7 @@ public class Flight extends BaseEntity{
      * 实际起飞时间（yyyy-mm-dd hh-mm-ss格式）
      * @return flight_deptime_date 实际起飞时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public Date getFlightDeptimeDate() {
+    public Timestamp getFlightDeptimeDate() {
         return flightDeptimeDate;
     }
 
@@ -487,7 +489,7 @@ public class Flight extends BaseEntity{
      * 实际起飞时间（yyyy-mm-dd hh-mm-ss格式）
      * @param flightDeptimeDate 实际起飞时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public void setFlightDeptimeDate(Date flightDeptimeDate) {
+    public void setFlightDeptimeDate(Timestamp flightDeptimeDate) {
         this.flightDeptimeDate = flightDeptimeDate;
     }
 
@@ -495,7 +497,7 @@ public class Flight extends BaseEntity{
      * 实际到达时间（yyyy-mm-dd hh-mm-ss格式）
      * @return flight_arrtime_date 实际到达时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public Date getFlightArrtimeDate() {
+    public Timestamp getFlightArrtimeDate() {
         return flightArrtimeDate;
     }
 
@@ -503,7 +505,7 @@ public class Flight extends BaseEntity{
      * 实际到达时间（yyyy-mm-dd hh-mm-ss格式）
      * @param flightArrtimeDate 实际到达时间（yyyy-mm-dd hh-mm-ss格式）
      */
-    public void setFlightArrtimeDate(Date flightArrtimeDate) {
+    public void setFlightArrtimeDate(Timestamp flightArrtimeDate) {
         this.flightArrtimeDate = flightArrtimeDate;
     }
 
