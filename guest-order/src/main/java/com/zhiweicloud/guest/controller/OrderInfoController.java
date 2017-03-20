@@ -313,14 +313,15 @@ public class OrderInfoController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "修改订单服务状态", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     public String updateServerComplete(
-            @Context final HttpHeaders headers,
-            @QueryParam("flightId") Long flightId,
-            @QueryParam("serverComplete") Short serverComplete) {
+            @HeaderParam("user-id") Long userId,
+            @HeaderParam("client-id") String airportCode,
+            String param) {
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
-
-            orderInfoService.updateServerComplete(flightId, serverComplete, userId, airportCode);
+            JSONObject paramJson = JSON.parseObject(param);
+            if(paramJson.getLong("flightId") == null){
+                logger.error("updateServerComplete error", LZStatus.DATA_EMPTY.display() + ":flightId");
+            }
+            orderInfoService.updateServerComplete(paramJson.getLong("flightId"), paramJson.getShort("serverComplete"), userId, airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("updateServerComplete error", e);
