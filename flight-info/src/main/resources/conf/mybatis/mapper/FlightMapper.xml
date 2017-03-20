@@ -229,7 +229,8 @@
 
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select f.*,o.server_complete from flight as f left join
-    (select server_complete, flight_id from order_info where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT})
+    (select server_complete, flight_id from order_info where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT}
+    group by flight_id)
     as o on f.flight_id = o.flight_id where f.flight_id = #{flightId,jdbcType=BIGINT} and f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
