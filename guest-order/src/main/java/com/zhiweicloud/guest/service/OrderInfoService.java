@@ -81,6 +81,8 @@ public class OrderInfoService {
                     flight.setIsInOrOut((short) 0);//出港
                 } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
                     flight.setIsInOrOut((short) 1);//进港
+                }else{
+                    flight.setIsInOrOut((short) 0);//出港
                 }
                 if (flightId != null && !flightId.equals("")) {
                     flight.setFlightId(flightId);
