@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest.common;
 
+import com.dragon.sign.DragonSignature;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,8 +63,6 @@ public class MainTest {
 //        params.put("url", url);
         params.put("sysCode", sysCode);
         System.out.println("签名原串：" + params.toString());
-        System.out.println(RSAEncrypt.loadPrivateKeyByFile(filepath));
-
         signstr = FengShuSignature.sign(params, RSAEncrypt.loadPrivateKeyByFile(filepath));
         System.out.println("签名串：" + signstr);
 
@@ -73,8 +73,41 @@ public class MainTest {
         System.out.println("验签结果：" + FengShuSignature.doCheck(params, signstr, RSAEncrypt.loadPublicKeyByFile(filepath)));
         System.out.println();
 
+        String data = "data = {" +
+                "    \"fd_id\": \"2139\"," +
+                "    \"FlightNo\": \"MU2474\"," +
+                "    \"FlightDate\": \"2017-03-20\"," +
+                "    \"FlightCompany\": \"上海东方航空公司\"," +
+                "    \"FlightDepcode\": \"NGB\"," +
+                "    \"FlightArrcode\": \"LHW\"," +
+                "    \"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\"," +
+                "    \"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\"," +
+                "    \"FlightDeptimeReadyDate\": \"\"," +
+                "    \"FlightArrtimeReadyDate\": \"\"," +
+                "    \"FlightDeptimeDate\": \"2017-03-18 12:30:45\"," +
+                "    \"FlightArrtimeDate\": \"\"," +
+                "    \"stopFlag\": \"\"," +
+                "    \"shareFlag\": \"\"," +
+                "    \"ShareFlightNo\": \"\"," +
+                "    \"FillFlightNo\": \"\"," +
+                "    \"BoardGate\": \"\"," +
+                "    \"BoardState\": \"\"," +
+                "    \"FlightState\": \"Plan\"," +
+                "    \"FlightHTerminal\": \"\"," +
+                "    \"FlightTerminal\": \"T2\"," +
+                "    \"FlightDep\": \"宁波市\"," +
+                "    \"FlightArr\": \"兰州市\"," +
+                "    \"FlightDepAirport\": \"宁波栎社国际机场\"," +
+                "    \"FlightArrAirport\": \"兰州中川机场\"," +
+                "    \"alternate_info\": \"\"," +
+                "    \"org_timezone\": \"\"," +
+                "    \"dst_timezone\": \"\"," +
+                "    \"fcategory\": \"\"," +
+                "    \"fid\": \"\"," +
+                "    \"BoardGateTime\": \"\"" +
+                "}";
+        System.out.println(DragonSignature.rsaSign(data.replace(" ",""), Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
 
-        System.out.println(FengShuSignature.doCheck(params, "ns8n2nvq/ob1uqRij1mTfJ6vd9/OYYNVcEJHLhocLLxqlblTRnBH+eNQZEhaGw8eQ57+7b6BypLR7K1dKGt+g5SieRKSK/UbS0vk0Y1RRybKrrCxOlpuNHBjWxUUdEuY4RLBp8wjCITbZz+6fg0003rOo9MiGmiXIG9cEoeeY94=", "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC2H3v0l99gO9WoIfn//6erEiVg1v1Sy/07tZMD9oJtzXblBFHga+bsLl4zFHycpDc3MhqZuGUtwfyqIpXroYsrhJF1nCHaRoZJkMEAI89+hfbefVgt4t9Y2LiqrqMJtYZ9q0OjtVVgRh7kfpDnzW803cto/FbQmo3CgI7bHhXikwIDAQAB"));
     }
 
 }

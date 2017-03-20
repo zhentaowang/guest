@@ -61,9 +61,20 @@ public class FengShuSignature {
         return null;
     }
 
+    public static String signForGet(Map<String,String> params, String privateKey){
+        String signContent = getSignContent(params);
+        String sign = sign(signContent, privateKey);
+        return escape(sign);
+    }
+
     public static String sign(Map<String,String> params, String privateKey) {
         String signContent = getSignContent(params);
         return sign(signContent, privateKey);
+    }
+
+    // escape(sStr).replace(/\+/g, '%2B').replace(/\"/g,'%22').replace(/\'/g, '%27').replace(/\//g,'%2F')
+    private static String escape(String sign){
+        return sign.replaceAll("\\+", "%2B");
     }
 
     private static String getSignContent(Map<String,String> params){
