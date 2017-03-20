@@ -51,6 +51,13 @@ public class OrderInfoService {
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
             Flight flight = orderInfo.getFlight();
             flight.setAirportCode(airportCode);
+
+            if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+                flight.setIsInOrOut((short) 0);//出港
+            } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+                flight.setIsInOrOut((short) 1);//进港
+            }
+
             if (flight.getFlightId() != null) {
                 flight.setUpdateTime(new Date());
                 flight.setUpdateUser(userId);
@@ -67,30 +74,22 @@ public class OrderInfoService {
              * 新增修改航班信息
              */
             if (orderInfo.getFlight() != null) {
-                /*Flight flight = orderInfo.getFlight();
+                Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
-                if (flight.getFlightId() != null) {
-                    flight.setUpdateTime(new Date());
-                    flight.setUpdateUser(userId);
+                Long flightId = flightMapper.isFlightExist(flight);
+                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+                    flight.setIsInOrOut((short) 0);//出港
+                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+                    flight.setIsInOrOut((short) 1);//进港
+                }
+                if (flightId != null && !flightId.equals("")) {
+                    flight.setFlightId(flightId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
-                } else {*/
-                    Flight flight = orderInfo.getFlight();
-                    flight.setAirportCode(airportCode);
-                    Long flightId = flightMapper.isFlightExist(flight);
-                    if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                        flight.setIsInOrOut((short) 0);//出港
-                    } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                        flight.setIsInOrOut((short) 1);//进港
-                    }
-                    if (flightId != null && !flightId.equals("")) {
-                        flight.setFlightId(flightId);
-                        flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
-                    } else {
-                        flight.setCreateTime(new Date());
-                        flight.setCreateUser(userId);
-                        flightMapper.insertSelective(flight);
-                    }
-                /*}*/
+                } else {
+                    flight.setCreateTime(new Date());
+                    flight.setCreateUser(userId);
+                    flightMapper.insertSelective(flight);
+                }
                 orderInfo.setFlightId(flight.getFlightId());
             }
             orderInfo.setCreateTime(new Date());
