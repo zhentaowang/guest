@@ -22,8 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -148,7 +153,7 @@ public class FlightInfoController {
     /**
      * 更新航班信息
      *
-     * @param dataStr     龙腾推送航班信息
+     * @param request
      * @param airportCode 机场码
      * @param userId      用户ID
      * @return
@@ -158,11 +163,11 @@ public class FlightInfoController {
     @Produces("application/json;charset=utf8")
     @Consumes("text/plain;charset=utf8")
     @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", consumes = "text/plain", tags = {"flight-info"})
-    public String updateFlight(String dataStr,
-                               @HeaderParam("client-id") String airportCode,
-                               @HeaderParam("user-id") Long userId) {
+    public String updateFlight(@HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId,
+                               @Context HttpServletRequest request) {
         try {
-            String data = dataStr.substring(dataStr.indexOf("{"), dataStr.indexOf("}") + 1);
+            String data = (String) request.getAttribute("data");
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
             Flight flight = new Flight();
             BeanUtils.copyProperties(flight, flightMatch);

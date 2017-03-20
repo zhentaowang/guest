@@ -55,6 +55,16 @@
     flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time, server_complete
   </sql>
 
+  <sql id="Base_Column_List_Update_Flight">
+    flight_id, flight_date, flight_no, flight_depcode, flight_arrcode, plan_no, flight_position,
+    board_in_out, is_in_or_out, is_near_or_far, server_time, fd_id, flight_company, flight_deptime_plan_date, flight_arrtime_plan_date,
+    flight_deptime_ready_date, flight_arrtime_ready_date, flight_deptime_date, flight_arrtime_date,
+    stop_flag, share_flag, share_flight_no, fill_flight_no, board_gate, board_state,
+    flight_state, flight_hterminal, flight_terminal, flight_dep, flight_arr, flight_dep_airport,
+    flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time
+  </sql>
+
+
   <select id="getFlightListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
@@ -751,17 +761,15 @@
     WHERE flight_id = #{flightId,jdbcType=BIGINT}
     </update>
 
-    <select id="isFlightExist" parameterType="com.zhiweicloud.guest.model.Flight" resultMap="BaseResultMap">
-      SELECT
-      <include refid="Base_Column_List" />
-      FROM flight WHERE
-      flight_date = #{flightDate,jdbcType=DATE} AND
-      flight_no = #{flightNo,jdbcType=VARCHAR} AND
-      flight_depcode = #{flightDepcode,jdbcType=VARCHAR} AND
-      flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND
-      is_deleted = 0
-    </select>
+  <select id="isFlightExist" parameterType="com.zhiweicloud.guest.model.Flight" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List_Update_Flight"/>
+    FROM flight WHERE
+    flight_date = #{flightDate,jdbcType=DATE} AND
+    flight_no = #{flightNo,jdbcType=VARCHAR} AND
+    flight_depcode = #{flightDepcode,jdbcType=VARCHAR} AND
+    flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND
+    is_deleted = 0
+  </select>
 
-        <!--and airport_code = #{airportCode}-->
-
-        </mapper>
+</mapper>
