@@ -68,6 +68,7 @@ public class FlightService {
 
     public void updateFlight(Flight flight) throws Exception {
         Flight queryFlight = flightMapper.isFlightExist(flight);
+        log.info("查询出来的flight: " + queryFlight.toString());
         if (queryFlight == null || queryFlight.getFlightId() == 0) {
             throw new FlightException("没有找到对应的航班信息");
         } else {
