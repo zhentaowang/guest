@@ -162,8 +162,7 @@ public class FlightInfoController {
     @POST
     @Path("updateFlight")
     @Produces("application/json;charset=utf8")
-    @Consumes("text/plain;charset=utf8")
-    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", consumes = "text/plain", tags = {"flight-info"})
+    @ApiOperation(value = "根据航班ID更新航班信息", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json", tags = {"flight-info"})
     public String updateFlight(@HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId,
                                @Context HttpServletRequest request) {
