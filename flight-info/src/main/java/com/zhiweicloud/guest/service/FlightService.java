@@ -64,10 +64,10 @@ public class FlightService {
 
     public void updateFlight(Flight flight) throws Exception {
         Flight queryFlight = flightMapper.isFlightExist(flight);
-        Long flightId = queryFlight.getFlightId();
         if (queryFlight == null || queryFlight.getFlightId() == 0) {
             throw new FlightException("没有找到对应的航班信息");
         } else {
+            Long flightId = queryFlight.getFlightId();
             if (Long.valueOf(queryFlight.getFdId()) < Long.valueOf(flight.getFdId())) {
                 flight.setFlightId(flightId);
                 flightMapper.updateFlight(flight);
