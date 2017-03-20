@@ -20,6 +20,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 */
 @ApiModel(value="SysRoleMenu",description="sys_role_menu")
 public class SysRoleMenu extends BaseEntity{
+    @ApiModelProperty(value="角色菜单主键id",name="roleMenuId", required=true)
+    private Long roleMenuId;
+
     @ApiModelProperty(value="角色id",name="roleId", required=true)
     private Long roleId;
 
@@ -49,6 +52,14 @@ public class SysRoleMenu extends BaseEntity{
      */
     public Long getMenuId() {
         return menuId;
+    }
+
+    public Long getRoleMenuId() {
+        return roleMenuId;
+    }
+
+    public void setRoleMenuId(Long roleMenuId) {
+        this.roleMenuId = roleMenuId;
     }
 
     /**

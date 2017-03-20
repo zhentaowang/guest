@@ -49,6 +49,20 @@ public class OrderInfoService {
             orderInfo.setUpdateTime(new Date());
             orderInfo.setUpdateUser(userId);
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            Flight flight = orderInfo.getFlight();
+            flight.setAirportCode(airportCode);
+
+            if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+                flight.setIsInOrOut((short) 0);//出港
+            } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+                flight.setIsInOrOut((short) 1);//进港
+            }
+
+            if (flight.getFlightId() != null) {
+                flight.setUpdateTime(new Date());
+                flight.setUpdateUser(userId);
+                flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
+            }
 
             //保存订单日志
             if (!StringUtils.isEmpty(orderInfo.getOrderStatus())) {
@@ -62,30 +76,42 @@ public class OrderInfoService {
             if (orderInfo.getFlight() != null) {
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
-                if (flight.getFlightId() != null) {
-                    flight.setUpdateTime(new Date());
-                    flight.setUpdateUser(userId);
+                Long flightId = flightMapper.isFlightExist(flight);
+                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+                    flight.setIsInOrOut((short) 0);//出港
+                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+                    flight.setIsInOrOut((short) 1);//进港
+                }else{
+                    flight.setIsInOrOut((short) 0);//出港
+                }
+                if (flightId != null && !flightId.equals("")) {
+                    flight.setFlightId(flightId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
                 } else {
-                    Long flightId = flightMapper.isFlightExist(flight);
-                    if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                        flight.setIsInOrOut((short) 0);//出港
-                    } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                        flight.setIsInOrOut((short) 1);//进港
-                    }
-                    if (flightId != null && !flightId.equals("")) {
-                        flight.setFlightId(flightId);
-                        flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
-                    } else {
-                        flight.setCreateTime(new Date());
-                        flight.setCreateUser(userId);
-                        flightMapper.insertSelective(flight);
-                    }
+                    flight.setCreateTime(new Date());
+                    flight.setCreateUser(userId);
+                    flightMapper.insertSelective(flight);
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
             orderInfo.setCreateTime(new Date());
             orderInfo.setCreateUser(userId);
+
+            Map<String, Object> headerMap = new HashMap<>();
+            Map<String, Object> paramMap = new HashMap<>();
+            headerMap.put("user-id", userId);
+            headerMap.put("client-id", airportCode);
+            paramMap.put("employeeId", userId);
+
+            if (orderInfo.getCreateUser() != null) {
+                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (createUserObject != null) {
+                    JSONArray jsonArray = createUserObject.getJSONArray("data");
+                    String createUserName = jsonArray.getJSONObject(0).get("name").toString();
+                    orderInfo.setCreateUserName(createUserName);
+                }
+            }
+
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
@@ -323,7 +349,7 @@ public class OrderInfoService {
 
     public OrderInfo getById(Long orderId, Long userId, String airportCode) throws Exception {
         OrderInfo orderInfo = orderInfoMapper.getDetailById(orderId, airportCode);
-        Map<String, Object> headerMap = new HashMap<>();
+        /*Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> paramMap = new HashMap<>();
         headerMap.put("user-id", userId);
         headerMap.put("client-id", airportCode);
@@ -336,7 +362,7 @@ public class OrderInfoService {
                 String createUserName = jsonArray.getJSONObject(0).get("name").toString();
                 orderInfo.setCreateUserName(createUserName);
             }
-        }
+        }*/
 
         return orderInfo;
     }

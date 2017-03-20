@@ -1,7 +1,16 @@
 package com.zhiweicloud.guest.common;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dragon.sign.DragonApiException;
+import com.dragon.sign.DragonSignature;
+
 import javax.servlet.*;
+import java.awt.dnd.DragSource;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,15 +26,27 @@ public class UpdateFlightFilter implements Filter{
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String sign = new String(request.getParameter("sign").getBytes("iso-8859-1"), "utf-8");
-        sign = sign.replaceAll(" ", "+");
-        Map<String, String> params = new HashMap<>();
-        params.put("sysCode", "dragon");
-        if (sign != null) {
-            boolean isCheck = FengShuSignature.doCheck(params, sign, "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC2H3v0l99gO9WoIfn//6erEiVg1v1Sy/07tZMD9oJtzXblBFHga+bsLl4zFHycpDc3MhqZuGUtwfyqIpXroYsrhJF1nCHaRoZJkMEAI89+hfbefVgt4t9Y2LiqrqMJtYZ9q0OjtVVgRh7kfpDnzW803cto/FbQmo3CgI7bHhXikwIDAQAB","UTF-8");
-            if (isCheck) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        try {
+            String dataStr = sb.toString();
+            String data = dataStr.substring(dataStr.indexOf("{"), dataStr.indexOf("}") + 1);
+            String signIn = dataStr.substring(dataStr.indexOf("&") + 1);
+            signIn = signIn.substring(signIn.indexOf("=") + 1);
+            System.out.println("参数" + signIn);
+            String dataIn = "data=" + data.replace(" ","");
+            String signRsa = DragonSignature.rsaSign(dataIn, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
+            System.out.println("生成" + signRsa);
+            if (signIn.equals(signRsa)){
+                request.setAttribute("data",data);
                 chain.doFilter(request,response);
             }
+        } catch (DragonApiException e) {
+            e.printStackTrace();
         }
     }
 
