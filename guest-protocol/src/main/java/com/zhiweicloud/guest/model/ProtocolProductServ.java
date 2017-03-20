@@ -39,13 +39,13 @@ public class ProtocolProductServ extends BaseEntity{
     @ApiModelProperty(value="计价规则",name="pricingRule")
     private String pricingRule;
 
-    @ApiModelProperty(value="是否计价：0，计价；1，不计价",name="isPricing")
+    @ApiModelProperty(value="是否计价：0，不计价；1，计价",name="isPricing")
     private Boolean isPricing;
 
-    @ApiModelProperty(value="是否优先：0，优先使用；1，不优先",name="isPrioritized")
+    @ApiModelProperty(value="是否优先：0，不优先；1，优先使用",name="isPrioritized")
     private Boolean isPrioritized;
 
-    @ApiModelProperty(value="是否可用：0，可用；1，不可用",name="isAvailabled")
+    @ApiModelProperty(value="是否可用：0，不可用；1，可用",name="isAvailabled")
     private Boolean isAvailabled;
 
     @Transient
