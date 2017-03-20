@@ -1,18 +1,12 @@
 package com.zhiweicloud.guest.common;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.dragon.sign.DragonApiException;
 import com.dragon.sign.DragonSignature;
 
 import javax.servlet.*;
-import java.awt.dnd.DragSource;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by tc on 2017/3/18.

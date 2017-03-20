@@ -68,7 +68,9 @@ public class FlightService {
             throw new FlightException("没有找到对应的航班信息");
         } else {
             Long flightId = queryFlight.getFlightId();
-            if (Long.valueOf(queryFlight.getFdId()) < Long.valueOf(flight.getFdId())) {
+            String fdId = queryFlight.getFdId();
+            fdId = fdId == null ? "-1" : fdId;
+            if (Long.valueOf(fdId) < Long.valueOf(flight.getFdId())) {
                 flight.setFlightId(flightId);
                 flightMapper.updateFlight(flight);
             } else {
