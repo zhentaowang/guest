@@ -77,19 +77,33 @@ public class MainTest {
     }
 
     public static void main(String[] args) throws Exception {
-        String data = "data={\"fd_id\":\"902990\",\"FlightNo\":\"MU2474\",\"FlightDate\":\"2017-03-21\",\"FlightCompany\":\"中国东方航空股份有限公司\",\"FlightDepcode\":\"NGB\",\"FlightArrcode\":\"LHW\",\"FlightDeptimePlanDate\":\"2017-03-21 15:10:00\",\"FlightArrtimePlanDate\":\"2017-03-21 20:10:00\",\"FlightDeptimeReadyDate\":\"\",\"FlightArrtimeReadyDate\":\"\",\"FlightDeptimeDate\":\"\",\"FlightArrtimeDate\":\"\",\"stopFlag\":\"\",\"shareFlag\":\"\",\"ShareFlightNo\":\"\",\"FillFlightNo\":\"\",\"BoardGate\":\"\",\"BoardState\":\"\",\"FlightState\":\"Plan\",\"FlightHTerminal\":\"\",\"FlightTerminal\":\"T2\",\"FlightDep\":\"宁波市\",\"FlightArr\":\"兰州市\",\"FlightDepAirport\":\"宁波栎社国际机场\",\"FlightArrAirport\":\"兰州中川机场\",\"alternate_info\":\"\",\"org_timezone\":\"\",\"dst_timezone\":\"\",\"fcategory\":\"\",\"fid\":\"\",\"BoardGateTime\":\"\"}";
-        System.out.println(DragonSignature.rsaSign(data.replace(" ",""), Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
-        System.out.println(DragonSignature.rsaSign(data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
+        String data1 = "data={\"fd_id\":\"902990\",\"FlightNo\":\"MU2474\",\"FlightDate\":\"2017-03-21\",\"FlightCompany\":\"中国东方航空股份有限公司\",\"FlightDepcode\":\"NGB\",\"FlightArrcode\":\"LHW\",\"FlightDeptimePlanDate\":\"2017-03-21 15:10:00\",\"FlightArrtimePlanDate\":\"2017-03-21 20:10:00\",\"FlightDeptimeReadyDate\":\"\",\"FlightArrtimeReadyDate\":\"\",\"FlightDeptimeDate\":\"\",\"FlightArrtimeDate\":\"\",\"stopFlag\":\"\",\"shareFlag\":\"\",\"ShareFlightNo\":\"\",\"FillFlightNo\":\"\",\"BoardGate\":\"\",\"BoardState\":\"\",\"FlightState\":\"Plan\",\"FlightHTerminal\":\"\",\"FlightTerminal\":\"T2\",\"FlightDep\":\"宁波市\",\"FlightArr\":\"兰州市\",\"FlightDepAirport\":\"宁波栎社国际机场\",\"FlightArrAirport\":\"兰州中川机场\",\"alternate_info\":\"\",\"org_timezone\":\"\",\"dst_timezone\":\"\",\"fcategory\":\"\",\"fid\":\"\",\"BoardGateTime\":\"\"}";
+//        System.out.println(DragonSignature.rsaSign(data.replace(" ",""), Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
+//        System.out.println();
+//
+//
+//
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//
+//        long time = 1490074398000l;
+//
+//
+//        String s = "{\"FD_ID\": \"0\",\"FlightNo\": \"MU2474\",\"FlightDate\": \"2017-03-20\",\"FlightCompany\": \"中国东方航空股份有限公司\",\"FlightDepcode\": \"NGB\",\"FlightArrcode\": \"LHW\",\"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\",\"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\",\"FlightDeptimeReadyDate\": \"\",\"FlightArrtimeReadyDate\": \"\",\"FlightDeptimeDate\": \"\",\"FlightArrtimeDate\": \"\",\"StopFlag\": \"\",\"ShareFlag\": \"\",\"ShareFlightNo\": \"\",\"FillFlightNo\": \"\",\"BoardGate\": \"\",\"BoardState\": \"\",\"FlightState\": \"Plan\",\"FlightHTerminal\": \"\",\"FlightTerminal\": \"T2\",\"FlightDep\": \"宁波市\",\"FlightArr\": \"兰州市\",\"FlightDepAirport\": \"宁波栎社国际机场\",\"FlightArrAirport\": \"兰州中川机场\",\"Fcategory\": \"\",\"BoardGateTime\": \"\"}";
+//        System.out.println(s.replace(" ","").toString());
+//        System.out.println(simpleDateFormat.format(new Date(time)));
+        String dataStr = "data={\"fd_id\":\"903100\",\"FlightNo\":\"MU2474\",\"FlightDate\":\"2017-03-21\",\"FlightCompany\":\"中国东方航空股份有限公司\",\"FlightDepcode\":\"NGB\",\"FlightArrcode\":\"LHW\",\"FlightDeptimePlanDate\":\"2017-03-21 15:10:00\",\"FlightArrtimePlanDate\":\"2017-03-21 20:10:00\",\"FlightDeptimeReadyDate\":\"\",\"FlightArrtimeReadyDate\":\"\",\"FlightDeptimeDate\":\"\",\"FlightArrtimeDate\":\"\",\"stopFlag\":\"\",\"shareFlag\":\"\",\"ShareFlightNo\":\"\",\"FillFlightNo\":\"\",\"BoardGate\":\"\",\"BoardState\":\"\",\"FlightState\":\"Plan\",\"FlightHTerminal\":\"\",\"FlightTerminal\":\"T2\",\"FlightDep\":\"宁波市\",\"FlightArr\":\"兰州市\",\"FlightDepAirport\":\"宁波栎社国际机场\",\"FlightArrAirport\":\"兰州中川机场\",\"alternate_info\":\"\",\"org_timezone\":\"\",\"dst_timezone\":\"\",\"fcategory\":\"\",\"fid\":\"\",\"BoardGateTime\":\"\"}&sign=J%2BTrLIJaIa/MMRQit7aG8L9rNGrmsUVJiZNjsPWBtS0kbDagl9Cvq/0Gq1bj9iiYF8BQYAXHKrfMNzj8lVJhfKzg1RCyOLwQlpgKdd91Led0Y%2BBFHZR8sbsEEgGc3V9SML6Ha/3bEi35i9VxF%2BRaOSlLTaBL7fOsJXcJ3UAZi5g=";
+        String data = dataStr.substring(dataStr.indexOf("{"), dataStr.indexOf("}") + 1);
+        System.out.println(data.equals(data1));
+        System.out.println("data数据 " + data);
+        String signIn = dataStr.substring(dataStr.indexOf("&") + 1);
+        signIn = signIn.substring(signIn.indexOf("=") + 1);
+        signIn = signIn.replace("%2B", "+");
+        System.out.println("传入的sign " + signIn);
+        System.out.println("生成的sign "+DragonSignature.rsaSign("data="+data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8));
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-        long time = 1490074398000l;
-
-
-        String s = "{\"FD_ID\": \"0\",\"FlightNo\": \"MU2474\",\"FlightDate\": \"2017-03-20\",\"FlightCompany\": \"中国东方航空股份有限公司\",\"FlightDepcode\": \"NGB\",\"FlightArrcode\": \"LHW\",\"FlightDeptimePlanDate\": \"2017-03-20 15:10:00\",\"FlightArrtimePlanDate\": \"2017-03-20 20:10:00\",\"FlightDeptimeReadyDate\": \"\",\"FlightArrtimeReadyDate\": \"\",\"FlightDeptimeDate\": \"\",\"FlightArrtimeDate\": \"\",\"StopFlag\": \"\",\"ShareFlag\": \"\",\"ShareFlightNo\": \"\",\"FillFlightNo\": \"\",\"BoardGate\": \"\",\"BoardState\": \"\",\"FlightState\": \"Plan\",\"FlightHTerminal\": \"\",\"FlightTerminal\": \"T2\",\"FlightDep\": \"宁波市\",\"FlightArr\": \"兰州市\",\"FlightDepAirport\": \"宁波栎社国际机场\",\"FlightArrAirport\": \"兰州中川机场\",\"Fcategory\": \"\",\"BoardGateTime\": \"\"}";
-        System.out.println(s.replace(" ","").toString());
-        System.out.println(simpleDateFormat.format(new Date(time)));
-
+        String ss = "J%2BTrLIJaIa/MMRQit7aG8L9rNGrmsUVJiZNjsPWBtS0kbDagl9Cvq/0Gq1bj9iiYF8BQYAXHKrfMNzj8lVJhfKzg1RCyOLwQlpgKdd91Led0Y%2BBFHZR8sbsEEgGc3V9SML6Ha/3bEi35i9VxF%2BRaOSlLTaBL7fOsJXcJ3UAZi5g=";
+        ss = ss.replace("%2B", "+");
+        System.out.println(ss.equals("J+TrLIJaIa/MMRQit7aG8L9rNGrmsUVJiZNjsPWBtS0kbDagl9Cvq/0Gq1bj9iiYF8BQYAXHKrfMNzj8lVJhfKzg1RCyOLwQlpgKdd91Led0Y+BFHZR8sbsEEgGc3V9SML6Ha/3bEi35i9VxF+RaOSlLTaBL7fOsJXcJ3UAZi5g="));
     }
 
 }
