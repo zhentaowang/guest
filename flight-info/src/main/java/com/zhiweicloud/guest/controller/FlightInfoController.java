@@ -185,6 +185,7 @@ public class FlightInfoController {
             }
             flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
+            log.info("flight对象内容:" + flight.toString());
             flightService.updateFlight(flight);
             result.put("state",1);
             result.put("info", "接收并处理成功");
