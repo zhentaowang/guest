@@ -13,8 +13,9 @@
 
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.SysRole">
     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="roleId">
-      insert into sys_role
+      SELECT LAST_INSERT_ID()
     </selectKey>
+      insert into sys_role
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="roleId != null">
         role_id,
