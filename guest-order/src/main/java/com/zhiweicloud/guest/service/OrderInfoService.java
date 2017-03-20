@@ -96,6 +96,22 @@ public class OrderInfoService {
             }
             orderInfo.setCreateTime(new Date());
             orderInfo.setCreateUser(userId);
+
+            Map<String, Object> headerMap = new HashMap<>();
+            Map<String, Object> paramMap = new HashMap<>();
+            headerMap.put("user-id", userId);
+            headerMap.put("client-id", airportCode);
+            paramMap.put("employeeId", userId);
+
+            if (orderInfo.getCreateUser() != null) {
+                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (createUserObject != null) {
+                    JSONArray jsonArray = createUserObject.getJSONArray("data");
+                    String createUserName = jsonArray.getJSONObject(0).get("name").toString();
+                    orderInfo.setCreateUserName(createUserName);
+                }
+            }
+
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
@@ -333,7 +349,7 @@ public class OrderInfoService {
 
     public OrderInfo getById(Long orderId, Long userId, String airportCode) throws Exception {
         OrderInfo orderInfo = orderInfoMapper.getDetailById(orderId, airportCode);
-        Map<String, Object> headerMap = new HashMap<>();
+        /*Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> paramMap = new HashMap<>();
         headerMap.put("user-id", userId);
         headerMap.put("client-id", airportCode);
@@ -346,7 +362,7 @@ public class OrderInfoService {
                 String createUserName = jsonArray.getJSONObject(0).get("name").toString();
                 orderInfo.setCreateUserName(createUserName);
             }
-        }
+        }*/
 
         return orderInfo;
     }
