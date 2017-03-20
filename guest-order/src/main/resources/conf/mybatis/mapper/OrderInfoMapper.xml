@@ -55,12 +55,12 @@
         <result column="server_time" jdbcType="TIMESTAMP" property="serverTime" />
         <result column="fd_id" jdbcType="VARCHAR" property="fdId" />
         <result column="flight_company" jdbcType="VARCHAR" property="flightCompany" />
-        <result column="flight_deptime_plan_date" jdbcType="DATE" property="flightDeptimePlanDate" />
-        <result column="flight_arrtime_plan_date" jdbcType="DATE" property="flightArrtimePlanDate" />
-        <result column="flight_deptime_ready_date" jdbcType="DATE" property="flightDeptimeReadyDate" />
-        <result column="flight_arrtime_ready_date" jdbcType="DATE" property="flightArrtimeReadyDate" />
-        <result column="flight_deptime_date" jdbcType="DATE" property="flightDeptimeDate" />
-        <result column="flight_arrtime_date" jdbcType="DATE" property="flightArrtimeDate" />
+        <result column="flight_deptime_plan_date" jdbcType="TIMESTAMP" property="flightDeptimePlanDate" />
+        <result column="flight_arrtime_plan_date" jdbcType="TIMESTAMP" property="flightArrtimePlanDate" />
+        <result column="flight_deptime_ready_date" jdbcType="TIMESTAMP" property="flightDeptimeReadyDate" />
+        <result column="flight_arrtime_ready_date" jdbcType="TIMESTAMP" property="flightArrtimeReadyDate" />
+        <result column="flight_deptime_date" jdbcType="TIMESTAMP" property="flightDeptimeDate" />
+        <result column="flight_arrtime_date" jdbcType="TIMESTAMP" property="flightArrtimeDate" />
         <result column="stop_flag" jdbcType="SMALLINT" property="stopFlag" />
         <result column="share_flag" jdbcType="SMALLINT" property="shareFlag" />
         <result column="share_flight_no" jdbcType="VARCHAR" property="shareFlightNo" />
@@ -503,14 +503,17 @@
     <if test="criteria.queryOrderType != null and !''.equals(criteria.queryOrderType) and criteria.queryOrderType == 1">
       <choose>
         <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus) and '已使用'.equals(criteria.queryOrderStatus)">
-          and o.order_type = 1
           and o.order_status in (#{criteria.queryOrderStatus})
         </when>
         <otherwise>
-          and o.order_type = 1
-          <if test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
-            and o.order_status in (#{criteria.queryOrderStatus})
-          </if>
+          <choose>
+            <when test="criteria.queryOrderStatus != null and !''.equals(criteria.queryOrderStatus)">
+              and o.order_type = 1 and o.order_status in (#{criteria.queryOrderStatus})
+            </when>
+            <otherwise>
+              and (o.order_type = 1 or o.order_status = '已使用')
+            </otherwise>
+          </choose>
         </otherwise>
       </choose>
     </if>

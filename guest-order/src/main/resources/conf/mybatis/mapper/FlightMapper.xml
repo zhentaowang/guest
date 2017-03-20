@@ -98,22 +98,22 @@
         flight_company = #{flightCompany,jdbcType=VARCHAR},
       </if>
       <if test="flightDeptimePlanDate != null">
-        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=DATE},
+        flight_deptime_plan_date = #{flightDeptimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimePlanDate != null">
-        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=DATE},
+        flight_arrtime_plan_date = #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeReadyDate != null">
-        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=DATE},
+        flight_deptime_ready_date = #{flightDeptimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeReadyDate != null">
-        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=DATE},
+        flight_arrtime_ready_date = #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeDate != null">
-        flight_deptime_date = #{flightDeptimeDate,jdbcType=DATE},
+        flight_deptime_date = #{flightDeptimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeDate != null">
-        flight_arrtime_date = #{flightArrtimeDate,jdbcType=DATE},
+        flight_arrtime_date = #{flightArrtimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="stopFlag != null">
         stop_flag = #{stopFlag,jdbcType=SMALLINT},
@@ -385,22 +385,22 @@
         #{flightCompany,jdbcType=VARCHAR},
       </if>
       <if test="flightDeptimePlanDate != null">
-        #{flightDeptimePlanDate,jdbcType=DATE},
+        #{flightDeptimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimePlanDate != null">
-        #{flightArrtimePlanDate,jdbcType=DATE},
+        #{flightArrtimePlanDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeReadyDate != null">
-        #{flightDeptimeReadyDate,jdbcType=DATE},
+        #{flightDeptimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeReadyDate != null">
-        #{flightArrtimeReadyDate,jdbcType=DATE},
+        #{flightArrtimeReadyDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightDeptimeDate != null">
-        #{flightDeptimeDate,jdbcType=DATE},
+        #{flightDeptimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="flightArrtimeDate != null">
-        #{flightArrtimeDate,jdbcType=DATE},
+        #{flightArrtimeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="stopFlag != null">
         #{stopFlag,jdbcType=SMALLINT},
