@@ -71,6 +71,42 @@ public class Serv extends BaseEntity{
     @Transient
     private Integer serverNum;
 
+    @Transient
+    @ApiModelProperty(value="价格",name="price")
+    private Double price;
+
+    @Transient
+    @ApiModelProperty(value="免费人数",name="freeRetinueNum")
+    private Long freeRetinueNum;
+
+    @Transient
+    @ApiModelProperty(value="超出价格",name="overStaffUnitPrice")
+    private Double overStaffUnitPrice;
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Long getFreeRetinueNum() {
+        return freeRetinueNum;
+    }
+
+    public void setFreeRetinueNum(Long freeRetinueNum) {
+        this.freeRetinueNum = freeRetinueNum;
+    }
+
+    public Double getOverStaffUnitPrice() {
+        return overStaffUnitPrice;
+    }
+
+    public void setOverStaffUnitPrice(Double overStaffUnitPrice) {
+        this.overStaffUnitPrice = overStaffUnitPrice;
+    }
+
     public String getPricingRule() {
         return pricingRule;
     }
