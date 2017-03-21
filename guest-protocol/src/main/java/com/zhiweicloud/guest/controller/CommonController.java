@@ -1,8 +1,11 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.service.ProtocolService;
 import io.swagger.annotations.Api;
@@ -14,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Component
 @Path("/")
-@Api(value="系统公共接口",description="产品品类desc ", tags={"commonController"})
+@Api(value = "系统公共接口", description = "产品品类desc ", tags = {"commonController"})
 public class CommonController {
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
 
@@ -40,6 +40,7 @@ public class CommonController {
 
     /**
      * 协议表 - 查询协议名称
+     *
      * @return
      */
     @GET
@@ -52,15 +53,16 @@ public class CommonController {
             @ApiImplicitParam(name = "name", value = "协议名称", dataType = "String", required = false, paramType = "query")
     })
     public String getProtocolDropdownList(@QueryParam(value = "airportCode") String airportCode,
-                                                      @QueryParam(value = "type") String type,
-                                                                @QueryParam(value = "name") String name
+                                          @QueryParam(value = "type") String type,
+                                          @QueryParam(value = "name") String name
     ) {
-        List<Dropdownlist> protocolNameList = protocolService.getProtocolDropdownList(airportCode,type,name);
+        List<Dropdownlist> protocolNameList = protocolService.getProtocolDropdownList(airportCode, type, name);
         return JSON.toJSONString(new LZResult<>(protocolNameList));
     }
 
     /**
      * 协议表 - 查询协议编号
+     *
      * @return
      */
     @GET
@@ -73,10 +75,10 @@ public class CommonController {
             @ApiImplicitParam(name = "no", value = "协议编号", dataType = "String", required = false, paramType = "query")
     })
     public String getProtocolNoDropdownList(@QueryParam(value = "airportCode") String airportCode,
-                                                                  @QueryParam(value = "type") String type,
-                                                                @QueryParam(value = "no") String no
+                                            @QueryParam(value = "type") String type,
+                                            @QueryParam(value = "no") String no
     ) {
-        List<Dropdownlist> protocolNameList = protocolService.getProtocolNoDropdownList(airportCode,type, no);
+        List<Dropdownlist> protocolNameList = protocolService.getProtocolNoDropdownList(airportCode, type, no);
         return JSON.toJSONString(new LZResult<>(protocolNameList));
     }
 
@@ -86,37 +88,59 @@ public class CommonController {
      * 或者 根据authorizerId 获取协议下拉框
      * 或者 预约号
      * 或者 预约人
+     *
      * @return
      */
     @GET
     @Path(value = "getProtocolNameDropdownList")
     @ApiOperation(value = "系统中用到协议名称下拉框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @Produces("application/json;charset=utf-8")
-    public String getProtocolNameDropdownList (
-            ContainerRequestContext request,
+    public String getProtocolNameDropdownList(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
             @QueryParam(value = "protocolId") Long protocolId,
             @QueryParam(value = "protocolName") String protocolName,
             @QueryParam(value = "protocolType") Long protocolType,
             @QueryParam(value = "authorizerId") Long authorizerId,
             @QueryParam(value = "authorizerName") String authorizerName,
-            @QueryParam(value = "reservationNum") String reservationNum){
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
+            @QueryParam(value = "reservationNum") String reservationNum) {
         LZResult<List<Map>> result = new LZResult<>();
-        try{
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("airportCode",airportCode);
-            map.put("protocolId",protocolId);
-            map.put("protocolName",protocolName);
-            map.put("protocolType",protocolType);//协议类型
-            map.put("authorizerId",authorizerId);
-            map.put("authorizerName",authorizerName);//预约人
-            map.put("reservationNum",reservationNum);//预约号
+        try {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("airportCode", airportCode);
+            map.put("protocolId", protocolId);
+            map.put("protocolName", protocolName);
+            map.put("protocolType", protocolType);//协议类型
+            map.put("authorizerId", authorizerId);
+            map.put("authorizerName", authorizerName);//预约人
+            map.put("reservationNum", reservationNum);//预约号
             List<Map> list = protocolService.getProtocolNameDropdownList(map);
+
+            Map<String, Object> headerMap = new HashMap<>();
+            Map<String, Object> paramMap = new HashMap<>();
+            headerMap.put("user-id", userId);
+            headerMap.put("client-id", airportCode);
+
+
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).get("institutionClientId") != null) {
+                    Map clientMap = new HashMap();
+                    paramMap.put("institutionClientId", list.get(i).get("institutionClientId"));
+                    JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
+                    if (jsonObject != null) {
+                        JSONObject institutionClientObject = jsonObject.getJSONObject("data");
+                        String clientValue = institutionClientObject.get("name").toString();
+                        clientMap.put("clientValue",clientValue);
+                    }
+                    clientMap.put("clientId",list.get(i).get("institutionClientId"));
+                    list.add(clientMap);
+                }
+            }
 
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());

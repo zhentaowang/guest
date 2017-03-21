@@ -233,21 +233,16 @@
 
   <select id="getPassengerlistByFlightId" resultMap="PassengerResultMap">
     SELECT
-      p.name,p.flight_id,p.order_id,concat(p.airport_code,lpad(p.order_id,6,'0')) AS order_no,sd.serviceDetailId,o.order_status,o.create_time ,se.room_name
+      p.name,p.flight_id,p.order_id,concat(p.airport_code,lpad(p.order_id,6,'0')) AS order_no,sd.serviceDetailId,sd.room_name,o.order_status,o.create_time
     FROM  passenger p
     LEFT JOIN
-      (SELECT service_detail->>"$.serviceDetailId" AS serviceDetailId,service_detail->>"$.serviceName",order_id,airport_code
+      (SELECT service_detail->>'$.serviceDetailId' AS serviceDetailId,service_detail->>'$.serviceName',service_detail->>'$.serviceDetailName' AS room_name,order_id,airport_code
         FROM order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
     ON p.order_id = sd.order_id
     LEFT JOIN
 	  (SELECT flight_id,order_status,create_time,order_id,airport_code
 	    FROM order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
 	ON p.order_id = o.order_id
-    LEFT JOIN protocol_product_service pps ON pps.protocol_product_service_id = sd.serviceDetailId
-    LEFT JOIN
-      (SELECT serv_id, `name` AS room_name
-        FROM v_serv WHERE airport_code = #{airportCode} and service_type_allocation_id = 1 and is_deleted = 0) as se
-    ON pps.service_id = se.serv_id
 
     WHERE p.flight_id = #{flightId}
 

@@ -2,6 +2,7 @@ target/
 .idea/
 api/
 *.iml
+*.vscode/
 webapp/
 src/main/resources/generatorConfig.xml
 *swagger.json
