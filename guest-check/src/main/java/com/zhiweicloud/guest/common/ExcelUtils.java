@@ -2,13 +2,16 @@ package com.zhiweicloud.guest.common;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -20,7 +23,7 @@ import java.util.*;
  */
 public class ExcelUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
+    private static final Log log = LogFactory.getLog(ExcelUtils.class);
 
     private ExcelUtils() {
     }
@@ -47,8 +50,8 @@ public class ExcelUtils {
     /**
      * 默认的导出路径
      */
-//    private static final String DEFAULT_PATH = "/home/nfs-share/excel";
-    private static final String DEFAULT_PATH = "C:/excel";
+    private static final String DEFAULT_PATH = "flie://home/nfs-share/excel";
+//    private static final String DEFAULT_PATH = "C:/excel";
 
     /**
      * 工作簿
@@ -105,9 +108,25 @@ public class ExcelUtils {
      */
     public static void export(String fileName, String sheetName, List rows, Map<String, String> titleMap) {
         initHSSFWorkbook(sheetName);
+        autoColumnSize(titleMap.size());
         createFirstRow(titleMap);
-        createContentRow(rows, titleMap);
+        createContentRowForVipCloud(rows, titleMap);
+//        createContentRow(rows, titleMap);
         out(getFilePath(fileName));
+    }
+
+    public static OutputStream workbookToStream(String fileName, String sheetName, List rows, Map<String, String> titleMap){
+        initHSSFWorkbook(sheetName);
+        autoColumnSize(titleMap.size());
+        createFirstRow(rows);
+        createContentRowForVipCloud(rows, titleMap);
+        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new ByteArrayOutputStream())) {
+            objectOutputStream.writeObject(workbook);
+            return objectOutputStream;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -158,6 +177,7 @@ public class ExcelUtils {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         HSSFFont font = workbook.createFont();
         font.setBold(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
         cellStyle.setFont(font);
 //        int i = 0;
 //        for (String s : titleMap.keySet()) {
@@ -240,6 +260,46 @@ public class ExcelUtils {
 //        }
 //    }
 
+    /**
+     * 项目中定制的方法 非通用.
+     * @param dataList 数据集合 *合计行数据格式和数量不一致*
+     * @param titleMap 标题集合
+     */
+    private static void createContentRowForVipCloud(List dataList, Map<String, String> titleMap) {
+        HSSFCellStyle contextstyle = workbook.createCellStyle();
+        HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
+        for (int i = 0, size = dataList.size(); i < size; i++) {
+            HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
+            Map<String, Object> rowMap = (HashMap) dataList.get(i);
+            int j = 0;
+            for (Map.Entry<String, String> entry : titleMap.entrySet()) {
+                HSSFCell textcell = row.createCell(j);
+                Object value = rowMap.get(entry.getKey());
+                if (value == null || "".equals(value)) {
+                    if (i == (size - 1) && j == 0) {
+                        textcell.setCellValue("合计");
+                    }else {
+                        textcell.setCellType(CellType.BLANK);
+                    }
+                } else {
+                    if (isNum(value)) {
+                        textcell.setCellType(CellType.NUMERIC);
+                        if (isInteger(value)) {
+                            contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,##0"));
+                        } else {
+                            contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,##0.00"));
+                        }
+                        textcell.setCellStyle(contextstyle);
+                        textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
+                    } else {
+                        textcell.setCellValue(value.toString());
+                    }
+                }
+                j++;
+            }
+        }
+    }
+
     private static void createContentRow(List dataList, Map<String, String> titleMap) {
         for (int i = 0,size = dataList.size(); i < size; i++) {
             HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
@@ -288,23 +348,19 @@ public class ExcelUtils {
         titleCell.setCellValue(sheetName);
     }
 
+    private static void autoColumnSize(int size){
+        for (int i = 0; i < size; i++) {
+            sheet.autoSizeColumn(i);
+        }
+    }
+
     private static void out(String filePath){
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(filePath);
+        try (OutputStream out = new FileOutputStream(filePath)) {
             workbook.write(out);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -341,7 +397,6 @@ public class ExcelUtils {
      * @param response 响应
      */
     public static void download(String downloadPath, HttpServletResponse response) {
-
         File file = new File(getFilePath(downloadPath));
         String filename = file.getName();
         try (InputStream inputStream = new BufferedInputStream(new FileInputStream(getFilePath(downloadPath)));
@@ -352,14 +407,75 @@ public class ExcelUtils {
             response.reset();
             // 设置response的Header
             response.addHeader("Content-Disposition", "attachment;filename="
-                    + new String(filename.getBytes()));
+                    + new String(filename.getBytes("UTF-8"), "ISO_8859_1"));
             response.addHeader("Content-Length", "" + file.length());
             response.setContentType("application/vnd.ms-excel;charset=UTF-8");
             toClient.write(buffer);
             toClient.flush();
+            workbook.write(toClient);
         } catch (IOException ex) {
-            logger.info(ex.getMessage());
+            log.info(ex.getMessage());
         }
+    }
+
+    public static void download(String fileName, String sheetName, List rows, Map<String, String> titleMap,HttpServletResponse response) {
+        initHSSFWorkbook(sheetName);
+        try (OutputStream out = response.getOutputStream()) {
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+            createFirstRow(titleMap);
+            createContentRowForVipCloud(rows, titleMap);
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean isNum(Object data){
+        return data.toString().matches("^(-?\\d+)(\\.\\d+)?$");
+    }
+
+    private static boolean isInteger(Object data){
+        return data.toString().matches("^[-+]?[\\d]*$");
+    }
+
+    public static void createExcel(HttpServletResponse response){
+        //创建workbook
+        workbook = new HSSFWorkbook();
+        //添加Worksheet（不添加sheet时生成的xls文件打开时会报错)
+        HSSFSheet sheet = workbook.createSheet("sheet1");
+        OutputStream out = null;
+        try {
+            out = response.getOutputStream();
+            String fileName = "test.xls";// 文件名
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+            HSSFRow row = sheet.createRow(0);    //创建第一行
+            for(int i = 0;i < 10;i++){
+                HSSFCell cell = row.createCell(i);
+                cell.setCellValue("测试数据"+i);
+            }
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Object o1 = "2017-05-04";
+        Object o2 = "愛尚飛";
+        Object o3 = "99.2";
+        System.out.println(isNum(o1.toString()));
+        System.out.println(isNum(o2.toString()));
+        System.out.println(isNum(o3.toString()));
     }
 
 }

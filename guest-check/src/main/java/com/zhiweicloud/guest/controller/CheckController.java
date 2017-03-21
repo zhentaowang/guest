@@ -134,12 +134,12 @@ public class CheckController {
             @HeaderParam("user-id") Long userId,
             @Context HttpServletResponse response) {
         try {
-            Map result = checkService.customerChecklist("LJG", orderCheckDetail, 1, 10);
+            Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, 10);
             if (result != null) {
                 checkService.exportExcel(orderCheckDetail, result, response);
             }
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -43,11 +43,43 @@ public class OrderInfoService {
         this.flightMapper = flightMapper;
     }
 
-    public String saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
+    public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
         if (orderInfo.getOrderId() != null) {
-            orderInfo.setUpdateTime(new Date());
-            orderInfo.setUpdateUser(userId);
+            Map<String, Object> headerMap = new HashMap<>();
+            Map<String, Object> paramMap = new HashMap<>();
+            headerMap.put("user-id", userId);
+            headerMap.put("client-id", airportCode);
+            paramMap.put("employeeId", userId);
+
+            /**
+             * 预约订单和服务订单保存的创建人和创建时间不是同一个字段
+             */
+            if (orderInfo.getOrderType() == 0) {//预约订单
+                orderInfo.setUpdateTime(new Date());
+                orderInfo.setUpdateUser(userId);
+                if (orderInfo.getUpdateUser() != null) {
+                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    if (updateUserObject != null) {
+                        JSONArray jsonArray = updateUserObject.getJSONArray("data");
+                        String updateUserName = jsonArray.getJSONObject(0).get("name").toString();
+                        orderInfo.setCreateUserName(updateUserName);
+                    }
+                }
+            } else {//服务订单
+                orderInfo.setServerUpdateTime(new Date());
+                orderInfo.setServerUpdateUserId(userId);
+                if (orderInfo.getServerUpdateUserId() != null) {
+                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    if (updateUserObject != null) {
+                        JSONArray jsonArray = updateUserObject.getJSONArray("data");
+                        String updateUserName = jsonArray.getJSONObject(0).get("name").toString();
+                        orderInfo.setServerUpdateUserName(updateUserName);
+                    }
+                }
+            }
+
+
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
             if (orderInfo.getFlight() != null) {
                 Flight flight = orderInfo.getFlight();
@@ -95,8 +127,6 @@ public class OrderInfoService {
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
-            orderInfo.setCreateTime(new Date());
-            orderInfo.setCreateUser(userId);
 
             Map<String, Object> headerMap = new HashMap<>();
             Map<String, Object> paramMap = new HashMap<>();
@@ -104,19 +134,37 @@ public class OrderInfoService {
             headerMap.put("client-id", airportCode);
             paramMap.put("employeeId", userId);
 
-            if (orderInfo.getCreateUser() != null) {
-                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                if (createUserObject != null) {
-                    JSONArray jsonArray = createUserObject.getJSONArray("data");
-                    String createUserName = jsonArray.getJSONObject(0).get("name").toString();
-                    orderInfo.setCreateUserName(createUserName);
+            /**
+             * 预约订单和服务订单保存的创建人和创建时间不是同一个字段
+             */
+            if (orderInfo.getOrderType() == 0) {
+                orderInfo.setCreateTime(new Date());
+                orderInfo.setCreateUser(userId);
+                if (orderInfo.getCreateUser() != null) {
+                    JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    if (createUserObject != null) {
+                        JSONArray jsonArray = createUserObject.getJSONArray("data");
+                        String createUserName = jsonArray.getJSONObject(0).get("name").toString();
+                        orderInfo.setCreateUserName(createUserName);
+                    }
+                }
+            } else {
+                orderInfo.setServerCreateTime(new Date());
+                orderInfo.setServerCreateUserId(userId);
+                if (orderInfo.getServerCreateUserId() != null) {
+                    JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    if (createUserObject != null) {
+                        JSONArray jsonArray = createUserObject.getJSONArray("data");
+                        String createUserName = jsonArray.getJSONObject(0).get("name").toString();
+                        orderInfo.setServerCreateUserName(createUserName);
+                    }
                 }
             }
+
 
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
-        return "操作成功";
     }
 
     /**
@@ -127,80 +175,80 @@ public class OrderInfoService {
      * @param orderServiceList
      */
     private void addPassengerAndServiceDetails(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
-        List passengerIds = new ArrayList<>();
-        List serverDetailsList = new ArrayList();
-        /**
-         * 新增修改passenger
-         */
-        for (int i = 0; passengerList != null && i < passengerList.size(); i++) {
-            Passenger p = passengerList.get(i);
-            p.setOrderId(orderInfo.getOrderId());
-            p.setAirportCode(orderInfo.getAirportCode());
-            p.setUpdateTime(new Date());
-            p.setUpdateUser(orderInfo.getUpdateUser());
-            p.setFlightId(orderInfo.getFlightId());
-            if (p.getPassengerId() != null) {
-                passengerMapper.updateByPassengerIdAndAirportCodeKeySelective(p);
-                passengerIds.add(p.getPassengerId());
-            } else {
-                passengerMapper.insertSelective(p);
-                passengerIds.add(p.getPassengerId());
+        try {
+            List passengerIds = new ArrayList<>();
+            List serverDetailsList = new ArrayList();
+            /**
+             * 新增修改passenger
+             */
+            for (int i = 0; passengerList != null && i < passengerList.size(); i++) {
+                Passenger p = passengerList.get(i);
+                p.setOrderId(orderInfo.getOrderId());
+                p.setAirportCode(orderInfo.getAirportCode());
+                p.setUpdateTime(new Date());
+                p.setUpdateUser(orderInfo.getUpdateUser());
+                p.setFlightId(orderInfo.getFlightId());
+                if (p.getPassengerId() != null) {
+                    passengerMapper.updateByPassengerIdAndAirportCodeKeySelective(p);
+                    passengerIds.add(p.getPassengerId());
+                } else {
+                    passengerMapper.insertSelective(p);
+                    passengerIds.add(p.getPassengerId());
+                }
             }
-        }
 
-        /**
-         * 新增修改服务信息
-         */
-        for (int i = 0; orderServiceList != null && i < orderServiceList.size(); i++) {
-            OrderService os = orderServiceList.get(i);
-            os.setOrderId(orderInfo.getOrderId());
-            os.setAirportCode(orderInfo.getAirportCode());
-            os.setUpdateTime(new Date());
-            os.setUpdateUser(orderInfo.getUpdateUser());
-            String detail = os.getServiceDetail();
-            JSONObject jsonObject = JSON.parseObject(detail);
+            /**
+             * 新增修改服务信息
+             */
+            for (int i = 0; orderServiceList != null && i < orderServiceList.size(); i++) {
+                OrderService os = orderServiceList.get(i);
+                os.setOrderId(orderInfo.getOrderId());
+                os.setAirportCode(orderInfo.getAirportCode());
+                os.setUpdateTime(new Date());
+                os.setUpdateUser(orderInfo.getUpdateUser());
+                String detail = os.getServiceDetail();
+                JSONObject jsonObject = JSON.parseObject(detail);
 
-            //
-            Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
-            headerMap.put("user-id", userId);
-            headerMap.put("client-id", airportCode);
-            paramMap.put("protocolProductId", orderInfo.getProductId());
-            paramMap.put("typeId", jsonObject.get("serviceId"));
+                Map<String, Object> headerMap = new HashMap<>();
+                Map<String, Object> paramMap = new HashMap<>();
+                headerMap.put("user-id", userId);
+                headerMap.put("client-id", airportCode);
+                paramMap.put("protocolProductId", orderInfo.getProductId());
+                paramMap.put("typeId", jsonObject.get("serviceId"));
 
-            if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
-                JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
-                //JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://http://ifeicloud.zhiweicloud.com/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
-                if (jsonObject1 != null) {
-                    JSONArray jsonArray = jsonObject1.getJSONArray("data");
-                    for (int k = 0; k < jsonArray.size(); k++) {
-                        if (jsonArray.getJSONObject(k).get("protocolProductServiceId").equals(jsonObject.get("serviceDetailId"))) {
-                            if (jsonArray.getJSONObject(k).get("pricingRule") != null) {
-                                os.setPriceRule(jsonArray.getJSONObject(k).get("pricingRule").toString());
+                if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
+                    JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
+                    if (jsonObject1 != null) {
+                        JSONArray jsonArray = jsonObject1.getJSONArray("data");
+                        for (int k = 0; k < jsonArray.size(); k++) {
+                            if (jsonArray.getJSONObject(k).get("protocolProductServiceId").equals(jsonObject.get("serviceDetailId"))) {
+                                if (jsonArray.getJSONObject(k).get("pricingRule") != null) {
+                                    os.setPriceRule(jsonArray.getJSONObject(k).get("pricingRule").toString());
+                                }
                             }
                         }
                     }
                 }
+                os.setServiceDetail(jsonObject.toJSONString());
+                if (os.getOrderServiceId() != null) {
+                    serverDetailsList.add(os.getOrderServiceId());
+                    orderServiceMapper.updateByOrderServiceIdAndAirportCodeKeySelective(os);
+                } else {
+                    orderServiceMapper.insertSelective(os);
+                    serverDetailsList.add(os.getOrderServiceId());
+                }
             }
-            //
 
-            os.setServiceDetail(jsonObject.toJSONString());
-            if (os.getOrderServiceId() != null) {
-                serverDetailsList.add(os.getOrderServiceId());
-                orderServiceMapper.updateByOrderServiceIdAndAirportCodeKeySelective(os);
-            } else {
-                orderServiceMapper.insertSelective(os);
-                serverDetailsList.add(os.getOrderServiceId());
+
+            if (passengerIds != null && passengerIds.size() > 0) {
+                this.deleteData(orderInfo.getOrderId(), ListUtil.List2String(passengerIds), orderInfo.getAirportCode(), "passenger_id", "passenger");
             }
-        }
 
-
-        if (passengerIds != null && passengerIds.size() > 0) {
-            this.deleteData(orderInfo.getOrderId(), ListUtil.List2String(passengerIds), orderInfo.getAirportCode(), "passenger_id", "passenger");
-        }
-
-        if (serverDetailsList != null && serverDetailsList.size() > 0) {
-            this.deleteData(orderInfo.getOrderId(), ListUtil.List2String(serverDetailsList), orderInfo.getAirportCode(), "order_service_id", "order_service");
+            if (serverDetailsList != null && serverDetailsList.size() > 0) {
+                this.deleteData(orderInfo.getOrderId(), ListUtil.List2String(serverDetailsList), orderInfo.getAirportCode(), "order_service_id", "order_service");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -236,7 +284,8 @@ public class OrderInfoService {
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolName", orderInfoQuery.getQueryCustomerInfo());
-            JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", headerMap, paramMap));
+            //JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", headerMap, paramMap));
+            JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?access_token=rbZ09t6JEE92JR7jBK4yeoRdXAHYkx4rJGVvDH0g&protocolName=" + orderInfoQuery.getQueryCustomerInfo()));
             if (protocolParam != null) {
                 JSONArray protocolArray = protocolParam.getJSONArray("data");
                 for (int i = 0; i < protocolArray.size(); i++) {
@@ -253,7 +302,8 @@ public class OrderInfoService {
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("reservationNum", orderInfoQuery.getQueryCustomerInfo());
-            JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", paramMap, headerMap));
+            //JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", paramMap, headerMap));
+            JSONObject reservationNumObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?access_token=rbZ09t6JEE92JR7jBK4yeoRdXAHYkx4rJGVvDH0g&reservationNum=" + orderInfoQuery.getQueryCustomerInfo()));
             if (reservationNumObject != null) {
                 JSONArray reservationNumArray = reservationNumObject.getJSONArray("data");
                 for (int i = 0; i < reservationNumArray.size(); i++) {
@@ -270,7 +320,8 @@ public class OrderInfoService {
         if (orderInfoQuery.getQueryCustomerInfo() != null && !orderInfoQuery.getQueryCustomerInfo().equals("")) {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("authorizerName", orderInfoQuery.getQueryCustomerInfo());
-            JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", paramMap, headerMap));
+            //JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", paramMap, headerMap));
+            JSONObject authorizerNameObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolNameDropdownList?access_token=rbZ09t6JEE92JR7jBK4yeoRdXAHYkx4rJGVvDH0g&authorizerName=" + orderInfoQuery.getQueryCustomerInfo()));
             if (authorizerNameObject != null) {
                 JSONArray authorizerNameArray = authorizerNameObject.getJSONArray("data");
 
