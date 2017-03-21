@@ -109,7 +109,7 @@ public class ScheduleEventController {
         param.put("servIds",servIds);
         param.put("serverComplete",serverComplete);
         LZResult<PaginationResult<Flight>> result  = scheduleEventService.getFlightList(param,page,rows);
-        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+        return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
     /**
@@ -123,7 +123,7 @@ public class ScheduleEventController {
     @ApiOperation(value = "航班管理 - 根据flightId查询航班详情 ", notes = "返回航班详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "28", required = true, paramType = "query")
+            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "68", required = true, paramType = "query")
     })
     public String getFlightView(@Context final HttpHeaders headers,
                        @QueryParam(value = "flightId") Long flightId
@@ -133,7 +133,7 @@ public class ScheduleEventController {
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
         Flight flight = scheduleEventService.getByFlightId(param);
-        return JSON.toJSONString(new LZResult<>(flight), SerializerFeature.WriteMapNullValue);
+        return JSON.toJSONStringWithDateFormat(new LZResult<>(flight), "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
     @GET
@@ -152,7 +152,7 @@ public class ScheduleEventController {
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         LZResult<PaginationResult<ScheduleEvent>> result  = scheduleEventService.getAll(param,page,rows);
-        return JSON.toJSONString(result);
+        return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss");
     }
 
     /**
@@ -243,7 +243,7 @@ public class ScheduleEventController {
         param.put("flightId",flightId);
         param.put("scheduleEventId",scheduleEventId);
         List<ScheduleEvent> scheduleEvent = scheduleEventService.getScheduleEventByFlightId(param);
-        return JSON.toJSONString(new LZResult<>(scheduleEvent));
+        return JSON.toJSONStringWithDateFormat(new LZResult<>(scheduleEvent), "yyyy-MM-dd HH:mm:ss");
     }
 
     /**
@@ -265,7 +265,7 @@ public class ScheduleEventController {
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
         List<ScheduleEvent> scheduleEvent = scheduleEventService.getScheduleEventBox(param);
-        return JSON.toJSONString(new LZResult<>(scheduleEvent));
+        return JSON.toJSONStringWithDateFormat(new LZResult<>(scheduleEvent), "yyyy-MM-dd HH:mm:ss");
     }
 
     /**
