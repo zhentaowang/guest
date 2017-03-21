@@ -26,6 +26,7 @@ package com.zhiweicloud.guest.mapper;
 
 
 import com.zhiweicloud.guest.model.Dropdownlist;
+import com.zhiweicloud.guest.model.OrderInfoQuery;
 import com.zhiweicloud.guest.model.Passenger;
 import org.apache.ibatis.annotations.Param;
 
@@ -55,4 +56,6 @@ public interface PassengerMapper{
      * @return
      */
     List<Passenger> getPassengerlistByFlightId(@Param("flightId")Long flightId, @Param("airportCode") String airportCode);
+
+    String getOrderIdsByPassengerNameOrCard(OrderInfoQuery orderInfoQuery);
 }

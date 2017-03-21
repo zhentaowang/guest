@@ -607,6 +607,9 @@
     <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
       and o.server_complete is not null
     </if>
+    <if test="criteria.orderIds != null and !''.equals(criteria.orderIds)">
+      and o.order_id in (#{criteria.orderIds})
+    </if>
     <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
       and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
     </if>
@@ -616,15 +619,15 @@
     <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
       and f.is_in_or_out in(#{criteria.queryIsInOrOut})
     </if>
-    limit #{page.startPageNo},#{page.pCount}
+
     ) as orderFlightClient
-    inner join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
-    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+    left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
+    <!--<if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and p.name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
       and p.identity_card = #{criteria.queryIdentityCard}
-    </if>
+    </if>-->
     )as orderFlightClientPassenger
     left join order_service orderService
     on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
@@ -700,6 +703,9 @@
             <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
               and o.server_complete is not null
             </if>
+            <if test="criteria.orderIds != null and !''.equals(criteria.orderIds)">
+              and o.order_id in (#{criteria.orderIds})
+            </if>
             <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
               and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
             </if>
@@ -711,13 +717,13 @@
             </if>
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
-        inner join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
-        <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+        left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
+        <!--<if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
           and p.name like concat('%',#{criteria.queryPassengerName},'%')
         </if>
         <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
           and p.identity_card = #{criteria.queryIdentityCard}
-        </if>
+        </if>-->
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
