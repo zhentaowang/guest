@@ -108,7 +108,7 @@
     where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{typeId,jdbcType=BIGINT} and is_deleted = 0) as s
     on p.service_id = s.serv_id
     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.service_type_allocation_id = #{typeId,jdbcType=BIGINT} and p.is_deleted = 0
-    and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
+    and p.protocol_product_id = #{protocolProductId,jdbcType=BIGINT} and p.is_availabled = 1
   </select>
 
   <select id="getListCount" parameterType="map" resultType="int">

@@ -114,7 +114,15 @@ public class ScheduleEventService {
      * @param param
      */
     public List<ScheduleEvent> getScheduleEventByFlightId(Map<String,Object> param) {
-        return scheduleEventMapper.selectByFlightId(param);
+        List<ScheduleEvent> scheduleEventList = scheduleEventMapper.selectByFlightId(param);
+        Date serverCompleteTime = flightMapper.selectByPrimaryKey(param).getServerCompleteTime();
+        if(serverCompleteTime != null){
+            ScheduleEvent scheduleEvent = new ScheduleEvent();
+            scheduleEvent.setScheduleTime(serverCompleteTime);
+            scheduleEvent.setName("服务完成");
+            scheduleEventList.add(scheduleEvent);
+        }
+        return scheduleEventList;
     }
 
     /**
