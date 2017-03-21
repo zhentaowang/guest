@@ -34,12 +34,15 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.ExcelUtils;
 import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.controller.CheckController;
 import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.apache.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +60,8 @@ import static com.alibaba.fastjson.parser.Feature.OrderedField;
  */
 @Service
 public class CheckService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CheckService.class);
 
     private final CheckMapper checkMapper;
     private final CheckDynamicColumn checkDynamicColumn;
@@ -98,8 +103,7 @@ public class CheckService {
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolId", checkList.get(i).get("protocolId"));
-            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getById?access_token=3A3MhKkdsOyvxZWYnMPTlnmCHSzfV3iGob4Uhvy7&protocolId=" + checkList.get(i).get("protocolId")));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
             if (protocolObject != null) {
                 JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
                 checkList.get(i).put("protocolType", protocolObj.get("protocolTypeName"));

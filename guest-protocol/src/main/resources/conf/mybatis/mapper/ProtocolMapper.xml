@@ -331,7 +331,7 @@
 
   <select id="getProtocolNameDropdownList" resultType="map" parameterType="map">
     SELECT
-      p.protocol_id as id,p.`name` AS `value`,type,institution_client_id as institutionClientId
+      p.protocol_id as id,p.`name` AS `value`,type,institution_client_id as clientId
     FROM
       v_protocol p
     <if test="authorizerName != null and !authorizerName.trim().equals('') or authorizerId != null" >
@@ -341,6 +341,10 @@
     <if test="protocolId != null" >
       and p.protocol_id = #{protocolId}
     </if>
+    <if test="customerId != null" >
+      and p.institution_client_id = #{customerId}
+    </if>
+
     <if test="protocolName != null and !protocolName.trim().equals('')" >
       and p.`name` like concat('%',#{protocolName},'%')
     </if>
