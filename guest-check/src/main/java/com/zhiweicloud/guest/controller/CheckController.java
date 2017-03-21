@@ -134,7 +134,6 @@ public class CheckController {
             @HeaderParam("user-id") Long userId,
             @Context HttpServletResponse response) {
         try {
-
             Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, 10);
             if (result != null) {
                 checkService.exportExcel(orderCheckDetail, result, response);

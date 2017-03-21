@@ -11,6 +11,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -114,17 +115,17 @@ public class ExcelUtils {
         out(getFilePath(fileName));
     }
 
-    public static OutputStream dataToStream(String fileName, String sheetName, List rows, Map<String, String> titleMap){
+    public static OutputStream workbookToStream(String fileName, String sheetName, List rows, Map<String, String> titleMap){
         initHSSFWorkbook(sheetName);
         autoColumnSize(titleMap.size());
         createFirstRow(rows);
         createContentRowForVipCloud(rows, titleMap);
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new ByteArrayOutputStream());
+        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new ByteArrayOutputStream())) {
+            objectOutputStream.writeObject(workbook);
+            return objectOutputStream;
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        workbook
         return null;
     }
 
@@ -282,12 +283,12 @@ public class ExcelUtils {
                     }
                 } else {
                     if (isNum(value)) {
+                        textcell.setCellType(CellType.NUMERIC);
                         if (isInteger(value)) {
-                            contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,#0"));
+                            contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,##0"));
                         } else {
                             contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,##0.00"));
                         }
-//                            textcell.setCellType(CellType.NUMERIC);
                         textcell.setCellStyle(contextstyle);
                         textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
                     } else {
@@ -396,7 +397,6 @@ public class ExcelUtils {
      * @param response 响应
      */
     public static void download(String downloadPath, HttpServletResponse response) {
-
         File file = new File(getFilePath(downloadPath));
         String filename = file.getName();
         try (InputStream inputStream = new BufferedInputStream(new FileInputStream(getFilePath(downloadPath)));
@@ -412,8 +412,23 @@ public class ExcelUtils {
             response.setContentType("application/vnd.ms-excel;charset=UTF-8");
             toClient.write(buffer);
             toClient.flush();
+            workbook.write(toClient);
         } catch (IOException ex) {
             log.info(ex.getMessage());
+        }
+    }
+
+    public static void download(String fileName, String sheetName, List rows, Map<String, String> titleMap,HttpServletResponse response) {
+        initHSSFWorkbook(sheetName);
+        try (OutputStream out = response.getOutputStream()) {
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+            createFirstRow(titleMap);
+            createContentRowForVipCloud(rows, titleMap);
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -423,6 +438,35 @@ public class ExcelUtils {
 
     private static boolean isInteger(Object data){
         return data.toString().matches("^[-+]?[\\d]*$");
+    }
+
+    public static void createExcel(HttpServletResponse response){
+        //创建workbook
+        workbook = new HSSFWorkbook();
+        //添加Worksheet（不添加sheet时生成的xls文件打开时会报错)
+        HSSFSheet sheet = workbook.createSheet("sheet1");
+        OutputStream out = null;
+        try {
+            out = response.getOutputStream();
+            String fileName = "test.xls";// 文件名
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+            HSSFRow row = sheet.createRow(0);    //创建第一行
+            for(int i = 0;i < 10;i++){
+                HSSFCell cell = row.createCell(i);
+                cell.setCellValue("测试数据"+i);
+            }
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
