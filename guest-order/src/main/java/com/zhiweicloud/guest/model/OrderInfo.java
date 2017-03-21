@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Transient;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -136,12 +137,33 @@ public class OrderInfo extends BaseEntity{
     private Flight flight;
 
     @ApiModelProperty(value = "创建人姓名", name = "createUserName")
-    @Transient
     private String createUserName;
 
 
     @ApiModelProperty(value = "随行人数", name = "alongTotal")
     private String alongTotal;
+
+    @ApiModelProperty(value="服务订单创建时间",name="serverCreateTime")
+    private Date serverCreateTime;
+
+    @ApiModelProperty(value="服务订单创建人id",name="serverCreateUserId")
+    private Long serverCreateUserId;
+
+    @ApiModelProperty(value="服务订单创建人姓名",name="serverCreateUserName")
+    private String serverCreateUserName;
+
+    @ApiModelProperty(value="服务订单修改时间",name="serverUpdateTime")
+    private Date serverUpdateTime;
+
+    @ApiModelProperty(value="服务订单修改人id",name="serverUpdateUserId")
+    private Long serverUpdateUserId;
+
+    @ApiModelProperty(value="服务订单修改人姓名",name="serverUpdateUserName")
+    private String serverUpdateUserName;
+
+    @ApiModelProperty(value="服务完成时间",name="serverCompleteTime")
+    private Date serverCompleteTime;
+
 
 
     /**
@@ -662,5 +684,109 @@ public class OrderInfo extends BaseEntity{
 
     public void setProtocolType(Long protocolType) {
         this.protocolType = protocolType;
+    }
+
+    /**
+     * 服务订单创建时间
+     * @return server_create_time 服务订单创建时间
+     */
+    public Date getServerCreateTime() {
+        return serverCreateTime;
+    }
+
+    /**
+     * 服务订单创建时间
+     * @param serverCreateTime 服务订单创建时间
+     */
+    public void setServerCreateTime(Date serverCreateTime) {
+        this.serverCreateTime = serverCreateTime;
+    }
+
+    /**
+     * 服务订单创建人id
+     * @return server_create_user_id 服务订单创建人id
+     */
+    public Long getServerCreateUserId() {
+        return serverCreateUserId;
+    }
+
+    /**
+     * 服务订单创建人id
+     * @param serverCreateUserId 服务订单创建人id
+     */
+    public void setServerCreateUserId(Long serverCreateUserId) {
+        this.serverCreateUserId = serverCreateUserId;
+    }
+
+    /**
+     * 服务订单创建人姓名
+     * @return server_create_user_name 服务订单创建人姓名
+     */
+    public String getServerCreateUserName() {
+        return serverCreateUserName;
+    }
+
+    /**
+     * 服务订单创建人姓名
+     * @param serverCreateUserName 服务订单创建人姓名
+     */
+    public void setServerCreateUserName(String serverCreateUserName) {
+        this.serverCreateUserName = serverCreateUserName;
+    }
+
+    /**
+     * 服务订单修改时间
+     * @return server_update_time 服务订单修改时间
+     */
+    public Date getServerUpdateTime() {
+        return serverUpdateTime;
+    }
+
+    /**
+     * 服务订单修改时间
+     * @param serverUpdateTime 服务订单修改时间
+     */
+    public void setServerUpdateTime(Date serverUpdateTime) {
+        this.serverUpdateTime = serverUpdateTime;
+    }
+
+    /**
+     * 服务订单修改人id
+     * @return server_update_user_id 服务订单修改人id
+     */
+    public Long getServerUpdateUserId() {
+        return serverUpdateUserId;
+    }
+
+    /**
+     * 服务订单修改人id
+     * @param serverUpdateUserId 服务订单修改人id
+     */
+    public void setServerUpdateUserId(Long serverUpdateUserId) {
+        this.serverUpdateUserId = serverUpdateUserId;
+    }
+
+    /**
+     * 服务订单修改人姓名
+     * @return server_update_user_name 服务订单修改人姓名
+     */
+    public String getServerUpdateUserName() {
+        return serverUpdateUserName;
+    }
+
+    /**
+     * 服务订单修改人姓名
+     * @param serverUpdateUserName 服务订单修改人姓名
+     */
+    public void setServerUpdateUserName(String serverUpdateUserName) {
+        this.serverUpdateUserName = serverUpdateUserName;
+    }
+
+    public Date getServerCompleteTime() {
+        return serverCompleteTime;
+    }
+
+    public void setServerCompleteTime(Date serverCompleteTime) {
+        this.serverCompleteTime = serverCompleteTime;
     }
 }
