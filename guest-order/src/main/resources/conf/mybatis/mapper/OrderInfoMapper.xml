@@ -789,9 +789,15 @@
     values (#{orderId},#{orderStatus},#{airportCode});
   </insert>
 
-  <update id="updateServerComplete">
+  <update id="updateServerComplete" parameterType="map">
     UPDATE
       order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{updateUser}
+      <if test="serverComplete == 1">
+        ,server_complete_time = NOW()
+      </if>
+      <if test="serverComplete == 0">
+        ,server_complete_time = NOW()
+      </if>
     WHERE airport_code = #{airportCode} AND flight_id = #{flightId}
 
   </update>
