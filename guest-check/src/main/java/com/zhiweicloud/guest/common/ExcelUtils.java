@@ -2,13 +2,12 @@ package com.zhiweicloud.guest.common;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.sun.corba.se.spi.ior.ObjectKey;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -23,7 +22,7 @@ import java.util.*;
  */
 public class ExcelUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
+    private static final Log log = LogFactory.getLog(ExcelUtils.class);
 
     private ExcelUtils() {
     }
@@ -50,7 +49,7 @@ public class ExcelUtils {
     /**
      * 默认的导出路径
      */
-    private static final String DEFAULT_PATH = "/home/nfs-share/excel";
+    private static final String DEFAULT_PATH = "flie://home/nfs-share/excel";
 //    private static final String DEFAULT_PATH = "C:/excel";
 
     /**
@@ -113,6 +112,20 @@ public class ExcelUtils {
         createContentRowForVipCloud(rows, titleMap);
 //        createContentRow(rows, titleMap);
         out(getFilePath(fileName));
+    }
+
+    public static OutputStream dataToStream(String fileName, String sheetName, List rows, Map<String, String> titleMap){
+        initHSSFWorkbook(sheetName);
+        autoColumnSize(titleMap.size());
+        createFirstRow(rows);
+        createContentRowForVipCloud(rows, titleMap);
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new ByteArrayOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        workbook
+        return null;
     }
 
     /**
@@ -400,7 +413,7 @@ public class ExcelUtils {
             toClient.write(buffer);
             toClient.flush();
         } catch (IOException ex) {
-            logger.info(ex.getMessage());
+            log.info(ex.getMessage());
         }
     }
 
