@@ -126,10 +126,10 @@ public class CommonController {
                 if (list.get(i).get("institutionClientId") != null) {
                     Map clientMap = new HashMap();
                     paramMap.put("institutionClientId", list.get(i).get("institutionClientId"));
-                    JSONObject institutionClientObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
-                    if (institutionClientObject != null) {
-                        JSONArray jsonArray = institutionClientObject.getJSONArray("data");
-                        String clientValue = jsonArray.getJSONObject(0).get("name").toString();
+                    JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
+                    if (jsonObject != null) {
+                        JSONObject institutionClientObject = jsonObject.getJSONObject("data");
+                        String clientValue = institutionClientObject.get("name").toString();
                         clientMap.put("clientValue",clientValue);
                     }
                     clientMap.put("clientId",list.get(i).get("institutionClientId"));
