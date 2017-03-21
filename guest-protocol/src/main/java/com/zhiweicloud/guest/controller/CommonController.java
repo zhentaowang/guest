@@ -123,17 +123,14 @@ public class CommonController {
 
 
             for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).get("institutionClientId") != null) {
-                    Map clientMap = new HashMap();
-                    paramMap.put("institutionClientId", list.get(i).get("institutionClientId"));
+                if (list.get(i).get("clientId") != null) {
+                    paramMap.put("institutionClientId", list.get(i).get("clientId"));
                     JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
                     if (jsonObject != null) {
                         JSONObject institutionClientObject = jsonObject.getJSONObject("data");
                         String clientValue = institutionClientObject.get("name").toString();
-                        clientMap.put("clientValue",clientValue);
+                        list.get(i).put("clientValue",clientValue);
                     }
-                    clientMap.put("clientId",list.get(i).get("institutionClientId"));
-                    list.add(clientMap);
                 }
             }
 

@@ -36,6 +36,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
+import com.zhiweicloud.guest.service.CopyProperties;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
 import org.apache.commons.beanutils.BeanUtils;
@@ -110,21 +111,27 @@ public class OrderInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo, @Context final HttpHeaders headers) {
+    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId) {
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
             JSONArray serviceListArray = orderObject.getJSONArray("serviceList");
             JSONArray passengerListArray = orderObject.getJSONArray("passengerList");
+            JSONArray flightListArray = orderObject.getJSONArray("flightList");
             orderObject.remove("serviceList");
             orderObject.remove("passengerList");
+            orderObject.remove("flightList");
 
             List<OrderService> orderServiceList = JSON.parseArray(JSON.toJSONString(serviceListArray), OrderService.class);
             List<Passenger> passengerList = JSON.parseArray(JSON.toJSONString(passengerListArray), Passenger.class);
+
+            List<Flight> flightList = JSON.parseArray(JSON.toJSONString(flightListArray), Flight.class);
+
+            Flight targetFlight = flightList.get(0);//全部参数
+            Flight source = flightList.get(1);//修改后的部分参数
+            CopyProperties.copy(source,targetFlight);
 
             OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
 
@@ -133,7 +140,7 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             } else {
-                if (order.getFlight().getFlightArrcode() == null || order.getFlight().getFlightDepcode() == null || order.getFlight().getFlightArrcode().equals("") || order.getFlight().getFlightDepcode().equals("")) {
+                if (targetFlight.getFlightArrcode() == null || targetFlight.getFlightDepcode() == null || order.getFlight().getFlightArrcode().equals("") || order.getFlight().getFlightDepcode().equals("")) {
                     result.setMsg("出发地三字码或者目的地三字码为空");
                     result.setStatus(5006);
                     result.setData(null);
