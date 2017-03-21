@@ -331,7 +331,7 @@
 
   <select id="getProtocolNameDropdownList" resultType="map" parameterType="map">
     SELECT
-      p.protocol_id as id,p.`name` AS `value`,type,institution_client_id as institutionClientId
+      p.protocol_id as id,p.`name` AS `value`,type,institution_client_id as clientId
     FROM
       v_protocol p
     <if test="authorizerName != null and !authorizerName.trim().equals('') or authorizerId != null" >
