@@ -2,19 +2,13 @@ package com.zhiweicloud.guest.common;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zhiweicloud.guest.controller.CheckController;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.container.ContainerResponseContext;
 import java.io.*;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -53,8 +47,8 @@ public class ExcelUtils {
     /**
      * 默认的导出路径
      */
-    private static final String DEFAULT_PATH = "/home/nfs-share/excel";
-//    private static final String DEFAULT_PATH = "C:/excel";
+//    private static final String DEFAULT_PATH = "/home/nfs-share/excel";
+    private static final String DEFAULT_PATH = "C:/excel";
 
     /**
      * 工作簿

@@ -103,8 +103,7 @@ public class CheckService {
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolId", checkList.get(i).get("protocolId"));
-            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getById?access_token=3A3MhKkdsOyvxZWYnMPTlnmCHSzfV3iGob4Uhvy7&protocolId=" + checkList.get(i).get("protocolId")));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
             if (protocolObject != null) {
                 JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
                 checkList.get(i).put("protocolType", protocolObj.get("protocolTypeName"));
