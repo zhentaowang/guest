@@ -129,8 +129,9 @@ public class OrderInfoController {
 
             List<Flight> flightList = JSON.parseArray(JSON.toJSONString(flightListArray), Flight.class);
 
-            Flight targetFlight = flightList.get(0);//全部参数
-            Flight source = flightList.get(1);//修改后的部分参数
+            Flight source= flightList.get(0);//修改后的部分参数
+            Flight targetFlight = flightList.get(1);//全部参数
+
             CopyProperties.copy(source,targetFlight);
 
             OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
@@ -140,7 +141,7 @@ public class OrderInfoController {
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
             } else {
-                if (targetFlight.getFlightArrcode() == null || targetFlight.getFlightDepcode() == null || order.getFlight().getFlightArrcode().equals("") || order.getFlight().getFlightDepcode().equals("")) {
+                if (targetFlight.getFlightArrcode() == null || targetFlight.getFlightDepcode() == null || targetFlight.getFlightArrcode().equals("") || targetFlight.getFlightDepcode().equals("")) {
                     result.setMsg("出发地三字码或者目的地三字码为空");
                     result.setStatus(5006);
                     result.setData(null);
@@ -215,6 +216,7 @@ public class OrderInfoController {
                             return JSON.toJSONString(result);
                         }
                     }
+                    order.setFlight(targetFlight);
                     String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
                     if(!res.equals("操作成功")){
                         result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
