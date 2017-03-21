@@ -204,8 +204,7 @@ public class CheckService {
         });
         String fileName = orderCheckDetail.getQueryProductName() + "_" + System.currentTimeMillis() + ".xls";
         String sheetName = orderCheckDetail.getQueryProductName();
-        ExcelUtils.export(fileName, sheetName, rows, titleMap);
-        ExcelUtils.download(fileName, response);
+        ExcelUtils.download(fileName, sheetName, rows, titleMap,response);
     }
 
 }

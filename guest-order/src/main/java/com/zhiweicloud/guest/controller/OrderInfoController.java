@@ -86,7 +86,7 @@ public class OrderInfoController {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             orderInfoQuery.setAirportCode(airportCode);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
-            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+            return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
@@ -216,16 +216,11 @@ public class OrderInfoController {
                         }
                     }
                     order.setFlight(targetFlight);
-                    String res = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
-                    if(!res.equals("操作成功")){
-                        result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
-                        result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
-                        result.setData(res);
-                    }else{
-                        result.setMsg(LZStatus.SUCCESS.display());
-                        result.setStatus(LZStatus.SUCCESS.value());
-                        result.setData(null);
-                    }
+                    orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
+                    result.setMsg(LZStatus.SUCCESS.display());
+                    result.setStatus(LZStatus.SUCCESS.value());
+                    result.setData(null);
+                    return JSON.toJSONString(result);
                 }
             }
         } catch (Exception e) {
@@ -307,7 +302,7 @@ public class OrderInfoController {
             result.setData(null);
             e.printStackTrace();
         }
-        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+        return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
 
