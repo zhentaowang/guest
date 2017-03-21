@@ -80,6 +80,9 @@ public class OrderInfoQuery extends BaseEntity{
     private String queryAgentPerson;
 
 
+    private String orderIds;
+
+
 
 
     public String getQueryPassengerName() {
@@ -208,5 +211,13 @@ public class OrderInfoQuery extends BaseEntity{
 
     public void setQueryAgentPerson(String queryAgentPerson) {
         this.queryAgentPerson = queryAgentPerson;
+    }
+
+    public String getOrderIds() {
+        return orderIds;
+    }
+
+    public void setOrderIds(String orderIds) {
+        this.orderIds = orderIds;
     }
 }
