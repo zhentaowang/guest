@@ -45,6 +45,7 @@
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
     <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
     <result column="server_complete" jdbcType="VARCHAR" property="serverComplete" />
+    <result column="server_complete_time" jdbcType="TIMESTAMP" property="serverCompleteTime" />
   </resultMap>
   <sql id="Base_Column_List">
     flight_id, flight_date, flight_no, flight_depcode, flight_arrcode, plan_no, flight_position,
@@ -52,7 +53,7 @@
     flight_deptime_ready_date, flight_arrtime_ready_date, flight_deptime_date, flight_arrtime_date,
     stop_flag, share_flag, share_flight_no, fill_flight_no, board_gate, board_state,
     flight_state, flight_hterminal, flight_terminal, flight_dep, flight_arr, flight_dep_airport,
-    flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time, server_complete
+    flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time, server_complete, server_complete_time
   </sql>
 
   <sql id="Base_Column_List_Update_Flight">
@@ -228,8 +229,8 @@
   </select>
 
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select f.*,o.server_complete from flight as f left join
-    (select server_complete, flight_id from order_info where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT}
+    select f.*, o.server_complete, o.server_complete_time from flight as f left join
+    (select server_complete, server_complete_time, flight_id from order_info where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT}
     group by flight_id)
     as o on f.flight_id = o.flight_id where f.flight_id = #{flightId,jdbcType=BIGINT} and f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0
   </select>
