@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,6 +276,19 @@ public class FlightInfoController {
             e.printStackTrace();
             return "error...";
         }
+    }
+
+    @GET
+    @Path("getUpdateResult")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "定制航班 - 推送给龙腾", notes = "返回成功还是失败", httpMethod = "GET", produces = "application/json")
+    public String getUpdateResult(@QueryParam(value = "flightId") Long flightId,
+                               @HeaderParam("client-id") String airportCode) {
+        Map<String, Object> result = new HashedMap();
+        result.put("state",-1);
+        result.put("info", "签名不匹配");
+        return JSON.toJSONString(result);
     }
 
 }
