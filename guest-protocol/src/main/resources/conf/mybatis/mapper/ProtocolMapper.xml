@@ -341,6 +341,10 @@
     <if test="protocolId != null" >
       and p.protocol_id = #{protocolId}
     </if>
+    <if test="customerId != null" >
+      and p.institution_client_id = #{customerId}
+    </if>
+
     <if test="protocolName != null and !protocolName.trim().equals('')" >
       and p.`name` like concat('%',#{protocolName},'%')
     </if>

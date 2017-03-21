@@ -99,6 +99,7 @@ public class CommonController {
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId,
             @QueryParam(value = "protocolId") Long protocolId,
+            @QueryParam(value = "customerId") Long customerId,
             @QueryParam(value = "protocolName") String protocolName,
             @QueryParam(value = "protocolType") Long protocolType,
             @QueryParam(value = "authorizerId") Long authorizerId,
@@ -114,6 +115,7 @@ public class CommonController {
             map.put("authorizerId", authorizerId);
             map.put("authorizerName", authorizerName);//预约人
             map.put("reservationNum", reservationNum);//预约号
+            map.put("customerId", customerId);//客户id
             List<Map> list = protocolService.getProtocolNameDropdownList(map);
 
             Map<String, Object> headerMap = new HashMap<>();
