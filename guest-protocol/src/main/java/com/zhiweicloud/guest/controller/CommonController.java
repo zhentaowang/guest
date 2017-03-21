@@ -130,9 +130,9 @@ public class CommonController {
                     if (jsonObject != null) {
                         JSONObject institutionClientObject = jsonObject.getJSONObject("data");
                         String clientValue = institutionClientObject.get("name").toString();
-                        clientMap.put("clientValue",clientValue);
+                        list.get(i).put("clientId",list.get(i).get("institutionClientId"));
+                        list.get(i).put("clientValue",clientValue);
                     }
-                    clientMap.put("clientId",list.get(i).get("institutionClientId"));
                     list.add(clientMap);
                 }
             }
