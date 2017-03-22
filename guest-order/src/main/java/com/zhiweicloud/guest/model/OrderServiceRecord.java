@@ -73,6 +73,21 @@ public class OrderServiceRecord extends BaseEntity{
     @ApiModelProperty(value="代办登机牌 0:需要，1：不需要",name="printCheck")
     private Short printCheck;
 
+    /**
+     * 修改订单时 类型不能为空
+     */
+    @Transient
+    @ApiModelProperty(value="订单类型：0：预约订单，1：服务订单",name="orderType")
+    private Short orderType;
+
+
+    public Short getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(Short orderType) {
+        this.orderType = orderType;
+    }
 
     /**
      * 主键id
