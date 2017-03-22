@@ -165,7 +165,7 @@ public class CheckService {
 
         for(int k = 0; k < checkList.size();k++){
             Map<String,Object> singleRow = checkList.get(k);
-
+            totalRow.put("orderNo","合计");
             for(String dataKey : singleRow.keySet()){
                 if (key.contains(dataKey) && singleRow.get(dataKey) != null){
                     Float value = Float.parseFloat(singleRow.get(dataKey).toString());

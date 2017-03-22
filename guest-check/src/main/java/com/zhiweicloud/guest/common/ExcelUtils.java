@@ -110,7 +110,7 @@ public class ExcelUtils {
         initHSSFWorkbook(sheetName);
         autoColumnSize(titleMap.size());
         createFirstRow(titleMap);
-        createContentRowForVipCloud(rows, titleMap);
+//        createContentRowForVipCloud(rows, titleMap);
 //        createContentRow(rows, titleMap);
         out(getFilePath(fileName));
     }
@@ -119,7 +119,7 @@ public class ExcelUtils {
         initHSSFWorkbook(sheetName);
         autoColumnSize(titleMap.size());
         createFirstRow(rows);
-        createContentRowForVipCloud(rows, titleMap);
+//        createContentRowForVipCloud(rows, titleMap);
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new ByteArrayOutputStream())) {
             objectOutputStream.writeObject(workbook);
             return objectOutputStream;
