@@ -615,12 +615,12 @@
     </if>
     <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
       and o.order_id in (
-      select GROUP_CONCAT(DISTINCT order_id) from passenger where name like concat('%',#{criteria.queryPassengerName},'%') where is_deleted = 0 and airport_code = #{criteria.airportCode}
+      select GROUP_CONCAT(DISTINCT order_id) from passenger where name like concat('%',#{criteria.queryPassengerName},'%') and is_deleted = 0 and airport_code = #{criteria.airportCode}
       )
     </if>
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)" >
       and o.order_id in (
-      select GROUP_CONCAT(DISTINCT order_id) from passenger where identity_card like concat('%',#{criteria.queryIdentityCard},'%') where is_deleted = 0 and airport_code = #{criteria.airportCode}
+      select GROUP_CONCAT(DISTINCT order_id) from passenger where identity_card like concat('%',#{criteria.queryIdentityCard},'%') and is_deleted = 0 and airport_code = #{criteria.airportCode}
       )
     </if>
 
@@ -712,12 +712,12 @@
             </if>
             <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)" >
               and o.order_id in (
-                select GROUP_CONCAT(DISTINCT order_id) from passenger where name like concat('%',#{criteria.queryPassengerName},'%') where is_deleted = 0 and airport_code = #{criteria.airportCode}
+                select GROUP_CONCAT(DISTINCT order_id) from passenger where name like concat('%',#{criteria.queryPassengerName},'%') and is_deleted = 0 and airport_code = #{criteria.airportCode}
               )
             </if>
             <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)" >
               and o.order_id in (
-              select GROUP_CONCAT(DISTINCT order_id) from passenger where identity_card like concat('%',#{criteria.queryIdentityCard},'%') where is_deleted = 0 and airport_code = #{criteria.airportCode}
+              select GROUP_CONCAT(DISTINCT order_id) from passenger where identity_card like concat('%',#{criteria.queryIdentityCard},'%') and is_deleted = 0 and airport_code = #{criteria.airportCode}
               )
             </if>
 
