@@ -63,7 +63,8 @@ public class PassengerController {
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
-        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+       
+        return  JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm", SerializerFeature.WriteMapNullValue);
     }
 
     /**
