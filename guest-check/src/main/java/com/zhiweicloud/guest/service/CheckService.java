@@ -95,7 +95,7 @@ public class CheckService {
 
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
-        for (int i = 0; i < checkList.size(); i++) {
+        /*for (int i = 0; i < checkList.size(); i++) {
 
             Map<String, Object> headerMap = new HashMap();
             headerMap.put("user-id", userId);
@@ -108,7 +108,7 @@ public class CheckService {
                 JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
                 checkList.get(i).put("protocolType", protocolObj.get("protocolTypeName"));
             }
-        }
+        }*/
 
         PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
