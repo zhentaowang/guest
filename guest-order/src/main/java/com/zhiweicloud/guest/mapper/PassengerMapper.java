@@ -57,5 +57,4 @@ public interface PassengerMapper{
      */
     List<Passenger> getPassengerlistByFlightId(@Param("flightId")Long flightId, @Param("airportCode") String airportCode);
 
-    String getOrderIdsByPassengerNameOrCard(OrderInfoQuery orderInfoQuery);
 }
