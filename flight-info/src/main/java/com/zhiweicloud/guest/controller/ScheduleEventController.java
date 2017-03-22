@@ -89,7 +89,7 @@ public class ScheduleEventController {
             @Context final HttpHeaders headers,
             @QueryParam(value = "flightNo") String flightNo,
             @QueryParam(value = "flightDate") String flightDate,
-            @QueryParam(value = "flightState") Long flightState,
+            @QueryParam(value = "flightState") String flightState,
             @QueryParam(value = "isInOrOut") Long isInOrOut,
             @QueryParam(value = "scheduleEventId") Long scheduleEventId,
             @QueryParam(value = "servIds") String servIds,
