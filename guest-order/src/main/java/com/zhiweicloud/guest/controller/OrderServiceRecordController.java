@@ -58,7 +58,7 @@ public class OrderServiceRecordController {
             if (!CollectionUtils.isEmpty(params.getData())) {
                 orderParam = params.getData().get(0);
             }
-            if (orderParam == null || null == orderParam.getOrderId()) {
+            if (orderParam == null || null == orderParam.getOrderId() || null == orderParam.getOrderType()) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
@@ -66,7 +66,7 @@ public class OrderServiceRecordController {
                 OrderInfo tempOrder = new OrderInfo();
                 tempOrder.setOrderId(orderParam.getOrderId());
                 tempOrder.setAirportCode(airportCode);
-                tempOrder.setUpdateUser(userId);
+                tempOrder.setOrderType(orderParam.getOrderType());
 
                 OrderServiceRecord record = new OrderServiceRecord();
                 record.setOrderId(orderParam.getOrderId());
