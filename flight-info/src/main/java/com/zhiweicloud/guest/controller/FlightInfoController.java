@@ -173,7 +173,6 @@ public class FlightInfoController {
                                @HeaderParam("user-id") Long userId,
                                @Context HttpServletRequest request) {
         try {
-            System.out.println("航班更新接口");
             String data = (String) request.getAttribute("data");
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
             Flight flight = new Flight();
