@@ -101,8 +101,8 @@ public class OrderInfoService {
                     flight.setFlightId(null);
                     flightMapper.insertSelective(flight);
                 }
+                orderInfo.setFlightId(flight.getFlightId());
             }
-            orderInfo.setFlightId(flight.getFlightId());
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
 
             //保存订单日志
