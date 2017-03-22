@@ -30,12 +30,15 @@
       and o.protocol_id in (#{criteria.queryProtocolId})
     </if>
     <if test="queryProductId != null and !''.equals(queryProductId)">
-      and o.product_id in (#{queryProductId})
+      and o.product_name in (${queryProductId})
+    </if>
+    <if test="queryProtocolType != null and !''.equals(queryProtocolType)">
+      and o.protocol_type in (${queryProtocolType})
     </if>
   </select>
 
   <select id="selectCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
-    select count(order_id) as orderCount,o.customer_id as customerId,o.customer_name as customerName,o.protocol_id as protocolId,o.protocol_name as protocolName,o.product_name as productName
+    select count(order_id) as orderCount,o.customer_id as customerId,o.customer_name as customerName,o.protocol_id as protocolId,o.protocol_name as protocolName,o.protocol_type as protocolType,o.product_name as productName
     from order_info o
     inner join flight f on o.flight_id = f.flight_id
 
@@ -62,7 +65,10 @@
       and o.protocol_id in (#{criteria.queryProtocolId})
     </if>
     <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
-      and o.product_id in (#{criteria.queryProductId})
+      and o.product_name in (${criteria.queryProductId})
+    </if>
+    <if test="criteria.queryProtocolType != null and !''.equals(criteria.queryProtocolType)">
+      and o.protocol_type in (${criteria.queryProtocolType})
     </if>
     GROUP BY o.customer_id
     limit #{page.startPageNo},#{page.pCount}
