@@ -254,15 +254,4 @@
   </update>
 
 
-  <select id="getOrderIdsByPassengerNameOrCard" resultType="string" parameterType="com.zhiweicloud.guest.model.OrderInfoQuery">
-    select GROUP_CONCAT(order_id) from passenger
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="queryPassengerName != null and !''.equals(queryPassengerName)">
-      and name like concat('%',#{queryPassengerName},'%')
-    </if>
-    <if test="queryIdentityCard != null and !''.equals(queryIdentityCard)">
-      and identity_card like concat('%',#{queryIdentityCard},'%')
-    </if>
-  </select>
-
 </mapper>
