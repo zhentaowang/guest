@@ -78,7 +78,7 @@ public class ScheduleEventController {
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "flightNo", value = "航班号", dataType = "String", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "flightDate", value = "航班日期", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "Long", required = false, paramType = "query"),
+                    @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "String", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "servIds", value = "服务id", dataType = "String", required = false, paramType = "query"),
