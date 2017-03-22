@@ -265,56 +265,75 @@ public class ExcelUtils {
      * @param dataList 数据集合 *合计行数据格式和数量不一致*
      * @param titleMap 标题集合
      */
-    private static void createContentRowForVipCloud(List dataList, Map<String, String> titleMap) {
-        HSSFCellStyle contextstyle = workbook.createCellStyle();
-        HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
-        for (int i = 0, size = dataList.size(); i < size; i++) {
-            HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
-            Map<String, Object> rowMap = (HashMap) dataList.get(i);
-            int j = 0;
-            for (Map.Entry<String, String> entry : titleMap.entrySet()) {
-                HSSFCell textcell = row.createCell(j);
-                Object value = rowMap.get(entry.getKey());
-                if (value == null || "".equals(value)) {
-                    if (i == (size - 1) && j == 0) {
-                        textcell.setCellValue("合计");
-                    }else {
-                        textcell.setCellType(CellType.BLANK);
-                    }
-                } else {
-                    if (isNum(value)) {
-                        textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
-//                        textcell.setCellType(CellType.NUMERIC);
-                        if (isInteger(value)) {
-                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
-                        } else {
-                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
-                        }
-                        textcell.setCellStyle(contextstyle);
-
-                    } else {
-                        textcell.setCellValue(value.toString());
-                    }
-                }
-                j++;
-            }
-        }
-    }
+//    private static void createContentRowForVipCloud(List dataList, Map<String, String> titleMap) {
+//        HSSFCellStyle contextstyle = workbook.createCellStyle();
+//        HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
+//        for (int i = 0, size = dataList.size(); i < size; i++) {
+//            HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
+//            Map<String, Object> rowMap = (HashMap) dataList.get(i);
+//            int j = 0;
+//            for (Map.Entry<String, String> entry : titleMap.entrySet()) {
+//                HSSFCell textcell = row.createCell(j);
+//                Object value = rowMap.get(entry.getKey());
+//                if (value == null || "".equals(value)) {
+//                    if (i == (size - 1) && j == 0) {
+//                        textcell.setCellValue("合计");
+//                    }else {
+//                        textcell.setCellType(CellType.BLANK);
+//                    }
+//                } else {
+//                    if (isNum(value)) {
+//                        textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
+////                        textcell.setCellType(CellType.NUMERIC);
+//                        if (isInteger(value)) {
+//                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
+//                        } else {
+//                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
+//                        }
+//                        textcell.setCellStyle(contextstyle);
+//
+//                    } else {
+//                        textcell.setCellValue(value.toString());
+//                    }
+//                }
+//                j++;
+//            }
+//        }
+//    }
 
     private static void createContentRow(List dataList, Map<String, String> titleMap) {
+        HSSFCellStyle contextstyle = workbook.createCellStyle();
         for (int i = 0,size = dataList.size(); i < size; i++) {
             HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
             Map<String,Object> rowMap = (HashMap) dataList.get(i);
             int j = 0;
             for (Map.Entry<String, String> entry : titleMap.entrySet()) {
                 HSSFCell textcell = row.createCell(j);
-                String value = (String) rowMap.get(entry.getKey());
-                textcell.setCellValue(value);
+                Object value = rowMap.get(entry.getKey());
+                setValue(textcell,value,contextstyle);
                 j++;
             }
         }
     }
-    
+
+    private static void setValue(HSSFCell cell,Object value,HSSFCellStyle contextstyle){
+        if (value == null || "".equals(value)) {
+            cell.setCellType(CellType.BLANK);
+        } else {
+            if (isNum(value)) {
+                cell.setCellValue(Double.parseDouble(String.valueOf(value)));
+                if (isInteger(value)) {
+                    contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
+                } else {
+                    contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
+                }
+                cell.setCellStyle(contextstyle);
+            }else {
+                cell.setCellValue(value.toString());
+            }
+        }
+    }
+
     /**
      * 创建excel内容
      * @param dataList 对象数据集合
@@ -426,7 +445,8 @@ public class ExcelUtils {
             response.setHeader("Content-Disposition", "attachment; filename="
                     + URLEncoder.encode(fileName, "UTF-8"));
             createFirstRow(titleMap);
-            createContentRowForVipCloud(rows, titleMap);
+            createContentRow(rows,titleMap);
+//            createContentRowForVipCloud(rows, titleMap);
             workbook.write(out);
         } catch (Exception e) {
             e.printStackTrace();
