@@ -69,7 +69,7 @@ public class CheckDynamicColumn {
          *所有-异地服务 LONG_DISTANCE
          * @ 订单号，航班日期，航班号，航段，进出港，贵宾厅人次，贵宾厅费用，陪同人次，陪同费用
          */
-        put("异地服务", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
+        put("异地贵宾服务", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
 
         /**
          * 除头等舱，金银卡 - 两舱休息室 FIRST_CABINS_AND_GOLD_SILVER_CARD
@@ -116,9 +116,6 @@ public class CheckDynamicColumn {
             ColumnType columnType = COLUMN.get(tableName);
             for (String column : columnType.column) {
                 result += ALL_COLUMN.get(column)[1] + ",";
-               /* if(ALL_COLUMN.get(column)[2].equals("1")){
-                    result += "sum(" + ALL_COLUMN.get(column)[1] + ")" + ",";
-                }*/
             }
             return result.substring(0, result.length() - 1);
         }catch (Exception e){
