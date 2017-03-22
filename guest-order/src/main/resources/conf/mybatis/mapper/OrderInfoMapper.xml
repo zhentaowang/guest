@@ -540,7 +540,7 @@
 
 
   <select id="selectOrderInfoTotal" resultType="int" parameterType="com.zhiweicloud.guest.model.OrderInfoQuery">
-    select count(DISTINCT(orderFlightClientPassengerService.order_id)) from
+    select count(DISTINCT(orderFlightClientPassengerService.order_id)) as count from
     (
     select orderFlightClientPassenger.*,orderService.order_service_id,orderService.service_detail from
     (
@@ -551,7 +551,7 @@
     o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,
     o.server_create_time, o.server_create_user_id, o.server_create_user_name, o.server_update_time,
     server_update_user_id, server_update_user_name,
-    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
+    f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,f.flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
     from order_info o
     inner join flight f
@@ -562,6 +562,9 @@
     </if>
     <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
       and o.protocol_id in ( #{criteria.queryProtocolIds})
+    </if>
+    <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
+      and o.protocol_id in ( #{criteria.queryProductId})
     </if>
     <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
       and o.is_important =  #{criteria.queryIsImportant}
@@ -607,24 +610,27 @@
     <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
       and o.server_complete is not null
     </if>
+    <if test="criteria.orderIds != null and !''.equals(criteria.orderIds)">
+      and o.order_id in (#{criteria.orderIds})
+    </if>
     <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
       and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
     </if>
     <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
-      and f.flight_date = str_to_date(#{criteria.queryFlightDate}, '%Y-%m-%d')
+      and f.flight_date = '2017-03-21'
     </if>
     <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
       and f.is_in_or_out in(#{criteria.queryIsInOrOut})
     </if>
-    limit #{page.startPageNo},#{page.pCount}
+
     ) as orderFlightClient
-    inner join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
-    <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+    left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
+    <!--<if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
       and p.name like concat('%',#{criteria.queryPassengerName},'%')
     </if>
     <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
       and p.identity_card = #{criteria.queryIdentityCard}
-    </if>
+    </if>-->
     )as orderFlightClientPassenger
     left join order_service orderService
     on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
@@ -655,6 +661,9 @@
             </if>
             <if test="criteria.queryProtocolIds != null and !''.equals(criteria.queryProtocolIds)">
               and o.protocol_id in ( #{criteria.queryProtocolIds})
+            </if>
+            <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
+              and o.protocol_id in ( #{criteria.queryProductId})
             </if>
             <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
               and o.is_important =  #{criteria.queryIsImportant}
@@ -700,24 +709,28 @@
             <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '2'.equals(criteria.queryAgentPerson)">
               and o.server_complete is not null
             </if>
+            <if test="criteria.orderIds != null and !''.equals(criteria.orderIds)">
+              and o.order_id in (#{criteria.orderIds})
+            </if>
             <if test="criteria.queryFlightNo != null and !''.equals(criteria.queryFlightNo)">
               and f.flight_no like concat('%',#{criteria.queryFlightNo},'%')
             </if>
             <if test="criteria.queryFlightDate != null and !''.equals(criteria.queryFlightDate)">
-              and f.flight_date = str_to_date(#{criteria.queryFlightDate}, '%Y-%m-%d')
+
+              and f.flight_date = '2017-03-21'
             </if>
             <if test="criteria.queryIsInOrOut != null and !''.equals(criteria.queryIsInOrOut)">
               and f.is_in_or_out in(#{criteria.queryIsInOrOut})
             </if>
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
-        inner join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
-        <if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
+        left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
+        <!--<if test="criteria.queryPassengerName != null and !''.equals(criteria.queryPassengerName)">
           and p.name like concat('%',#{criteria.queryPassengerName},'%')
         </if>
         <if test="criteria.queryIdentityCard != null and !''.equals(criteria.queryIdentityCard)">
           and p.identity_card = #{criteria.queryIdentityCard}
-        </if>
+        </if>-->
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
@@ -726,16 +739,16 @@
     <choose>
       <when test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy)">
         <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
-          order by orderFlightClientPassengerService.plan_take_off_time asc
+          order by orderFlightClientPassengerService.flight_deptime_plan_date asc
         </if>
         <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
-          order by orderFlightClientPassengerService.plan_take_off_time desc
+          order by orderFlightClientPassengerService.flight_deptime_plan_date desc
         </if>
         <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
-          order by orderFlightClientPassengerService.plan_landing_time asc
+          order by orderFlightClientPassengerService.flight_arrtime_plan_date asc
         </if>
         <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
-          order by orderFlightClientPassengerService.plan_landing_time desc
+          order by orderFlightClientPassengerService.flight_arrtime_plan_date desc
         </if>
       </when>
       <otherwise>

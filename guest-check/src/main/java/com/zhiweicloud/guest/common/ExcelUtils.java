@@ -283,14 +283,15 @@ public class ExcelUtils {
                     }
                 } else {
                     if (isNum(value)) {
-                        textcell.setCellType(CellType.NUMERIC);
+                        textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
+//                        textcell.setCellType(CellType.NUMERIC);
                         if (isInteger(value)) {
-                            contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,##0"));
+                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
                         } else {
-                            contextstyle.setDataFormat(hssfDataFormat.getBuiltinFormat("#,##0.00"));
+                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
                         }
                         textcell.setCellStyle(contextstyle);
-                        textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
+
                     } else {
                         textcell.setCellValue(value.toString());
                     }
