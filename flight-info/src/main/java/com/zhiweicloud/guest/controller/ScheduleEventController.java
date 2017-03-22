@@ -57,7 +57,7 @@ public class ScheduleEventController {
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             for (int i = 0; i < param.size(); i++) {
-                Flight flight = JSONObject.toJavaObject(JSON.parseObject(param.get(i).toString()),Flight.class);
+                Flight flight = param.getJSONObject(i).toJavaObject(Flight.class);
                 flight.setAirportCode(airportCode);
                 scheduleEventService.flightUpdate(flight);
             }
