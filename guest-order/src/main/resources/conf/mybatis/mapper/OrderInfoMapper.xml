@@ -731,16 +731,16 @@
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <choose>
       <when test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy)">
-        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 0">
+        <if test="criteria.queryOrderBy == 0">
           order by orderFlightClientPassengerService.flight_deptime_plan_date asc
         </if>
-        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 1">
+        <if test="criteria.queryOrderBy == 1">
           order by orderFlightClientPassengerService.flight_deptime_plan_date desc
         </if>
-        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 2">
+        <if test="criteria.queryOrderBy == 2">
           order by orderFlightClientPassengerService.flight_arrtime_plan_date asc
         </if>
-        <if test="criteria.queryOrderBy != null and !''.equals(criteria.queryOrderBy) and criteria.queryOrderType == 3">
+        <if test="criteria.queryOrderBy == 3">
           order by orderFlightClientPassengerService.flight_arrtime_plan_date desc
         </if>
       </when>
