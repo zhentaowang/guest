@@ -108,7 +108,7 @@ public class ServController {
                         if (!serviceFieldName.containsKey(keys.toArray()[i])) {
                             return LXResult.build(4995, "传输数据字段错误");
                         } else {
-                            if (param00.getString(keys.toArray()[i].toString()).isEmpty() && !keys.toArray()[i].toString().equals("plateNumber")) {
+                            if (param00.getString(keys.toArray()[i].toString()).isEmpty() & !keys.toArray()[i].toString().equals("plateNumber")) {
                                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
                             }
                         }
