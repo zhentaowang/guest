@@ -6,8 +6,6 @@
     <result column="menu_id" jdbcType="BIGINT" property="menuId" />
   </resultMap>
 
-
-
   <insert id="insertByExists">
     INSERT INTO sys_role_menu (role_id,menu_id,airport_code)
     SELECT #{roleId},#{menuId},#{airportCode}

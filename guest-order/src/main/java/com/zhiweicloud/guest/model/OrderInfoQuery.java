@@ -69,7 +69,7 @@ public class OrderInfoQuery extends BaseEntity{
 
     @ApiModelProperty(value = "出港：0，进港1", name = "queryIsInOrOut")
     @QueryParam("queryIsInOrOut")
-    private Integer queryIsInOrOut;
+    private String queryIsInOrOut;
 
     @ApiModelProperty(value = "附加服务单:1：代表查询的是勾选了代办登机牌，或者代托行李的订单", name = "queryAttServerOrderList")
     @QueryParam("queryAttServerOrderList")
@@ -78,11 +78,6 @@ public class OrderInfoQuery extends BaseEntity{
     @ApiModelProperty(value = "附加服务单 订单是否被安排，0：未安排，1：已安排，2：已完成", name = "queryAgentPerson")
     @QueryParam("queryAgentPerson")
     private String queryAgentPerson;
-
-
-    private String orderIds;
-
-
 
 
     public String getQueryPassengerName() {
@@ -189,11 +184,11 @@ public class OrderInfoQuery extends BaseEntity{
         this.queryIdentityCard = queryIdentityCard;
     }
 
-    public Integer getQueryIsInOrOut() {
+    public String getQueryIsInOrOut() {
         return queryIsInOrOut;
     }
 
-    public void setQueryIsInOrOut(Integer queryIsInOrOut) {
+    public void setQueryIsInOrOut(String queryIsInOrOut) {
         this.queryIsInOrOut = queryIsInOrOut;
     }
 
@@ -211,13 +206,5 @@ public class OrderInfoQuery extends BaseEntity{
 
     public void setQueryAgentPerson(String queryAgentPerson) {
         this.queryAgentPerson = queryAgentPerson;
-    }
-
-    public String getOrderIds() {
-        return orderIds;
-    }
-
-    public void setOrderIds(String orderIds) {
-        this.orderIds = orderIds;
     }
 }

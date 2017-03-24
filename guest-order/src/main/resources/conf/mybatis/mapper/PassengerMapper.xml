@@ -173,6 +173,9 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="flightId != null">
+        flight_id = #{flightId,jdbcType=BIGINT},
+      </if>
       <if test="phone != null">
         phone = #{phone,jdbcType=BIGINT},
       </if>

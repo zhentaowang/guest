@@ -107,17 +107,15 @@ public class RoleController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
-    public String save(@ApiParam(value = "sysRole", required = true) RequsetParams<SysRole> params,@Context final HttpHeaders headers){
+    public String save(@ApiParam(value = "sysRole", required = true) RequsetParams<SysRole> params,
+                       @HeaderParam("client-id")String airportCode,
+                       @HeaderParam("user-id") Long userId ){
         LZResult<String> result = new LZResult<>();
         try{
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode =  headers.getRequestHeaders().getFirst("client-id");
-
             SysRole sysRole = null;
             if(!CollectionUtils.isEmpty(params.getData())){
                 sysRole = params.getData().get(0);
             }
-
             if (sysRole == null || sysRole.getName() == null || sysRole.getName().equals("")) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
@@ -127,13 +125,14 @@ public class RoleController {
                 sysRole.setAirportCode(airportCode);
                 //判断是否重名
                 int exists = sysRoleService.judgeRepeat(sysRole);
-                if(sysRole.getRoleId() != null){
-                    sysRole.setUpdateUser(userId);
-                    sysRole.setUpdateTime(new Date());
-                }else{
-                    sysRole.setCreateUser(userId);
-                    sysRole.setCreateTime(new Date());
-                }
+//                时区问题 -- 暂时用数据库自动生成的时间
+//                if(sysRole.getRoleId() != null){
+//                    sysRole.setUpdateUser(userId);
+//                    sysRole.setUpdateTime(new Date());
+//                }else{
+//                    sysRole.setCreateUser(userId);
+//                    sysRole.setCreateTime(new Date());
+//                }
                 if (exists > 0) {
                     result.setMsg(LZStatus.REPNAM.display());
                     result.setStatus(LZStatus.REPNAM.value());
