@@ -89,7 +89,7 @@ public class ServController {
             Serv serv = new Serv();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
-            JSONObject param00 = JSON.parseObject(param.get(0).toString());
+            JSONObject param00 = JSON.parseObject(JSONObject.toJSONString(param.get(0),SerializerFeature.WriteMapNullValue));
             serv.setServId(param00.getLong("servId"));
             serv.setAirportCode(airportCode);
             serv.setName(param00.getString("name"));
@@ -97,7 +97,7 @@ public class ServController {
             param00.remove("servId");
             param00.remove("name");
             param00.remove("serviceTypeAllocationId");
-            serv.setServiceDetail(param00.toJSONString());
+            serv.setServiceDetail(JSONObject.toJSONString(param00,SerializerFeature.WriteMapNullValue));
             Set keys = param00.keySet();
             Map<String, Object> serviceFieldName = ServiceDetail.getServiceFieldName(serv.getServiceTypeAllocationId());
             if (keys.size() != serviceFieldName.size()) {
