@@ -128,12 +128,21 @@ public class OrderInfoController {
 
             List<Flight> flightList = JSON.parseArray(JSON.toJSONString(flightListArray), Flight.class);
 
-            Flight source= flightList.get(0);//修改后的部分参数
-            Flight targetFlight = flightList.get(1);//全部参数
-
-            CopyProperties.copy(source,targetFlight);
+            Flight targetFlight = null;//全部参数
 
             OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
+
+            if(flightList != null && flightList.get(0) != null && flightList.get(1) != null){
+                Flight source = flightList.get(0);//修改后的部分参数
+                targetFlight = flightList.get(1);//全部参数
+                CopyProperties.copy(source,targetFlight);
+            }else{
+                targetFlight = orderInfoService.getById(order.getOrderId(), userId, airportCode).getFlight();
+            }
+
+
+
+
 
             if (order == null || order.getProtocolId() == null || order.getProtocolId().equals("") || order.getProductId() == null || order.getProductId().equals("")) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
@@ -208,7 +217,7 @@ public class OrderInfoController {
                             flag = true;
                         }
 
-                        if(!flag){
+                        if(flag){
                             result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
                             result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
                             result.setData("错误的状态更新");
