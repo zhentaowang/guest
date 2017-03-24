@@ -193,7 +193,7 @@ public class OrderInfoController {
                          *          服务草稿
                          *          服务取消
                          */
-                        if(currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))){
+                        if(currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))){
                             flag = true;
                         }
                         /**
@@ -217,7 +217,7 @@ public class OrderInfoController {
                             flag = true;
                         }
 
-                        if(flag){
+                        if(!flag){
                             result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
                             result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
                             result.setData("错误的状态更新");
