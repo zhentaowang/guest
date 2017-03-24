@@ -9,16 +9,19 @@
 
     and  o.is_deleted = 0 and f.is_deleted = 0
     <if test="queryFlightDateBegin != null and !''.equals(queryFlightDateBegin)">
-      and f.flight_date &gt; #{queryFlightDateBegin}
+      and f.flight_date &gt;= #{queryFlightDateBegin}
     </if>
     <if test="queryFlightDateEnd != null and !''.equals(queryFlightDateEnd)">
-      and f.flight_date &lt; #{queryFlightDateEnd}
+      and f.flight_date &lt;= #{queryFlightDateEnd}
     </if>
     <if test="queryCreateDateBegin != null and !''.equals(queryCreateDateBegin)">
-      and o.create_time &gt; #{queryCreateDateBegin}
+      and o.create_time &gt;= #{criteria.queryCreateDateBegin}
     </if>
     <if test="queryCreateDateEnd != null and !''.equals(queryCreateDateEnd)">
-      and o.create_time &lt; #{queryCreateDateEnd}
+      and o.create_time &lt;= #{queryCreateDateEnd}
+    </if>
+    <if test="queryCreateDateEnd != null and !''.equals(queryCreateDateEnd)">
+      and o.create_time &lt;= #{queryCreateDateEnd}
     </if>
     <if test="queryCustomerName != null and !''.equals(queryCustomerName)">
       and o.customer_name like concat('%',#{queryCustomerName},'%')
@@ -30,27 +33,30 @@
       and o.protocol_id in (#{criteria.queryProtocolId})
     </if>
     <if test="queryProductId != null and !''.equals(queryProductId)">
-      and o.product_id in (#{queryProductId})
+      and o.product_name in (${queryProductId})
+    </if>
+    <if test="queryProtocolType != null and !''.equals(queryProtocolType)">
+      and o.protocol_type in (${queryProtocolType})
     </if>
   </select>
 
   <select id="selectCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
-    select count(order_id) as orderCount,o.customer_id as customerId,o.customer_name as customerName,o.protocol_id as protocolId,o.protocol_name as protocolName,o.product_name as productName
+    select count(order_id) as orderCount,o.customer_id as customerId,o.customer_name as customerName,o.protocol_id as protocolId,o.protocol_name as protocolName,o.protocol_type as protocolType,o.product_name as productName
     from order_info o
     inner join flight f on o.flight_id = f.flight_id
 
     where o.is_deleted = 0 and f.is_deleted = 0
     <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
-      and f.flight_date &gt; #{criteria.queryFlightDateBegin}
+      and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
     </if>
     <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
-      and f.flight_date &lt; #{criteria.queryFlightDateEnd}
+      and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
     </if>
     <if test="criteria.queryCreateDateBegin != null and !''.equals(criteria.queryCreateDateBegin)">
-      and o.create_time &gt; #{criteria.queryCreateDateBegin}
+      and o.create_time &gt;= #{criteria.queryCreateDateBegin}
     </if>
     <if test="criteria.queryCreateDateEnd != null and !''.equals(criteria.queryCreateDateEnd)">
-      and o.create_time &lt; #{criteria.queryCreateDateEnd}
+      and o.create_time &lt;= #{criteria.queryCreateDateEnd}
     </if>
     <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)">
       and o.customer_name like concat('%',#{criteria.queryCustomerName},'%')
@@ -62,7 +68,10 @@
       and o.protocol_id in (#{criteria.queryProtocolId})
     </if>
     <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
-      and o.product_id in (#{criteria.queryProductId})
+      and o.product_name in (${criteria.queryProductId})
+    </if>
+    <if test="criteria.queryProtocolType != null and !''.equals(criteria.queryProtocolType)">
+      and o.protocol_type in (${criteria.queryProtocolType})
     </if>
     GROUP BY o.customer_id
     limit #{page.startPageNo},#{page.pCount}

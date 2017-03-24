@@ -87,7 +87,7 @@ public class CheckController {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-            return JSON.toJSONString(result);
+            return JSON.toJSONString(result,SerializerFeature.WriteMapNullValue);
         }
     }
 

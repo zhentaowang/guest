@@ -95,7 +95,7 @@ public class CheckService {
 
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
-        for (int i = 0; i < checkList.size(); i++) {
+        /*for (int i = 0; i < checkList.size(); i++) {
 
             Map<String, Object> headerMap = new HashMap();
             headerMap.put("user-id", userId);
@@ -104,12 +104,11 @@ public class CheckService {
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolId", checkList.get(i).get("protocolId"));
             JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
-            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getById?access_token=59UFQ9V7G82O6AFlGYO6hntsmMNARj9ytQSc9E1J&protocolId="+ checkList.get(i).get("protocolId")));
             if (protocolObject != null && protocolObject.get("data") != null) {
                 JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
                 checkList.get(i).put("protocolType", protocolObj.get("protocolTypeName"));
             }
-        }
+        }*/
 
         PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
