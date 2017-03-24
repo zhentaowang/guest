@@ -28,7 +28,7 @@ public class CrmConstant {
     public static final String protocol_type_3 = "3";//服务会员
     public static final String protocol_type_4 = "4";//地方政要
     public static final String protocol_type_5 = "5";//机场接待
-    public static final String protocol_type_6 = "6";//副部级政要
+    public static final String protocol_type_6 = "6";//VVIP
     public static final String protocol_type_7 = "7";//包量客户
     public static final String protocol_type_8 = "8";//结算会员
     public static final String protocol_type_9 = "9";//结算金银卡
@@ -43,7 +43,7 @@ public class CrmConstant {
     public static final String protocol_type_name_3 = "服务会员";
     public static final String protocol_type_name_4 = "地方政要";
     public static final String protocol_type_name_5 = "机场接待";
-    public static final String protocol_type_name_6 = "副部级政要";
+    public static final String protocol_type_name_6 = "VVIP";
     public static final String protocol_type_name_7 = "包量客户";
     public static final String protocol_type_name_8 = "结算会员";
     public static final String protocol_type_name_9 = "结算金银卡";
