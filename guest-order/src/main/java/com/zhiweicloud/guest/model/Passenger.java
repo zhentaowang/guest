@@ -50,9 +50,6 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="单位",name="workUnit")
     private String workUnit;
 
-    @ApiModelProperty(value="贵宾卡",name="vipCard")
-    private String vipCard;
-
     @ApiModelProperty(value="座位号",name="sitNo")
     private String sitNo;
 
@@ -65,8 +62,8 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="卡号",name="cardNo")
     private String cardNo;
 
-    @ApiModelProperty(value="0：金卡，1：银卡",name="cardType")
-    private Short cardType;
+    @ApiModelProperty(value="卡类别",name="cardType")
+    private String cardType;
 
     @ApiModelProperty(value="乘客类型：0，乘客，1：随行",name="passengerType")
     private Short passengerType;
@@ -260,22 +257,6 @@ public class Passenger extends BaseEntity{
     }
 
     /**
-     * 贵宾卡
-     * @return vip_card 贵宾卡
-     */
-    public String getVipCard() {
-        return vipCard;
-    }
-
-    /**
-     * 贵宾卡
-     * @param vipCard 贵宾卡
-     */
-    public void setVipCard(String vipCard) {
-        this.vipCard = vipCard;
-    }
-
-    /**
      * 座位号
      * @return sit_no 座位号
      */
@@ -340,18 +321,18 @@ public class Passenger extends BaseEntity{
     }
 
     /**
-     * 0：金卡，1：银卡
-     * @return card_type 0：金卡，1：银卡
+     * 卡类别
+     * @return card_type
      */
-    public Short getCardType() {
+    public String getCardType() {
         return cardType;
     }
 
     /**
-     * 0：金卡，1：银卡
+     * 卡类别
      * @param cardType 0：金卡，1：银卡
      */
-    public void setCardType(Short cardType) {
+    public void setCardType(String cardType) {
         this.cardType = cardType;
     }
 

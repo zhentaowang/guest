@@ -9,12 +9,11 @@
     <result column="phone" jdbcType="BIGINT" property="phone" />
     <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
     <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
-    <result column="vip_card" jdbcType="VARCHAR" property="vipCard" />
     <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
     <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
     <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
     <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
-    <result column="card_type" jdbcType="SMALLINT" property="cardType" />
+    <result column="card_type" jdbcType="VARCHAR" property="cardType" />
     <result column="passenger_type" jdbcType="SMALLINT" property="passengerType" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
@@ -23,7 +22,7 @@
 
   </resultMap>
   <sql id="Base_Column_List">
-    passenger_id, order_id,flight_id, name, phone, identity_card, work_unit, vip_card, sit_no,
+    passenger_id, order_id,flight_id, name, phone, identity_card, work_unit, sit_no,
     cabin_no, ticket_no, card_no, card_type, expire_time, create_user, update_user,passenger_type
   </sql>
 
@@ -54,9 +53,6 @@
       </if>
       <if test="workUnit != null">
         work_unit,
-      </if>
-      <if test="vipCard != null">
-        vip_card,
       </if>
       <if test="sitNo != null">
         sit_no,
@@ -185,9 +181,6 @@
       <if test="workUnit != null">
         work_unit = #{workUnit,jdbcType=VARCHAR},
       </if>
-      <if test="vipCard != null">
-        vip_card = #{vipCard,jdbcType=VARCHAR},
-      </if>
       <if test="sitNo != null">
         sit_no = #{sitNo,jdbcType=VARCHAR},
       </if>
@@ -201,7 +194,7 @@
         card_no = #{cardNo,jdbcType=VARCHAR},
       </if>
       <if test="cardType != null">
-        card_type = #{cardType,jdbcType=SMALLINT},
+        card_type = #{cardType,jdbcType=VARCHAR},
       </if>
       <if test="passengerType != null">
         passenger_type = #{passengerType,jdbcType=SMALLINT},

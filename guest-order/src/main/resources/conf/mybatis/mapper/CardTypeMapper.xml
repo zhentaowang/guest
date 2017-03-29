@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.CardTypeMapper">
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.CardType">
+    <result column="card_id" jdbcType="BIGINT" property="cardId" />
+    <result column="card_name" jdbcType="VARCHAR" property="cardName" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+  </resultMap>
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.CardType">
+    insert into card_type (card_id, card_name, is_deleted, 
+      airport_code, create_time, create_user, 
+      update_time, update_user)
+    values (#{cardId,jdbcType=BIGINT}, #{cardName,jdbcType=VARCHAR}, #{isDeleted,jdbcType=SMALLINT}, 
+      #{airportCode,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.CardType">
+    insert into card_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cardId != null">
+        card_id,
+      </if>
+      <if test="cardName != null">
+        card_name,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+      <if test="airportCode != null">
+        airport_code,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cardId != null">
+        #{cardId,jdbcType=BIGINT},
+      </if>
+      <if test="cardName != null">
+        #{cardName,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=SMALLINT},
+      </if>
+      <if test="airportCode != null">
+        #{airportCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="queryCardTypeByAirportCode" resultType="map">
+    select card_id as cardId,card_name as cardName from card_type where is_deleted = 0 and airport_code = #{airportCode}
+  </select>
+</mapper>

@@ -95,20 +95,21 @@ public class CheckService {
 
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
-        /*for (int i = 0; i < checkList.size(); i++) {
+        for (int i = 0; i < checkList.size(); i++) {
 
             Map<String, Object> headerMap = new HashMap();
             headerMap.put("user-id", userId);
             headerMap.put("client-id", airportCode);
 
             Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("protocolId", checkList.get(i).get("protocolId"));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getById",paramMap,headerMap));
+            paramMap.put("protocolTypeId", checkList.get(i).get("protocolType"));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",paramMap,headerMap));
+            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://192.168.0.167:8887/getProtocolTypeDropdownList?protocolTypeId="+ checkList.get(i).get("protocolType") +"&access_token=8ZVjLvSO9f8YWIMJJwfyJvTMMuffzzHm8huZiPRY"));
             if (protocolObject != null && protocolObject.get("data") != null) {
-                JSONObject protocolObj = JSON.parseObject(protocolObject.get("data").toString());
-                checkList.get(i).put("protocolType", protocolObj.get("protocolTypeName"));
+                JSONObject protocolObj = JSON.parseObject(JSON.parseArray(protocolObject.get("data").toString()).get(0).toString());
+                checkList.get(i).put("protocolTypeName", protocolObj.get("value"));
             }
-        }*/
+        }
 
         PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
@@ -149,7 +150,7 @@ public class CheckService {
             orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount(productName));
             map.put("column", checkDynamicColumn.getHeader(productName));
 
-            orderCheckDetail.setQueryWhere("and customer_id = " + orderCheckDetail.getQueryCustomerId() +
+            orderCheckDetail.setQueryWhere("and customer_id in " + orderCheckDetail.getQueryCustomerId() +
                     " and protocol_type = " + orderCheckDetail.getQueryProtocolType() +
                     " and protocol_id = " + orderCheckDetail.getQueryProtocolId() +
                     " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");

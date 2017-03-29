@@ -79,6 +79,10 @@ public class OrderInfoQuery extends BaseEntity{
     @QueryParam("queryAgentPerson")
     private String queryAgentPerson;
 
+    @ApiModelProperty(value = "订单号", name = "queryOrderNo")
+    @QueryParam("queryOrderNo")
+    private String queryOrderNo;
+
 
     public String getQueryPassengerName() {
         return queryPassengerName;
@@ -206,5 +210,13 @@ public class OrderInfoQuery extends BaseEntity{
 
     public void setQueryAgentPerson(String queryAgentPerson) {
         this.queryAgentPerson = queryAgentPerson;
+    }
+
+    public String getQueryOrderNo() {
+        return queryOrderNo;
+    }
+
+    public void setQueryOrderNo(String queryOrderNo) {
+        this.queryOrderNo = queryOrderNo;
     }
 }
