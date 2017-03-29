@@ -164,6 +164,8 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="服务完成时间",name="serverCompleteTime")
     private Date serverCompleteTime;
 
+    @ApiModelProperty(value="服务地点",name="serverLocation")
+    private String serverLocation;
 
 
     /**
@@ -788,5 +790,13 @@ public class OrderInfo extends BaseEntity{
 
     public void setServerCompleteTime(Date serverCompleteTime) {
         this.serverCompleteTime = serverCompleteTime;
+    }
+
+    public String getServerLocation() {
+        return serverLocation;
+    }
+
+    public void setServerLocation(String serverLocation) {
+        this.serverLocation = serverLocation;
     }
 }

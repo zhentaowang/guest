@@ -38,7 +38,7 @@ public class OrderCheckDetail extends BaseEntity{
 
     @ApiModelProperty(value="客户id",name="queryCustomerId")
     @QueryParam("queryCustomerId")
-    private Long queryCustomerId;
+    private String queryCustomerId;
 
     @ApiModelProperty(value="协议id",name="queryProtocolId")
     @QueryParam("queryProtocolId")
@@ -90,7 +90,7 @@ public class OrderCheckDetail extends BaseEntity{
         this.queryProductName = queryProductName;
     }
 
-    public Long getQueryCustomerId() {
+    public String getQueryCustomerId() {
         return queryCustomerId;
     }
 
@@ -102,7 +102,7 @@ public class OrderCheckDetail extends BaseEntity{
         this.queryProtocolType = queryProtocolType;
     }
 
-    public void setQueryCustomerId(Long queryCustomerId) {
+    public void setQueryCustomerId(String queryCustomerId) {
         this.queryCustomerId = queryCustomerId;
     }
 

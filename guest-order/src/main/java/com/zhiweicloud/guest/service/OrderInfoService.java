@@ -45,16 +45,18 @@ public class OrderInfoService {
 
     public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
-        if (orderInfo.getOrderId() != null) {
-            Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
-            headerMap.put("user-id", userId);
-            headerMap.put("client-id", airportCode);
-            paramMap.put("employeeId", userId);
+        Map<String, Object> headerMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
 
-            /**
-             * 预约订单和服务订单保存的创建人和创建时间不是同一个字段
-             */
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("employeeId", userId);
+
+        if (orderInfo.getOrderId() != null) {
+
+
+
+             //预约订单和服务订单保存的创建人和创建时间不是同一个字段
             if (orderInfo.getOrderType() == 0) {//预约订单
                 orderInfo.setUpdateTime(new Date());
                 orderInfo.setUpdateUser(userId);
@@ -84,15 +86,9 @@ public class OrderInfoService {
                 Long flightId = flightMapper.isFlightExist(flight);
                 flight.setAirportCode(airportCode);
 
-                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                    flight.setIsInOrOut((short) 0);//出港
-                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                    flight.setIsInOrOut((short) 1);//进港
-                } else {
-                    flight.setIsInOrOut((short) 0);//出港
-                }
+                this.setFlightInOrOut(flight);
 
-                if (flightId != null && !flightId.equals("")) {
+                if (flightId != null) {
                     flight.setFlightId(flightId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
                 } else {
@@ -100,6 +96,13 @@ public class OrderInfoService {
                     flight.setCreateUser(userId);
                     flight.setFlightId(null);
                     flightMapper.insertSelective(flight);
+
+                    //龙腾定制航班
+                    Map<String, Object> flightMap = new HashMap<>();
+                    flightMap.put("flightId", flightId);
+                    JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/customFlight",flightMap,headerMap));
+                    //
+
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
@@ -118,13 +121,9 @@ public class OrderInfoService {
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
                 Long flightId = flightMapper.isFlightExist(flight);
-                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                    flight.setIsInOrOut((short) 0);//出港
-                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                    flight.setIsInOrOut((short) 1);//进港
-                } else {
-                    flight.setIsInOrOut((short) 0);//出港
-                }
+
+                this.setFlightInOrOut(flight);
+
                 if (flightId != null && !flightId.equals("")) {
                     flight.setFlightId(flightId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
@@ -132,15 +131,15 @@ public class OrderInfoService {
                     flight.setCreateTime(new Date());
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
+                    //龙腾定制航班
+                    Map<String, Object> flightMap = new HashMap<>();
+                    flightMap.put("flightId", flightId);
+                    JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/customFlight",flightMap,headerMap));
+                    //
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
 
-            Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
-            headerMap.put("user-id", userId);
-            headerMap.put("client-id", airportCode);
-            paramMap.put("employeeId", userId);
 
             /**
              * 预约订单和服务订单保存的创建人和创建时间不是同一个字段
@@ -173,6 +172,16 @@ public class OrderInfoService {
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
+    }
+
+    private void setFlightInOrOut(Flight flight){
+        if (flight.getAirportCode().equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+            flight.setIsInOrOut((short) 0);//出港
+        } else if (flight.getAirportCode().equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+            flight.setIsInOrOut((short) 1);//进港
+        } else {
+            flight.setIsInOrOut((short) 0);//出港
+        }
     }
 
     /**
