@@ -365,16 +365,16 @@ public class OrderInfoController {
      * @return
      */
     @GET
-    @Path("getServerNumByServiceDetailId")
+    @Path("getServerNumByServlId")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据订单状态/详细服务id 获取服务人次 ", notes = "返回服务人次", httpMethod = "GET", produces = "application/json")
-    public String getServerNumByServiceDetailId(
-            @QueryParam("serviceDetailId") Long serviceDetailId,
+    public String getServerNumByServlId(
+            @QueryParam("servId") Long servId,
             @Context final HttpHeaders headers) {
         LZResult<Integer> result = new LZResult();
         try {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            Integer orderCount = orderInfoService.getServerNumByServiceDetailId(OrderConstant.ORDER_STATUS_USED, serviceDetailId, airportCode);
+            Integer orderCount = orderInfoService.getServerNumByServlId(OrderConstant.ORDER_STATUS_USED, servId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderCount);

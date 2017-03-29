@@ -21,6 +21,11 @@ public class OrderConstant {
      */
     public static final String ORDER_STATUS_USED = "已使用";
 
+    /**
+     * 订单是否重要 0：是，1：否
+     */
+    public static final Short ORDER_IS_IMPORTANT = 0;
+
 
 
 }

@@ -368,12 +368,12 @@ public class OrderInfoService {
     /**
      * 根据详细服务id和服务状态获取服务人次
      *
-     * @param serviceDetailId
+     * @param servId
      * @param airportCode
      * @return
      */
-    public int getServerNumByServiceDetailId(String orderStatus, Long serviceDetailId, String airportCode) throws Exception {
-        return orderInfoMapper.getServerNumByServiceDetailId(orderStatus, serviceDetailId, airportCode);
+    public int getServerNumByServlId(String orderStatus, Long servId, String airportCode) throws Exception {
+        return orderInfoMapper.getServerNumByServlId(orderStatus, servId, airportCode);
     }
 
     /**

@@ -33,11 +33,11 @@
   </sql>
 
   <select id="queryById" resultMap="PassengerResultMap">
-    SELECT * FROM v_passenger_crm p WHERE passenger_id = #{passengerId} AND airport_code = #{airportCode}
+    SELECT * FROM v_crm p WHERE passenger_id = #{passengerId} AND airport_code = #{airportCode}
   </select>
 
   <select id="queryPassengerList" resultMap="PassengerResultMap" parameterType="map">
-    SELECT * FROM v_passenger_crm p
+    SELECT * FROM v_crm p
 
     WHERE p.airport_Code = #{passengerQuery.airportCode}
     <if test="passengerQuery.passengerNo != null and !''.equals(passengerQuery.passengerNo)">
@@ -72,7 +72,7 @@
   </select>
 
   <select id="getListCount" parameterType="String" resultType="int">
-    SELECT count(p.passenger_id) FROM v_passenger_crm p
+    SELECT count(p.passenger_id) FROM v_crm p
 
     WHERE p.airport_Code = #{passengerQuery.airportCode}
     <if test="passengerQuery.passengerNo != null and !''.equals(passengerQuery.passengerNo)">

@@ -6,6 +6,7 @@
 */
 package com.zhiweicloud.guest.model;
 
+import com.zhiweicloud.guest.common.OrderConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.security.PrivateKey;
 import java.util.Date;
 import java.util.List;
 
@@ -100,6 +102,63 @@ public class Passenger extends BaseEntity{
     @Transient
     private String orderNo;
 
+    /**
+     * 返回字段，服务完成时间
+     */
+    @Transient
+    private Date serverCreateTime;
+
+    /**
+     * 返回字段，客户名称，==乘客表中的 clientName
+     */
+    @Transient
+    private String customerName;
+
+    @Transient
+    private Short isImportant;
+
+    @Transient
+    private boolean booleanImportant;
+
+    /**
+     * 没有服务时间，返回预定时间
+     * @return
+     */
+    public Date getServerCreateTime() {
+        return serverCreateTime == null ? this.getCreateTime() : serverCreateTime;
+    }
+
+    /**
+     * 返回是否重要客户
+     * @return
+     */
+    public boolean isBooleanImportant() {
+        return this.isImportant == OrderConstant.ORDER_IS_IMPORTANT ? true : false;
+    }
+
+    public Short getIsImportant() {
+        return isImportant;
+    }
+
+    public void setIsImportant(Short isImportant) {
+        this.isImportant = isImportant;
+    }
+
+    public void setBooleanImportant(boolean booleanImportant) {
+        this.booleanImportant = booleanImportant;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setServerCreateTime(Date serverCreateTime) {
+        this.serverCreateTime = serverCreateTime;
+    }
 
     /**
      * 主键自增id

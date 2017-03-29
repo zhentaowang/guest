@@ -233,21 +233,10 @@ public class ServService {
         headerMap.put("client-id", airportCode);
         for(Serv serv : servList){
             paramMap.put("servId", serv.getServId());
-            //根据服务ser_id 查询协议产品服务
-            JSONObject protocolJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolProductServByServId", headerMap, paramMap));
-            //解析协议产品服务对象
-            JSONArray protocolProductServList = JSON.parseArray(JSON.toJSONString(protocolJSONObject.get("data")));
-
-            int servNum = 0;
-            for(int i = 0; i < protocolProductServList.size(); i++){
-                JSONObject protocolProductServ = protocolProductServList.getJSONObject(i);
-                Long serviceDetailId = Long.valueOf(protocolProductServ.get("protocolProductServiceId").toString());
-
-                paramMap.put("serviceDetailId", serviceDetailId);
-                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServiceDetailId", headerMap, paramMap));
-                //解析协议产品服务对象,统计人数
-                servNum = servNum + Integer.valueOf(orderServiceJSONObject.get("data").toString());
-            }
+            //根据servId,服务厅的id 从order_service 统计服务人数
+            JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServlId", headerMap, paramMap));
+            //解析协议产品服务对象,统计人数
+            int servNum = Integer.valueOf(orderServiceJSONObject.get("data").toString());
             serv.setServerNum(servNum);
         }
         return servList;

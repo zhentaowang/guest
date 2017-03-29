@@ -217,9 +217,12 @@
     <id column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="server_create_time" jdbcType="VARCHAR" property="serverCreateTime" />
     <result column="service_detail" jdbcType="VARCHAR" property="serviceDetail" />
     <result column="room_name" jdbcType="VARCHAR" property="roomName" />
     <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="is_important" jdbcType="VARCHAR" property="isImportant" />
     <collection property="passengerList" resultMap="passengerNameResult" />
   </resultMap>
 
@@ -229,18 +232,24 @@
 
   <select id="getPassengerlistByFlightId" resultMap="PassengerResultMap">
     SELECT
-      p.name,p.flight_id,p.order_id,concat(p.airport_code,lpad(p.order_id,6,'0')) AS order_no,sd.serviceDetailId,sd.room_name,o.order_status,o.create_time
+      p.name,p.flight_id,p.order_id,concat(p.airport_code,lpad(p.order_id,6,'0')) AS order_no,sd.serviceId,sd.servId,sd.room_name,o.order_status,o.create_time,o.server_create_time,o.customer_name,o.is_important
     FROM  passenger p
     LEFT JOIN
-      (SELECT service_detail->>'$.serviceDetailId' AS serviceDetailId,service_detail->>'$.serviceName',service_detail->>'$.serviceDetailName' AS room_name,order_id,airport_code
-        FROM order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 AND service_detail->'$.serviceName' ='贵宾厅') sd
+      (SELECT service_detail->>'$.serviceId' AS serviceId,service_detail->>'$.servId' AS servId,service_detail->>'$.serviceName',service_detail->>'$.serviceDetailName' AS room_name,order_id,airport_code
+        FROM order_service WHERE airport_code = #{airportCode} AND is_deleted = 0 ) sd
     ON p.order_id = sd.order_id
     LEFT JOIN
-	  (SELECT flight_id,order_status,create_time,order_id,airport_code
+	  (SELECT flight_id,order_status,create_time,order_id,airport_code,server_create_time,customer_name,is_important
 	    FROM order_info WHERE airport_code = #{airportCode} AND is_deleted = 0) o
 	ON p.order_id = o.order_id
 
-    WHERE p.flight_id = #{flightId}
+    WHERE p.flight_id = #{flightId} and (order_status = '已预约' or order_status = '已使用')
+    <if test="servId != null">
+      AND servId = #{servId}
+    </if>
+    <if test="typeId != null">
+      AND typeId = #{typeId}
+    </if>
 
   </select>
 

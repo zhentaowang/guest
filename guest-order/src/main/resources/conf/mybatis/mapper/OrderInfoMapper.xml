@@ -821,12 +821,12 @@
 
   </update>
 
-  <select id="getServerNumByServiceDetailId" resultType="int">
+  <select id="getServerNumByServlId" resultType="int">
     SELECT
       ifnull(sum(sd.serverNum),0) FROM order_info o
     LEFT JOIN
       (SELECT ifnull(service_detail->>'$.serverNum',0) as serverNum, order_id FROM order_service
-        WHERE service_detail->'$.serviceDetailId' = #{serviceDetailId} AND is_deleted = 0 AND airport_code = #{airportCode}) sd
+        WHERE service_detail->>'$.servId' = #{servId} AND is_deleted = 0 AND airport_code = #{airportCode}) sd
     ON sd.order_id = o.order_id
     WHERE  o.is_deleted = 0  and o.order_status = #{orderStatus} and server_complete != 1 and airport_code = #{airportCode}
   </select>

@@ -18,7 +18,8 @@ public enum  ProtocolTypeEnum {
     PROTOCOL_TYPE_8(8, "结算会员"),
     PROTOCOL_TYPE_9(9, "结算金银卡"),
     PROTOCOL_TYPE_10(10, "结算头等舱"),
-    PROTOCOL_TYPE_11(11, "零散散客");
+    PROTOCOL_TYPE_11(11, "零散散客"),
+    PROTOCOL_TYPE_12(12, "百事特内接");
 
 
     private Integer typeValue;
