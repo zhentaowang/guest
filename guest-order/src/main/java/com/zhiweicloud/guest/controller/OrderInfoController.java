@@ -143,7 +143,7 @@ public class OrderInfoController {
             }
 
 
-            if (order == null || order.getProtocolId() == null || order.getProtocolId().equals("") || order.getProductId() == null || order.getProductId().equals("")) {
+            if (order == null) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);

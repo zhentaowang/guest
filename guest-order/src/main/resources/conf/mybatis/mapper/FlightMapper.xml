@@ -65,7 +65,7 @@
         flight_date = #{flightDate,jdbcType=DATE},
       </if>
       <if test="flightNo != null">
-        flight_no = #{flightNo,jdbcType=VARCHAR},
+        upper(flight_no = #{flightNo,jdbcType=VARCHAR}),
       </if>
       <if test="flightDepcode != null">
         flight_depcode = #{flightDepcode,jdbcType=VARCHAR},
@@ -352,7 +352,7 @@
         #{flightDate,jdbcType=DATE},
       </if>
       <if test="flightNo != null">
-        #{flightNo,jdbcType=VARCHAR},
+        upper(#{flightNo,jdbcType=VARCHAR}),
       </if>
       <if test="flightDepcode != null">
         #{flightDepcode,jdbcType=VARCHAR},
