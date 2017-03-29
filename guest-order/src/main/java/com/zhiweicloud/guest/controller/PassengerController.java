@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.model.Dropdownlist;
@@ -60,16 +61,20 @@ public class PassengerController {
     @Path(value="getPassengerByFlightId")
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="根据航班id查询乘客信息",notes="根据航班id获取乘客信息", httpMethod="GET",produces="application/json",tags={"common:公共接口"})
-    public String getPassengerByFlightId(ContainerRequestContext request,
-                                         @QueryParam(value = "flightId") Long flightId,
+    public String getPassengerByFlightId(@QueryParam(value = "flightId") Long flightId,
+                                         @QueryParam(value = "servId") Long servId,
                                          @HeaderParam("client-id") String airportCode) {
         LZResult<List<Passenger>> result = new LZResult<>();
-        List<Passenger> passengerList = passengerService.getPassengerlistByFlightId(flightId,airportCode);
+        Long typeId = null;
+        if(servId == null){
+            typeId = 1L; //1:贵宾厅，5：休息室。不传servId，就默认查全部贵宾厅(调度列表中用到)
+        }
+        List<Passenger> passengerList = passengerService.getPassengerlistByFlightId(flightId,typeId,servId,airportCode);
 
         result.setMsg(LZStatus.SUCCESS.display());
         result.setStatus(LZStatus.SUCCESS.value());
         result.setData(passengerList);
-        return JSON.toJSONString(result);
+        return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
 
     }
 }

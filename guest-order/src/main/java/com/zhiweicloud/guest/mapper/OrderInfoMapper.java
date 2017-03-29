@@ -72,12 +72,12 @@ public interface OrderInfoMapper{
 
     /**
      * 根据详细服务id和服务状态获取 服务人次
-     * @param serviceDetailId
+     * @param servId
      * @param airportCode
      * @return
      */
 
-    int getServerNumByServiceDetailId(@Param("orderStatus") String orderStatus,@Param("serviceDetailId") Long serviceDetailId,@Param("airportCode")String airportCode);
+    int getServerNumByServlId(@Param("orderStatus") String orderStatus,@Param("servId") Long servId,@Param("airportCode")String airportCode);
 
     /**
      * 根据协议id 查询订单数量

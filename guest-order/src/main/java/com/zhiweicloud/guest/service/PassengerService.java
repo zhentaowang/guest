@@ -21,7 +21,7 @@ public class PassengerService {
         return passengerMapper.getIdentityCardDropdownList(identityCard,airportCode);
     }
 
-    public List<Passenger> getPassengerlistByFlightId(Long flightId,String airportCode){
-        return passengerMapper.getPassengerlistByFlightId(flightId,airportCode);
+    public List<Passenger> getPassengerlistByFlightId(Long flightId, Long typeId, Long servId, String airportCode){
+        return passengerMapper.getPassengerlistByFlightId(flightId, typeId, servId, airportCode);
     }
 }

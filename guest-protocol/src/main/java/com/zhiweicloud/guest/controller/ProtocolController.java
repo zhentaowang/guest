@@ -338,7 +338,7 @@ public class ProtocolController {
         }
 
         /**
-         * 协议类型下拉框
+         * 协议类型下拉框(废弃)
          * @return
          */
         @GET
@@ -361,6 +361,8 @@ public class ProtocolController {
 
             return JSON.toJSONString(result);
         }
+
+
 
 
         /**
