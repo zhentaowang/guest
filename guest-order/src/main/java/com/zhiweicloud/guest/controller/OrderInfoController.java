@@ -86,7 +86,7 @@ public class OrderInfoController {
         try {
             orderInfoQuery.setAirportCode(airportCode);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
-            return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+            return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
@@ -110,9 +110,11 @@ public class OrderInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
-                               @HeaderParam("user-id") Long userId) {
+    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo/*,  @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId*/) {
         LZResult<String> result = new LZResult<>();
+        String airportCode = "LJG";
+        Long userId = 108L;
         try {
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
@@ -131,14 +133,17 @@ public class OrderInfoController {
             Flight targetFlight = null;//全部参数
 
             OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
+            OrderInfo oldOrder = null;
+            if (order.getOrderId() != null) {
+                oldOrder = orderInfoService.getById(order.getOrderId(), userId, airportCode);
+            }
 
-            OrderInfo oldOrder = orderInfoService.getById(order.getOrderId(), userId, airportCode);
 
-            if(flightList != null && flightList.get(0) != null && flightList.get(1) != null){
+            if (flightList != null && flightList.get(0) != null && flightList.get(1) != null) {
                 Flight source = flightList.get(0);//修改后的部分参数
                 targetFlight = flightList.get(1);//全部参数
-                CopyProperties.copy(source,targetFlight);
-            }else{
+                CopyProperties.copy(source, targetFlight);
+            } else {
                 targetFlight = oldOrder.getFlight();
             }
 
@@ -152,10 +157,10 @@ public class OrderInfoController {
                     result.setMsg("出发地三字码或者目的地三字码为空");
                     result.setStatus(5006);
                     result.setData(null);
-                }else{
-                    if(order.getOrderId() != null){
-                        boolean flag = canUpdateOrderStatus(oldOrder.getOrderStatus(),order.getOrderStatus());
-                        if(!flag){
+                } else {
+                    if (order.getOrderId() != null) {
+                        boolean flag = canUpdateOrderStatus(oldOrder.getOrderStatus(), order.getOrderStatus());
+                        if (!flag) {
                             result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
                             result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
                             result.setData("错误的状态更新");
@@ -179,7 +184,7 @@ public class OrderInfoController {
         return JSON.toJSONString(result);
     }
 
-    private boolean canUpdateOrderStatus(String currentOrderStatus,String toOrderStatus){
+    private boolean canUpdateOrderStatus(String currentOrderStatus, String toOrderStatus) {
         boolean flag = false;
         try {
             /**
@@ -195,7 +200,7 @@ public class OrderInfoController {
              *          已预约
              *          预约取消
              */
-            if(currentOrderStatus.equals("预约草稿") && (toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已预约") || toOrderStatus.equals("预约取消"))){
+            if (currentOrderStatus.equals("预约草稿") && (toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已预约") || toOrderStatus.equals("预约取消"))) {
                 flag = true;
             }
             /**
@@ -204,7 +209,7 @@ public class OrderInfoController {
              *          已使用
              *          预约取消
              */
-            if(currentOrderStatus.equals("已预约") && (toOrderStatus.equals("已预约") || toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消"))){
+            if (currentOrderStatus.equals("已预约") && (toOrderStatus.equals("已预约") || toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消"))) {
                 flag = true;
             }
             /**
@@ -212,7 +217,7 @@ public class OrderInfoController {
              *          服务草稿
              *          服务取消
              */
-            if(currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))){
+            if (currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))) {
                 flag = true;
             }
             /**
@@ -220,19 +225,19 @@ public class OrderInfoController {
              *          已使用
              *          服务取消
              */
-            if(currentOrderStatus.equals("服务草稿") && (toOrderStatus.equals("服务草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("服务取消"))){
+            if (currentOrderStatus.equals("服务草稿") && (toOrderStatus.equals("服务草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("服务取消"))) {
                 flag = true;
             }
             /**
              * 预约取消-》预约取消
              */
-            if(currentOrderStatus.equals("预约取消") && toOrderStatus.equals("预约取消")){
+            if (currentOrderStatus.equals("预约取消") && toOrderStatus.equals("预约取消")) {
                 flag = true;
             }
             /**
              * 服务取消-》服务取消
              */
-            if(currentOrderStatus.equals("服务取消") && toOrderStatus.equals("服务取消")){
+            if (currentOrderStatus.equals("服务取消") && toOrderStatus.equals("服务取消")) {
                 flag = true;
             }
 
@@ -328,7 +333,7 @@ public class OrderInfoController {
             result.setData(null);
             e.printStackTrace();
         }
-        return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+        return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
 
@@ -348,7 +353,7 @@ public class OrderInfoController {
             String param) {
         try {
             JSONObject paramJson = JSON.parseObject(param);
-            if(paramJson.getLong("flightId") == null){
+            if (paramJson.getLong("flightId") == null) {
                 logger.error("updateServerComplete error", LZStatus.DATA_EMPTY.display() + ":flightId");
             }
             orderInfoService.updateServerComplete(paramJson.getLong("flightId"), paramJson.getShort("serverComplete"), userId, airportCode);
@@ -412,6 +417,7 @@ public class OrderInfoController {
 
     /**
      * 查找客户下有订单的协议ID
+     *
      * @param customerIds 客户ID串
      * @param airportCode 机场码
      * @return
@@ -426,7 +432,7 @@ public class OrderInfoController {
         List<ProtocolList> protocolLists;
         LZResult<List<ProtocolList>> result = new LZResult<>();
         try {
-            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
+            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(protocolLists);
@@ -435,7 +441,7 @@ public class OrderInfoController {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-        }finally {
+        } finally {
             return result;
         }
     }
@@ -444,7 +450,7 @@ public class OrderInfoController {
     @Path("getCardType")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "查询卡类别", notes = "返回卡类别下拉框", httpMethod = "GET", produces = "application/json")
-    public String getCardType(@HeaderParam("client-id") String airportCode){
+    public String getCardType(@HeaderParam("client-id") String airportCode) {
         LZResult<Object> result = new LZResult<>();
         try {
             List<Map> list = orderInfoService.queryCardType(airportCode);
