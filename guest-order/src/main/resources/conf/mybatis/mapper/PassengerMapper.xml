@@ -248,7 +248,7 @@
       AND servId = #{servId}
     </if>
     <if test="typeId != null">
-      AND typeId = #{typeId}
+      AND serviceId = #{typeId}
     </if>
 
   </select>
