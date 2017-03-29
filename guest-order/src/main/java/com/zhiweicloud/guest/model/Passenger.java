@@ -72,11 +72,7 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="有效期",name="expireTime")
     private Date expireTime;
 
-    /**
-     * 返回字段。详细服务
-     */
-    @Transient
-    private String serviceDetail;
+
 
     /**
      * 返回字段。订单状态
@@ -117,8 +113,17 @@ public class Passenger extends BaseEntity{
     @Transient
     private Short isImportant;
 
+    /**
+     * 返回字段，是否重要
+     */
     @Transient
     private boolean booleanImportant;
+
+    /**
+     * 返回字段，服务人次
+     */
+    @Transient
+    private int serverNum;
 
     /**
      * 没有服务时间，返回预定时间
@@ -134,6 +139,15 @@ public class Passenger extends BaseEntity{
      */
     public boolean isBooleanImportant() {
         return this.isImportant == OrderConstant.ORDER_IS_IMPORTANT ? true : false;
+    }
+
+
+    public int getServerNum() {
+        return serverNum;
+    }
+
+    public void setServerNum(int serverNum) {
+        this.serverNum = serverNum;
     }
 
     public Short getIsImportant() {
@@ -350,14 +364,6 @@ public class Passenger extends BaseEntity{
      */
     public void setExpireTime(Date expireTime) {
         this.expireTime = expireTime;
-    }
-
-    public String getServiceDetail() {
-        return serviceDetail;
-    }
-
-    public void setServiceDetail(String serviceDetail) {
-        this.serviceDetail = serviceDetail;
     }
 
     public String getOrderStatus() {
