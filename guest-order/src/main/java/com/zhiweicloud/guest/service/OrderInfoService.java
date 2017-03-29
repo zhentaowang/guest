@@ -96,11 +96,11 @@ public class OrderInfoService {
                     flightMapper.insertSelective(flight);
 
                     //龙腾定制航班
-                    if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                    /*if(!orderInfo.getProductName().equals("异地贵宾服务")){*/
                         Map<String, Object> flightMap = new HashMap<>();
                         flightMap.put("flightId", flightId);
                         JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
-                    }
+                    /*}*/
                     //
 
                 }
@@ -132,11 +132,11 @@ public class OrderInfoService {
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
                     //龙腾定制航班 如果产品为异地贵宾服务，不走定制航班
-                    if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                    /*if(!orderInfo.getProductName().equals("异地贵宾服务")){*/
                         Map<String, Object> flightMap = new HashMap<>();
                         flightMap.put("flightId", flightId);
                         JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
-                    }
+                    /*}*/
                     //
                 }
                 orderInfo.setFlightId(flight.getFlightId());
