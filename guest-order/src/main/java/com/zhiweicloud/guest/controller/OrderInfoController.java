@@ -50,6 +50,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -80,12 +81,9 @@ public class OrderInfoController {
             @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @BeanParam final OrderInfoQuery orderInfoQuery,
-            @Context final HttpHeaders headers) {
+            @HeaderParam("user-id") Long userId,
+            @HeaderParam("client-id") String airportCode) {
         try {
-            //Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            //String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            Long userId = 108L;
-            String airportCode = "LJG";
             orderInfoQuery.setAirportCode(airportCode);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
             return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
@@ -442,6 +440,23 @@ public class OrderInfoController {
         }
     }
 
+    @GET
+    @Path("getCardType")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "查询卡类别", notes = "返回卡类别下拉框", httpMethod = "GET", produces = "application/json")
+    public String getCardType(@HeaderParam("client-id") String airportCode){
+        LZResult<Object> result = new LZResult<>();
+        try {
+            List<Map> list = orderInfoService.queryCardType(airportCode);
+            return JSON.toJSONString(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
+    }
 
 
 }

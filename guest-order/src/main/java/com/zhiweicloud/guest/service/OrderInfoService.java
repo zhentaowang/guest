@@ -8,10 +8,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.mapper.FlightMapper;
-import com.zhiweicloud.guest.mapper.OrderInfoMapper;
-import com.zhiweicloud.guest.mapper.OrderServiceMapper;
-import com.zhiweicloud.guest.mapper.PassengerMapper;
+import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -35,12 +32,15 @@ public class OrderInfoService {
 
     private final FlightMapper flightMapper;
 
+    private final CardTypeMapper cardTypeMapper;
+
     @Autowired
-    public OrderInfoService(OrderInfoMapper orderInfoMapper, PassengerMapper passengerMapper, OrderServiceMapper orderServiceMapper, FlightMapper flightMapper) {
+    public OrderInfoService(OrderInfoMapper orderInfoMapper, PassengerMapper passengerMapper, OrderServiceMapper orderServiceMapper, FlightMapper flightMapper,CardTypeMapper cardTypeMapper) {
         this.orderInfoMapper = orderInfoMapper;
         this.passengerMapper = passengerMapper;
         this.orderServiceMapper = orderServiceMapper;
         this.flightMapper = flightMapper;
+        this.cardTypeMapper = cardTypeMapper;
     }
 
     public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
@@ -402,5 +402,10 @@ public class OrderInfoService {
             protocolLists.add(protocolList);
         }
         return protocolLists;
+    }
+
+    public List<Map> queryCardType(String airportCode) {
+        List<Map> list = cardTypeMapper.queryCardTypeByAirportCode(airportCode);
+        return list;
     }
 }
