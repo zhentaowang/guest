@@ -45,7 +45,11 @@
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
     <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
     <result column="server_complete" jdbcType="VARCHAR" property="serverComplete" />
+    <result column="server_complete_name" jdbcType="VARCHAR" property="serverCompleteName" />
+    <result column="server_complete_id" jdbcType="BIGINT" property="serverCompleteId" />
     <result column="server_complete_time" jdbcType="TIMESTAMP" property="serverCompleteTime" />
+    <result column="server_num" jdbcType="BIGINT" property="serverNum" />
+    <result column="serv_id" jdbcType="BIGINT" property="servId" />
   </resultMap>
   <sql id="Base_Column_List">
     flight_id, flight_date, flight_no, flight_depcode, flight_arrcode, plan_no, flight_position,
@@ -53,7 +57,8 @@
     flight_deptime_ready_date, flight_arrtime_ready_date, flight_deptime_date, flight_arrtime_date,
     stop_flag, share_flag, share_flight_no, fill_flight_no, board_gate, board_state,
     flight_state, flight_hterminal, flight_terminal, flight_dep, flight_arr, flight_dep_airport,
-    flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time, server_complete, server_complete_time
+    flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time, server_complete, server_complete_time,
+    server_num, serv_id, server_complete_name, server_complete_id
   </sql>
 
   <sql id="Base_Column_List_Update_Flight">
@@ -149,21 +154,29 @@
 
   <select id="getFlightListByOrderStatus" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
-    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_id,schedule_time)
-    in (select concat(flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by flight_id))
+    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.flight_position, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_schedule_event_id,flight_id,schedule_time)
+    in (select concat(flight_schedule_event_id,flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by flight_id))
     as fse left join (select schedule_event_id, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
+    inner join (select oi.flight_id, os.servId, sum(os.serverNum) as serverNum, os.serviceName from order_info as oi
+    right join (select order_id, service_detail->>"$.servId" as servId, service_detail->>"$.serverNum" as serverNum, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.servIds != null and criteria.servIds != ''">
+    <if test="criteria.servIds != null and criteria.servIds != '' and criteria.servIds != 0">
       and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
       and service_detail->>"$.serviceId" = #{criteria.typeId,jdbcType=BIGINT}
     </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0
-    and server_complete = #{criteria.serverComplete,jdbcType=SMALLINT} group by oi.flight_id)
+    and oi.product_name != '异地贵宾服务' and oi.order_status in ('已使用','已预约')
+    <if test="criteria.serverComplete != null">
+       and oi.server_complete = #{criteria.serverComplete,jdbcType=SMALLINT}
+    </if>
+    group by oi.flight_id
+    <if test="criteria.servIds != 0">
+      , os.servId
+    </if>)
     as o on fs.flight_id = o.flight_id
     where 0 = 0
     <if test="criteria.flightDate != null and criteria.flightDate != ''">
@@ -194,21 +207,29 @@
 
   <select id="getFlightListCountByOrderStatus" parameterType="map" resultType="int">
     select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
-    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.board_gate, f.board_state, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_id,schedule_time)
-    in (select concat(flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0  group by flight_id))
+    f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.flight_position, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
+    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_schedule_event_id,flight_id,schedule_time)
+    in (select concat(flight_schedule_event_id,flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0  group by flight_id))
     as fse left join (select schedule_event_id, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
-    inner join (select oi.flight_id, os.serviceName from order_info as oi right join (select order_id, service_detail->>"$.serviceDetailName" as serviceName from order_service
+    inner join (select oi.flight_id, os.servId, sum(os.serverNum) as serverNum, os.serviceName from order_info as oi
+    right join (select order_id, service_detail->>"$.servId" as servId, service_detail->>"$.serverNum" as serverNum, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="servIds != null and servIds != ''">
+    <if test="servIds != null and servIds != '' and servIds != 0">
       and service_detail->>"$.servId" in (${servIds})
     </if>
     <if test="typeId != null and typeId != ''">
       and service_detail->>"$.serviceId" = #{typeId,jdbcType=BIGINT}
     </if>) as os on oi.order_id = os.order_id where oi.airport_code = #{airportCode,jdbcType=VARCHAR} and oi.is_deleted = 0
-    and server_complete = #{serverComplete,jdbcType=SMALLINT} group by oi.flight_id)
+    and oi.product_name != '异地贵宾服务' and oi.order_status in ('已使用','已预约')
+    <if test="serverComplete != null">
+      and oi.server_complete = #{serverComplete,jdbcType=SMALLINT}
+    </if>
+    group by oi.flight_id
+    <if test="servIds != 0">
+      , os.servId
+    </if>)
     as o on fs.flight_id = o.flight_id
     where 0 = 0
     <if test="flightDate != null and flightDate != ''">

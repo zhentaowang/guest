@@ -161,12 +161,60 @@ public class Flight extends BaseEntity{
     private String serviceName;
 
     @Transient
+    @ApiModelProperty(value="服务完成人id",name="serverCompleteId")
+    private Long serverCompleteId;
+
+    @Transient
+    @ApiModelProperty(value="服务完成人名称",name="serverCompleteName")
+    private String serverCompleteName;
+
+    @Transient
     @ApiModelProperty(value="服务完成状态",name="serverComplete")
     private String serverComplete;
 
     @Transient
     @ApiModelProperty(value="服务完成时间",name="serverCompleteTime")
     private Date serverCompleteTime;
+
+    @Transient
+    @ApiModelProperty(value="服务人数",name="serverNum")
+    private Long serverNum;
+
+    @Transient
+    @ApiModelProperty(value="服务id",name="servId")
+    private Long servId;
+
+    public Long getServerCompleteId() {
+        return serverCompleteId;
+    }
+
+    public void setServerCompleteId(Long serverCompleteId) {
+        this.serverCompleteId = serverCompleteId;
+    }
+
+    public String getServerCompleteName() {
+        return serverCompleteName;
+    }
+
+    public void setServerCompleteName(String serverCompleteName) {
+        this.serverCompleteName = serverCompleteName;
+    }
+
+    public Long getServerNum() {
+        return serverNum;
+    }
+
+    public void setServerNum(Long serverNum) {
+        this.serverNum = serverNum;
+    }
+
+    public Long getServId() {
+        return servId;
+    }
+
+    public void setServId(Long servId) {
+        this.servId = servId;
+    }
 
     public Date getServerCompleteTime() {
         return serverCompleteTime;

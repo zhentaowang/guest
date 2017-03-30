@@ -80,14 +80,18 @@ public class ScheduleEventService {
         BasePagination<Map<String,Object>> queryCondition;
         List<Flight> flightList;
         PaginationResult<Flight> eqr;
-        if(param.get("serverComplete") == null){
-            count = flightMapper.getFlightListCount(param);
-            queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-            flightList = flightMapper.getFlightListByConidition(queryCondition);
-        }else{
-            count = flightMapper.getFlightListCountByOrderStatus(param);
-            queryCondition = new BasePagination<>(param, new PageModel(page, rows));
-            flightList = flightMapper.getFlightListByOrderStatus(queryCondition);
+        count = flightMapper.getFlightListCountByOrderStatus(param);
+        queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        flightList = flightMapper.getFlightListByOrderStatus(queryCondition);
+        for(int i = 0; i < flightList.size(); i++){
+            Map<String,Object> params = new HashMap<>();
+            params.put("flightId",flightList.get(i).getFlightId());
+            params.put("airportCode",param.get("airportCode"));
+            Date serverCompleteTime = flightMapper.selectByPrimaryKey(params).getServerCompleteTime();
+            if(serverCompleteTime != null){
+                flightList.get(i).setScheduleTime(serverCompleteTime);
+                flightList.get(i).setScheduleEventName("服务完成");
+            }
         }
         eqr = new PaginationResult<>(count, flightList);
         return new LZResult<>(eqr);

@@ -50,12 +50,12 @@ public class AuthorizerController {
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", required = false, paramType = "query"),
                     @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", defaultValue = "18", required = true, paramType = "query")})
     public String list(
-            @Context final HttpHeaders headers,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows,
             @QueryParam(value = "protocolId") Long protocolId) {
         Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
         param.put("airportCode",airportCode);
         param.put("protocolId",protocolId);
         LZResult<List<Authorizer>> result  = authorizerService.getAll(param,page,rows);
@@ -114,11 +114,11 @@ public class AuthorizerController {
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "authorizerId", value = "授权人id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
     })
-    public String view(@Context final HttpHeaders headers,
+    public String view(@HeaderParam("client-id") String airportCode,
+                       @HeaderParam("user-id") Long userId,
                                      @QueryParam(value = "authorizerId") Long authorizerId
     ) {
         Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
         param.put("airportCode",airportCode);
         param.put("authorizerId",authorizerId);
         Authorizer authorizer = authorizerService.getById(param);
@@ -137,10 +137,10 @@ public class AuthorizerController {
     @ApiOperation(value = "授权人管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     public String delete(
             @RequestBody RequsetParams<Long> params,
-            @Context final HttpHeaders headers) {
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         try {
             List<Long> ids = params.getData();
-            String airportCode = headers.getRequestHeaders().getFirst("client-id").toString();
             authorizerService.deleteById(ids,airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
@@ -158,11 +158,11 @@ public class AuthorizerController {
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="订单中用到协议预约人下拉框，只包含id，和value的对象",notes="根据数据字典的分类名称获取详情数据,下拉",tags={"common:公共接口"})
     public String getAuthorizerDropdownList(
-            ContainerRequestContext request,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
             @QueryParam(value = "protocolId") Long protocolId,
             @QueryParam(value = "name") String name,
             @QueryParam(value = "authorizerId") Long authorizerId) {
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
         LZResult<List<Dropdownlist>> result = new LZResult<>();
 
         try{

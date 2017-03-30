@@ -44,9 +44,8 @@ public class ProtocolController {
     /**
      * 协议管理 - 新增or更新
      * 需要判断name是否重复
-     *
      * @param params
-     * @return
+     * @return LXResult 成功还是失败
      */
     @POST
     @Path("save-or-update")
@@ -54,74 +53,30 @@ public class ProtocolController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public String save(@ApiParam(value = "protocol", required = true) @RequestBody String params,
-                         @Context final HttpHeaders headers) {
+                       @HeaderParam("client-id") String airportCode,
+                       @HeaderParam("user-id") Long userId) {
         try {
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             JSONObject param00 = JSON.parseObject(param.get(0).toString());
             JSONArray authorizerList = param00.getJSONArray("authorizer");
-            JSONArray protocolProductList = param00.getJSONArray("protocolProduct");
             param00.remove("authorizer");
             param00.remove("protocolProduct");
             Protocol protocol = JSONObject.toJavaObject(param00,Protocol.class);
             protocol.setAirportCode(airportCode);
+            protocol.setCreateUser(userId);
+            protocol.setUpdateUser(userId);
             List<Authorizer> authorizers = new ArrayList<>();
             if(authorizerList != null){
                 for (int i = 0; i < authorizerList.size(); i++) {
                     JSONObject authorizer00 = JSON.parseObject(authorizerList.get(i).toString());
                     Authorizer authorizer = JSONObject.toJavaObject(authorizer00,Authorizer.class);
                     authorizer.setAirportCode(protocol.getAirportCode());
+                    authorizer.setCreateUser(protocol.getCreateUser());
+                    authorizer.setUpdateUser(protocol.getUpdateUser());
                     authorizers.add(authorizer);
                 }
             }
             protocol.setAuthorizerList(authorizers);
-//            if(protocolProductList != null){
-//                List<ProtocolProduct> protocolProducts = new ArrayList<>();
-//                for (int i = 0; i < protocolProductList.size(); i++) {
-//                    JSONObject protocolProduct00 = JSON.parseObject(protocolProductList.get(i).toString());
-//                    JSONArray protocolProductServiceList = protocolProduct00.getJSONArray("protocolProductService");
-//                    protocolProduct00.remove("protocolProductService");
-//                    ProtocolProduct protocolProduct = JSONObject.toJavaObject(protocolProduct00,ProtocolProduct.class);
-//                    protocolProduct.setAirportCode(protocol.getAirportCode());
-//                    List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
-//                    for (int j = 0; j < protocolProductServiceList.size(); j++) {
-//                        JSONObject protocolProductService00 = JSON.parseObject(protocolProductServiceList.get(j).toString());
-//                        ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductService00,ProtocolProductServ.class);
-//                        protocolProductServ.setAirportCode(protocol.getAirportCode());
-//                        protocolProductService00.remove("protocolProductServiceId");
-//                        protocolProductService00.remove("airportCode");
-//                        protocolProductService00.remove("serviceTypeAllocationId");
-//                        protocolProductService00.remove("serviceId");
-//                        protocolProductService00.remove("isPricing");
-//                        protocolProductService00.remove("isPrioritized");
-//                        protocolProductService00.remove("isAvailabled");
-//                        protocolProductServ.setPricingRule(protocolProductService00.toJSONString());
-//                        Set keys = protocolProductService00.keySet();
-//                        Map<String, Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(protocolProductServ.getServiceTypeAllocationId());
-//                        if (keys.size() != protocolProductFieldName.size()) {
-//                            return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
-//                        } else {
-//                            if (protocolProductFieldName != null) {
-//                                for (int k = 0; k < keys.size(); k++) {
-//                                    if (!protocolProductFieldName.containsKey(keys.toArray()[k])) {
-//                                        return JSON.toJSONString(LXResult.build(4995, "传输数据字段错误"));
-//                                    } else {
-//                                        if (protocolProductService00.getString(keys.toArray()[k].toString()).isEmpty()) {
-//                                            return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        protocolProductFieldName.clear();
-//                        protocolProductServs.add(protocolProductServ);
-//                    }
-//                    protocolProduct.setProtocolProductServList(protocolProductServs);
-//                    protocolProducts.add(protocolProduct);
-//                }
-//                protocol.setProtocolProductList(protocolProducts);
-//            }
-
 
             if (protocol == null) {
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
@@ -130,11 +85,6 @@ public class ProtocolController {
                     || protocol.getReservationNum() == null) {
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
-//            if(protocol.getProtocolId() != null && protocolService.selectOrderByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) == true){//协议修改
-//                if(authorizerService.selectByProtocolId(protocol.getProtocolId(),protocol.getAirportCode()) > protocol.getAuthorizerList().size()){
-//                    return LXResult.build(4999, "该协议被订单引用，协议下预约人不能被删除");
-//                }
-//            }
             if (protocolService.selectByName(protocol) == true) {
                 return JSON.toJSONString(LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display()));
             }
@@ -152,9 +102,10 @@ public class ProtocolController {
 
     /**
      * 协议管理 - 根据id查询
-     *
-     * @param protocolId
-     * @return
+     * @param protocolId 协议id
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return LZResult 协议详情
      */
     @GET
     @Path("view")
@@ -163,11 +114,11 @@ public class ProtocolController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", defaultValue = "188", required = true, paramType = "query")
     })
-    public String view(@Context final HttpHeaders headers,
-                       @QueryParam(value = "protocolId") Long protocolId
+    public String view(@QueryParam(value = "protocolId") Long protocolId,
+                       @HeaderParam("client-id") String airportCode,
+                       @HeaderParam("user-id") Long userId
     ) {
-        Map<String, Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolId", protocolId);
         Protocol protocol = protocolService.getById(param);
@@ -177,9 +128,9 @@ public class ProtocolController {
 
     /**
      * 协议管理 - 根据id查询
-     *
-     * @param protocolId
-     * @return
+     * @param airportCode 机场代码
+     * @param protocolId 协议id
+     * @return LZResult 协议详情
      */
     @GET
     @Path("getById")
@@ -191,7 +142,7 @@ public class ProtocolController {
     public String getById(@HeaderParam("client-id") String airportCode,
                        @QueryParam(value = "protocolId") Long protocolId
     ) {
-        Map<String, Object> param = new HashMap();
+        Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolId", protocolId);
         Protocol protocol = protocolService.getById(param);
@@ -200,9 +151,10 @@ public class ProtocolController {
 
     /**
      * 协议管理 - 根据协议产品id查询服务类别树
-     *
-     * @param protocolProductId
-     * @return
+     * @param protocolProductId 协议产品id
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return LZResult 服务类别树
      */
     @GET
     @Path("get-service-type-tree-by-protocol-product-id")
@@ -211,10 +163,10 @@ public class ProtocolController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
     })
-    public String getServiceMenuList(@Context final HttpHeaders headers,
+    public String getServiceMenuList(@HeaderParam("client-id") String airportCode,
+                                     @HeaderParam("user-id") Long userId,
                                      @QueryParam(value = "protocolProductId") Long protocolProductId) {
-        Map<String, Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolProductId", protocolProductId);
         List<ProtocolProductServ> serviceMenuList = protocolService.getServiceMenuList(param);
@@ -223,9 +175,10 @@ public class ProtocolController {
 
     /**
      * 协议管理 - 根据协议产品id查询服务类别
-     *
-     * @param protocolProductId
-     * @return
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @param protocolProductId  协议产品id
+     * @return LZResult 服务类别树
      */
     @GET
     @Path("get-service-type-by-protocol-product-id")
@@ -234,10 +187,10 @@ public class ProtocolController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
     })
-    public String getServiceTypeList(@Context final HttpHeaders headers,
+    public String getServiceTypeList(@HeaderParam("client-id") String airportCode,
+                                     @HeaderParam("user-id") Long userId,
                                      @QueryParam(value = "protocolProductId") Long protocolProductId) {
-        Map<String, Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolProductId", protocolProductId);
         List<ProtocolProductServ> serviceMenuList = protocolService.getServiceTypeList(param);
@@ -250,7 +203,9 @@ public class ProtocolController {
      * @param rows 每页显示数目
      * @param typeId 服务类型配置id
      * @param protocolProductId 协议产品id
-     * @return
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return LZResult 服务详情列表
      */
     @GET
     @Path("get-service-list-by-type-and-protocol-product-id")
@@ -266,9 +221,9 @@ public class ProtocolController {
                         @QueryParam(value = "rows") Integer rows,
                         @QueryParam(value = "typeId") Long typeId,
                         @QueryParam(value = "protocolProductId") Long protocolProductId,
-                        @Context final HttpHeaders headers) {
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+                        @HeaderParam("client-id") String airportCode,
+                        @HeaderParam("user-id") Long userId) {
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         param.put("typeId", typeId);
         param.put("protocolProductId", protocolProductId);
@@ -280,7 +235,9 @@ public class ProtocolController {
      * 协议管理 - 根据服务类型配置id和协议产品id查询服务下拉框
      * @param typeId 服务类型配置id
      * @param protocolProductId 协议产品id
-     * @return
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return LZResult 服务下拉框
      */
     @GET
     @Path("get-service-box-by-type-and-protocol-product-id")
@@ -291,9 +248,9 @@ public class ProtocolController {
                     @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")})
     public String getServiceDropDownBox(@QueryParam(value = "typeId") Long typeId,
                         @QueryParam(value = "protocolProductId") Long protocolProductId,
-                        @Context final HttpHeaders headers) {
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+                                        @HeaderParam("client-id") String airportCode,
+                                        @HeaderParam("user-id") Long userId) {
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         param.put("typeId", typeId);
         param.put("protocolProductId", protocolProductId);
@@ -303,12 +260,13 @@ public class ProtocolController {
 
         /**
          * 重写协议列表，2017.2.23
-         * @param page
-         * @param rows
-         * @param protocolType
-         * @param institutionClientName
-         * @param protocolName
-         * @return
+         * @param page 起始页
+         * @param rows 每页显示数目
+         * @param protocolType 协议类型
+         * @param institutionClientName 机构客户名称
+         * @param protocolName 协议名称
+         * @param airportCode 机场代码
+         * @return LZResult 协议详情列表
          */
         @GET
         @Path("protocolList")
@@ -338,8 +296,8 @@ public class ProtocolController {
         }
 
         /**
-         * 协议类型下拉框(废弃)
-         * @return
+         * 协议类型下拉框
+         * @return 协议类型下拉框
          */
         @GET
         @Path("protocolTypeSelect")
