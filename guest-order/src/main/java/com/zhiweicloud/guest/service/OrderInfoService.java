@@ -8,10 +8,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.mapper.FlightMapper;
-import com.zhiweicloud.guest.mapper.OrderInfoMapper;
-import com.zhiweicloud.guest.mapper.OrderServiceMapper;
-import com.zhiweicloud.guest.mapper.PassengerMapper;
+import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -35,35 +32,39 @@ public class OrderInfoService {
 
     private final FlightMapper flightMapper;
 
+    private final CardTypeMapper cardTypeMapper;
+
     @Autowired
-    public OrderInfoService(OrderInfoMapper orderInfoMapper, PassengerMapper passengerMapper, OrderServiceMapper orderServiceMapper, FlightMapper flightMapper) {
+    public OrderInfoService(OrderInfoMapper orderInfoMapper, PassengerMapper passengerMapper, OrderServiceMapper orderServiceMapper, FlightMapper flightMapper,CardTypeMapper cardTypeMapper) {
         this.orderInfoMapper = orderInfoMapper;
         this.passengerMapper = passengerMapper;
         this.orderServiceMapper = orderServiceMapper;
         this.flightMapper = flightMapper;
+        this.cardTypeMapper = cardTypeMapper;
     }
 
     public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
-        if (orderInfo.getOrderId() != null) {
-            Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
-            headerMap.put("user-id", userId);
-            headerMap.put("client-id", airportCode);
-            paramMap.put("employeeId", userId);
+        Map<String, Object> headerMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
 
-            /**
-             * 预约订单和服务订单保存的创建人和创建时间不是同一个字段
-             */
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("employeeId", userId);
+
+        if (orderInfo.getOrderId() != null) {
+
+
+
+             //预约订单和服务订单保存的创建人和创建时间不是同一个字段
             if (orderInfo.getOrderType() == 0) {//预约订单
                 orderInfo.setUpdateTime(new Date());
                 orderInfo.setUpdateUser(userId);
                 if (orderInfo.getUpdateUser() != null) {
                     JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (updateUserObject != null) {
-                        JSONArray jsonArray = updateUserObject.getJSONArray("data");
-                        String updateUserName = jsonArray.getJSONObject(0).get("name").toString();
-                        orderInfo.setCreateUserName(updateUserName);
+                        JSONObject obj = updateUserObject.getJSONObject("data");
+                        orderInfo.setCreateUserName(obj.get("name").toString());
                     }
                 }
             } else {//服务订单
@@ -72,9 +73,8 @@ public class OrderInfoService {
                 if (orderInfo.getServerUpdateUserId() != null) {
                     JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (updateUserObject != null) {
-                        JSONArray jsonArray = updateUserObject.getJSONArray("data");
-                        String updateUserName = jsonArray.getJSONObject(0).get("name").toString();
-                        orderInfo.setServerUpdateUserName(updateUserName);
+                        JSONObject obj = updateUserObject.getJSONObject("data");
+                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
                     }
                 }
             }
@@ -84,15 +84,9 @@ public class OrderInfoService {
                 Long flightId = flightMapper.isFlightExist(flight);
                 flight.setAirportCode(airportCode);
 
-                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                    flight.setIsInOrOut((short) 0);//出港
-                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                    flight.setIsInOrOut((short) 1);//进港
-                } else {
-                    flight.setIsInOrOut((short) 0);//出港
-                }
+                this.setFlightInOrOut(flight);
 
-                if (flightId != null && !flightId.equals("")) {
+                if (flightId != null) {
                     flight.setFlightId(flightId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
                 } else {
@@ -100,6 +94,15 @@ public class OrderInfoService {
                     flight.setCreateUser(userId);
                     flight.setFlightId(null);
                     flightMapper.insertSelective(flight);
+
+                    //龙腾定制航班
+                    /*if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                        Map<String, Object> flightMap = new HashMap<>();
+                        flightMap.put("flightId", flightId);
+                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+                    }*/
+                    //
+
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
@@ -118,13 +121,9 @@ public class OrderInfoService {
                 Flight flight = orderInfo.getFlight();
                 flight.setAirportCode(airportCode);
                 Long flightId = flightMapper.isFlightExist(flight);
-                if (airportCode.equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
-                    flight.setIsInOrOut((short) 0);//出港
-                } else if (airportCode.equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
-                    flight.setIsInOrOut((short) 1);//进港
-                } else {
-                    flight.setIsInOrOut((short) 0);//出港
-                }
+
+                this.setFlightInOrOut(flight);
+
                 if (flightId != null && !flightId.equals("")) {
                     flight.setFlightId(flightId);
                     flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
@@ -132,15 +131,17 @@ public class OrderInfoService {
                     flight.setCreateTime(new Date());
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
+                    //龙腾定制航班 如果产品为异地贵宾服务，不走定制航班
+                    /*if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                        Map<String, Object> flightMap = new HashMap<>();
+                        flightMap.put("flightId", flightId);
+                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+                    }*/
+                    //
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
 
-            Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
-            headerMap.put("user-id", userId);
-            headerMap.put("client-id", airportCode);
-            paramMap.put("employeeId", userId);
 
             /**
              * 预约订单和服务订单保存的创建人和创建时间不是同一个字段
@@ -151,9 +152,8 @@ public class OrderInfoService {
                 if (orderInfo.getCreateUser() != null) {
                     JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (createUserObject != null) {
-                        JSONArray jsonArray = createUserObject.getJSONArray("data");
-                        String createUserName = jsonArray.getJSONObject(0).get("name").toString();
-                        orderInfo.setCreateUserName(createUserName);
+                        JSONObject obj = createUserObject.getJSONObject("data");
+                        orderInfo.setCreateUserName(obj.get("name").toString());
                     }
                 }
             } else {
@@ -162,9 +162,8 @@ public class OrderInfoService {
                 if (orderInfo.getServerCreateUserId() != null) {
                     JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (createUserObject != null) {
-                        JSONArray jsonArray = createUserObject.getJSONArray("data");
-                        String createUserName = jsonArray.getJSONObject(0).get("name").toString();
-                        orderInfo.setServerCreateUserName(createUserName);
+                        JSONObject obj = createUserObject.getJSONObject("data");
+                        orderInfo.setServerCreateUserName(obj.get("name").toString());
                     }
                 }
             }
@@ -173,6 +172,16 @@ public class OrderInfoService {
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
+    }
+
+    private void setFlightInOrOut(Flight flight){
+        if (flight.getAirportCode().equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
+            flight.setIsInOrOut((short) 0);//出港
+        } else if (flight.getAirportCode().equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
+            flight.setIsInOrOut((short) 1);//进港
+        } else {
+            flight.setIsInOrOut((short) 0);//出港
+        }
     }
 
     /**
@@ -359,12 +368,12 @@ public class OrderInfoService {
     /**
      * 根据详细服务id和服务状态获取服务人次
      *
-     * @param serviceDetailId
+     * @param servId
      * @param airportCode
      * @return
      */
-    public int getServerNumByServiceDetailId(String orderStatus, Long serviceDetailId, String airportCode) throws Exception {
-        return orderInfoMapper.getServerNumByServiceDetailId(orderStatus, serviceDetailId, airportCode);
+    public int getServerNumByServlId(String orderStatus, Long servId, String airportCode) throws Exception {
+        return orderInfoMapper.getServerNumByServlId(orderStatus, servId, airportCode);
     }
 
     /**
@@ -393,5 +402,10 @@ public class OrderInfoService {
             protocolLists.add(protocolList);
         }
         return protocolLists;
+    }
+
+    public List<Map> queryCardType(String airportCode) {
+        List<Map> list = cardTypeMapper.queryCardTypeByAirportCode(airportCode);
+        return list;
     }
 }

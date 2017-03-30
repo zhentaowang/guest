@@ -71,6 +71,9 @@
     <if test="isDeleted != null">
       is_deleted = #{isDeleted,jdbcType=SMALLINT},
     </if>
+    <if test="updateUser != null">
+      update_user = #{updateUser,jdbcType=BIGINT},
+    </if>
       update_time = CURRENT_TIMESTAMP
   </set>
   where airport_code = #{airportCode,jdbcType=VARCHAR} and serv_id = #{servId,jdbcType=BIGINT}
@@ -211,7 +214,7 @@
   
   <select id="getServNameAndPositionNum" resultMap="BaseResultMap">
       SELECT
-        s.serv_id,s.`no`,s.`name`,ifnull(service_detail->>"$.positionNum",0) as positionNum FROM v_serv s
+        s.serv_id,s.`no`,s.`name`,ifnull(service_detail->>'$.positionNum',0) as positionNum FROM v_serv s
       <if test="hasDefault">
         LEFT JOIN (SELECT serv_id,is_deleted from serv_default WHERE employee_id = #{userId}) d ON s.serv_id= d.serv_id
       </if>

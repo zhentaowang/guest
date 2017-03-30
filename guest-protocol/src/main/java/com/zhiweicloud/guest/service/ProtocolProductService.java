@@ -109,16 +109,19 @@ public class ProtocolProductService {
      * @param airportCode
      * @param ids
      */
-    public void deleteById(List<Long> ids,String airportCode) {
+    public void deleteById(List<Long> ids,String airportCode,Long userId) {
         for(int i = 0; i< ids.size();i++){
             ProtocolProduct protocolProduct = new ProtocolProduct();
             protocolProduct.setAirportCode(airportCode);
             protocolProduct.setProtocolProductId(ids.get(i));
             protocolProduct.setIsDeleted(Constant.MARK_AS_DELETED);
+            protocolProduct.setUpdateUser(userId);
             protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
             ProtocolProductServ protocolProductServ = new ProtocolProductServ();
             protocolProductServ.setAirportCode(airportCode);
             protocolProductServ.setProtocolProductId(protocolProduct.getProtocolProductId());
+            protocolProductServ.setUpdateUser(userId);
+            protocolProductServ.setIsDeleted(Constant.MARK_AS_DELETED);
             protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductServ);
         }
     }

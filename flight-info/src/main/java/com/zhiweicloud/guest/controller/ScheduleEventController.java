@@ -3,7 +3,6 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
@@ -38,13 +37,18 @@ import java.util.Map;
 @Api(value = "调度管理", description = "调度管理desc ", tags = {"schedule-event"})
 public class ScheduleEventController {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleEventController.class);
+
+    private final ScheduleEventService scheduleEventService;
+
     @Autowired
-    private ScheduleEventService scheduleEventService;
+    public ScheduleEventController(ScheduleEventService scheduleEventService) {
+        this.scheduleEventService = scheduleEventService;
+    }
 
     /**
      * 航班管理 - 修改航班
-     * @param params
-     * @return
+     * @param params 航班信息
+     * @return 成功或失败
      */
     @POST
     @Path("flight-update")
@@ -77,14 +81,14 @@ public class ScheduleEventController {
             {
                     @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
                     @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "flightNo", value = "航班号", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "flightDate", value = "航班日期", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "servIds", value = "服务id", dataType = "String", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "typeId", value = "服务类型id", dataType = "Long", required = false, paramType = "query"),
-                    @ApiImplicitParam(name = "serverComplete", value = "订单是否为服务完成状态", dataType = "Long", required = false, paramType = "query")
+                    @ApiImplicitParam(name = "flightNo", value = "航班号", dataType = "String", paramType = "query"),
+                    @ApiImplicitParam(name = "flightDate", value = "航班日期", dataType = "String", paramType = "query"),
+                    @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "String", paramType = "query"),
+                    @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "Long", paramType = "query"),
+                    @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", paramType = "query"),
+                    @ApiImplicitParam(name = "servIds", value = "服务id", dataType = "String", paramType = "query"),
+                    @ApiImplicitParam(name = "typeId", value = "服务类型id", dataType = "Long", paramType = "query"),
+                    @ApiImplicitParam(name = "serverComplete", value = "订单是否为服务完成状态", dataType = "Long", paramType = "query")
             })
     public String getFlightList(
             @Context final HttpHeaders headers,
@@ -98,16 +102,16 @@ public class ScheduleEventController {
             @QueryParam(value = "serverComplete") Long serverComplete,
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows) {
-        Map<String,Object> param = new HashMap();
+        Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode",airportCode);
+        param.put("airportCode","LJG");
         param.put("flightNo",flightNo);
         param.put("flightDate",flightDate);
         param.put("flightState",flightState);
         param.put("isInOrOut",isInOrOut);
-
         param.put("scheduleEventId",scheduleEventId);
         param.put("servIds",servIds);
+        param.put("typeId",typeId);
         param.put("serverComplete",serverComplete);
         LZResult<PaginationResult<Flight>> result  = scheduleEventService.getFlightList(param,page,rows);
         return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
@@ -115,8 +119,8 @@ public class ScheduleEventController {
 
     /**
      * 航班管理 - 根据flightId查询航班详情
-     * @param flightId
-     * @return
+     * @param flightId 航班id
+     * @return 航班详情
      */
     @GET
     @Path("get-flight-view")
@@ -129,7 +133,7 @@ public class ScheduleEventController {
     public String getFlightView(@Context final HttpHeaders headers,
                        @QueryParam(value = "flightId") Long flightId
     ) {
-        Map<String,Object> param = new HashMap();
+        Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
@@ -149,7 +153,7 @@ public class ScheduleEventController {
             @Context final HttpHeaders headers,
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows) {
-        Map<String,Object> param = new HashMap();
+        Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         LZResult<PaginationResult<ScheduleEvent>> result  = scheduleEventService.getAll(param,page,rows);
@@ -159,8 +163,8 @@ public class ScheduleEventController {
     /**
      * 调度事件管理 - 新增or更新
      * 需要判断name是否重复
-     * @param params
-     * @return
+     * @param params 调度事件
+     * @return 成功或失败
      */
     @POST
     @Path("schedule-event-save-or-update")
@@ -180,7 +184,7 @@ public class ScheduleEventController {
                 scheduleEventService.saveOrUpdate(scheduleEvent);
                 return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
             }else{
-                if (scheduleEvent == null  || scheduleEvent.getName() == null || scheduleEvent.getType() == null
+                if (scheduleEvent.getName() == null || scheduleEvent.getType() == null
                         || scheduleEvent.getIsApproach() == null || scheduleEvent.getAirportCode() == null) {
                     return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
                 }else{
@@ -197,21 +201,20 @@ public class ScheduleEventController {
 
     /**
      * 调度事件管理 - 根据scheduleEventId查询事件详情
-     * @param scheduleEventId
-     * @return
+     * @param scheduleEventId 调度事件id
+     * @return String 调度事件详情
      */
     @GET
     @Path("schedule-event-view")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "调度事件管理 - 根据scheduleEventId查询事件详情 ", notes = "返回调度事件详情", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
     })
     public String view(@Context final HttpHeaders headers,
                        @QueryParam(value = "scheduleEventId") Long scheduleEventId
     ) {
-        Map<String,Object> param = new HashMap();
+        Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("scheduleEventId",scheduleEventId);
@@ -219,11 +222,13 @@ public class ScheduleEventController {
         return JSON.toJSONString(new LZResult<>(scheduleEvent));
     }
 
+
+
     /**
      * 调度事件管理 - 根据flightId和scheduleEventId查询
-     * @param flightId
-     * @param scheduleEventId
-     * @return
+     * @param flightId 航班id
+     * @param scheduleEventId 调度事件id
+     * @return 调度时间和类型
      */
     @GET
     @Path("get-schedule-event-by-flight-id")
@@ -232,13 +237,13 @@ public class ScheduleEventController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", required = false, paramType = "query")
+            @ApiImplicitParam(name = "scheduleEventId", value = "调度事件id", dataType = "Long", paramType = "query")
     })
     public String getScheduleEventByFlightId(@Context final HttpHeaders headers,
                        @QueryParam(value = "flightId") Long flightId,
                                              @QueryParam(value = "scheduleEventId") Long scheduleEventId
     ) {
-        Map<String,Object> param = new HashMap();
+        Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
@@ -249,19 +254,22 @@ public class ScheduleEventController {
 
     /**
      * 调度事件管理 - 获取调度事件下拉框
-     * @return
+     * @param flightId 航班id
+     * @return 调度时间和类型
      */
     @GET
     @Path("get-schedule-event-drop-down-box")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "调度事件管理 - 获取调度事件下拉框 ", notes = "返回调度时间和类型", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+//            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+//            @ApiImplicitParam(name = "isInOrOut", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "schedule", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
     })
     public String getScheduleEventBox(@Context final HttpHeaders headers,
                                       @QueryParam(value = "flightId") Long flightId
     ) {
-        Map<String,Object> param = new HashMap();
+        Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
@@ -272,7 +280,7 @@ public class ScheduleEventController {
     /**
      * 调度事件管理 - 删除
      * @param params ids
-     * @return
+     * @return 响应结果
      */
     @POST
     @Path("schedule-event-delete")
@@ -285,8 +293,8 @@ public class ScheduleEventController {
         try {
             List<Long> ids = params.getData();
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            for (int i = 0; i < ids.size(); i++) {
-                if (scheduleEventService.selectFlightByScheduleEventId(ids.get(i), airportCode) == true) {
+            for (Long id : ids) {
+                if (scheduleEventService.selectFlightByScheduleEventId(id, airportCode)) {
                     return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
                 }
             }

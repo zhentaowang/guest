@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.ProtocolTypeMapper">
+
+  <resultMap id="DropdownlistMap" type="com.zhiweicloud.guest.model.Dropdownlist">
+    <id column="protocol_type_id" jdbcType="BIGINT" property="id" />
+    <result column="protocol_type_name" jdbcType="VARCHAR" property="value" />
+  </resultMap>
+
+  <select id="getProtocolTypeDropdownList" resultMap="DropdownlistMap">
+    SELECT
+      protocol_type_id, protocol_type_name
+    FROM
+      protocol_type
+    WHERE
+      airport_code = #{airportCode}
+    <if test="protocolTypeId != null">
+      AND protocol_type_id = #{protocolTypeId}
+    </if>
+  </select>
+</mapper>

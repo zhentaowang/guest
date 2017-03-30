@@ -61,7 +61,7 @@ public class EmployeeService {
         return result;
     }
 
-    public List<Map> getById(Long employeeId, String airportCode) {
+    public Map getById(Long employeeId, String airportCode) {
         return employeeMapper.selectByIdAndAirportCode(employeeId,airportCode);
     }
 

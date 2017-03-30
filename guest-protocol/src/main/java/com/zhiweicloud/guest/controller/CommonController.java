@@ -1,13 +1,13 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.service.ProtocolService;
+import com.zhiweicloud.guest.service.ProtocolTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerRequestContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,9 @@ public class CommonController {
 
     @Autowired
     private ProtocolService protocolService;
+
+    @Autowired
+    private ProtocolTypeService protocolTypeService;
 
     /**
      * 协议表 - 查询协议名称
@@ -147,5 +149,33 @@ public class CommonController {
         }
         return JSON.toJSONString(result);
 
+    }
+
+
+    /**
+     * 重写协议类型下拉框 2017.3.27
+     * 从数据库获取
+     * @return
+     */
+    @GET
+    @Path("getProtocolTypeDropdownList")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "协议管理 - 协议类型下拉框", notes = "返回协议类型")
+    public String getProtocolTypeDropdownList (@QueryParam(value = "protocolTypeId") Long protocolTypeId,
+                                               @HeaderParam("client-id") String airportCode) {
+        LZResult<List<Dropdownlist>> result = new LZResult<>();
+        try{
+            List<Dropdownlist> list = protocolTypeService.getProtocolTypeDropdownList(protocolTypeId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+        }catch (Exception e){
+            logger.error("getProtocolTypeDropdownList error", e);
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+        }
+
+        return JSON.toJSONString(result);
     }
 }

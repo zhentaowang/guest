@@ -6,6 +6,7 @@
 */
 package com.zhiweicloud.guest.model;
 
+import com.zhiweicloud.guest.common.OrderConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.security.PrivateKey;
 import java.util.Date;
 import java.util.List;
 
@@ -48,9 +50,6 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="单位",name="workUnit")
     private String workUnit;
 
-    @ApiModelProperty(value="贵宾卡",name="vipCard")
-    private String vipCard;
-
     @ApiModelProperty(value="座位号",name="sitNo")
     private String sitNo;
 
@@ -63,8 +62,8 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="卡号",name="cardNo")
     private String cardNo;
 
-    @ApiModelProperty(value="0：金卡，1：银卡",name="cardType")
-    private Short cardType;
+    @ApiModelProperty(value="卡类别",name="cardType")
+    private String cardType;
 
     @ApiModelProperty(value="乘客类型：0，乘客，1：随行",name="passengerType")
     private Short passengerType;
@@ -73,11 +72,7 @@ public class Passenger extends BaseEntity{
     @ApiModelProperty(value="有效期",name="expireTime")
     private Date expireTime;
 
-    /**
-     * 返回字段。详细服务
-     */
-    @Transient
-    private String serviceDetail;
+
 
     /**
      * 返回字段。订单状态
@@ -103,6 +98,81 @@ public class Passenger extends BaseEntity{
     @Transient
     private String orderNo;
 
+    /**
+     * 返回字段，服务完成时间
+     */
+    @Transient
+    private Date serverCreateTime;
+
+    /**
+     * 返回字段，客户名称，==乘客表中的 clientName
+     */
+    @Transient
+    private String customerName;
+
+    @Transient
+    private Short isImportant;
+
+    /**
+     * 返回字段，是否重要
+     */
+    @Transient
+    private boolean booleanImportant;
+
+    /**
+     * 返回字段，服务人次
+     */
+    @Transient
+    private int serverNum;
+
+    /**
+     * 没有服务时间，返回预定时间
+     * @return
+     */
+    public Date getServerCreateTime() {
+        return serverCreateTime == null ? this.getCreateTime() : serverCreateTime;
+    }
+
+    /**
+     * 返回是否重要客户
+     * @return
+     */
+    public boolean isBooleanImportant() {
+        return this.isImportant == OrderConstant.ORDER_IS_IMPORTANT ? true : false;
+    }
+
+
+    public int getServerNum() {
+        return serverNum;
+    }
+
+    public void setServerNum(int serverNum) {
+        this.serverNum = serverNum;
+    }
+
+    public Short getIsImportant() {
+        return isImportant;
+    }
+
+    public void setIsImportant(Short isImportant) {
+        this.isImportant = isImportant;
+    }
+
+    public void setBooleanImportant(boolean booleanImportant) {
+        this.booleanImportant = booleanImportant;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setServerCreateTime(Date serverCreateTime) {
+        this.serverCreateTime = serverCreateTime;
+    }
 
     /**
      * 主键自增id
@@ -201,22 +271,6 @@ public class Passenger extends BaseEntity{
     }
 
     /**
-     * 贵宾卡
-     * @return vip_card 贵宾卡
-     */
-    public String getVipCard() {
-        return vipCard;
-    }
-
-    /**
-     * 贵宾卡
-     * @param vipCard 贵宾卡
-     */
-    public void setVipCard(String vipCard) {
-        this.vipCard = vipCard;
-    }
-
-    /**
      * 座位号
      * @return sit_no 座位号
      */
@@ -281,18 +335,18 @@ public class Passenger extends BaseEntity{
     }
 
     /**
-     * 0：金卡，1：银卡
-     * @return card_type 0：金卡，1：银卡
+     * 卡类别
+     * @return card_type
      */
-    public Short getCardType() {
+    public String getCardType() {
         return cardType;
     }
 
     /**
-     * 0：金卡，1：银卡
+     * 卡类别
      * @param cardType 0：金卡，1：银卡
      */
-    public void setCardType(Short cardType) {
+    public void setCardType(String cardType) {
         this.cardType = cardType;
     }
 
@@ -310,14 +364,6 @@ public class Passenger extends BaseEntity{
      */
     public void setExpireTime(Date expireTime) {
         this.expireTime = expireTime;
-    }
-
-    public String getServiceDetail() {
-        return serviceDetail;
-    }
-
-    public void setServiceDetail(String serviceDetail) {
-        this.serviceDetail = serviceDetail;
     }
 
     public String getOrderStatus() {

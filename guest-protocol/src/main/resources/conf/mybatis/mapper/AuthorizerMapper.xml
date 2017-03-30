@@ -169,7 +169,7 @@
 
   <select id="getAuthorizerDropdownList" resultMap="DropdownlistMap" parameterType="map">
     SELECT
-      authorizer_id,`name` AS `value`
+      authorizer_id,concat_ws(' - ',NAME,  cellphone) AS `value`
     FROM
       authorizer WHERE is_deleted = 0 AND airport_code = #{airportCode} AND `name` IS NOT NULL
     <if test="name != null and !name.trim().equals('')" >

@@ -42,8 +42,10 @@ public class ProtocolProductController {
     /**
      * 协议产品管理 - 新增or更新
      * 需要判断name是否重复
-     * @param params
-     * @return
+     * @param params 协议产品信息
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return 成功还是失败
      */
     @POST
     @Path("protocol-product-save-or-update")
@@ -51,9 +53,9 @@ public class ProtocolProductController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议产品管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public LXResult protocolProductSave(@ApiParam(value = "protocolProduct", required = true) @RequestBody String params,
-                         @Context final HttpHeaders headers) {
+                                        @HeaderParam("client-id") String airportCode,
+                                        @HeaderParam("user-id") Long userId) {
         try {
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for(int k = 0; k < param.size(); k++){
                 JSONObject param00 = JSON.parseObject(param.get(k).toString());
@@ -61,6 +63,8 @@ public class ProtocolProductController {
                 param00.remove("serviceList");
                 ProtocolProduct protocolProduct = JSONObject.toJavaObject(param00,ProtocolProduct.class);
                 protocolProduct.setAirportCode(airportCode);
+                protocolProduct.setCreateUser(userId);
+                protocolProduct.setUpdateUser(userId);
                 List<ProtocolProductServ> protocolProductServs = new ArrayList<>();
                 if(serviceList != null){
                     for (int i = 0; i < serviceList.size(); i++) {
@@ -70,6 +74,8 @@ public class ProtocolProductController {
                         protocolProductServ00.remove("name");
                         ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductServ00,ProtocolProductServ.class);
                         protocolProductServ.setAirportCode(protocolProduct.getAirportCode());
+                        protocolProductServ.setCreateUser(protocolProduct.getCreateUser());
+                        protocolProductServ.setUpdateUser(protocolProduct.getUpdateUser());
                         protocolProductServs.add(protocolProductServ);
                     }
                 }
@@ -94,8 +100,10 @@ public class ProtocolProductController {
     /**
      * 协议产品服务管理 - 新增or更新
      * 需要判断name是否重复
-     * @param params
-     * @return
+     * @param params 协议产品信息
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return 成功还是失败
      */
     @POST
     @Path("protocol-product-service-save-or-update")
@@ -103,14 +111,16 @@ public class ProtocolProductController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "协议产品服务管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public String protocolProductServiceSave(@ApiParam(value = "protocolProductService", required = true) @RequestBody String params,
-                                        @Context final HttpHeaders headers) {
+                                             @HeaderParam("client-id") String airportCode,
+                                             @HeaderParam("user-id") Long userId) {
         try {
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for (int i = 0; i < param.size(); i++) {
                 JSONObject protocolProductService00 = JSON.parseObject(param.get(i).toString());
                 ProtocolProductServ protocolProductServ = JSONObject.toJavaObject(protocolProductService00,ProtocolProductServ.class);
                 protocolProductServ.setAirportCode(airportCode);
+                protocolProductServ.setCreateUser(userId);
+                protocolProductServ.setUpdateUser(userId);
                 protocolProductService00.remove("protocolProductServiceId");
                 protocolProductService00.remove("protocolProductId");
                 protocolProductService00.remove("serviceTypeAllocationId");
@@ -147,9 +157,10 @@ public class ProtocolProductController {
 
     /**
      * 协议产品管理 - 根据id查询
-     *
-     * @param protocolProductId
-     * @return
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @param protocolProductId 协议产品id
+     * @return LZResult 协议产品详情
      */
     @GET
     @Path("protocol-product-view")
@@ -158,11 +169,11 @@ public class ProtocolProductController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolProductId", value = "协议产品id", dataType = "Long", defaultValue = "4", required = true, paramType = "query")
     })
-    public String protocolProductView(@Context final HttpHeaders headers,
+    public String protocolProductView(@HeaderParam("client-id") String airportCode,
+                                      @HeaderParam("user-id") Long userId,
                        @QueryParam(value = "protocolProductId") Long protocolProductId
     ) {
-        Map<String, Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolProductId", protocolProductId);
         ProtocolProduct protocolProduct = protocolProductService.getById(param);
@@ -171,9 +182,10 @@ public class ProtocolProductController {
 
     /**
      * 协议产品服务管理 - 根据id查询
-     *
-     * @param protocolProductServiceId
-     * @return
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @param protocolProductServiceId 协议产品服务id
+     * @return LZResult 协议产品服务详情
      */
     @GET
     @Path("protocol-product-service-view")
@@ -182,11 +194,11 @@ public class ProtocolProductController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "protocolProductServiceId", value = "协议产品服务id", dataType = "Long", defaultValue = "11", required = true, paramType = "query")
     })
-    public String protocolProductServiceView(@Context final HttpHeaders headers,
+    public String protocolProductServiceView(@HeaderParam("client-id") String airportCode,
+                                             @HeaderParam("user-id") Long userId,
                                       @QueryParam(value = "protocolProductServiceId") Long protocolProductServiceId
     ) {
-        Map<String, Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+        Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolProductServiceId", protocolProductServiceId);
         ProtocolProductServ protocolProductServ = protocolProductService.getByProtocolProductServiceId(param);
@@ -195,9 +207,12 @@ public class ProtocolProductController {
 
         /**
          * 协议产品管理 - 协议产品列表
-         * @param page
-         * @param rows
-         * @return
+         * @param page 起始页
+         * @param rows 每页显示数目
+         * @param airportCode 机场代码
+         * @param userId 用户id
+         * @param protocolId 协议id
+         * @return LZResult 协议产品信息
          */
         @GET
         @Path("protocol-product-list")
@@ -209,12 +224,12 @@ public class ProtocolProductController {
                         @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
                         @ApiImplicitParam(name = "protocolId", value = "协议id", dataType = "Long", defaultValue = "188", required = true, paramType = "query")})
         public String protocolProductList(
-                @Context final HttpHeaders headers,
+                @HeaderParam("client-id") String airportCode,
+                @HeaderParam("user-id") Long userId,
                 @QueryParam(value = "page") Integer page,
                 @QueryParam(value = "rows") Integer rows,
                 @QueryParam(value = "protocolId") Long protocolId) {
-            Map<String,Object> param = new HashMap();
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            Map<String,Object> param = new HashMap<>();
             param.put("airportCode",airportCode);
             param.put("protocolId",protocolId);
             LZResult<PaginationResult<ProtocolProduct>> result  = protocolProductService.getAll(param,page,rows);
@@ -224,7 +239,9 @@ public class ProtocolProductController {
     /**
      * 协议产品管理 - 删除
      * @param params ids
-     * @return
+     * @param airportCode 机场代码
+     * @param userId 用户id
+     * @return 响应结果
      */
     @POST
     @Path("protocol-product-delete")
@@ -233,16 +250,16 @@ public class ProtocolProductController {
     @ApiOperation(value = "协议产品管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
     public String protocolProductDelete(
             @RequestBody RequsetParams<Long> params,
-            @Context final HttpHeaders headers) {
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
         try {
             List<Long> ids = params.getData();
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             for(int i = 0; i< ids.size();i++){
                 if(protocolProductService.selectOrderByProtocolProductId(ids.get(i),airportCode) == true){
                     return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
                 }
             }
-            protocolProductService.deleteById(ids,airportCode);
+            protocolProductService.deleteById(ids,airportCode,userId);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("delete protocolProduct by ids error", e);

@@ -50,6 +50,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SysMenuController.java
@@ -80,13 +81,12 @@ public class OrderInfoController {
             @DefaultValue("1") @QueryParam(value = "page") Integer page,
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @BeanParam final OrderInfoQuery orderInfoQuery,
-            @Context final HttpHeaders headers) {
+            @HeaderParam("user-id") Long userId,
+            @HeaderParam("client-id") String airportCode) {
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             orderInfoQuery.setAirportCode(airportCode);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
-            return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+            return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
             LZResult result = new LZResult<>();
@@ -113,6 +113,8 @@ public class OrderInfoController {
     public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
         LZResult<String> result = new LZResult<>();
+        /*String airportCode = "LJG";
+        Long userId = 108L;*/
         try {
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
@@ -128,14 +130,25 @@ public class OrderInfoController {
 
             List<Flight> flightList = JSON.parseArray(JSON.toJSONString(flightListArray), Flight.class);
 
-            Flight source= flightList.get(0);//修改后的部分参数
-            Flight targetFlight = flightList.get(1);//全部参数
-
-            CopyProperties.copy(source,targetFlight);
+            Flight targetFlight = null;//全部参数
 
             OrderInfo order = JSON.toJavaObject(param.getJSONArray("data").getJSONObject(0), OrderInfo.class);
+            OrderInfo oldOrder = null;
+            if (order.getOrderId() != null) {
+                oldOrder = orderInfoService.getById(order.getOrderId(), userId, airportCode);
+            }
 
-            if (order == null || order.getProtocolId() == null || order.getProtocolId().equals("") || order.getProductId() == null || order.getProductId().equals("")) {
+
+            if (flightList != null && flightList.get(0) != null && flightList.get(1) != null) {
+                Flight source = flightList.get(0);//修改后的部分参数
+                targetFlight = flightList.get(1);//全部参数
+                CopyProperties.copy(source, targetFlight);
+            } else {
+                targetFlight = oldOrder.getFlight();
+            }
+
+
+            if (order == null) {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
@@ -144,71 +157,10 @@ public class OrderInfoController {
                     result.setMsg("出发地三字码或者目的地三字码为空");
                     result.setStatus(5006);
                     result.setData(null);
-                }else{
-                    if(order.getOrderId() != null){
-                        /**
-                         * 通过changeOrderStatus字段为1 来判断，是修改订单状态
-                         */
-                        //首先根据订单拿到当前订单的状态
-                        /**
-                         * 只有如下的几种订单流转状态
-                         * 预约草稿 to  {预约取消，已预约}
-                         已预约 to  {已使用,预约取消}
-                         已使用 to  {服务草稿，服务取消}
-                         服务草稿 to  {已使用，服务取消}
-                         */
-
-                        String currentOrderStatus =  orderInfoService.getById(order.getOrderId(), userId, airportCode).getOrderStatus();
-                        String toOrderStatus = order.getOrderStatus();
-                        boolean flag = false;
-
-                        /**
-                         * 预约草稿-》预约草稿
-                         *          已预约
-                         *          预约取消
-                         */
-                        if(currentOrderStatus.equals("预约草稿") && (toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已预约") || toOrderStatus.equals("预约取消"))){
-                            flag = true;
-                        }
-                        /**
-                         * 已预约-》  已预约
-                         *          预约草稿
-                         *          已使用
-                         *          预约取消
-                         */
-                        if(currentOrderStatus.equals("已预约") && (toOrderStatus.equals("已预约") || toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消"))){
-                            flag = true;
-                        }
-                        /**
-                         * 已使用-》  已使用
-                         *          服务草稿
-                         *          服务取消
-                         */
-                        if(currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))){
-                            flag = true;
-                        }
-                        /**
-                         * 服务草稿-》 服务草稿
-                         *          已使用
-                         *          服务取消
-                         */
-                        if(currentOrderStatus.equals("服务草稿") && (toOrderStatus.equals("服务草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("服务取消"))){
-                            flag = true;
-                        }
-                        /**
-                         * 预约取消-》预约取消
-                         */
-                        if(currentOrderStatus.equals("预约取消") && toOrderStatus.equals("预约取消")){
-                            flag = true;
-                        }
-                        /**
-                         * 服务取消-》服务取消
-                         */
-                        if(currentOrderStatus.equals("服务取消") && toOrderStatus.equals("服务取消")){
-                            flag = true;
-                        }
-
-                        if(!flag){
+                } else {
+                    if (order.getOrderId() != null) {
+                        boolean flag = canUpdateOrderStatus(oldOrder.getOrderStatus(), order.getOrderStatus());
+                        if (!flag) {
                             result.setMsg(LZStatus.ORDER_STATUS_FLOW_ERROR.display());
                             result.setStatus(LZStatus.ORDER_STATUS_FLOW_ERROR.value());
                             result.setData("错误的状态更新");
@@ -230,6 +182,85 @@ public class OrderInfoController {
             result.setData(e.toString());
         }
         return JSON.toJSONString(result);
+    }
+
+    private boolean canUpdateOrderStatus(String currentOrderStatus, String toOrderStatus) {
+        boolean flag = false;
+        try {
+            /**
+             * 只有如下的几种订单流转状态
+             * 预约草稿 to  {预约取消，已预约}
+             已预约 to  {已使用,预约取消}
+             已使用 to  {服务草稿，服务取消}
+             服务草稿 to  {已使用，服务取消}
+             */
+
+            /**
+             * 预约草稿-》预约草稿
+             *          已预约
+             *          预约取消
+             */
+            if (currentOrderStatus.equals("预约草稿") && (toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已预约") || toOrderStatus.equals("预约取消"))) {
+                flag = true;
+            }
+            /**
+             * 已预约-》  已预约
+             *          预约草稿
+             *          已使用
+             *          预约取消
+             */
+            if (currentOrderStatus.equals("已预约") && (toOrderStatus.equals("已预约") || toOrderStatus.equals("预约草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消"))) {
+                flag = true;
+            }
+            /**
+             * 已使用-》  已使用
+             *          服务草稿
+             *          服务取消
+             */
+            if (currentOrderStatus.equals("已使用") && (toOrderStatus.equals("已使用") || toOrderStatus.equals("预约取消") || toOrderStatus.equals("服务草稿") || toOrderStatus.equals("服务取消"))) {
+                flag = true;
+            }
+            /**
+             * 服务草稿-》 服务草稿
+             *          已使用
+             *          服务取消
+             */
+            if (currentOrderStatus.equals("服务草稿") && (toOrderStatus.equals("服务草稿") || toOrderStatus.equals("已使用") || toOrderStatus.equals("服务取消"))) {
+                flag = true;
+            }
+            /**
+             * 预约取消-》预约取消
+             */
+            if (currentOrderStatus.equals("预约取消") && toOrderStatus.equals("预约取消")) {
+                flag = true;
+            }
+            /**
+             * 服务取消-》服务取消
+             */
+            if (currentOrderStatus.equals("服务取消") && toOrderStatus.equals("服务取消")) {
+                flag = true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+
+    @GET
+    @Path("getAirportCode")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "查看当前登录的机场编码", notes = "返回机场编码", httpMethod = "GET", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功", response = String.class)
+    })
+    public String getAirportCode(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        return airportCode;
     }
 
 
@@ -302,7 +333,7 @@ public class OrderInfoController {
             result.setData(null);
             e.printStackTrace();
         }
-        return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+        return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
 
@@ -322,7 +353,7 @@ public class OrderInfoController {
             String param) {
         try {
             JSONObject paramJson = JSON.parseObject(param);
-            if(paramJson.getLong("flightId") == null){
+            if (paramJson.getLong("flightId") == null) {
                 logger.error("updateServerComplete error", LZStatus.DATA_EMPTY.display() + ":flightId");
             }
             orderInfoService.updateServerComplete(paramJson.getLong("flightId"), paramJson.getShort("serverComplete"), userId, airportCode);
@@ -339,16 +370,16 @@ public class OrderInfoController {
      * @return
      */
     @GET
-    @Path("getServerNumByServiceDetailId")
+    @Path("getServerNumByServlId")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据订单状态/详细服务id 获取服务人次 ", notes = "返回服务人次", httpMethod = "GET", produces = "application/json")
-    public String getServerNumByServiceDetailId(
-            @QueryParam("serviceDetailId") Long serviceDetailId,
+    public String getServerNumByServlId(
+            @QueryParam("servId") Long servId,
             @Context final HttpHeaders headers) {
         LZResult<Integer> result = new LZResult();
         try {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            Integer orderCount = orderInfoService.getServerNumByServiceDetailId(OrderConstant.ORDER_STATUS_USED, serviceDetailId, airportCode);
+            Integer orderCount = orderInfoService.getServerNumByServlId(OrderConstant.ORDER_STATUS_USED, servId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderCount);
@@ -386,6 +417,7 @@ public class OrderInfoController {
 
     /**
      * 查找客户下有订单的协议ID
+     *
      * @param customerIds 客户ID串
      * @param airportCode 机场码
      * @return
@@ -400,7 +432,7 @@ public class OrderInfoController {
         List<ProtocolList> protocolLists;
         LZResult<List<ProtocolList>> result = new LZResult<>();
         try {
-            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds,airportCode);
+            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(protocolLists);
@@ -409,11 +441,28 @@ public class OrderInfoController {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
-        }finally {
+        } finally {
             return result;
         }
     }
 
+    @GET
+    @Path("getCardType")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "查询卡类别", notes = "返回卡类别下拉框", httpMethod = "GET", produces = "application/json")
+    public String getCardType(@HeaderParam("client-id") String airportCode) {
+        LZResult<Object> result = new LZResult<>();
+        try {
+            List<Map> list = orderInfoService.queryCardType(airportCode);
+            return JSON.toJSONString(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
+    }
 
 
 }

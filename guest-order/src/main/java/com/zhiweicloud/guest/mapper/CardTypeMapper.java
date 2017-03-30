@@ -25,39 +25,14 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.model.Dropdownlist;
-import com.zhiweicloud.guest.model.OrderInfoQuery;
-import com.zhiweicloud.guest.model.Passenger;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhangpengfei on 2016/12/26.
  */
-public interface PassengerMapper{
+public interface CardTypeMapper {
 
-    /**
-     * 订单列表，身份证号模糊匹配下拉框
-     * 返回不重复的身份证号码
-     * @return
-     */
-    List<Dropdownlist> getIdentityCardDropdownList(@Param("identityCard") String identityCard, @Param("airportCode") String airportCode);
 
-    void updateByPassengerIdAndAirportCodeKeySelective(Passenger p);
-
-    void insertSelective(Passenger p);
-
-    void markAsDeleted(Passenger passenger);
-    /**
-     * 返回航班信息中的 旅客信息，与订单状态等信息结合
-     * @param flightId
-     * @param typeId
-     * @param servId
-     * @param airportCode
-     * @return
-     */
-    List<Passenger> getPassengerlistByFlightId(@Param("flightId")Long flightId, @Param("typeId") Long typeId,
-                                               @Param("servId") Long servId, @Param("airportCode") String airportCode);
-
+    List<Map> queryCardTypeByAirportCode(String airportCode);
 }

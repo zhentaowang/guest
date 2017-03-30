@@ -109,12 +109,10 @@ public class EmployeeController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "员工管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param, @Context final HttpHeaders headers) {
+    public String save(@ApiParam(value = "employee", required = true) RequsetParams<Employee> param, @HeaderParam("client-id") String airportCode,
+                       @HeaderParam("user-id") Long userId) {
         LZResult<String> result = new LZResult<>();
         try {
-            Long userId = Long.valueOf(headers.getRequestHeaders().getFirst("user-id"));
-
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             Employee employee = null;
             if (!CollectionUtils.isEmpty(param.getData())) {
                 employee = param.getData().get(0);
@@ -166,9 +164,9 @@ public class EmployeeController {
             @QueryParam("employeeId") Long employeeId,
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
-        LZResult<List<Map>> result = new LZResult<>();
+        LZResult<Object> result = new LZResult<>();
         try {
-            List<Map> employee = employeeService.getById(employeeId, airportCode);
+            Map employee = employeeService.getById(employeeId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(employee);
@@ -300,6 +298,27 @@ public class EmployeeController {
             result.setData(null);
         }
         return JSON.toJSONString(result);
+    }
+
+    @GET
+    @Path("getUserName")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "根据accesstoken获取用户名", notes = "返回登录人用户名", httpMethod = "GET", produces = "application/json")
+    public String getCardType(@HeaderParam("client-id") String airportCode,@HeaderParam("user-id") Long userId){
+        LZResult<Object> result = new LZResult<>();
+        try {
+            Map employee = employeeService.getById(userId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(employee);
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
     }
 
 

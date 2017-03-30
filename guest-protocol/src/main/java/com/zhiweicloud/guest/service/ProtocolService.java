@@ -103,54 +103,6 @@ public class ProtocolService {
                 params.put("ids",ids.append(0));
                 authorizerMapper.deleteByIdAndAirportCode(params);
             }
-
-//            //协议产品修改
-//            StringBuffer ids00 = new StringBuffer();
-//            if(protocol.getProtocolProductList() != null){
-//                for(int i = 0; i < protocol.getProtocolProductList().size(); i++){
-//                    ProtocolProduct protocolProduct = protocol.getProtocolProductList().get(i);
-//                    if (protocolProduct.getProtocolProductId() != null){
-//                        ids00.append(protocolProduct.getProtocolProductId()+",");
-//                        protocolProductMapper.updateByIdAndAirportCode(protocolProduct);
-//                    }else{
-//                        protocolProduct.setProtocolId(protocol.getProtocolId());
-//                        protocolProduct.setCreateTime(new Date());
-//                        protocolProduct.setUpdateTime(new Date());
-//                        protocolProduct.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-//                        protocolProductMapper.insertBySelective(protocolProduct);
-//                        ids00.append(protocolProduct.getProtocolProductId()+",");
-//                    }
-//                    if(protocolProduct.getProtocolProductServList() != null){
-//                    for(int j = 0; j < protocolProduct.getProtocolProductServList().size(); j++ ){
-//                        ProtocolProductServ protocolProductService = protocolProduct.getProtocolProductServList().get(j);
-//                        if (protocolProductService.getProtocolProductServiceId() != null){
-//                            protocolProductServiceMapper.updateByIdAndAirportCode(protocolProductService);
-//                        }else{
-//                            protocolProductService.setProtocolProductId(protocolProduct.getProtocolProductId());
-//                            protocolProductService.setCreateTime(new Date());
-//                            protocolProductService.setUpdateTime(new Date());
-//                            protocolProductService.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-//                            protocolProductServiceMapper.insertBySelective(protocolProductService);
-//                        }
-//                    }
-//                }
-//            }
-//                if(ids00.length() != 0){
-//                    params.put("ids00",ids00.substring(0,ids00.length() - 1));
-//                    protocolProductMapper.deleteByIdAndAirportCode(params);
-//                    protocolProductServiceMapper.deleteByIdAndAirportCode(params);
-//                }
-//                else{
-//                    params.put("ids00",ids00.append(0));
-//                    protocolProductMapper.deleteByIdAndAirportCode(params);
-//                    protocolProductServiceMapper.deleteByIdAndAirportCode(params);
-//                }
-//            }
-//            else{
-//                params.put("ids00",ids00.append(0));
-//                protocolProductMapper.deleteByIdAndAirportCode(params);
-//                protocolProductServiceMapper.deleteByIdAndAirportCode(params);
-//            }
         } else {
 
             //协议添加
@@ -171,26 +123,6 @@ public class ProtocolService {
                     authorizerMapper.insertBySelective(p);
                 }
             }
-
-//            //协议产品添加
-//            if(protocol.getProtocolProductList() != null){
-//                for(int j = 0; j < protocol.getProtocolProductList().size(); j++){
-//                    ProtocolProduct pp = protocol.getProtocolProductList().get(j);
-//                    pp.setProtocolId(protocol.getProtocolId());
-//                    pp.setCreateTime(new Date());
-//                    pp.setUpdateTime(new Date());
-//                    pp.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-//                    protocolProductMapper.insertBySelective(pp);
-//                    for(int i = 0; i < protocol.getProtocolProductList().get(j).getProtocolProductServList().size(); i++){
-//                        ProtocolProductServ p = protocol.getProtocolProductList().get(j).getProtocolProductServList().get(i);
-//                        p.setProtocolProductId(pp.getProtocolProductId());
-//                        p.setCreateTime(new Date());
-//                        p.setUpdateTime(new Date());
-//                        p.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-//                        protocolProductServiceMapper.insertBySelective(p);
-//                    }
-//                }
-//            }
         }
         return protocol.getProtocolId();
     }

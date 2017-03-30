@@ -52,7 +52,7 @@ public interface EmployeeMapper{
 
     List<Map> selectEmployeeList(BasePagination<Employee> queryCondition);
 
-    List<Map> selectByIdAndAirportCode(@Param("employeeId") Long employeeId, @Param("airportCode") String airportCode );
+    Map selectByIdAndAirportCode(@Param("employeeId") Long employeeId, @Param("airportCode") String airportCode );
 
     void addEmployeeAndRoleRelate(@Param("employeeId") Long employeeId, @Param("roleId") Long roleId,@Param("airportCode") String airportCode );
 
