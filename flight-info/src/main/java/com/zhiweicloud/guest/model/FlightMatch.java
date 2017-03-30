@@ -1,13 +1,17 @@
 package com.zhiweicloud.guest.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Transient;
 import java.util.Date;
 
 /**
- * Created by tc on 2017/3/15.
+ * FlightMatch.java
+ * 推送航班信息json串映射实体类
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2017/3/28 16:32
+ * @author tiecheng
  */
 public class FlightMatch extends BaseEntity {
 
