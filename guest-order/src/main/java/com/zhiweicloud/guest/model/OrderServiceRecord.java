@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * OrderServiceRecord.java
@@ -34,6 +35,9 @@ public class OrderServiceRecord extends BaseEntity{
 
     @ApiModelProperty(value="服务动态",name="recordDesc")
     private String recordDesc;
+
+    @ApiModelProperty(value="创建人名",name="createUserName")
+    private String createUserName;
 
 
     //以下是订单里的信息，插入服务动态时，作为参数
@@ -73,6 +77,10 @@ public class OrderServiceRecord extends BaseEntity{
     @ApiModelProperty(value="代办登机牌 0:需要，1：不需要",name="printCheck")
     private Short printCheck;
 
+    @Transient
+    @ApiModelProperty(value="乘客列表",name="passengerList")
+    private List<Passenger> passengerList;
+
     /**
      * 修改订单时 类型不能为空
      */
@@ -80,6 +88,14 @@ public class OrderServiceRecord extends BaseEntity{
     @ApiModelProperty(value="订单类型：0：预约订单，1：服务订单",name="orderType")
     private Short orderType;
 
+
+    public List<Passenger> getPassengerList() {
+        return passengerList;
+    }
+
+    public void setPassengerList(List<Passenger> passengerList) {
+        this.passengerList = passengerList;
+    }
 
     public Short getOrderType() {
         return orderType;
@@ -207,5 +223,13 @@ public class OrderServiceRecord extends BaseEntity{
 
     public void setAgentPersonName(String agentPersonName) {
         this.agentPersonName = agentPersonName;
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 }
