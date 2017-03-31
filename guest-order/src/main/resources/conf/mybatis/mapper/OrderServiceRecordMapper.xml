@@ -27,7 +27,7 @@
 
   <select id="getOrderServiceRecord"  resultMap="BaseResultMap">
     SELECT
-      create_time,record_desc
+      create_time,record_desc,create_user
     FROM
       order_service_record
     WHERE
