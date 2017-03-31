@@ -107,13 +107,16 @@ public class FlightService {
             if (Long.valueOf(fdId) <= Long.valueOf(fdId2)) {
                 flight.setFlightId(flightId);
                 FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
-                flightUpdateLog.setCreateUser(flight.getUpdateUser());
-                flightUpdateLog.setUpdateMessage(BeanCompareUtils.compareTwoBean(queryFlight,flight));
-                flightUpdateLog.setOperatorName("非常准");
-                flightUpdateLog.setFlightId(flightId);
-                flightUpdateLog.setAirportCode(flight.getAirportCode());
-                flightUpdateLogMapper.insert(flightUpdateLog);
-                flightMapper.updateFlight(flight);
+                String updateMessage = BeanCompareUtils.compareTwoBean(queryFlight, flight);
+                if (updateMessage != null) {
+                    flightUpdateLog.setCreateUser(flight.getUpdateUser());
+                    flightUpdateLog.setUpdateMessage(updateMessage);
+                    flightUpdateLog.setOperatorName("非常准");
+                    flightUpdateLog.setFlightId(flightId);
+                    flightUpdateLog.setAirportCode(flight.getAirportCode());
+                    flightUpdateLogMapper.insert(flightUpdateLog);
+                    flightMapper.updateFlight(flight);
+                }
             } else {
                 throw new FlightException("无需更新");
             }
