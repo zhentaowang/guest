@@ -31,6 +31,7 @@ import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightScheduleEvent;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,13 +90,22 @@ public class FlightService {
     }
 
     public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent, Long userId) throws Exception {
-        if (flightScheduleEvent.getFlightScheduleEventId() == null || flightScheduleEvent.getFlightScheduleEventId() == 0) {
+
+        if (flightScheduleEvent.getFlightScheduleEventId() == null) {
             flightScheduleEvent.setCreateUser(userId);
             flightScheduleEventMapper.insertSelective(flightScheduleEvent);
         } else {
             flightScheduleEvent.setUpdateUser(userId);
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
+
+        Map<String, Object> param = new HashedMap();
+        param.put("airportCode", flightScheduleEvent.getAirportCode());
+        param.put("userId", userId);
+        param.put("flightScheduleEventId", flightScheduleEvent.getFlightScheduleEventId());
+        FlightScheduleEvent flightScheduleEvent0 = flightScheduleEventMapper.selectByPrimaryKey(param);
+        flightScheduleEvent0.setAirportCode(flightScheduleEvent.getAirportCode());
+        flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent0);
     }
 
     public Flight queryFlightById(Long id, String airportCode) throws Exception {
