@@ -827,12 +827,12 @@
 
   <update id="updateServerComplete" parameterType="map">
     UPDATE
-      order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{updateUser}
+      order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{userId}
       <if test="serverComplete == 1">
-        ,server_complete_time = NOW()
+        ,server_complete_time = NOW(), server_complete_id = #{userId}, server_complete_name = #{serverCompleteName}
       </if>
       <if test="serverComplete == 0">
-        ,server_complete_time = NULL 
+        ,server_complete_time = NULL, server_complete_id = NULL, server_complete_name = NULL
       </if>
     WHERE airport_code = #{airportCode} AND flight_id = #{flightId}
 

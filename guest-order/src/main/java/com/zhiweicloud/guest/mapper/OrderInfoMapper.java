@@ -63,12 +63,10 @@ public interface OrderInfoMapper{
 
     /**
      * 根据flight_id 修改订单服务状态
-     * @param flightId
-     * @param airportCode
+     * @param map
      * @return
      */
-    int updateServerComplete(@Param("flightId") Long flightId, @Param("serverComplete") Short serverComplete,
-                             @Param("updateUser") Long updateUser, @Param("airportCode") String airportCode);
+    int updateServerComplete(Map<String,Object> map);
 
     /**
      * 根据详细服务id和服务状态获取 服务人次
