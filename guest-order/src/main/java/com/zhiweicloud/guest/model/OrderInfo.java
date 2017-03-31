@@ -84,6 +84,12 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="是否托运说明",name="consignRemark")
     private String consignRemark;
 
+    @ApiModelProperty(value="安检礼遇",name="securityCheck")
+    private Short securityCheck;
+
+    @ApiModelProperty(value="是否托运说明",name="securityCheckRemark")
+    private String securityCheckRemark;
+
     @ApiModelProperty(value="服务说明",name="otherRemark")
     private String otherRemark;
 
@@ -798,5 +804,21 @@ public class OrderInfo extends BaseEntity{
 
     public void setServerLocation(String serverLocation) {
         this.serverLocation = serverLocation;
+    }
+
+    public Short getSecurityCheck() {
+        return securityCheck;
+    }
+
+    public void setSecurityCheck(Short securityCheck) {
+        this.securityCheck = securityCheck;
+    }
+
+    public String getSecurityCheckRemark() {
+        return securityCheckRemark;
+    }
+
+    public void setSecurityCheckRemark(String securityCheckRemark) {
+        this.securityCheckRemark = securityCheckRemark;
     }
 }

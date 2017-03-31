@@ -21,6 +21,8 @@
       <result column="print_check_remark" jdbcType="VARCHAR" property="printCheckRemark" />
       <result column="consign" jdbcType="SMALLINT" property="consign" />
       <result column="consign_remark" jdbcType="VARCHAR" property="consignRemark" />
+      <result column="security_check" jdbcType="SMALLINT" property="securityCheck" />
+      <result column="security_check_remark" jdbcType="VARCHAR" property="securityCheckRemark" />
       <result column="other_remark" jdbcType="VARCHAR" property="otherRemark" />
       <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
       <result column="order_type" jdbcType="SMALLINT" property="orderType" />
@@ -177,6 +179,12 @@
       <if test="printCheckRemark != null">
         print_check_remark,
       </if>
+      <if test="securityCheck != null">
+        security_check,
+      </if>
+      <if test="securityCheckRemark != null">
+        security_check_remark,
+      </if>
       <if test="consign != null">
         consign,
       </if>
@@ -320,6 +328,12 @@
       <if test="consignRemark != null">
         #{consignRemark,jdbcType=VARCHAR},
       </if>
+      <if test="securityCheck != null">
+        #{securityCheck,jdbcType=SMALLINT},
+      </if>
+      <if test="securityCheckRemark != null">
+        #{securityCheckRemark,jdbcType=VARCHAR},
+      </if>
       <if test="otherRemark != null">
         #{otherRemark,jdbcType=VARCHAR},
       </if>
@@ -459,6 +473,12 @@
       <if test="consignRemark != null">
         consign_remark = #{consignRemark,jdbcType=VARCHAR},
       </if>
+      <if test="securityCheck != null">
+        consign = #{securityCheck,jdbcType=SMALLINT},
+      </if>
+      <if test="securityCheckRemark != null">
+        security_check_remark = #{securityCheckRemark,jdbcType=VARCHAR},
+      </if>
       <if test="otherRemark != null">
         other_remark = #{otherRemark,jdbcType=VARCHAR},
       </if>
@@ -519,9 +539,6 @@
       <if test="updateUser != null">
         update_user = #{updateUser,jdbcType=BIGINT},
       </if>
-      <if test="updateUser != null">
-        update_user = #{updateUser,jdbcType=BIGINT},
-      </if>
       <if test="serverCreateTime != null">
         server_create_time = #{serverCreateTime,jdbcType=TIMESTAMP},
       </if>
@@ -559,7 +576,7 @@
     select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
     o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
     o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,
-    o.server_create_time, o.server_create_user_id, o.server_create_user_name, o.server_update_time,o.server_location,
+    o.server_create_time, o.server_create_user_id, o.server_create_user_name, o.server_update_time,o.server_location,o.security_check,o.security_check_remark,
     server_update_user_id, server_update_user_name,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,f.flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
@@ -658,7 +675,7 @@
             select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
                 o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,
                 o.other_remark,o.order_status,o.order_type,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,o.protocol_type,
-                o.server_create_time, o.server_create_user_id, o.server_create_user_name, o.server_update_time,o.server_location,
+                o.server_create_time, o.server_create_user_id, o.server_create_user_name, o.server_update_time,o.server_location,o.security_check,o.security_check_remark,
                 f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
                 f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
 			from order_info o
@@ -781,7 +798,7 @@
     select orderFlightClient.*,p.passenger_id,p.name as passenger_name,p.phone,p.identity_card,p.work_unit,p.sit_no as passenger_sit_no,p.cabin_no,p.ticket_no,p.card_no,p.card_type,p.expire_time,p.passenger_type from
     (
       select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
-      o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
+      o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,o.security_check,o.security_check_remark,
       o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,o.create_user_name,o.along_total,o.server_location,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
@@ -810,12 +827,12 @@
 
   <update id="updateServerComplete" parameterType="map">
     UPDATE
-      order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{updateUser}
+      order_info SET server_complete = #{serverComplete}, update_time = NOW(), update_user = #{userId}
       <if test="serverComplete == 1">
-        ,server_complete_time = NOW()
+        ,server_complete_time = NOW(), server_complete_id = #{userId}, server_complete_name = #{serverCompleteName}
       </if>
       <if test="serverComplete == 0">
-        ,server_complete_time = NULL 
+        ,server_complete_time = NULL, server_complete_id = NULL, server_complete_name = NULL
       </if>
     WHERE airport_code = #{airportCode} AND flight_id = #{flightId}
 

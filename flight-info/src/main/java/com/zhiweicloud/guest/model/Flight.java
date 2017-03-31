@@ -7,6 +7,8 @@
 package com.zhiweicloud.guest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.zhiweicloud.guest.common.DisplayName;
+import com.zhiweicloud.guest.common.DisplayValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 */
 @ApiModel(value="Flight",description="flight")
 public class Flight extends BaseEntity{
+
     @ApiModelProperty(value="主键自增id",name="flightId", required=true)
     @NotEmpty
     @Id
@@ -46,96 +49,130 @@ public class Flight extends BaseEntity{
     private String flightArrcode;
 
     @ApiModelProperty(value="机号",name="planNo")
+    @DisplayName(name = "机号")
     private String planNo;
 
     @ApiModelProperty(value="机位",name="flightPosition")
+    @DisplayName(name = "机位")
     private String flightPosition;
 
     @ApiModelProperty(value="国际国内：国外：0，国内：1",name="boardInOut")
+    @DisplayName(name = "国际国内",map = {@DisplayValue(key = "0",value = "国外"),@DisplayValue(key = "1",value = "国内")})
     private Short boardInOut;
 
     @ApiModelProperty(value="出港：0，进港1",name="isInOrOut")
+    @DisplayName(name = "进出港",map = {@DisplayValue(key = "0",value = "出港"),@DisplayValue(key = "1",value = "进港")})
     private Short isInOrOut;
 
     @ApiModelProperty(value="远机位：0，近机位：1",name="isNearOrFar")
+    @DisplayName(name = "远机位",map = {@DisplayValue(key = "0",value = "远机位"),@DisplayValue(key = "1",value = "近机位")})
     private Short isNearOrFar;
 
     @ApiModelProperty(value="服务时间",name="serverTime")
+    @DisplayName(name = "服务时间")
     private Date serverTime;
 
     @ApiModelProperty(value="忽视",name="fdId")
     private String fdId;
 
     @ApiModelProperty(value="航空公司名称",name="flightCompany")
+    @DisplayName(name = "航空公司名称")
     private String flightCompany;
 
     @ApiModelProperty(value="计划起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimePlanDate")
+    @DisplayName(name = "计划起飞时间")
     private Date flightDeptimePlanDate;
 
     @ApiModelProperty(value="计划到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimePlanDate")
+    @DisplayName(name = "计划到达时间")
     private Date flightArrtimePlanDate;
 
     @ApiModelProperty(value="预计起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimeReadyDate")
+    @DisplayName(name = "预计起飞时间")
     private Date flightDeptimeReadyDate;
 
     @ApiModelProperty(value="预计到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimeReadyDate")
+    @DisplayName(name = "预计到达时间")
     private Date flightArrtimeReadyDate;
 
     @ApiModelProperty(value="实际起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimeDate")
+    @DisplayName(name = "实际起飞时间")
     private Date flightDeptimeDate;
 
     @ApiModelProperty(value="实际到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimeDate")
+    @DisplayName(name = "实际到达时间")
     private Date flightArrtimeDate;
 
     @ApiModelProperty(value="是否 经停 （0:不经停;1:经停 ）",name="stopFlag")
+    @DisplayName(name = "经停情况",map = {@DisplayValue(key = "0",value = "不经停"),@DisplayValue(key = "1",value = "经停")})
     private Short stopFlag;
 
     @ApiModelProperty(value="是否 共享 （0:不共享;1:共享 ）",name="shareFlag")
+    @DisplayName(name = "共享情况",map = {@DisplayValue(key = "0",value = "不共享"),@DisplayValue(key = "1",value = "共享")})
     private Short shareFlag;
 
     @ApiModelProperty(value="共享航班号",name="shareFlightNo")
+    @DisplayName(name = "共享航班号")
     private String shareFlightNo;
 
     @ApiModelProperty(value="补班 航班号 （取消 的航班才有此字段）",name="fillFlightNo")
+    @DisplayName(name = "补班航班号")
     private String fillFlightNo;
 
     @ApiModelProperty(value="登机口",name="boardGate")
+    @DisplayName(name = "登机口")
     private String boardGate;
 
     @ApiModelProperty(value="乘机状态（ 开始值机，值机结束，开始登机，催促登机，登机结束 ）",name="boardState")
+    @DisplayName(name = "乘机状态")
     private String boardState;
 
-    @ApiModelProperty(value="航班状态（计划，起飞，到达，延误，取消，备降，返航）(Plan,Take off,Arrivals,Delay,Cancel,Alternate,Return)",name="flightState")
+    @ApiModelProperty(value = "航班状态（计划，起飞，到达，延误，取消，备降，返航）(Plan,Take off,Arrivals,Delay,Cancel,Alternate,Return)", name = "flightState")
+    @DisplayName(name = "航班状态", map = {@DisplayValue(key = "Plan", value = "计划"), @DisplayValue(key = "Take off", value = "起飞"),
+            @DisplayValue(key = "Arrivals", value = "到达"), @DisplayValue(key = "Delay", value = "延误"), @DisplayValue(key = "Cancel", value = "取消"),
+            @DisplayValue(key = "Alternate", value = "备降"), @DisplayValue(key = "Return", value = "返航")})
     private String flightState;
 
     @ApiModelProperty(value="候机楼",name="flightHterminal")
+    @DisplayName(name = "候机楼")
     private String flightHterminal;
 
     @ApiModelProperty(value="接机楼",name="flightTerminal")
+    @DisplayName(name = "接机楼")
     private String flightTerminal;
 
     @ApiModelProperty(value="出发城市名",name="flightDep")
+    @DisplayName(name = "出发城市名")
     private String flightDep;
 
     @ApiModelProperty(value="到达城市名",name="flightArr")
+    @DisplayName(name = "到达城市名")
     private String flightArr;
 
     @ApiModelProperty(value="出发机场名",name="flightDepAirport")
+    @DisplayName(name = "出发机场名")
     private String flightDepAirport;
 
     @ApiModelProperty(value="到达机场名",name="flightArrAirport")
+    @DisplayName(name = "到达机场名")
     private String flightArrAirport;
 
     @ApiModelProperty(value="备降信息节点",name="alternateInfo")
+    @DisplayName(name = "备降信息节点")
     private String alternateInfo;
 
     @ApiModelProperty(value="出发地时区",name="orgTimezone")
+    @DisplayName(name = "出发地时区")
     private String orgTimezone;
 
     @ApiModelProperty(value="目的地时区",name="dstTimezone")
+    @DisplayName(name = "目的地时区")
     private String dstTimezone;
 
     @ApiModelProperty(value="航班属性（0:国内-国内;1国内-国际;2国内-地区;3:地区-国际;4:国际-国际;5:未知）",name="fcategory")
+    @DisplayName(name = "航班属性",map = {@DisplayValue(key = "0", value = "国内-国内"), @DisplayValue(key = "1", value = "国内-国际"),
+            @DisplayValue(key = "2", value = "国内-地区"), @DisplayValue(key = "3", value = "地区-国际"),
+            @DisplayValue(key = "4", value = "国际-国际"), @DisplayValue(key = "5", value = "未知")})
     private String fcategory;
 
     @ApiModelProperty(value="按商户传递原值返回",name="fid")

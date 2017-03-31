@@ -26,10 +26,13 @@ package com.zhiweicloud.guest.service;
 
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.BeanCompareUtils;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.mapper.FlightMapper;
+import com.zhiweicloud.guest.mapper.FlightUpdateLogMapper;
 import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightUpdateLog;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
@@ -51,6 +54,9 @@ public class ScheduleEventService {
 
     @Autowired
     private FlightMapper flightMapper;
+
+    @Autowired
+    private FlightUpdateLogMapper flightUpdateLogMapper;
 
     /**
      * 分页获取调度事件列表
@@ -158,8 +164,24 @@ public class ScheduleEventService {
      * 修改航班
      * @param flight
      */
-    public void flightUpdate(Flight flight) {
-        flightMapper.updateByPrimaryKeySelective(flight);
+    public void flightUpdate(Flight flight) throws Exception {
+        // 先查询出来航班信息
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightId", flight.getFlightId());
+        params.put("airportCode", flight.getAirportCode());
+        Flight oldFlight = flightMapper.selectByFlightId(flight.getFlightId());
+        if(oldFlight!=null){
+        System.out.println("数据库数据" + oldFlight.toString());
+        System.out.println("新传入数据" + flight.toString());
+            String updateMessage = BeanCompareUtils.compareTwoBean(oldFlight, flight);
+            FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
+            flightUpdateLog.setUpdateMessage(updateMessage);
+            flightUpdateLog.setCreateUser(flight.getUpdateUser());
+            flightUpdateLog.setFlightId(flight.getFlightId());
+            flightUpdateLog.setAirportCode(flight.getAirportCode());
+            flightUpdateLogMapper.insert(flightUpdateLog);
+            flightMapper.updateByPrimaryKeySelective(flight);
+        }
     }
 
     /**

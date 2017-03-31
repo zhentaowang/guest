@@ -56,13 +56,14 @@ public class ScheduleEventController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value="航班管理 - 修改航班", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
     public String flightUpdate(@ApiParam(value = "flight", required = true) @RequestBody String params,
-                         @Context final HttpHeaders headers){
+                               @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId){
         try{
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
-            String airportCode = headers.getRequestHeaders().getFirst("client-id");
             for (int i = 0; i < param.size(); i++) {
                 Flight flight = param.getJSONObject(i).toJavaObject(Flight.class);
                 flight.setAirportCode(airportCode);
+                flight.setUpdateUser(userId);
                 scheduleEventService.flightUpdate(flight);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
@@ -308,4 +309,5 @@ public class ScheduleEventController {
             return JSON.toJSONString(LXResult.error());
         }
     }
+
 }

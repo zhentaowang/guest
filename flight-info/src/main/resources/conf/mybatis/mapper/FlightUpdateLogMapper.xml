@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.FlightUpdateLogMapper">
+
+  <resultMap id="SimpleResultMap" type="com.zhiweicloud.guest.model.FlightUpdateLog">
+    <id column="flight_log_id" jdbcType="BIGINT" property="flightLogId" />
+    <result column="flight_id" jdbcType="BIGINT" property="flightId" />
+    <result column="update_message" jdbcType="VARCHAR" property="updateMessage" />
+    <result column="operator_name" jdbcType="VARCHAR" property="operatorName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+  </resultMap>
+
+  <sql id="selectName">
+    <trim suffixOverrides=",">
+      flight_log_id,
+      flight_id,
+      operator_name,
+      update_message,
+      is_deleted,
+      airport_code,
+      create_time,
+      create_user,
+      update_time,
+      update_user
+    </trim>
+  </sql>
+
+  <sql id="insertName">
+    <trim prefix="(" suffixOverrides="," suffix=")">
+      <if test="null != flightId">flight_id,</if>
+      <if test="null != operatorName">operator_name,</if>
+      <if test="null != updateMessage">update_message,</if>
+      <if test="null != createUser">create_user,</if>
+      <if test="null != airportCode">airport_code,</if>
+    </trim>
+  </sql>
+
+  <sql id="insertValue">
+    <trim prefix="(" suffixOverrides="," suffix=")">
+      <if test="null != flightId">#{flightId, jdbcType=BIGINT},</if>
+      <if test="null != operatorName">#{operatorName,jdbcType=VARCHAR},</if>
+      <if test="null != updateMessage">#{updateMessage, jdbcType=VARCHAR},</if>
+      <if test="null != createUser">#{createUser, jdbcType=BIGINT},</if>
+      <if test="null != airportCode">#{airportCode, jdbcType=VARCHAR},</if>
+    </trim>
+  </sql>
+
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.FlightUpdateLog">
+    INSERT INTO flight_update_log
+    <include refid="insertName"/>
+    VALUES
+    <include refid="insertValue"/>
+  </insert>
+
+  <select id="selectByLogId" resultType="com.zhiweicloud.guest.model.FlightUpdateLog">
+    SELECT
+    <include refid="selectName"/>
+    FROM flight_update_log
+    WHERE
+    flight_log_id = #{flightLogId,jdbcType=BIGINT} AND is_delete = 0 AND airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByFlightId" resultType="com.zhiweicloud.guest.model.FlightUpdateLog">
+    SELECT
+    <include refid="selectName"/>
+    FROM flight_update_log l LEFT JOIN flight f
+    ON l.flight_id = f.flight_id
+    WHERE
+    flight_id = #{flightId,jdbcType=BIGINT} AND is_delete = 0 AND airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByFlightIdForShow" resultMap="SimpleResultMap">
+    SELECT
+	CASE
+    WHEN l.operator_name IS NULL THEN
+	e.NAME
+    ELSE l.operator_name
+    END as operator_name,l.flight_log_id,l.flight_id,
+    json_extract(l.update_message,'$') update_message,l.create_time
+    FROM
+	  flight_update_log l
+    LEFT JOIN employee e ON l.create_user = e.employee_id WHERE l.flight_id = #{flightId,jdbcType=BIGINT} AND l.is_deleted = 0 AND l.airport_code = #{airportCode,jdbcType=VARCHAR} ORDER BY l.create_time DESC
+  </select>
+
+</mapper>

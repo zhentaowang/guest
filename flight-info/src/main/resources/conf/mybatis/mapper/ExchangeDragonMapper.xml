@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.ExchangeDragonMapper">
+
+  <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.model.ExchangeDragon">
+    <id column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+    <result column="exchange_type" jdbcType="SMALLINT" property="exchangeType" />
+    <result column="invoke_time" jdbcType="TIMESTAMP" property="invokeTime" />
+    <result column="invoke_result" jdbcType="SMALLINT" property="invokeResult" />
+  </resultMap>
+  
+  <sql id="selectName">
+    <trim suffixOverrides=",">
+      exchange_id,
+      flight_date,
+      flight_no,
+      exchange_type,
+      invoke_time,
+      invoke_result,
+      is_deleted,
+      airport_code,
+      create_time,
+      create_user,
+      update_time,
+      update_user
+    </trim>
+  </sql>
+
+  <sql id="selectWhere">
+    <where>
+      <if test="null != flightDate">AND flight_date = #{flightDate},</if>
+      <if test="null != flightNo">AND flight_no = #{flightNo},</if>
+      <if test="null != exchangeType">AND exchange_type = #{exchangeType},</if>
+      <if test="null != invokeTime">AND invoke_time = #{invokeTime},</if>
+      <if test="null != invokeResult">AND invoke_result = #{invokeResult},</if>
+      AND is_delete = 0
+    </where>
+  </sql>
+
+  <sql id="insertName">
+    <trim prefix="(" suffixOverrides="," suffix=")">
+      <if test="null != flightDate">flight_date,</if>
+      <if test="null != flightNo">flight_no,</if>
+      <if test="null != exchangeType">exchange_type,</if>
+      <if test="null != invokeTime">invoke_time,</if>
+      <if test="null != invokeResult">invoke_result,</if>
+      <if test="null != createUser">create_user,</if>
+      <if test="null != airportCode">airport_code,</if>
+    </trim>
+  </sql>
+
+  <sql id="insertValue">
+    <trim prefix="(" suffixOverrides="," suffix=")">
+      <if test="null != flightDate">#{flightDate, jdbcType=TIMESTAMP},</if>
+      <if test="null != flightNo">#{flightNo, jdbcType=VARCHAR},</if>
+      <if test="null != exchangeType">#{exchangeType, jdbcType=SMALLINT},</if>
+      <if test="null != invokeTime">#{invokeTime, jdbcType=TIMESTAMP},</if>
+      <if test="null != invokeResult">#{invokeResult, jdbcType=SMALLINT},</if>
+      <if test="null != createUser">#{createUser, jdbcType=BIGINT},</if>
+      <if test="null != airportCode">#{airportCode, jdbcType=VARCHAR},</if>
+    </trim>
+  </sql>
+
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.ExchangeDragon">
+    INSERT INTO flight_exchange_dragon
+    <include refid="insertName"/>
+    VALUES
+    <include refid="insertValue"/>
+  </insert>
+
+  <delete id="deleteByExchangeId" parameterType="java.lang.Long">
+    DELETE FROM flight_exchange_dragon
+    WHERE exchange_id = #{exchangeId,jdbcType=BIGINT}
+  </delete>
+
+  <update id="updateForDeleteByExchangeId" parameterType="java.lang.Long">
+    UPDATE flight_exchange_dragon
+    SET is_deleted = 1
+    WHERE exchange_id = #{exchangeId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByExchangeId" resultType="com.zhiweicloud.guest.model.ExchangeDragon">
+    SELECT
+    <include refid="selectName"/>
+    FROM flight_exchange_dragon
+    WHERE
+    exchange_id = #{exchangeId,jdbcType=BIGINT} AND is_delete = 0 AND airport_code = #{airportCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByCondition" parameterType="com.zhiweicloud.guest.model.ExchangeDragon" resultType="com.zhiweicloud.guest.model.ExchangeDragon">
+    SELECT
+    <include refid="selectName"/>
+    FROM flight_exchange_dragon
+    <include refid="selectWhere"/>
+  </select>
+
+</mapper>

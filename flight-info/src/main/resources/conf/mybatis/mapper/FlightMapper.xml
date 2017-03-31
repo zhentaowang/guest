@@ -61,6 +61,7 @@
     server_num, serv_id, server_complete_name, server_complete_id
   </sql>
 
+  <!-- tc add 2017-03-30 -->
   <sql id="Base_Column_List_Update_Flight">
     flight_id, flight_date, flight_no, flight_depcode, flight_arrcode, plan_no, flight_position,
     board_in_out, is_in_or_out, is_near_or_far, server_time, fd_id, flight_company, flight_deptime_plan_date, flight_arrtime_plan_date,
@@ -70,6 +71,46 @@
     flight_arr_airport, alternate_info, org_timezone, dst_timezone, fcategory, fid, board_gate_time
   </sql>
 
+  <resultMap id="SimpleFlightMap" type="com.zhiweicloud.guest.model.Flight">
+    <id column="flight_id" jdbcType="BIGINT" property="flightId"/>
+    <result column="flight_date" jdbcType="DATE" property="flightDate"/>
+    <result column="flight_no" jdbcType="VARCHAR" property="flightNo"/>
+    <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode"/>
+    <result column="flight_arrcode" jdbcType="VARCHAR" property="flightArrcode"/>
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo"/>
+    <result column="flight_position" jdbcType="VARCHAR" property="flightPosition"/>
+    <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut"/>
+    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut"/>
+    <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar"/>
+    <result column="server_time" jdbcType="TIMESTAMP" property="serverTime"/>
+    <result column="fd_id" jdbcType="VARCHAR" property="fdId"/>
+    <result column="flight_company" jdbcType="VARCHAR" property="flightCompany"/>
+    <result column="flight_deptime_plan_date" jdbcType="TIMESTAMP" property="flightDeptimePlanDate"/>
+    <result column="flight_arrtime_plan_date" jdbcType="TIMESTAMP" property="flightArrtimePlanDate"/>
+    <result column="flight_deptime_ready_date" jdbcType="TIMESTAMP" property="flightDeptimeReadyDate"/>
+    <result column="flight_arrtime_ready_date" jdbcType="TIMESTAMP" property="flightArrtimeReadyDate"/>
+    <result column="flight_deptime_date" jdbcType="TIMESTAMP" property="flightDeptimeDate"/>
+    <result column="flight_arrtime_date" jdbcType="TIMESTAMP" property="flightArrtimeDate"/>
+    <result column="stop_flag" jdbcType="SMALLINT" property="stopFlag"/>
+    <result column="share_flag" jdbcType="SMALLINT" property="shareFlag"/>
+    <result column="share_flight_no" jdbcType="VARCHAR" property="shareFlightNo"/>
+    <result column="fill_flight_no" jdbcType="VARCHAR" property="fillFlightNo"/>
+    <result column="board_gate" jdbcType="VARCHAR" property="boardGate"/>
+    <result column="board_state" jdbcType="VARCHAR" property="boardState"/>
+    <result column="flight_state" jdbcType="VARCHAR" property="flightState"/>
+    <result column="flight_hterminal" jdbcType="VARCHAR" property="flightHterminal"/>
+    <result column="flight_terminal" jdbcType="VARCHAR" property="flightTerminal"/>
+    <result column="flight_dep" jdbcType="VARCHAR" property="flightDep"/>
+    <result column="flight_arr" jdbcType="VARCHAR" property="flightArr"/>
+    <result column="flight_dep_airport" jdbcType="VARCHAR" property="flightDepAirport"/>
+    <result column="flight_arr_airport" jdbcType="VARCHAR" property="flightArrAirport"/>
+    <result column="alternate_info" jdbcType="VARCHAR" property="alternateInfo"/>
+    <result column="org_timezone" jdbcType="VARCHAR" property="orgTimezone"/>
+    <result column="dst_timezone" jdbcType="VARCHAR" property="dstTimezone"/>
+    <result column="fcategory" jdbcType="VARCHAR" property="fcategory"/>
+    <result column="fid" jdbcType="VARCHAR" property="fid"/>
+    <result column="board_gate_time" jdbcType="VARCHAR" property="boardGateTime"/>
+  </resultMap>
 
   <select id="getFlightListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
@@ -252,8 +293,7 @@
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select f.*, o.server_complete, o.server_complete_time, o.server_complete_name from flight as f left join
     (select server_complete, server_complete_time, flight_id, server_complete_name from order_info where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT}
-    group by flight_id)
-    as o on f.flight_id = o.flight_id where f.flight_id = #{flightId,jdbcType=BIGINT} and f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0
+    group by flight_id) as o on f.flight_id = o.flight_id where f.flight_id = #{flightId,jdbcType=BIGINT} and f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from flight
@@ -524,8 +564,9 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Flight">
-    update flight
+    UPDATE flight
     <set>
       <if test="flightDate != null">
         flight_date = #{flightDate,jdbcType=DATE},
@@ -638,9 +679,11 @@
       <if test="boardGateTime != null">
         board_gate_time = #{boardGateTime,jdbcType=VARCHAR},
       </if>
+      update_time = now(),update_user = #{updateUser,jdbcType=BIGINT}
     </set>
-    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    WHERE flight_id = #{flightId,jdbcType=BIGINT}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
     set flight_date = #{flightDate,jdbcType=DATE},
@@ -792,6 +835,14 @@
     flight_no = #{flightNo,jdbcType=VARCHAR} AND
     flight_depcode = #{flightDepcode,jdbcType=VARCHAR} AND
     flight_arrcode = #{flightArrcode,jdbcType=VARCHAR} AND
+    is_deleted = 0
+  </select>
+
+  <select id="selectByFlightId" parameterType="java.lang.Long" resultMap="SimpleFlightMap">
+    SELECT
+    <include refid="Base_Column_List_Update_Flight"/>
+    FROM flight WHERE
+    flight_id = #{flightId, jdbcType=BIGINT} AND
     is_deleted = 0
   </select>
 
