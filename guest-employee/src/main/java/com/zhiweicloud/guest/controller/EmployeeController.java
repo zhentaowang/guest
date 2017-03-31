@@ -274,7 +274,7 @@ public class EmployeeController {
 
     /**
      * 根据角色查代办人 下拉框
-     *
+     * （目前用全部员工，前端不传roleId）
      * @return
      */
     @GET
@@ -282,12 +282,12 @@ public class EmployeeController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "系统中用到的员工下拉框，只包含id，和value的对象", notes = "根据数据字典的角色id获取用户数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public String getEmployeeDropdownListByRoleId(ContainerRequestContext request,
-                                                  @QueryParam(value = "roleId") Long roleId) {
+    public String getEmployeeDropdownListByRoleId(@HeaderParam("client-id") String airportCode,
+                                                  @QueryParam(value = "roleId") Long roleId,
+                                                  @QueryParam(value = "name") String name) {
         LZResult<List<Dropdownlist>> result = new LZResult<>();
         try {
-            String airportCode = request.getHeaders().getFirst("client-id").toString();
-            List<Dropdownlist> list = employeeService.getEmployeeDropdownListByRoleId(airportCode, roleId);
+            List<Dropdownlist> list = employeeService.getEmployeeDropdownListByRoleId(airportCode, roleId, name);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);

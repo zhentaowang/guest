@@ -29,6 +29,9 @@
     <if test="roleId != null">
       AND r.role_id = #{roleId} and r.is_deleted=0
     </if>
+    <if test="name != null and !name.equals('')">
+      AND e.name like concat('%', #{name}, '%')
+    </if>
     ORDER BY e.`name`
   </select>
 
