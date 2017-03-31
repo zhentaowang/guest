@@ -65,6 +65,9 @@
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
       update_time = CURRENT_TIMESTAMP
     </set>
     where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT}

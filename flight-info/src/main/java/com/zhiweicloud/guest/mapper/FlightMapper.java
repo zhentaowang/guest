@@ -51,7 +51,28 @@ public interface FlightMapper {
 
     Integer updateByPrimaryKeySelective(Flight flight);
 
+    /**
+     * 是否存在航班信息
+     *
+     * @param flight 需要判断的航班对象
+     *               判断条件为 航班号，航班日期，航班出发地三字码，航班目的地三字码
+     * @return
+     */
     Flight isFlightExist(Flight flight);
 
+    /**
+     * 更新航班信息
+     *
+     * @param flight 需要更新的航班对象
+     */
     void updateFlight(Flight flight);
+
+    /**
+     * 根据航班ID查询航班对象
+     *
+     * @param flightId
+     * @return
+     */
+    Flight selectByFlightId(Long flightId);
+
 }

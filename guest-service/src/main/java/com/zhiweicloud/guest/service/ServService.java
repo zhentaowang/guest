@@ -158,10 +158,11 @@ public class ServService {
      * @param ids
      * @param airportCode
      */
-    public void deleteById(List<Long> ids,String airportCode) {
+    public void deleteById(List<Long> ids,String airportCode, Long userId) {
         for(int i = 0; i< ids.size();i++){
             Serv serv = new Serv();
             serv.setAirportCode(airportCode);
+            serv.setUpdateUser(userId);
             serv.setServId(ids.get(i));
             serv.setIsDeleted(Constant.MARK_AS_DELETED);
             servMapper.updateByIdAndAirportCode(serv);

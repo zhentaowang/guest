@@ -9,6 +9,7 @@ import javax.servlet.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 
 /**
  * UpdateFlightFilter.java.
@@ -44,16 +45,16 @@ public class UpdateFlightFilter implements Filter{
         }
         try {
             String dataStr = sb.toString();
-            LOG.info("完整的参数" + dataStr);
+//            LOG.info("完整的参数" + dataStr);
             String data = dataStr.substring(dataStr.indexOf("{"), dataStr.indexOf("}") + 1);
-            System.out.println("data数据" + dataStr);
             String signIn = dataStr.substring(dataStr.indexOf("&") + 1);
             signIn = signIn.substring(signIn.indexOf("=") + 1);
-            signIn = signIn.replace("%2B", "+");
-            LOG.info("参数的sign" + signIn);
+//            signIn = signIn.replace("%2B", "+");
+            signIn = URLDecoder.decode(signIn, "UTF-8");
+//            LOG.info("参数的sign" + signIn);
             String signRsa = DragonSignature.rsaSign("data=" + data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
-            LOG.info("计算的sign" + signRsa);
-            LOG.info("是否相等" + signIn.equals(signRsa));
+//            LOG.info("计算的sign" + signRsa);
+//            LOG.info("是否相等" + signIn.equals(signRsa));
             if (signIn.equals(signRsa)) {
                 request.setAttribute("data", data);
                 chain.doFilter(request, response);

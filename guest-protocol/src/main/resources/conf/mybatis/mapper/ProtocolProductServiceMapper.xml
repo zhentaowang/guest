@@ -68,9 +68,12 @@
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
+      <if test="updateUser != null">
+      update_user = #{updateUser,jdbcType=BIGINT},
+    </if>
       update_time = CURRENT_TIMESTAMP
     </set>
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_service_id = #{protocolProductServiceId,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
   </update>
   <select id="getServiceMenuList" parameterType="java.util.Map" resultMap="BaseResultMap">
     select p.service_type_allocation_id, s.category from protocol_product_service as p

@@ -111,11 +111,11 @@ public class OrderInfoController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo/*,  @HeaderParam("client-id") String airportCode,
-                               @HeaderParam("user-id") Long userId*/) {
+    public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
+                               @HeaderParam("user-id") Long userId) {
         LZResult<String> result = new LZResult<>();
-        String airportCode = "LJG";
-        Long userId = 108L;
+        /*String airportCode = "LJG";
+        Long userId = 108L;*/
         try {
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);

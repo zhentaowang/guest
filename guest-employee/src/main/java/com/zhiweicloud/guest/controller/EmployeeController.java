@@ -304,7 +304,7 @@ public class EmployeeController {
     @Path("getUserName")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "根据accesstoken获取用户名", notes = "返回登录人用户名", httpMethod = "GET", produces = "application/json")
-    public String getCardType(@HeaderParam("client-id") String airportCode,@HeaderParam("user-id") Long userId){
+    public String getUserName(@HeaderParam("client-id") String airportCode,@HeaderParam("user-id") Long userId){
         LZResult<Object> result = new LZResult<>();
         try {
             Map employee = employeeService.getById(userId,airportCode);

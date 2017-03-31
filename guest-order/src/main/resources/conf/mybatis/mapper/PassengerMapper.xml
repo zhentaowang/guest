@@ -104,9 +104,6 @@
       <if test="workUnit != null">
         #{workUnit,jdbcType=VARCHAR},
       </if>
-      <if test="vipCard != null">
-        #{vipCard,jdbcType=VARCHAR},
-      </if>
       <if test="sitNo != null">
         #{sitNo,jdbcType=VARCHAR},
       </if>
