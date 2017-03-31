@@ -564,8 +564,9 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Flight">
-    update flight
+    UPDATE flight
     <set>
       <if test="flightDate != null">
         flight_date = #{flightDate,jdbcType=DATE},
@@ -678,9 +679,11 @@
       <if test="boardGateTime != null">
         board_gate_time = #{boardGateTime,jdbcType=VARCHAR},
       </if>
+      update_time = now(),update_user = #{updateUser,jdbcType=BIGINT}
     </set>
-    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    WHERE flight_id = #{flightId,jdbcType=BIGINT}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
     set flight_date = #{flightDate,jdbcType=DATE},
