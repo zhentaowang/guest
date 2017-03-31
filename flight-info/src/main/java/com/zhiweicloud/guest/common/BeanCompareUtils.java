@@ -1,7 +1,5 @@
 package com.zhiweicloud.guest.common;
 
-import com.zhiweicloud.guest.model.Flight;
-
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -53,7 +51,7 @@ public class BeanCompareUtils {
                     value = simpleDateFormat.format((Date) o2);
                 }
                 DisplayValue[] map = displayName.map();
-                if (o2 != null && !o2.equals(o1)) {
+                if (o2 != null && !"".equals(o2.toString()) && !o2.equals(o1)) {
                     value = getValue(map, value, o2);
                     sb.append("\"").append(name).append("\"").append(":").append("\"").append(value).append("\"").append(",");
                 }
@@ -63,41 +61,23 @@ public class BeanCompareUtils {
         return sb.toString();
     }
 
+    /**
+     * 根据key得到value 用于存储标识和中文对应
+     * @param map
+     * @param value
+     * @param o
+     * @return
+     */
     private static Object getValue(DisplayValue[] map,Object value,Object o) {
         if (map.length > 0) {
             for (DisplayValue displayValue : map) {
-                if (displayValue.key().equals(o)) {
+                boolean equals = displayValue.key().equals(String.valueOf(o));
+                if (equals) {
                     value = displayValue.value();
                 }
             }
         }
         return value;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Flight flight1 = new Flight();
-        Flight flight2 = new Flight();
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat format2 =  new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        flight1.setFlightDate(format.parse("2017-03-29"));
-        flight2.setFlightDate(format.parse("2017-03-29"));
-        flight1.setAirportCode("LJG");
-        flight2.setAirportCode("LJG");
-        flight1.setFlightNo("MU7424");
-        flight2.setFlightNo("MU7424");
-        flight1.setBoardState("开始登机");
-        flight2.setBoardState("登机结束");
-        flight1.setFcategory("-1");
-        flight2.setFcategory("0");
-        flight2.setDstTimezone("28800");
-        flight2.setOrgTimezone("28800");
-        flight1.setBoardGate("31");
-        flight2.setBoardGate("7");
-        flight1.setFlightDeptimeReadyDate(format2.parse("2017-03-29 11:22:00"));
-        flight2.setFlightDeptimeReadyDate(format2.parse("2017-03-29 15:06:00"));
-        flight1.setFlightArrtimeReadyDate(format2.parse("2017-03-29 13:12:00"));
-        flight2.setFlightArrtimeReadyDate(format2.parse("2017-03-29 17:19:00"));
-        System.out.println(compareTwoBean(flight1, flight2));
     }
 
 }
