@@ -115,10 +115,11 @@ public class EmployeeService {
         return employeeMapper.getEmployeeDropdownList(airportCode);
     }
 
-    public List<Dropdownlist> getEmployeeDropdownListByRoleId(String airportCode, Long roleId){
+    public List<Dropdownlist> getEmployeeDropdownListByRoleId(String airportCode, Long roleId, String name){
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("airportCode",airportCode);
         map.put("roleId",roleId);
+        map.put("name",name);
         return employeeMapper.getEmployeeDropdownListByRoleId(map);
     }
 
