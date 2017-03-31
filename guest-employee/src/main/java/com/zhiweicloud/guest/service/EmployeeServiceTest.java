@@ -35,8 +35,8 @@ public class EmployeeServiceTest {
 
     @Test
     public void getEmployeeDropdownListByRoleId() throws  Exception {
-        List<Dropdownlist> list =employeeService.getEmployeeDropdownListByRoleId("LJG",18L);
-        List<Dropdownlist> list2 =employeeService.getEmployeeDropdownListByRoleId("LJG",null);
+        List<Dropdownlist> list =employeeService.getEmployeeDropdownListByRoleId("LJG",18L,null);
+        List<Dropdownlist> list2 =employeeService.getEmployeeDropdownListByRoleId("LJG",null,null);
         System.out.println(111);
     }
 

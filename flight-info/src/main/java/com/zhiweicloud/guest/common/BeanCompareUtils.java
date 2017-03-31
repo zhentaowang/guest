@@ -28,13 +28,14 @@ public class BeanCompareUtils {
      * @return
      * @throws Exception
      */
-    public static<T> String compareTwoBean(T t1, T t2) throws Exception {
+    public static <T> String compareTwoBean(T t1, T t2) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FORMAT_DATE);
         Object value; // 输出值
         String name;    // 输出名字
         StringBuilder sb = new StringBuilder("{");
         Class<?> clazz = t1.getClass();
         Field[] fields = clazz.getDeclaredFields();
+        int count = 0;  // 改变的字段数量
         for (Field field : fields) {
             // 如果有DisplayName注解才继续
             DisplayName displayName = field.getAnnotation(DisplayName.class);
@@ -54,11 +55,16 @@ public class BeanCompareUtils {
                 if (o2 != null && !"".equals(o2.toString()) && !o2.equals(o1)) {
                     value = getValue(map, value, o2);
                     sb.append("\"").append(name).append("\"").append(":").append("\"").append(value).append("\"").append(",");
+                    count++;
                 }
             }
         }
-        sb.deleteCharAt(sb.length() - 1).append("}");
-        return sb.toString();
+        if (count > 0) {
+            sb.deleteCharAt(sb.length() - 1).append("}");
+            return sb.toString();
+        } else {
+            return null;
+        }
     }
 
     /**
