@@ -305,5 +305,5 @@ public class ScheduleEventController {
             return JSON.toJSONString(LXResult.error());
         }
     }
-    
+
 }
