@@ -47,6 +47,30 @@ public class ScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="调度时间",name="scheduleTime")
     private Date scheduleTime;
 
+    @Transient
+    @ApiModelProperty(value="调度事件更新人",name="scheduleUpdateUserName")
+    private String scheduleUpdateUserName;
+
+    @Transient
+    @ApiModelProperty(value="调度事件备注说明",name="remark")
+    private String remark;
+
+    public String getScheduleUpdateUserName() {
+        return scheduleUpdateUserName;
+    }
+
+    public void setScheduleUpdateUserName(String scheduleUpdateUserName) {
+        this.scheduleUpdateUserName = scheduleUpdateUserName;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public Date getScheduleTime() {
         return scheduleTime;
     }

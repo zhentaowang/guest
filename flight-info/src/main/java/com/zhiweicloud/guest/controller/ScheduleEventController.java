@@ -104,7 +104,7 @@ public class ScheduleEventController {
             @QueryParam(value = "rows") Integer rows) {
         Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode","LJG");
+        param.put("airportCode",airportCode);
         param.put("flightNo",flightNo);
         param.put("flightDate",flightDate);
         param.put("flightState",flightState);
@@ -262,17 +262,21 @@ public class ScheduleEventController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "调度事件管理 - 获取调度事件下拉框 ", notes = "返回调度时间和类型", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
-//            @ApiImplicitParam(name = "isInOrOut", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "schedule", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+            @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "isInOrOut", value = "进出港状态", dataType = "Long", defaultValue = "1", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "scheduleType", value = "调度类型", dataType = "String", defaultValue = "VIP调度", required = true, paramType = "query")
     })
     public String getScheduleEventBox(@Context final HttpHeaders headers,
-                                      @QueryParam(value = "flightId") Long flightId
+                                      @QueryParam(value = "flightId") Long flightId,
+                                      @QueryParam(value = "isInOrOut") Long isInOrOut,
+                                      @QueryParam(value = "scheduleType") String scheduleType
     ) {
         Map<String,Object> param = new HashMap<>();
         String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
+        param.put("isInOrOut",isInOrOut);
+        param.put("scheduleType",scheduleType);
         List<ScheduleEvent> scheduleEvent = scheduleEventService.getScheduleEventBox(param);
         return JSON.toJSONStringWithDateFormat(new LZResult<>(scheduleEvent), "yyyy-MM-dd HH:mm:ss");
     }
@@ -305,4 +309,5 @@ public class ScheduleEventController {
             return JSON.toJSONString(LXResult.error());
         }
     }
+
 }

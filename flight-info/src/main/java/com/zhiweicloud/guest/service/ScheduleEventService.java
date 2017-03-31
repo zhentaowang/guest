@@ -125,10 +125,12 @@ public class ScheduleEventService {
      */
     public List<ScheduleEvent> getScheduleEventByFlightId(Map<String,Object> param) {
         List<ScheduleEvent> scheduleEventList = scheduleEventMapper.selectByFlightId(param);
-        Date serverCompleteTime = flightMapper.selectByPrimaryKey(param).getServerCompleteTime();
-        if(serverCompleteTime != null){
+        Flight flight = flightMapper.selectByPrimaryKey(param);
+        if(flight.getServerCompleteTime() != null){
             ScheduleEvent scheduleEvent = new ScheduleEvent();
-            scheduleEvent.setScheduleTime(serverCompleteTime);
+            scheduleEvent.setScheduleTime(flight.getServerCompleteTime());
+            scheduleEvent.setScheduleUpdateUserName(flight.getServerCompleteName());
+//            scheduleEvent.setScheduleUpdateUserName("超级管理员");
             scheduleEvent.setName("服务完成");
             scheduleEventList.add(scheduleEvent);
         }

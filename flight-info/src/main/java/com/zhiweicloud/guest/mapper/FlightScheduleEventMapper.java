@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public interface FlightScheduleEventMapper {
 
-    ScheduleEvent selectByPrimaryKey(Map<String, Object> map);
+    FlightScheduleEvent selectByPrimaryKey(Map<String, Object> map);
 
     void deleteByPrimaryKey(Long id);
 

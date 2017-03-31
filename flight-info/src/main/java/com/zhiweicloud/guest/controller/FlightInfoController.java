@@ -268,10 +268,11 @@ public class FlightInfoController {
     }
 
     /**
-     * 得到航班信息修改日志
-     * @param flightId
-     * @param airportCode
-     * @param userId
+     * 航班信息修改日志
+     *
+     * @param flightId    航班ID
+     * @param airportCode 客户端标识
+     * @param userId      用户ID
      * @return
      */
     @GET
@@ -285,7 +286,7 @@ public class FlightInfoController {
             @HeaderParam("user-id") Long userId) {
         LZResult<List<FlightUpdateLog>> result = new LZResult<>();
         try {
-            List<FlightUpdateLog> list = flightService.selectFlightLog(flightId, "LJG");
+            List<FlightUpdateLog> list = flightService.selectFlightLog(flightId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
