@@ -126,7 +126,7 @@ public class ScheduleEventService {
     public List<ScheduleEvent> getScheduleEventByFlightId(Map<String,Object> param) {
         List<ScheduleEvent> scheduleEventList = scheduleEventMapper.selectByFlightId(param);
         Flight flight = flightMapper.selectByPrimaryKey(param);
-        if(flight.getServerCompleteTime() != null){
+        if(flight.getServerComplete() == 1){
             ScheduleEvent scheduleEvent = new ScheduleEvent();
             scheduleEvent.setScheduleTime(flight.getServerCompleteTime());
             scheduleEvent.setScheduleUpdateUserName(flight.getServerCompleteName());
