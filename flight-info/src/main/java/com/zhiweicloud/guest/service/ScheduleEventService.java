@@ -171,16 +171,16 @@ public class ScheduleEventService {
         params.put("airportCode", flight.getAirportCode());
         Flight oldFlight = flightMapper.selectByFlightId(flight.getFlightId());
         if(oldFlight!=null){
-        System.out.println("数据库数据" + oldFlight.toString());
-        System.out.println("新传入数据" + flight.toString());
             String updateMessage = BeanCompareUtils.compareTwoBean(oldFlight, flight);
-            FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
-            flightUpdateLog.setUpdateMessage(updateMessage);
-            flightUpdateLog.setCreateUser(flight.getUpdateUser());
-            flightUpdateLog.setFlightId(flight.getFlightId());
-            flightUpdateLog.setAirportCode(flight.getAirportCode());
-            flightUpdateLogMapper.insert(flightUpdateLog);
-            flightMapper.updateByPrimaryKeySelective(flight);
+            if(updateMessage!= null){
+                FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
+                flightUpdateLog.setUpdateMessage(updateMessage);
+                flightUpdateLog.setCreateUser(flight.getUpdateUser());
+                flightUpdateLog.setFlightId(flight.getFlightId());
+                flightUpdateLog.setAirportCode(flight.getAirportCode());
+                flightUpdateLogMapper.insert(flightUpdateLog);
+                flightMapper.updateByPrimaryKeySelective(flight);
+            }
         }
     }
 
