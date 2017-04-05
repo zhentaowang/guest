@@ -207,7 +207,7 @@ public class Flight extends BaseEntity{
 
     @Transient
     @ApiModelProperty(value="服务完成状态",name="serverComplete")
-    private String serverComplete;
+    private Short serverComplete;
 
     @Transient
     @ApiModelProperty(value="服务完成时间",name="serverCompleteTime")
@@ -261,11 +261,11 @@ public class Flight extends BaseEntity{
         this.serverCompleteTime = serverCompleteTime;
     }
 
-    public String getServerComplete() {
+    public Short getServerComplete() {
         return serverComplete;
     }
 
-    public void setServerComplete(String serverComplete) {
+    public void setServerComplete(Short serverComplete) {
         this.serverComplete = serverComplete;
     }
 

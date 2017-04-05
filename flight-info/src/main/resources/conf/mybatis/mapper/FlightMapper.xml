@@ -44,7 +44,7 @@
     <result column="schedule_event_name" jdbcType="TIMESTAMP" property="scheduleEventName" />
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
     <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
-    <result column="server_complete" jdbcType="VARCHAR" property="serverComplete" />
+    <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
     <result column="server_complete_name" jdbcType="VARCHAR" property="serverCompleteName" />
     <result column="server_complete_id" jdbcType="BIGINT" property="serverCompleteId" />
     <result column="server_complete_time" jdbcType="TIMESTAMP" property="serverCompleteTime" />

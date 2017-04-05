@@ -369,9 +369,8 @@ public class OrderInfoService {
         //远程调用查询该用户id，的用户名字，存到订单表（多余的字段）
         JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
         if (createUserObject != null) {
-            JSONArray jsonArray = createUserObject.getJSONArray("data");
-            String createUserName = jsonArray.getJSONObject(0).get("name").toString();
-            map.put("serverCompleteName", createUserName);
+            JSONObject obj = createUserObject.getJSONObject("data");
+            map.put("serverCompleteName", obj.get("name").toString());
         }
         map.put("userId", userId);
         map.put("airportCode", airportCode);

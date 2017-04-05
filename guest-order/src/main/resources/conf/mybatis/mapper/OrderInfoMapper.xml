@@ -179,17 +179,17 @@
       <if test="printCheckRemark != null">
         print_check_remark,
       </if>
-      <if test="securityCheck != null">
-        security_check,
-      </if>
-      <if test="securityCheckRemark != null">
-        security_check_remark,
-      </if>
       <if test="consign != null">
         consign,
       </if>
       <if test="consignRemark != null">
         consign_remark,
+      </if>
+      <if test="securityCheck != null">
+        security_check,
+      </if>
+      <if test="securityCheckRemark != null">
+        security_check_remark,
       </if>
       <if test="otherRemark != null">
         other_remark,
