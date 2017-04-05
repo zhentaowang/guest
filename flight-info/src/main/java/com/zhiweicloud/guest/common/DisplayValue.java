@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * DisplayValue.java
+ * 展示的属性值
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017/3/30 11:51
@@ -23,7 +24,7 @@ public @interface DisplayValue {
     String key();
 
     /**
-     * value
+     * state
      * @return
      */
     String value();

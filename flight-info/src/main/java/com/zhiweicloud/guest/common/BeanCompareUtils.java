@@ -8,10 +8,12 @@ import java.util.Date;
 
 /**
  * BeanCompareUtils.java
- *
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * 两个实体类比较 工具类
+ * <p>
+ * Copyright(C) 2017 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017/3/30 10:33
+ *
  * @author tiecheng
  */
 public class BeanCompareUtils {
@@ -69,9 +71,10 @@ public class BeanCompareUtils {
 
     /**
      * 根据key得到value 用于存储标识和中文对应
-     * @param map
-     * @param value
-     * @param o
+     *
+     * @param map   需要展示的名-值 对应
+     * @param value 展示的value
+     * @param o     展示的key
      * @return
      */
     private static Object getValue(DisplayValue[] map,Object value,Object o) {

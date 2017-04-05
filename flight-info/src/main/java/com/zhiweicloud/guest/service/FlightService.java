@@ -111,7 +111,7 @@ public class FlightService {
                 if (updateMessage != null) {
                     flightUpdateLog.setCreateUser(flight.getUpdateUser());
                     flightUpdateLog.setUpdateMessage(updateMessage);
-                    flightUpdateLog.setOperatorName("非常准");
+                    flightUpdateLog.setOperatorName("非常准"); // 从非常准推送过来的数据
                     flightUpdateLog.setFlightId(flightId);
                     flightUpdateLog.setAirportCode(flight.getAirportCode());
                     flightUpdateLogMapper.insert(flightUpdateLog);
