@@ -191,21 +191,23 @@ public class CheckService {
     public void exportExcel(OrderCheckDetail orderCheckDetail, Map result, HttpServletResponse response){
         JSONArray column = (JSONArray) result.get("column");
         List rows = (List) result.get("rows");
-        Map<String, String> titleMap = new HashMap<>();
-        column.forEach(x -> {
-            String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
-            Map<String, String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
-            String[] strArray = new String[2];
-            int i = 0;
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                strArray[i] = entry.getValue();
-                i++;
-            }
-            titleMap.put(strArray[1], strArray[0]);
-        });
-        String fileName = orderCheckDetail.getQueryProductName() + "_" + System.currentTimeMillis() + ".xls";
-        String sheetName = orderCheckDetail.getQueryProductName();
-        ExcelUtils.download(fileName, sheetName, rows, titleMap,response);
+        if (rows.size() > 1) {
+            Map<String, String> titleMap = new LinkedHashMap<>();
+            column.forEach(x -> {
+                String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
+                Map<String, String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
+                String[] strArray = new String[2];
+                int i = 0;
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    strArray[i] = entry.getValue();
+                    i++;
+                }
+                titleMap.put(strArray[1], strArray[0]);
+            });
+            String fileName = orderCheckDetail.getQueryProductName() + "_" + System.currentTimeMillis() + ".xls";
+            String sheetName = orderCheckDetail.getQueryProductName();
+            ExcelUtils.download(fileName, sheetName, rows, titleMap,response);
+        }
     }
 
 }

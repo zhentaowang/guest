@@ -119,9 +119,10 @@ public class CheckController {
     /**
      * 导出文件
      * Excel
+     *
      * @param orderCheckDetail 参数
-     * @param airportCode 机场码
-     * @param userId 用户ID
+     * @param airportCode      机场码
+     * @param userId           用户ID
      * @return
      */
     @GET
@@ -130,11 +131,12 @@ public class CheckController {
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
     public void exportFile(
             @BeanParam final OrderCheckDetail orderCheckDetail,
+//            @RequestBody OrderCheckDetail orderCheckDetail,
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId,
             @Context HttpServletResponse response) {
         try {
-            Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, 10);
+            Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, Integer.MAX_VALUE);
             if (result != null) {
                 checkService.exportExcel(orderCheckDetail, result, response);
             }
