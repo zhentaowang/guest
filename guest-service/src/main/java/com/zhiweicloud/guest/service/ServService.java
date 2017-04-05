@@ -121,7 +121,7 @@ public class ServService {
     }
 
     /**
-     * 删除服务时判断是否有产品已经引用
+     * 删除服务时判断是否有订单已经引用
      * @param serviceId
      * @return boolean
      */
@@ -130,7 +130,7 @@ public class ServService {
         params.put("airportCode",airportCode);
         params.put("serviceId",serviceId);
         Long count = servMapper.selectProductByServiceId(params);
-        if(count > 0){//count大于0，说明有产品已经引用该服务
+        if(count > 0){//count大于0，说明有订单已经引用该服务
             return true;
         }
         else{

@@ -136,8 +136,8 @@
   </select>
 
   <select id="selectProductByServiceId"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT count(protocol_product_service_id) from protocol_product_service
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and service_id = #{serviceId,jdbcType=BIGINT}
+    SELECT count(order_service_id) from order_service
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and service_detail->>"$.servId" = #{serviceId,jdbcType=BIGINT}
   </select>
 
   <select id="getServiceNameDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">
