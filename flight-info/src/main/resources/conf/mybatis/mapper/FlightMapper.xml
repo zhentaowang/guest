@@ -196,8 +196,8 @@
   <select id="getFlightListByOrderStatus" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select * from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.flight_position, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_schedule_event_id,flight_id,schedule_time)
-    in (select concat(flight_schedule_event_id,flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by flight_id))
+    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_id,schedule_time)
+    in (select concat(flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by flight_id))
     as fse left join (select schedule_event_id, name from schedule_event where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
@@ -249,8 +249,8 @@
   <select id="getFlightListCountByOrderStatus" parameterType="map" resultType="int">
     select count(fs.flight_id) from (select f.flight_id, f.flight_no, f.flight_date, f.flight_dep, f.flight_arr, f.flight_deptime_date, f.flight_arrtime_date,
     f.flight_deptime_plan_date, f.flight_arrtime_plan_date, f.flight_state, f.flight_position, f.is_in_or_out, s.schedule_event_id, s.schedule_time, s.name as schedule_event_name
-    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_schedule_event_id,flight_id,schedule_time)
-    in (select concat(flight_schedule_event_id,flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0  group by flight_id))
+    from flight as f left join (select fse.flight_id, fse.schedule_event_id, fse.schedule_time, se.name from (select * from flight_schedule_event where concat(flight_id,schedule_time)
+    in (select concat(flight_id,max(schedule_time)) from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 group by flight_id))
     as fse left join (select schedule_event_id, name from schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0)
     as se on fse.schedule_event_id =se.schedule_event_id) as s on f.flight_id = s.flight_id
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
