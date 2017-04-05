@@ -103,8 +103,8 @@ public class CheckService {
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolTypeId", checkList.get(i).get("protocolType"));
-            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",paramMap,headerMap));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolTypeDropdownList?protocolTypeId="+ checkList.get(i).get("protocolType") +"&access_token=7XVOkrTNTlfAftMoQg5flsEX9QlxIPfJGdzQFAAm"));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",paramMap,headerMap));
+            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolTypeDropdownList?protocolTypeId="+ checkList.get(i).get("protocolType") +"&access_token=7XVOkrTNTlfAftMoQg5flsEX9QlxIPfJGdzQFAAm"));
             if (protocolObject != null && protocolObject.get("data") != null && JSON.parseArray(protocolObject.get("data").toString()).size() > 0) {
 
                 JSONObject protocolObj = JSON.parseObject(JSON.parseArray(protocolObject.get("data").toString()).get(0).toString());
