@@ -7,6 +7,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.common.CustomStatus;
+import com.zhiweicloud.guest.common.PushStatus;
 import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.FlightMatch;
@@ -73,13 +75,13 @@ public class FlightInfoController {
         try {
             return flightService.getFlightInfo(fnum, date, airportCode, userId);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
             return "{ \"Data\": [],\"Info\": \"" + e.getMessage() + "\",\"DPtime\": ,\"Vtime\": ,\"State\": -1}";
         }
     }
 
     /**
-     * 产品品类下拉框 数据
+     * 产品品类下拉框 数据.
      *
      * @param airportNameOrCode 机场名或机场码
      * @return
@@ -106,7 +108,7 @@ public class FlightInfoController {
     }
 
     /**
-     * 航班号信息下拉框 数据
+     * 航班号信息下拉框 数据.
      *
      * @param flightNo    航班号
      * @param airportCode 机场码
@@ -137,7 +139,7 @@ public class FlightInfoController {
     }
 
     /**
-     * 更新航班信息 -- 提供给龙腾推送
+     * 更新航班信息 -- 提供给龙腾推送.
      *
      * @param request     请求对象
      * @param airportCode 机场码
@@ -160,33 +162,33 @@ public class FlightInfoController {
             Map<String, Object> result = new HashMap<>();
             // 龙腾推送过来的航班信息为空，需要一直推送直到不为空
             if (flight == null) {
-                result.put("state", -1);
-                result.put("info", "推送航班信息为空");
+                result.put("state", PushStatus.EMPTY.state());
+                result.put("info", PushStatus.EMPTY.info());
                 return JSON.toJSONString(result);
             }
             flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
             flightService.updateFlight(flight);
-            result.put("state", 1);
-            result.put("info", "接收并处理成功");
+            result.put("state", PushStatus.SUCCESS.state());
+            result.put("info", PushStatus.SUCCESS.info());
             return JSON.toJSONString(result);
         } catch (FlightException e) {
             log.error(e.getMessage());
             Map<String, Object> result = new HashMap<>();
-            result.put("state", 2);
-            result.put("info", e.getMessage());
+            result.put("state", PushStatus.REPEAT.state());
+            result.put("info", PushStatus.REPEAT.info());
             return JSON.toJSONString(result);
         } catch (Exception e) {
             log.error(e.getMessage());
             Map<String, Object> result = new HashMap<>();
-            result.put("state", -1);
-            result.put("info", "操作失败");
+            result.put("state", PushStatus.ERROR.state());
+            result.put("info", PushStatus.ERROR.info());
             return JSON.toJSONString(result);
         }
     }
 
     /**
-     * 航班调度事件管理 - 新增or更新
+     * 航班调度事件管理 - 新增or更新.
      *
      * @param params
      * @param airportCode
@@ -217,7 +219,7 @@ public class FlightInfoController {
     }
 
     /**
-     * 定制航班信息
+     * 定制航班信息.
      * 调用了龙腾的接口
      *
      * @param flightId    航班ID
@@ -239,8 +241,8 @@ public class FlightInfoController {
             // 根据ID查询航班信息
             Flight flight = flightService.queryFlightById(flightId, airportCode);
             if (flight == null) {
-                result.put("state", -3);
-                result.put("info", "无法定制不存在航班");
+                result.put("state", CustomStatus.EMPTY.state());
+                result.put("info", CustomStatus.EMPTY.info());
                 return JSON.toJSONString(result);
             }
             flight.setAirportCode(airportCode);
@@ -250,25 +252,25 @@ public class FlightInfoController {
             // 定制成功 -- 拿到航班动态信息 并且 更新航班表数据
             if (state != null && state == 1) {
                 flightService.updateFlight(flightService.getFlightDynamic(flight));
-                result.put("state", 1);
-                result.put("info", "定制航班成功");
+                result.put("state", CustomStatus.SUCCESS.state());
+                result.put("info", CustomStatus.SUCCESS.info());
                 return JSON.toJSONString(result);
             }
 //            String ret = HttpClientUtil.httpPostRequest("http://183.63.121.12:8012/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", p);
-            result.put("state", -2);
-            result.put("info", "定制航班失败");
+            result.put("state", CustomStatus.FAIL.state());
+            result.put("info", CustomStatus.FAIL.info());
             return JSON.toJSONString(result);
         } catch (Exception e) {
             log.debug(e.getMessage());
             Map<String, Object> result = new HashMap<>();
-            result.put("state", -1);
+            result.put("state", CustomStatus.ERROR.state());
             result.put("info", "定制航班异常：" + e.getMessage());
             return JSON.toJSONString(result);
         }
     }
 
     /**
-     * 航班信息修改日志
+     * 航班信息修改日志.
      *
      * @param flightId    航班ID
      * @param airportCode 客户端标识
