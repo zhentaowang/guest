@@ -370,7 +370,11 @@ public class OrderInfoController {
             if (paramJson.getLong("flightId") == null) {
                 logger.error("updateServerComplete error", LZStatus.DATA_EMPTY.display() + ":flightId");
             }
-            orderInfoService.updateServerComplete(paramJson.getLong("flightId"), paramJson.getShort("serverComplete"), userId, airportCode);
+            Map<String,Object> map = new HashMap();
+            map.put("flightId", paramJson.getLong("flightId"));
+            map.put("serverComplete", paramJson.getShort("serverComplete"));
+
+            orderInfoService.updateServerComplete(map, userId, airportCode);
             return JSON.toJSONString(LXResult.success());
         } catch (Exception e) {
             logger.error("updateServerComplete error", e);
@@ -378,7 +382,7 @@ public class OrderInfoController {
         }
     }
 
-    /**
+    /**3
      * 根据订单状态/详细服务id 获取服务人次
      *
      * @return

@@ -6,16 +6,20 @@
     <result column="flight_id" jdbcType="BIGINT" property="flightId" />
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
     <result column="schedule_time" jdbcType="TIMESTAMP" property="scheduleTime" />
+    <result column="schedule_update_user_name" jdbcType="VARCHAR" property="scheduleUpdateUserName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
   <sql id="Base_Column_List">
-    flight_schedule_event_id, flight_id, schedule_event_id, schedule_time
+    flight_schedule_event_id, flight_id, schedule_event_id, schedule_time, schedule_update_user_name, remark
   </sql>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 
-    <include refid="Base_Column_List" />
-    from flight_schedule_event
-    where flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
+    f.flight_schedule_event_id, e.name as schedule_update_user_name
+    from flight_schedule_event as f left join (select employee_id, name from employee where
+    employee_id = #{userId,jdbcType=BIGINT} and is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR}) as e on f.create_user = e.employee_id
+    where f.create_user = #{userId,jdbcType=BIGINT} and f.is_deleted = 0 and f.airport_code = #{airportCode,jdbcType=VARCHAR}
+    and f.flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -24,6 +28,9 @@
   </delete>
 
   <insert id="insertSelective" parameterType="com.zhiweicloud.guest.model.FlightScheduleEvent">
+    <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="flightScheduleEventId">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into flight_schedule_event
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="flightScheduleEventId != null">
@@ -37,6 +44,12 @@
       </if>
       <if test="scheduleTime != null">
         schedule_time,
+      </if>
+      <if test="scheduleUpdateUserName != null">
+        schedule_update_user_name,
+      </if>
+      <if test="remark != null">
+        remark,
       </if>
       create_time,
       create_user
@@ -54,6 +67,12 @@
       <if test="scheduleTime != null">
         #{scheduleTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="scheduleUpdateUserName != null">
+        #{scheduleUpdateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
       now(),#{createUser,jdbcType=BIGINT}
     </trim>
   </insert>
@@ -70,10 +89,16 @@
       <if test="scheduleTime != null">
         schedule_time = #{scheduleTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="scheduleUpdateUserName != null">
+        schedule_update_user_name = #{scheduleUpdateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
       update_time = now(),
       update_user = #{updateUser,jdbcType=BIGINT}
     </set>
-    WHERE flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT}
+    WHERE flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
 
 </mapper>

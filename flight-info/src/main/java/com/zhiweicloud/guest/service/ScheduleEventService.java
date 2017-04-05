@@ -93,9 +93,9 @@ public class ScheduleEventService {
             Map<String,Object> params = new HashMap<>();
             params.put("flightId",flightList.get(i).getFlightId());
             params.put("airportCode",param.get("airportCode"));
-            Date serverCompleteTime = flightMapper.selectByPrimaryKey(params).getServerCompleteTime();
-            if(serverCompleteTime != null){
-                flightList.get(i).setScheduleTime(serverCompleteTime);
+            Flight flight = flightMapper.selectByPrimaryKey(params);
+            if(flight.getServerComplete() == 1){
+                flightList.get(i).setScheduleTime(flight.getServerCompleteTime());
                 flightList.get(i).setScheduleEventName("服务完成");
             }
         }
@@ -125,10 +125,12 @@ public class ScheduleEventService {
      */
     public List<ScheduleEvent> getScheduleEventByFlightId(Map<String,Object> param) {
         List<ScheduleEvent> scheduleEventList = scheduleEventMapper.selectByFlightId(param);
-        Date serverCompleteTime = flightMapper.selectByPrimaryKey(param).getServerCompleteTime();
-        if(serverCompleteTime != null){
+        Flight flight = flightMapper.selectByPrimaryKey(param);
+        if(flight.getServerComplete() == 1){
             ScheduleEvent scheduleEvent = new ScheduleEvent();
-            scheduleEvent.setScheduleTime(serverCompleteTime);
+            scheduleEvent.setScheduleTime(flight.getServerCompleteTime());
+            scheduleEvent.setScheduleUpdateUserName(flight.getServerCompleteName());
+//            scheduleEvent.setScheduleUpdateUserName("超级管理员");
             scheduleEvent.setName("服务完成");
             scheduleEventList.add(scheduleEvent);
         }
@@ -168,14 +170,18 @@ public class ScheduleEventService {
         params.put("flightId", flight.getFlightId());
         params.put("airportCode", flight.getAirportCode());
         Flight oldFlight = flightMapper.selectByFlightId(flight.getFlightId());
-        String updateMessage = BeanCompareUtils.compareTwoBean(oldFlight, flight);
-        FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
-        flightUpdateLog.setUpdateMessage(updateMessage);
-        flightUpdateLog.setCreateUser(flight.getUpdateUser());
-        flightUpdateLog.setFlightId(flight.getFlightId());
-        flightUpdateLog.setAirportCode(flight.getAirportCode());
-        flightUpdateLogMapper.insert(flightUpdateLog);
-        flightMapper.updateByPrimaryKeySelective(flight);
+        if(oldFlight!=null){
+            String updateMessage = BeanCompareUtils.compareTwoBean(oldFlight, flight);
+            if(updateMessage!= null){
+                FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
+                flightUpdateLog.setUpdateMessage(updateMessage);
+                flightUpdateLog.setCreateUser(flight.getUpdateUser());
+                flightUpdateLog.setFlightId(flight.getFlightId());
+                flightUpdateLog.setAirportCode(flight.getAirportCode());
+                flightUpdateLogMapper.insert(flightUpdateLog);
+                flightMapper.updateByPrimaryKeySelective(flight);
+            }
+        }
     }
 
     /**

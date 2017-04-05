@@ -44,7 +44,7 @@
     <result column="schedule_event_name" jdbcType="TIMESTAMP" property="scheduleEventName" />
     <result column="schedule_event_id" jdbcType="BIGINT" property="scheduleEventId" />
     <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
-    <result column="server_complete" jdbcType="VARCHAR" property="serverComplete" />
+    <result column="server_complete" jdbcType="SMALLINT" property="serverComplete" />
     <result column="server_complete_name" jdbcType="VARCHAR" property="serverCompleteName" />
     <result column="server_complete_id" jdbcType="BIGINT" property="serverCompleteId" />
     <result column="server_complete_time" jdbcType="TIMESTAMP" property="serverCompleteTime" />
@@ -204,7 +204,7 @@
     inner join (select oi.flight_id, os.servId, sum(os.serverNum) as serverNum, os.serviceName from order_info as oi
     right join (select order_id, service_detail->>"$.servId" as servId, service_detail->>"$.serverNum" as serverNum, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="criteria.servIds != null and criteria.servIds != '' and criteria.servIds != 0">
+    <if test="criteria.servIds != null and criteria.servIds != '' and !criteria.servIds.equals('调度管理')">
       and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
     <if test="criteria.typeId != null and criteria.typeId != ''">
@@ -215,7 +215,7 @@
        and oi.server_complete = #{criteria.serverComplete,jdbcType=SMALLINT}
     </if>
     group by oi.flight_id
-    <if test="criteria.servIds != 0">
+    <if test="!criteria.servIds.equals('调度管理')">
       , os.servId
     </if>)
     as o on fs.flight_id = o.flight_id
@@ -257,7 +257,7 @@
     inner join (select oi.flight_id, os.servId, sum(os.serverNum) as serverNum, os.serviceName from order_info as oi
     right join (select order_id, service_detail->>"$.servId" as servId, service_detail->>"$.serverNum" as serverNum, service_detail->>"$.serviceDetailName" as serviceName from order_service
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    <if test="servIds != null and servIds != '' and servIds != 0">
+    <if test="servIds != null and servIds != '' and !servIds.equals('调度管理')">
       and service_detail->>"$.servId" in (${servIds})
     </if>
     <if test="typeId != null and typeId != ''">
@@ -268,7 +268,7 @@
       and oi.server_complete = #{serverComplete,jdbcType=SMALLINT}
     </if>
     group by oi.flight_id
-    <if test="servIds != 0">
+    <if test="!servIds.equals('调度管理')">
       , os.servId
     </if>)
     as o on fs.flight_id = o.flight_id
@@ -291,9 +291,9 @@
   </select>
 
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select f.*, o.server_complete, o.server_complete_time from flight as f left join
-    (SELECT server_complete,server_complete_time,flight_id FROM order_info where is_deleted = 0 and airport_code = #{airportCode, jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT} GROUP BY flight_id)
-    as o on f.flight_id = o.flight_id where f.flight_id = #{flightId,jdbcType=BIGINT} and f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0
+    select f.*, o.server_complete, o.server_complete_time, o.server_complete_name from flight as f left join
+    (select server_complete, server_complete_time, flight_id, server_complete_name from order_info where is_deleted = 0 and airport_code = #{airportCode,jdbcType=VARCHAR} and flight_id = #{flightId,jdbcType=BIGINT}
+    group by flight_id) as o on f.flight_id = o.flight_id where f.flight_id = #{flightId,jdbcType=BIGINT} and f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from flight
@@ -564,8 +564,9 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.zhiweicloud.guest.model.Flight">
-    update flight
+    UPDATE flight
     <set>
       <if test="flightDate != null">
         flight_date = #{flightDate,jdbcType=DATE},
@@ -678,9 +679,11 @@
       <if test="boardGateTime != null">
         board_gate_time = #{boardGateTime,jdbcType=VARCHAR},
       </if>
+      update_time = now(),update_user = #{updateUser,jdbcType=BIGINT}
     </set>
-    where flight_id = #{flightId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
+    WHERE flight_id = #{flightId,jdbcType=BIGINT}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.zhiweicloud.guest.model.Flight">
     update flight
     set flight_date = #{flightDate,jdbcType=DATE},

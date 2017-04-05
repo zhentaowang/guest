@@ -357,12 +357,24 @@ public class OrderInfoService {
     /**
      * 根据flight_id 修改订单服务状态
      *
-     * @param flightId
-     * @param airportCode
+     * @param map
      * @return
      */
-    public void updateServerComplete(Long flightId, Short serverComplete, Long updateUser, String airportCode) throws Exception {
-        orderInfoMapper.updateServerComplete(flightId, serverComplete, updateUser, airportCode);
+    public void updateServerComplete(Map<String,Object> map, Long userId, String airportCode) throws Exception {
+        Map<String, Object> headerMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("employeeId", userId);
+        //远程调用查询该用户id，的用户名字，存到订单表（多余的字段）
+        JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+        if (createUserObject != null) {
+            JSONObject obj = createUserObject.getJSONObject("data");
+            map.put("serverCompleteName", obj.get("name").toString());
+        }
+        map.put("userId", userId);
+        map.put("airportCode", airportCode);
+        orderInfoMapper.updateServerComplete(map);
     }
 
     /**

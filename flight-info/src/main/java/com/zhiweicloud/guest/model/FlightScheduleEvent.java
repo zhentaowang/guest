@@ -38,6 +38,28 @@ public class FlightScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="调度时间",name="scheduleTime")
     private Date scheduleTime;
 
+    @ApiModelProperty(value="调度更新人名称",name="scheduleUpdateUserName")
+    private String scheduleUpdateUserName;
+
+    @ApiModelProperty(value="调度事件备注说明",name="remark")
+    private String remark;
+
+    public String getScheduleUpdateUserName() {
+        return scheduleUpdateUserName;
+    }
+
+    public void setScheduleUpdateUserName(String scheduleUpdateUserName) {
+        this.scheduleUpdateUserName = scheduleUpdateUserName;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     /**
      * 调度时间
      * @return scheduleTime 调度时间

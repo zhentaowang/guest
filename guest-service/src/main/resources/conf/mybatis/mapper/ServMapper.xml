@@ -136,11 +136,8 @@
   </select>
 
   <select id="selectProductByServiceId"  parameterType="java.util.Map"  resultType="java.lang.Long">
-    SELECT count(p.product_id) from product_service_type as p right join
-    (select service_type_allocation_id from serv
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and serv_id = #{serviceId,jdbcType=BIGINT} and is_deleted = 0)
-    as s on p.service_type_id = s.service_type_allocation_id
-     where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
+    SELECT count(protocol_product_service_id) from protocol_product_service
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and service_id = #{serviceId,jdbcType=BIGINT}
   </select>
 
   <select id="getServiceNameDropdownList" parameterType="java.util.Map" resultMap="DropdownlistMap">

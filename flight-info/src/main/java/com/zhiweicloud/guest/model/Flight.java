@@ -128,9 +128,8 @@ public class Flight extends BaseEntity{
     private String boardState;
 
     @ApiModelProperty(value = "航班状态（计划，起飞，到达，延误，取消，备降，返航）(Plan,Take off,Arrivals,Delay,Cancel,Alternate,Return)", name = "flightState")
-    @DisplayName(name = "航班状态", map = {@DisplayValue(key = "Plan", value = "计划"), @DisplayValue(key = "Take", value = "起飞"),
-            @DisplayValue(key = "off", value = "到达"), @DisplayValue(key = "Arrivals", value = "延误"),
-            @DisplayValue(key = "Delay", value = "延误"), @DisplayValue(key = "Cancel", value = "取消"),
+    @DisplayName(name = "航班状态", map = {@DisplayValue(key = "Plan", value = "计划"), @DisplayValue(key = "Take off", value = "起飞"),
+            @DisplayValue(key = "Arrivals", value = "到达"), @DisplayValue(key = "Delay", value = "延误"), @DisplayValue(key = "Cancel", value = "取消"),
             @DisplayValue(key = "Alternate", value = "备降"), @DisplayValue(key = "Return", value = "返航")})
     private String flightState;
 
@@ -208,7 +207,7 @@ public class Flight extends BaseEntity{
 
     @Transient
     @ApiModelProperty(value="服务完成状态",name="serverComplete")
-    private String serverComplete;
+    private Short serverComplete;
 
     @Transient
     @ApiModelProperty(value="服务完成时间",name="serverCompleteTime")
@@ -262,11 +261,11 @@ public class Flight extends BaseEntity{
         this.serverCompleteTime = serverCompleteTime;
     }
 
-    public String getServerComplete() {
+    public Short getServerComplete() {
         return serverComplete;
     }
 
-    public void setServerComplete(String serverComplete) {
+    public void setServerComplete(Short serverComplete) {
         this.serverComplete = serverComplete;
     }
 

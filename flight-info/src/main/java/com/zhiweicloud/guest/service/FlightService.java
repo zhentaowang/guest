@@ -33,6 +33,12 @@ import com.dragon.sign.DragonSignature;
 import com.zhiweicloud.guest.common.BeanCompareUtils;
 import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.FlightException;
+import com.zhiweicloud.guest.mapper.AirportInfoMapper;
+import com.zhiweicloud.guest.mapper.FlightMapper;
+import com.zhiweicloud.guest.mapper.FlightScheduleEventMapper;
+import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightScheduleEvent;
+import org.apache.commons.collections.map.HashedMap;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
@@ -101,13 +107,16 @@ public class FlightService {
             if (Long.valueOf(fdId) <= Long.valueOf(fdId2)) {
                 flight.setFlightId(flightId);
                 FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
-                flightUpdateLog.setCreateUser(flight.getUpdateUser());
-                flightUpdateLog.setUpdateMessage(BeanCompareUtils.compareTwoBean(queryFlight,flight));
-                flightUpdateLog.setOperatorName("非常准");
-                flightUpdateLog.setFlightId(flightId);
-                flightUpdateLog.setAirportCode(flight.getAirportCode());
-                flightUpdateLogMapper.insert(flightUpdateLog);
-                flightMapper.updateFlight(flight);
+                String updateMessage = BeanCompareUtils.compareTwoBean(queryFlight, flight);
+                if (updateMessage != null) {
+                    flightUpdateLog.setCreateUser(flight.getUpdateUser());
+                    flightUpdateLog.setUpdateMessage(updateMessage);
+                    flightUpdateLog.setOperatorName("非常准");
+                    flightUpdateLog.setFlightId(flightId);
+                    flightUpdateLog.setAirportCode(flight.getAirportCode());
+                    flightUpdateLogMapper.insert(flightUpdateLog);
+                    flightMapper.updateFlight(flight);
+                }
             } else {
                 throw new FlightException("无需更新");
             }
@@ -127,13 +136,22 @@ public class FlightService {
     }
 
     public void saveOrUpdateFlightScheduleEvent(FlightScheduleEvent flightScheduleEvent, Long userId) throws Exception {
-        if (flightScheduleEvent.getFlightScheduleEventId() == null || flightScheduleEvent.getFlightScheduleEventId() == 0) {
+
+        if (flightScheduleEvent.getFlightScheduleEventId() == null) {
             flightScheduleEvent.setCreateUser(userId);
             flightScheduleEventMapper.insertSelective(flightScheduleEvent);
         } else {
             flightScheduleEvent.setUpdateUser(userId);
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
+
+        Map<String, Object> param = new HashedMap();
+        param.put("airportCode", flightScheduleEvent.getAirportCode());
+        param.put("userId", userId);
+        param.put("flightScheduleEventId", flightScheduleEvent.getFlightScheduleEventId());
+        FlightScheduleEvent flightScheduleEvent0 = flightScheduleEventMapper.selectByPrimaryKey(param);
+        flightScheduleEvent0.setAirportCode(flightScheduleEvent.getAirportCode());
+        flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent0);
     }
 
     /**

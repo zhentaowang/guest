@@ -9,6 +9,7 @@
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="create_user_name" jdbcType="BIGINT" property="createUserName" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
   </resultMap>
@@ -20,14 +21,14 @@
 
   <insert id="insert" parameterType="com.zhiweicloud.guest.model.OrderServiceRecord">
     INSERT INTO
-      order_service_record (order_id, record_desc, is_deleted, airport_code, create_time,  create_user )
+      order_service_record (order_id, record_desc, is_deleted, airport_code, create_time, create_user, create_user_name )
     VALUES
-      (#{record.orderId}, #{record.recordDesc}, 0, #{record.airportCode}, #{record.createTime}, #{record.createUser})
+      (#{record.orderId}, #{record.recordDesc}, 0, #{record.airportCode}, NOW(), #{record.createUser}, #{record.createUserName})
   </insert>
 
   <select id="getOrderServiceRecord"  resultMap="BaseResultMap">
     SELECT
-      create_time,record_desc
+      create_time,record_desc,create_user_name
     FROM
       order_service_record
     WHERE
