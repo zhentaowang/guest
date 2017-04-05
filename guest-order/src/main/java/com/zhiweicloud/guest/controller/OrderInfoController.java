@@ -49,6 +49,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,8 +114,6 @@ public class OrderInfoController {
     public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
         LZResult<String> result = new LZResult<>();
-        /*String airportCode = "LJG";
-        Long userId = 108L;*/
         try {
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
@@ -260,7 +259,22 @@ public class OrderInfoController {
     public String getAirportCode(
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
-        return airportCode;
+        LZResult<Object> result = new LZResult();
+        try {
+
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            Map map = new HashMap();
+            map.put("airportCode",airportCode);
+            result.setData(map);
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            e.printStackTrace();
+            return JSON.toJSONString(result);
+        }
     }
 
 
