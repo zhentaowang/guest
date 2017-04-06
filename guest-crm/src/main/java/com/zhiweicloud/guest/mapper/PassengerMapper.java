@@ -64,9 +64,6 @@ public interface PassengerMapper {
 
     /**
      * 获取手机或者身份证匹配的 服务信息
-     * @param phone
-     * @param identityCard
-     * @param airportCode
      * @return
      */
     List<ServiceInfo> queryServiceInfoList(Map<String,Object> map);
