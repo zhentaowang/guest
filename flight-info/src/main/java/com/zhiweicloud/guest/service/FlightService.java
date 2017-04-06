@@ -200,7 +200,7 @@ public class FlightService {
         ExchangeDragon exchangeDragon = new ExchangeDragon();
         exchangeDragon.setFlightDate(simpleDateFormat.parse(date));
         exchangeDragon.setFlightNo(fnum);
-        exchangeDragon.setExchangeType((short) 1); // 2 表示定制
+        exchangeDragon.setExchangeType((short) 1); // 1 表示查询
         exchangeDragon.setCreateUser(userId);
         Integer crState = null;
         if (ret != null) {
@@ -221,7 +221,8 @@ public class FlightService {
      * @throws DragonApiException
      * @throws UnsupportedEncodingException
      */
-    public Integer customDrangon(Flight flight) throws DragonApiException, UnsupportedEncodingException {
+    public Integer customDragon(Flight flight) throws DragonApiException, UnsupportedEncodingException {
+        log.info("FlightService customDragon 定制龙腾信息");
         // 调用定制航班信息接口
         String customResult = new String(HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo", getParamsForCustomFlight(flight)).getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
         // 解析返回值
@@ -230,6 +231,7 @@ public class FlightService {
             JSONObject crObject = JSON.parseObject(customResult);
             crState = crObject.getInteger("State");
         }
+        log.info("FlightService customDragon 生成操作日志");
         // 生成操作日志
         ExchangeDragon exchangeDragon = new ExchangeDragon();
         exchangeDragon.setFlightDate(flight.getFlightDate());

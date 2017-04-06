@@ -113,7 +113,7 @@ public class OrderInfoController {
     @ApiOperation(value = "订单 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
     public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
-        LZResult<String> result = new LZResult<>();
+        LZResult<Object> result = new LZResult<>();
         try {
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
@@ -151,11 +151,13 @@ public class OrderInfoController {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
+                return JSON.toJSONString(result);
             } else {
                 if (targetFlight.getFlightArrcode() == null || targetFlight.getFlightDepcode() == null || targetFlight.getFlightArrcode().equals("") || targetFlight.getFlightDepcode().equals("")) {
                     result.setMsg("出发地三字码或者目的地三字码为空");
                     result.setStatus(5006);
                     result.setData(null);
+                    return JSON.toJSONString(result);
                 } else {
                     if (order.getOrderId() != null) {
                         boolean flag = canUpdateOrderStatus(oldOrder.getOrderStatus(), order.getOrderStatus());
@@ -167,10 +169,10 @@ public class OrderInfoController {
                         }
                     }
                     order.setFlight(targetFlight);
-                    orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
+                    Long orderId = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
                     result.setMsg(LZStatus.SUCCESS.display());
                     result.setStatus(LZStatus.SUCCESS.value());
-                    result.setData(null);
+                    result.setData(orderId);
                     return JSON.toJSONString(result);
                 }
             }
@@ -179,8 +181,9 @@ public class OrderInfoController {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(e.toString());
+            return JSON.toJSONString(result);
         }
-        return JSON.toJSONString(result);
+
     }
 
     private boolean canUpdateOrderStatus(String currentOrderStatus, String toOrderStatus) {
