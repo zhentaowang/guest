@@ -96,10 +96,12 @@ public class OrderInfoService {
                     flightMapper.insertSelective(flight);
 
                     //龙腾定制航班
-                    if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                    if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
                         Map<String, Object> flightMap = new HashMap<>();
-                        flightMap.put("flightId", flightId);
-                        HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+                        flightMap.put("flightId", flight.getFlightId());
+                        String re = HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+//                        String re = HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/flight-info/customFlight", headerMap, flightMap);
+                        System.out.println(re);
                     }
                     //
 
@@ -132,10 +134,12 @@ public class OrderInfoService {
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
                     //龙腾定制航班 如果产品为异地贵宾服务，不走定制航班
-                    if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                    if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
                         Map<String, Object> flightMap = new HashMap<>();
-                        flightMap.put("flightId", flightId);
-                        HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+                        flightMap.put("flightId", flight.getFlightId());
+                        String re = HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+//                        String re = HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/flight-info/customFlight", headerMap, flightMap);
+                        System.out.println(re);
                     }
                     //
                 }

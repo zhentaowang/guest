@@ -39,6 +39,8 @@ import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.CopyProperties;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,9 @@ import java.util.Map;
 @Path("/")
 @Api(value = "订单", description = "订单desc ", tags = {"订单管理"})
 public class OrderInfoController {
+
+//    private static final Log log = LogFactory.getLog(OrderInfoController.class);
+
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoController.class);
 
     @Autowired
@@ -85,6 +90,7 @@ public class OrderInfoController {
             @HeaderParam("user-id") Long userId,
             @HeaderParam("client-id") String airportCode) {
         try {
+            logger.debug("test - log - position");
             orderInfoQuery.setAirportCode(airportCode);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
             return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
