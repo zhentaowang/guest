@@ -420,4 +420,13 @@ public class OrderInfoService {
         List<Map> list = cardTypeMapper.queryCardTypeByAirportCode(airportCode);
         return list;
     }
+
+    /**
+     * 更新订单信息
+     * @param orderInfo
+     * @throws Exception
+     */
+    public void updateOrderInfo(OrderInfo orderInfo) throws Exception{
+        orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+    }
 }

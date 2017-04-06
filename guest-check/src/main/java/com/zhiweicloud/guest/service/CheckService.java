@@ -103,9 +103,10 @@ public class CheckService {
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolTypeId", checkList.get(i).get("protocolType"));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",paramMap,headerMap));
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",headerMap,paramMap));
             //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolTypeDropdownList?protocolTypeId="+ checkList.get(i).get("protocolType") +"&access_token=7XVOkrTNTlfAftMoQg5flsEX9QlxIPfJGdzQFAAm"));
-            if (protocolObject != null && protocolObject.get("data") != null) {
+            if (protocolObject != null && protocolObject.get("data") != null && JSON.parseArray(protocolObject.get("data").toString()).size() > 0) {
+
                 JSONObject protocolObj = JSON.parseObject(JSON.parseArray(protocolObject.get("data").toString()).get(0).toString());
                 checkList.get(i).put("protocolTypeName", protocolObj.get("value"));
             }
@@ -150,7 +151,7 @@ public class CheckService {
             orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount(productName));
             map.put("column", checkDynamicColumn.getHeader(productName));
 
-            orderCheckDetail.setQueryWhere("and customer_id in " + orderCheckDetail.getQueryCustomerId() +
+            orderCheckDetail.setQueryWhere("and customer_id = " + orderCheckDetail.getQueryCustomerId() +
                     " and protocol_type = " + orderCheckDetail.getQueryProtocolType() +
                     " and protocol_id = " + orderCheckDetail.getQueryProtocolId() +
                     " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");

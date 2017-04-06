@@ -24,4 +24,8 @@ public class PassengerService {
     public List<Passenger> getPassengerlistByFlightId(Long flightId, Long typeId, Long servId, String airportCode){
         return passengerMapper.getPassengerlistByFlightId(flightId, typeId, servId, airportCode);
     }
+
+    public void updateByPassenger(Passenger p) throws Exception{
+        passengerMapper.updateByPassengerIdAndAirportCodeKeySelective(p);
+    }
 }

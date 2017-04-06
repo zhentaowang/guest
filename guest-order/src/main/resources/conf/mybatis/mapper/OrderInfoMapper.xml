@@ -102,7 +102,7 @@
         <result column="phone" jdbcType="BIGINT" property="phone" />
         <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
         <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
-        <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
+        <result column="passenger_sit_no" jdbcType="VARCHAR" property="sitNo" />
         <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
         <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
         <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
