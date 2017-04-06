@@ -99,7 +99,8 @@ public class OrderInfoService {
                     if(!orderInfo.getProductName().equals("异地贵宾服务")){
                         Map<String, Object> flightMap = new HashMap<>();
                         flightMap.put("flightId", flightId);
-                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+//                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+                        System.out.println(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", flightMap, headerMap));
                     }
                     //
 
@@ -135,7 +136,8 @@ public class OrderInfoService {
                     if(!orderInfo.getProductName().equals("异地贵宾服务")){
                         Map<String, Object> flightMap = new HashMap<>();
                         flightMap.put("flightId", flightId);
-                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+//                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+                        System.out.println(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", flightMap, headerMap));
                     }
                     //
                 }
