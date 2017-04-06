@@ -43,7 +43,7 @@ public class OrderInfoService {
         this.cardTypeMapper = cardTypeMapper;
     }
 
-    public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
+    public Long saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
         Map<String, Object> headerMap = new HashMap<>();
         headerMap.put("user-id", userId);
@@ -172,6 +172,7 @@ public class OrderInfoService {
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
+        return orderInfo.getOrderId();
     }
 
     private void setFlightInOrOut(Flight flight){
