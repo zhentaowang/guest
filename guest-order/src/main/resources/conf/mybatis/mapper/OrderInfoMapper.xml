@@ -577,7 +577,7 @@
     o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,
     o.other_remark,o.order_status,o.order_type,o.agent_person,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.along_total,
     o.server_create_time, o.server_create_user_id, o.server_create_user_name, o.server_update_time,o.server_location,o.security_check,o.security_check_remark,
-    server_update_user_id, server_update_user_name,
+    o.server_update_user_id, o.server_update_user_name,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,f.flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
     from order_info o
@@ -800,6 +800,11 @@
       select concat(o.airport_code,lpad(o.order_id,6,'0')) AS order_no,o.order_id,o.protocol_id,o.protocol_name,o.customer_id,o.customer_name,o.booking_person,o.booking_person_name,
       o.notice_person,o.booking_way,o.is_important,o.product_id,o.product_name,o.print_check,o.print_check_remark,o.consign,o.consign_remark,o.is_deleted,o.protocol_type,o.security_check,o.security_check_remark,
       o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,o.create_user_name,o.along_total,o.server_location,
+      o.server_create_user_id,
+      o.server_create_user_name,
+      o.server_update_time,
+      o.server_update_user_id,
+      o.server_update_user_name,
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
       from order_info o
