@@ -7,16 +7,14 @@
 package com.zhiweicloud.guest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.zhiweicloud.guest.common.DisplayName;
-import com.zhiweicloud.guest.common.DisplayValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.Date;
 
 /**
  * Flight.java
