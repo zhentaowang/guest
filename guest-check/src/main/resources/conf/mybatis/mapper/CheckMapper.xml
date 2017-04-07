@@ -15,7 +15,7 @@
       and f.flight_date &lt;= #{queryFlightDateEnd}
     </if>
     <if test="queryCreateDateBegin != null and !''.equals(queryCreateDateBegin)">
-      and o.create_time &gt;= #{criteria.queryCreateDateBegin}
+      and o.create_time &gt;= #{queryCreateDateBegin}
     </if>
     <if test="queryCreateDateEnd != null and !''.equals(queryCreateDateEnd)">
       and o.create_time &lt;= #{queryCreateDateEnd}
@@ -28,9 +28,6 @@
     </if>
     <if test="queryProtocolName != null and !''.equals(queryProtocolName)">
       and o.protocol_name like concat('%',#{queryProtocolName},'%')
-    </if>
-    <if test="queryProtocolId != null and !''.equals(queryProtocolId)">
-      and o.protocol_id in (#{criteria.queryProtocolId})
     </if>
     <if test="queryProductId != null and !''.equals(queryProductId)">
       and o.product_name in (${queryProductId})
@@ -65,7 +62,7 @@
       and o.protocol_name like concat('%',#{criteria.queryProtocolName},'%')
     </if>
     <if test="criteria.queryProtocolId != null and !''.equals(criteria.queryProtocolId)">
-      and o.protocol_id in (#{criteria.queryProtocolId})
+      and o.protocol_id in (${criteria.queryProtocolId})
     </if>
     <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
       and o.product_name in (${criteria.queryProductId})
