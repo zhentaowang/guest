@@ -326,6 +326,8 @@ public class FlightInfoController {
             @HeaderParam("user-id") Long userId) {
         try {
             Flight flight = JSONObject.parseObject(flightJson, Flight.class);
+            flight.setUpdateUser(userId);
+            flight.setAirportCode(airportCode);
             Long flightId = flight.getFlightId();
             if (flightId == null || "".equals(flightId)) {
                 return JSON.toJSONString(LXResult.build(LZStatus.BAD_REQUEST.value(), LZStatus.BAD_REQUEST.display()));
