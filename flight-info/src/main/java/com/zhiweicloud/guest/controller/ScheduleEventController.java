@@ -11,6 +11,7 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.ScheduleEvent;
+import com.zhiweicloud.guest.service.FlightService;
 import com.zhiweicloud.guest.service.ScheduleEventService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -38,10 +39,13 @@ import java.util.Map;
 public class ScheduleEventController {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleEventController.class);
 
+    private final FlightService flightService;
+
     private final ScheduleEventService scheduleEventService;
 
     @Autowired
-    public ScheduleEventController(ScheduleEventService scheduleEventService) {
+    public ScheduleEventController(ScheduleEventService scheduleEventService,FlightService flightService) {
+        this.flightService = flightService;
         this.scheduleEventService = scheduleEventService;
     }
 
@@ -64,7 +68,8 @@ public class ScheduleEventController {
                 Flight flight = param.getJSONObject(i).toJavaObject(Flight.class);
                 flight.setAirportCode(airportCode);
                 flight.setUpdateUser(userId);
-                scheduleEventService.flightUpdate(flight);
+                Long flightId = flight.getFlightId();
+                flightService.updateFlightAndFlightLog(flightService.queryFlightById(flightId,airportCode),flight);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {

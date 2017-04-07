@@ -75,4 +75,6 @@ public interface FlightMapper {
      */
     Flight selectByFlightId(Long flightId);
 
+    void updateFlightDirect(Flight flight);
+
 }

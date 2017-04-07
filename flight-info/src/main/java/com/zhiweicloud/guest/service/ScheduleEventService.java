@@ -49,6 +49,7 @@ import java.util.Map;
  */
 @Service
 public class ScheduleEventService {
+
     @Autowired
     private ScheduleEventMapper scheduleEventMapper;
 
@@ -159,31 +160,7 @@ public class ScheduleEventService {
             scheduleEventMapper.insertSelective(scheduleEvent);
         }
     }
-
-    /**
-     * 修改航班
-     * @param flight
-     */
-    public void flightUpdate(Flight flight) throws Exception {
-        // 先查询出来航班信息
-        Map<String, Object> params = new HashMap<>();
-        params.put("flightId", flight.getFlightId());
-        params.put("airportCode", flight.getAirportCode());
-        Flight oldFlight = flightMapper.selectByFlightId(flight.getFlightId());
-        if(oldFlight!=null){
-            String updateMessage = BeanCompareUtils.compareTwoBean(oldFlight, flight);
-            if(updateMessage!= null){
-                FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
-                flightUpdateLog.setUpdateMessage(updateMessage);
-                flightUpdateLog.setCreateUser(flight.getUpdateUser());
-                flightUpdateLog.setFlightId(flight.getFlightId());
-                flightUpdateLog.setAirportCode(flight.getAirportCode());
-                flightUpdateLogMapper.insert(flightUpdateLog);
-                flightMapper.updateByPrimaryKeySelective(flight);
-            }
-        }
-    }
-
+    
     /**
      * 删除调度事件
      * @param airportCode
