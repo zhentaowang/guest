@@ -846,4 +846,10 @@
     is_deleted = 0
   </select>
 
+  <update id="updateFlightDirect" parameterType="com.zhiweicloud.guest.model.Flight">
+    UPDATE flight
+    SET is_custom = #{isCustom,jdbcType=TINYINT}
+    WHERE flight_id = #{flightId, jdbcType=BIGINT} AND is_deleted = 0
+  </update>
+
 </mapper>
