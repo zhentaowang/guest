@@ -27,8 +27,6 @@ import java.util.List;
 @ApiModel(value="Passenger",description="passenger")
 public class Passenger extends BaseEntity{
     @ApiModelProperty(value="主键自增id",name="passengerId", required=true)
-    @Id
-    @GeneratedValue(generator = "JDBC")
     private Long passengerId;
 
     @ApiModelProperty(value="订单id",name="orderId", required=true)
@@ -49,6 +47,9 @@ public class Passenger extends BaseEntity{
 
     @ApiModelProperty(value="单位",name="workUnit")
     private String workUnit;
+
+    @ApiModelProperty(value="职位",name="position")
+    private String position;
 
     @ApiModelProperty(value="座位号",name="sitNo")
     private String sitNo;
@@ -412,5 +413,13 @@ public class Passenger extends BaseEntity{
 
     public void setPassengerType(Short passengerType) {
         this.passengerType = passengerType;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }
