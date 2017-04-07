@@ -237,9 +237,12 @@ public class FlightInfoController {
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
         try {
+            log.info("FlightController customFlight 定制航班信息");
+            log.info("FlightController customFlight 定制航班的ID"+ flightId);
             Map<String, Object> result = new HashMap<>();
             // 根据ID查询航班信息
             Flight flight = flightService.queryFlightById(flightId, airportCode);
+            log.info("FlightController customFlight old flight "+ flight.toString());
             if (flight == null) {
                 result.put("state", CustomStatus.EMPTY.state());
                 result.put("info", CustomStatus.EMPTY.info());
@@ -248,7 +251,7 @@ public class FlightInfoController {
             flight.setAirportCode(airportCode);
             flight.setUpdateUser(userId);
             // 向龙腾定制航班信息
-            Integer state = flightService.customDrangon(flight);
+            Integer state = flightService.customDragon(flight);
             // 定制成功 -- 拿到航班动态信息 并且 更新航班表数据
             if (state != null && state == 1) {
                 flightService.updateFlight(flightService.getFlightDynamic(flight));

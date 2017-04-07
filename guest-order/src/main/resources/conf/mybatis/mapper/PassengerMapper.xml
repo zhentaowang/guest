@@ -9,6 +9,7 @@
     <result column="phone" jdbcType="BIGINT" property="phone" />
     <result column="identity_card" jdbcType="VARCHAR" property="identityCard" />
     <result column="work_unit" jdbcType="VARCHAR" property="workUnit" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
     <result column="sit_no" jdbcType="VARCHAR" property="sitNo" />
     <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
     <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
@@ -53,6 +54,9 @@
       </if>
       <if test="workUnit != null">
         work_unit,
+      </if>
+      <if test="position != null">
+        position,
       </if>
       <if test="sitNo != null">
         sit_no,
@@ -103,6 +107,9 @@
       </if>
       <if test="workUnit != null">
         #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=VARCHAR},
       </if>
       <if test="sitNo != null">
         #{sitNo,jdbcType=VARCHAR},
@@ -177,6 +184,9 @@
       </if>
       <if test="workUnit != null">
         work_unit = #{workUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        position = #{position,jdbcType=VARCHAR},
       </if>
       <if test="sitNo != null">
         sit_no = #{sitNo,jdbcType=VARCHAR},

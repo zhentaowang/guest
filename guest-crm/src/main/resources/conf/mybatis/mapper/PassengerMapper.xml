@@ -110,7 +110,7 @@
       count(crm_passenger_id)
     FROM
       crm_passenger
-    WHERE airport_code = #{airportCode} AND (phone = #{phone} OR identity_card = #{identityCard})
+    WHERE airport_code = #{airportCode} AND phone = #{phone}
   </select>
 
 
@@ -145,8 +145,8 @@
 	  crm_passenger
 	WHERE
 	  is_deleted=0 AND airport_code = #{airportCode}
-	  <if test="phone != null or (identity_card != null and !''.equals(identityCard))">
-        AND (phone = #{phone} or identity_card = #{identityCard})
+	  <if test="phone != null">
+        AND phone = #{phone}
       </if>
       <if test="phone == null and (identity_card == null or ''.equals(identityCard))">
         AND crm_passenger_id = #{crmPassengerId}

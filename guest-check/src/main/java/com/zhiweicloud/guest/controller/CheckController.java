@@ -101,14 +101,16 @@ public class CheckController {
             @BeanParam final OrderCheckDetail orderCheckDetail,
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
+        LZResult result = new LZResult<>();
         try {
-            Map result = checkService.customerChecklist(airportCode,orderCheckDetail, page, rows);
-            Map map = new HashMap();
-            map.put("data",result);
-            return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
+            Map res = checkService.customerChecklist(airportCode,orderCheckDetail, page, rows);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(res);
+            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             e.printStackTrace();
-            LZResult result = new LZResult<>();
+
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
@@ -136,7 +138,7 @@ public class CheckController {
             @HeaderParam("user-id") Long userId,
             @Context HttpServletResponse response) {
         try {
-            Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, Integer.MAX_VALUE);
+            Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, 10);
             if (result != null) {
                 checkService.exportExcel(orderCheckDetail, result, response);
             }

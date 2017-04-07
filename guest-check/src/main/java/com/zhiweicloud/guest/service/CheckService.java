@@ -75,24 +75,6 @@ public class CheckService {
     public LZResult<PaginationResult<Map>> getAll(Long userId, String airportCode, CheckQueryParam checkQueryParam, Integer page, Integer rows) throws Exception {
         BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
 
-        //productType 1,2,3 这种格式
-        if (checkQueryParam.getQueryProtocolType() != null && !checkQueryParam.getQueryProtocolType().equals("")) {
-            if (checkQueryParam.getQueryProtocolType().length() > 0 && checkQueryParam.getQueryProtocolType().contains(",")) {
-                String protocolTypeArr[] = checkQueryParam.getQueryProtocolType().split(",");
-                for (int i = 0; i < protocolTypeArr.length; i++) {
-                    List protocolIdList = this.getProtocolList(protocolTypeArr[i], userId, airportCode);
-                    if (protocolIdList.size() > 0) {
-                        checkQueryParam.setQueryProtocolId(ListUtil.List2String(protocolIdList));//协议id
-                    }
-                }
-            } else {
-                List protocolIdList = this.getProtocolList(checkQueryParam.getQueryProtocolType(), userId, airportCode);
-                if (protocolIdList.size() > 0) {
-                    checkQueryParam.setQueryProtocolId(ListUtil.List2String(protocolIdList));//协议id
-                }
-            }
-        }
-
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
         for (int i = 0; i < checkList.size(); i++) {
@@ -103,9 +85,9 @@ public class CheckService {
 
             Map<String, Object> paramMap = new HashMap<>();
             paramMap.put("protocolTypeId", checkList.get(i).get("protocolType"));
-            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",paramMap,headerMap));
-            //JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/guest-protocol/getProtocolTypeDropdownList?protocolTypeId="+ checkList.get(i).get("protocolType") +"&access_token=7XVOkrTNTlfAftMoQg5flsEX9QlxIPfJGdzQFAAm"));
-            if (protocolObject != null && protocolObject.get("data") != null) {
+            JSONObject protocolObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolTypeDropdownList",headerMap,paramMap));
+            if (protocolObject != null && protocolObject.get("data") != null && JSON.parseArray(protocolObject.get("data").toString()).size() > 0) {
+
                 JSONObject protocolObj = JSON.parseObject(JSON.parseArray(protocolObject.get("data").toString()).get(0).toString());
                 checkList.get(i).put("protocolTypeName", protocolObj.get("value"));
             }
@@ -114,25 +96,6 @@ public class CheckService {
         PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
         LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
         return result;
-    }
-
-    private List getProtocolList(String protocolType, Long userId, String airportCode) throws Exception {
-        Map<String, Object> headerMap = new HashMap();
-        headerMap.put("user-id", userId);
-        headerMap.put("client-id", airportCode);
-
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("protocolType", protocolType);
-        List protocolIdList = new ArrayList();
-        JSONObject protocolParam = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/getProtocolNameDropdownList", headerMap, paramMap));
-        if (protocolParam != null) {
-            JSONArray protocolArray = protocolParam.getJSONArray("data");
-            for (int i = 0; i < protocolArray.size(); i++) {
-                JSONObject jsonObject = JSON.parseObject(protocolArray.get(i).toString());
-                protocolIdList.add(jsonObject.get("id"));
-            }
-        }
-        return protocolIdList;
     }
 
 
@@ -150,7 +113,7 @@ public class CheckService {
             orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount(productName));
             map.put("column", checkDynamicColumn.getHeader(productName));
 
-            orderCheckDetail.setQueryWhere("and customer_id in " + orderCheckDetail.getQueryCustomerId() +
+            orderCheckDetail.setQueryWhere("and customer_id = " + orderCheckDetail.getQueryCustomerId() +
                     " and protocol_type = " + orderCheckDetail.getQueryProtocolType() +
                     " and protocol_id = " + orderCheckDetail.getQueryProtocolId() +
                     " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");

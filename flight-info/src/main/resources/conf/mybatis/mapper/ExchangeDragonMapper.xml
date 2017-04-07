@@ -54,7 +54,7 @@
   <sql id="insertValue">
     <trim prefix="(" suffixOverrides="," suffix=")">
       <if test="null != flightDate">#{flightDate, jdbcType=TIMESTAMP},</if>
-      <if test="null != flightNo">#{flightNo, jdbcType=VARCHAR},</if>
+      <if test="null != flightNo">UPPER(#{flightNo, jdbcType=VARCHAR}),</if>
       <if test="null != exchangeType">#{exchangeType, jdbcType=SMALLINT},</if>
       <if test="null != invokeTime">#{invokeTime, jdbcType=TIMESTAMP},</if>
       <if test="null != invokeResult">#{invokeResult, jdbcType=SMALLINT},</if>

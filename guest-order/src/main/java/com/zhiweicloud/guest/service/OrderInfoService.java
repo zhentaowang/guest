@@ -43,7 +43,7 @@ public class OrderInfoService {
         this.cardTypeMapper = cardTypeMapper;
     }
 
-    public void saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
+    public Long saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
         Map<String, Object> headerMap = new HashMap<>();
         headerMap.put("user-id", userId);
@@ -58,9 +58,17 @@ public class OrderInfoService {
 
              //预约订单和服务订单保存的创建人和创建时间不是同一个字段
             if (orderInfo.getOrderType() == 0) {//预约订单
-                orderInfo.setUpdateTime(new Date());
-                orderInfo.setUpdateUser(userId);
-                if (orderInfo.getUpdateUser() != null) {
+                if(orderInfo.getOrderStatus() != null && orderInfo.getOrderStatus().equals("已使用")){//预约订单 转为 服务订单，需要保持 服务订单的更新时间，更新人
+                    orderInfo.setServerUpdateTime(new Date());
+                    orderInfo.setServerUpdateUserId(userId);
+                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    if (updateUserObject != null) {
+                        JSONObject obj = updateUserObject.getJSONObject("data");
+                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
+                    }
+                }else{
+                    orderInfo.setUpdateTime(new Date());
+                    orderInfo.setUpdateUser(userId);
                     JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
@@ -70,12 +78,10 @@ public class OrderInfoService {
             } else {//服务订单
                 orderInfo.setServerUpdateTime(new Date());
                 orderInfo.setServerUpdateUserId(userId);
-                if (orderInfo.getServerUpdateUserId() != null) {
-                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    if (updateUserObject != null) {
-                        JSONObject obj = updateUserObject.getJSONObject("data");
-                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
-                    }
+                JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (updateUserObject != null) {
+                    JSONObject obj = updateUserObject.getJSONObject("data");
+                    orderInfo.setServerUpdateUserName(obj.get("name").toString());
                 }
             }
             Flight flight = orderInfo.getFlight();
@@ -96,10 +102,12 @@ public class OrderInfoService {
                     flightMapper.insertSelective(flight);
 
                     //龙腾定制航班
-                    if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                    if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
                         Map<String, Object> flightMap = new HashMap<>();
-                        flightMap.put("flightId", flightId);
-                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+                        flightMap.put("flightId", flight.getFlightId());
+                        String re = HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+//                        String re = HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/flight-info/customFlight", headerMap, flightMap);
+                        System.out.println(re);
                     }
                     //
 
@@ -132,10 +140,12 @@ public class OrderInfoService {
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
                     //龙腾定制航班 如果产品为异地贵宾服务，不走定制航班
-                    if(!orderInfo.getProductName().equals("异地贵宾服务")){
+                    if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
                         Map<String, Object> flightMap = new HashMap<>();
-                        flightMap.put("flightId", flightId);
-                        JSON.parseObject(HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight",flightMap,headerMap));
+                        flightMap.put("flightId", flight.getFlightId());
+                        String re = HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+//                        String re = HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/flight-info/customFlight", headerMap, flightMap);
+                        System.out.println(re);
                     }
                     //
                 }
@@ -149,22 +159,20 @@ public class OrderInfoService {
             if (orderInfo.getOrderType() == 0) {
                 orderInfo.setCreateTime(new Date());
                 orderInfo.setCreateUser(userId);
-                if (orderInfo.getCreateUser() != null) {
-                    JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    if (createUserObject != null) {
-                        JSONObject obj = createUserObject.getJSONObject("data");
-                        orderInfo.setCreateUserName(obj.get("name").toString());
-                    }
+                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (createUserObject != null) {
+                    JSONObject obj = createUserObject.getJSONObject("data");
+                    orderInfo.setCreateUserName(obj.get("name").toString());
                 }
             } else {
                 orderInfo.setServerCreateTime(new Date());
                 orderInfo.setServerCreateUserId(userId);
-                if (orderInfo.getServerCreateUserId() != null) {
-                    JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    if (createUserObject != null) {
-                        JSONObject obj = createUserObject.getJSONObject("data");
-                        orderInfo.setServerCreateUserName(obj.get("name").toString());
-                    }
+                orderInfo.setServerUpdateUserId(userId);
+                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (createUserObject != null) {
+                    JSONObject obj = createUserObject.getJSONObject("data");
+                    orderInfo.setServerCreateUserName(obj.get("name").toString());
+                    orderInfo.setServerUpdateUserName(obj.get("name").toString());
                 }
             }
 
@@ -172,6 +180,7 @@ public class OrderInfoService {
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
+        return orderInfo.getOrderId();
     }
 
     private void setFlightInOrOut(Flight flight){
@@ -419,5 +428,14 @@ public class OrderInfoService {
     public List<Map> queryCardType(String airportCode) {
         List<Map> list = cardTypeMapper.queryCardTypeByAirportCode(airportCode);
         return list;
+    }
+
+    /**
+     * 更新订单信息
+     * @param orderInfo
+     * @throws Exception
+     */
+    public void updateOrderInfo(OrderInfo orderInfo) throws Exception{
+        orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
     }
 }

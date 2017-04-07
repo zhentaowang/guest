@@ -8,8 +8,10 @@ import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.OrderInfo;
 import com.zhiweicloud.guest.model.OrderServiceRecord;
+import com.zhiweicloud.guest.model.Passenger;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import com.zhiweicloud.guest.service.OrderServiceRecordService;
+import com.zhiweicloud.guest.service.PassengerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class OrderServiceRecordController {
     @Autowired
     private OrderInfoService orderInfoService;
 
+    @Autowired
+    private PassengerService passengerService;
+
     @POST
     @Path(value="addOrderServiceRecord")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -57,11 +62,10 @@ public class OrderServiceRecordController {
                 result.setMsg(LZStatus.DATA_EMPTY.display());
                 result.setStatus(LZStatus.DATA_EMPTY.value());
                 result.setData(null);
-            }else{
+            }else {
                 OrderInfo tempOrder = new OrderInfo();
                 tempOrder.setOrderId(orderParam.getOrderId());
                 tempOrder.setAirportCode(airportCode);
-                tempOrder.setOrderType(orderParam.getOrderType());
                 tempOrder.setUpdateUser(userId);
                 tempOrder.setUpdateTime(new Date());
 
@@ -71,49 +75,56 @@ public class OrderServiceRecordController {
                 record.setCreateUser(userId);
 
                 //设置代办人
-                if(orderParam.getAgentPerson() != null){
+                if(orderParam.getAgentPerson() != null) {
                     tempOrder.setAgentPerson(orderParam.getAgentPerson());
                     tempOrder.setAgentPersonName(orderParam.getAgentPersonName());
                     record.setRecordDesc(OrderConstant.ORDER_SER_AGENT_PERSON + orderParam.getAgentPersonName());
                     orderServiceRecordService.insert(record);
                 }
                 //设置证件
-                if(orderParam.getServerCardNo() != null){
+                if(orderParam.getServerCardNo() != null) {
                     tempOrder.setServerCardNo(orderParam.getServerCardNo());
                     record.setRecordDesc(OrderConstant.ORDER_SER_SERVER_CARDNO + orderParam.getServerCardNo());
                     orderServiceRecordService.insert(record);
                 }
                 //设置贵宾卡
-                if(orderParam.getVipCard() != null){
+                if(orderParam.getVipCard() != null) {
                     tempOrder.setVipCard(orderParam.getVipCard());
                     record.setRecordDesc(OrderConstant.ORDER_SER_VIP_CARD + orderParam.getVipCard());
                     orderServiceRecordService.insert(record);
                 }
                 //设置现金
-                if(orderParam.getCash() != null){
+                if(orderParam.getCash() != null) {
                     tempOrder.setCash(orderParam.getCash());
                     record.setRecordDesc(OrderConstant.ORDER_SER_CASH + orderParam.getCash());
                     orderServiceRecordService.insert(record);
                 }
                 //设置座位号
-                if(orderParam.getSitNo() != null){
+                if(orderParam.getSitNo() != null) {
                     tempOrder.setSitNo(orderParam.getSitNo());
                     record.setRecordDesc(OrderConstant.ORDER_SER_SIT_NO + orderParam.getSitNo());
                     orderServiceRecordService.insert(record);
                 }
                 //设置代办状态
-                if(orderParam.getAgentComplete() != null){
+                if(orderParam.getAgentComplete() != null) {
                     tempOrder.setAgentComplete(orderParam.getAgentComplete());
-                    if(Constant.MARK_AS_BUSS_DATA == orderParam.getAgentComplete()){
+                    if(Constant.MARK_AS_BUSS_DATA == orderParam.getAgentComplete()) {
                         record.setRecordDesc(OrderConstant.ORDER_SER_SERVER_RESTART);
-                    }else{
+                    }else {
                         record.setRecordDesc(OrderConstant.ORDER_SER_SERVER_COMPLETE);
                     }
                     orderServiceRecordService.insert(record);
                 }
 
                 //修改订单附加服务部分信息
-                orderInfoService.saveOrUpdate(tempOrder, orderParam.getPassengerList(),null, userId, airportCode);
+                orderInfoService.updateOrderInfo(tempOrder);
+                //乘客信息不为空的话，更新乘客座位
+                if(!CollectionUtils.isEmpty(orderParam.getPassengerList())) {
+                    for(Passenger p : orderParam.getPassengerList()) {
+                        p.setAirportCode(airportCode);
+                        passengerService.updateByPassenger(p);
+                    }
+                }
 
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
