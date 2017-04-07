@@ -17,6 +17,7 @@
       and srm.is_deleted = 0 and sur.is_deleted = 0
       order by srm.menu_id
     )
+    order by position
   </select>
 
 
