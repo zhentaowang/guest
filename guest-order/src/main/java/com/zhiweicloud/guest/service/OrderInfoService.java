@@ -152,7 +152,7 @@ public class OrderInfoService {
              */
             if (orderInfo.getOrderType() == 0) {
                 orderInfo.setCreateTime(new Date());
-                orderInfo.setCreateUser(userId);
+                orderInfo.setUpdateUser(userId);
                 if (orderInfo.getCreateUser() != null) {
                     JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (createUserObject != null) {
@@ -163,11 +163,13 @@ public class OrderInfoService {
             } else {
                 orderInfo.setServerCreateTime(new Date());
                 orderInfo.setServerCreateUserId(userId);
+                orderInfo.setServerUpdateUserId(userId);
                 if (orderInfo.getServerCreateUserId() != null) {
                     JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (createUserObject != null) {
                         JSONObject obj = createUserObject.getJSONObject("data");
                         orderInfo.setServerCreateUserName(obj.get("name").toString());
+                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
                     }
                 }
             }

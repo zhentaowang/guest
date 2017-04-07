@@ -380,7 +380,7 @@
         #{airportCode,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=BIGINT},
@@ -389,13 +389,13 @@
         #{createUserName,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
       <if test="updateUser != null">
         #{updateUser,jdbcType=BIGINT},
       </if>
       <if test="serverCreateTime != null">
-        #{serverCreateTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
       <if test="serverCreateUserId != null">
         #{serverCreateUserId,jdbcType=BIGINT},
@@ -404,7 +404,7 @@
         #{serverCreateUserName,jdbcType=VARCHAR},
       </if>
       <if test="serverUpdateTime != null">
-        #{serverUpdateTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
       <if test="serverUpdateUserId != null">
         #{serverUpdateUserId,jdbcType=BIGINT},
@@ -528,19 +528,19 @@
         airport_code = #{airportCode,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+        create_time = now(),
       </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now(),
       </if>
       <if test="updateUser != null">
         update_user = #{updateUser,jdbcType=BIGINT},
       </if>
       <if test="serverCreateTime != null">
-        server_create_time = #{serverCreateTime,jdbcType=TIMESTAMP},
+        server_create_time = now(),
       </if>
       <if test="serverCreateUserId != null">
         server_create_user_id = #{serverCreateUserId,jdbcType=BIGINT},
@@ -549,7 +549,7 @@
         server_create_user_name = #{serverCreateUserName,jdbcType=VARCHAR},
       </if>
       <if test="serverUpdateTime != null">
-        server_update_time = #{serverUpdateTime,jdbcType=TIMESTAMP},
+        server_update_time = now(),
       </if>
       <if test="serverUpdateUserId != null">
         server_update_user_id = #{serverUpdateUserId,jdbcType=BIGINT},
@@ -802,9 +802,11 @@
       o.other_remark,o.order_status,o.order_type,o.agent_complete,o.agent_person,o.agent_person_name,o.server_card_no,o.vip_card,o.cash,o.sit_no,o.server_complete,o.server_person_num,o.airport_code,o.create_time,o.create_user,o.create_user_name,o.along_total,o.server_location,
       o.server_create_user_id,
       o.server_create_user_name,
+      o.server_create_time,
       o.server_update_time,
       o.server_update_user_id,
       o.server_update_user_name,
+
     f.flight_id,f.flight_date,f.flight_no,f.flight_depcode,f.flight_arrcode,f.flight_dep,f.flight_arr,f.flight_dep_airport,flight_arr_airport,f.flight_position,f.board_in_out,
     f.flight_deptime_plan_date,f.flight_arrtime_plan_date,f.is_in_or_out,f.board_gate,f.is_near_or_far,f.plan_no
       from order_info o
