@@ -7,6 +7,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import com.zhiweicloud.guest.common.BeanCompareUtils;
 import com.zhiweicloud.guest.common.CustomStatus;
 import com.zhiweicloud.guest.common.PushStatus;
 import com.zhiweicloud.guest.common.FlightException;
@@ -252,8 +253,10 @@ public class FlightInfoController {
             flight.setUpdateUser(userId);
             // 向龙腾定制航班信息
             Integer state = flightService.customDragon(flight);
-            // 定制成功 -- 拿到航班动态信息 并且 更新航班表数据
+            // 定制成功 -- 设置航班表的是否定制字段 拿到航班动态信息 并且 更新航班表数据
             if (state != null && state == 1) {
+                flight.setIsCustom(true);
+                flightService.updateFlightDirect(flight);
                 flightService.updateFlight(flightService.getFlightDynamic(flight));
                 result.put("state", CustomStatus.SUCCESS.state());
                 result.put("info", CustomStatus.SUCCESS.info());
@@ -302,6 +305,38 @@ public class FlightInfoController {
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
             return JSON.toJSONString(result);
+        }
+    }
+
+    /**
+     * 航班信息修改日志.
+     *
+     * @param flightJson 航班对象Json
+     * @param airportCode 客户端标识
+     * @param userId      用户ID
+     * @return
+     */
+    @POST
+    @Path("updateFlightInfo")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "更新航班信息", notes = "返回航班更新结果", httpMethod = "POST", produces = "application/json")
+    public String updateFlightInfo(
+            @FormParam("flight") String flightJson,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        try {
+            Flight flight = JSONObject.parseObject(flightJson, Flight.class);
+            flight.setUpdateUser(userId);
+            flight.setAirportCode(airportCode);
+            Long flightId = flight.getFlightId();
+            if (flightId == null || "".equals(flightId)) {
+                return JSON.toJSONString(LXResult.build(LZStatus.BAD_REQUEST.value(), LZStatus.BAD_REQUEST.display()));
+            }
+            flightService.updateFlightAndFlightLog(flightService.queryFlightById(flightId,airportCode), flight);
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 

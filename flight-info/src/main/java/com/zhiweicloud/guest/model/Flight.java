@@ -11,14 +11,12 @@ import com.zhiweicloud.guest.common.DisplayName;
 import com.zhiweicloud.guest.common.DisplayValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import java.util.Date;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.Date;
 
 /**
  * Flight.java
@@ -221,6 +219,10 @@ public class Flight extends BaseEntity{
     @ApiModelProperty(value="服务id",name="servId")
     private Long servId;
 
+    @Transient
+    @ApiModelProperty(value="是否定制",name="isCustom")
+    private Boolean isCustom;
+
     public Long getServerCompleteId() {
         return serverCompleteId;
     }
@@ -299,6 +301,14 @@ public class Flight extends BaseEntity{
 
     public void setScheduleEventName(String scheduleEventName) {
         this.scheduleEventName = scheduleEventName;
+    }
+
+    public Boolean getIsCustom() {
+        return isCustom;
+    }
+
+    public void setIsCustom(Boolean custom) {
+        this.isCustom = custom;
     }
 
     /**

@@ -111,12 +111,12 @@ public class FlightService {
                 if (updateMessage != null) {
                     flightUpdateLog.setCreateUser(flight.getUpdateUser());
                     flightUpdateLog.setUpdateMessage(updateMessage);
-                    flightUpdateLog.setOperatorName("非常准"); // 从非常准推送过来的数据
+                    flightUpdateLog.setOperatorName("非常准"); // 从非常准推送过来的数据,暂时写死
                     flightUpdateLog.setFlightId(flightId);
                     flightUpdateLog.setAirportCode(flight.getAirportCode());
                     flightUpdateLogMapper.insert(flightUpdateLog);
-                    flightMapper.updateFlight(flight);
                 }
+                flightMapper.updateFlight(flight);
             } else {
                 throw new FlightException("无需更新");
             }
@@ -279,6 +279,33 @@ public class FlightService {
         newFlight.setUpdateUser(flight.getUpdateUser());
         return newFlight;
     }
+
+    /**
+     * 更新航班信息并且插入航班更新日志
+     *
+     * @param localFlight    local database flight object
+     * @param incomingFlight incoming flight object
+     * @return
+     */
+    public void updateFlightAndFlightLog(Flight localFlight,Flight incomingFlight) throws Exception {
+        // a json string about local and incoming flight object comparison
+        String updateMessage = BeanCompareUtils.compareTwoBean(localFlight, incomingFlight);
+        // 考虑到需要记录的更新字段不包括全部航班字段，虽然没有记录航班更新信息，但任然需要更新航班信息
+        if (updateMessage != null) {
+            FlightUpdateLog flightUpdateLog = new FlightUpdateLog();
+            flightUpdateLog.setUpdateMessage(updateMessage);
+            flightUpdateLog.setCreateUser(incomingFlight.getUpdateUser());
+            flightUpdateLog.setFlightId(incomingFlight.getFlightId());
+            flightUpdateLog.setAirportCode(incomingFlight.getAirportCode());
+            flightUpdateLogMapper.insert(flightUpdateLog);
+        }
+        flightMapper.updateFlight(incomingFlight);
+    }
+
+    public void updateFlightDirect(Flight flight) throws Exception{
+        flightMapper.updateFlightDirect(flight);
+    }
+
 
     /**
      * 定制航班 所需参数
