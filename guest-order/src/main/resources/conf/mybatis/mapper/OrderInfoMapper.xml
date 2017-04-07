@@ -587,6 +587,9 @@
     <if test="criteria.queryCustomerInfo != null and !''.equals(criteria.queryCustomerInfo)">
       and (o.protocol_name like concat('%',#{criteria.queryCustomerInfo},'%') or o.customer_name like concat('%',#{criteria.queryCustomerInfo},'%'))
     </if>
+    <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
+      and o.product_name in (${criteria.queryProductId})
+    </if>
     <if test="criteria.queryIsImportant != null and !''.equals(criteria.queryIsImportant)">
       and o.is_important =  #{criteria.queryIsImportant}
     </if>

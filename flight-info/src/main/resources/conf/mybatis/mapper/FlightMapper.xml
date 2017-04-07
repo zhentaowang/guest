@@ -203,7 +203,7 @@
     where f.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     inner join (select oi.flight_id, os.servId, sum(os.serverNum) as serverNum, os.serviceName from order_info as oi
     right join (select order_id, service_detail->>"$.servId" as servId, service_detail->>"$.serverNum" as serverNum, service_detail->>"$.serviceDetailName" as serviceName from order_service
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 and service_detail->>"$.servId" != 'null'
     <if test="criteria.servIds != null and criteria.servIds != '' and !criteria.servIds.equals('调度管理')">
       and service_detail->>"$.servId" in (${criteria.servIds})
     </if>
@@ -256,7 +256,7 @@
     where f.airport_code = #{airportCode,jdbcType=VARCHAR} and f.is_deleted = 0) as fs
     inner join (select oi.flight_id, os.servId, sum(os.serverNum) as serverNum, os.serviceName from order_info as oi
     right join (select order_id, service_detail->>"$.servId" as servId, service_detail->>"$.serverNum" as serverNum, service_detail->>"$.serviceDetailName" as serviceName from order_service
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and service_detail->>"$.servId" != 'null'
     <if test="servIds != null and servIds != '' and !servIds.equals('调度管理')">
       and service_detail->>"$.servId" in (${servIds})
     </if>
