@@ -27,6 +27,7 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -44,5 +45,9 @@ public interface FlightMapper{
 
     void insertSelective(Flight flight);
 
+    Flight selectByPrimaryKey(@Param("flightId") Long flightId);
+
     Long isFlightExist(Flight flight);
+
+    Boolean selectIsCustomById(@Param("flightId") Long flightId);
 }

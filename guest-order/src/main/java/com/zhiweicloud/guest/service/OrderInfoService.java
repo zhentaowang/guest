@@ -3,7 +3,6 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -16,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -93,24 +94,15 @@ public class OrderInfoService {
                 this.setFlightInOrOut(flight);
 
                 if (flightId != null) {
-                    flight.setFlightId(flightId);
-                    flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
+//                    flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
+//                    HttpClientUtil.httpPostRequest("http://127.0.0.1:8989/updateFlightInfo", headerMap, updateFlightMap);
+                    executeFlightOperate(flightId,orderInfo,flight,headerMap);
                 } else {
                     flight.setCreateTime(new Date());
                     flight.setCreateUser(userId);
                     flight.setFlightId(null);
                     flightMapper.insertSelective(flight);
-
-                    //龙腾定制航班
-                    if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
-                        Map<String, Object> flightMap = new HashMap<>();
-                        flightMap.put("flightId", flight.getFlightId());
-                        String re = HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
-//                        String re = HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/flight-info/customFlight", headerMap, flightMap);
-                        System.out.println(re);
-                    }
-                    //
-
+                    customFlight(orderInfo,flight,headerMap);
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
@@ -133,21 +125,12 @@ public class OrderInfoService {
                 this.setFlightInOrOut(flight);
 
                 if (flightId != null && !flightId.equals("")) {
-                    flight.setFlightId(flightId);
-                    flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
+                    executeFlightOperate(flightId,orderInfo,flight,headerMap);
                 } else {
                     flight.setCreateTime(new Date());
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
-                    //龙腾定制航班 如果产品为异地贵宾服务，不走定制航班
-                    if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
-                        Map<String, Object> flightMap = new HashMap<>();
-                        flightMap.put("flightId", flight.getFlightId());
-                        String re = HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
-//                        String re = HttpClientUtil.httpGetRequest("http://ifeicloud.zhiweicloud.com/flight-info/customFlight", headerMap, flightMap);
-                        System.out.println(re);
-                    }
-                    //
+                    customFlight(orderInfo,flight,headerMap);
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
@@ -175,12 +158,30 @@ public class OrderInfoService {
                     orderInfo.setServerUpdateUserName(obj.get("name").toString());
                 }
             }
-
-
             orderInfoMapper.insertSelective(orderInfo);
         }
         this.addPassengerAndServiceDetails(orderInfo, passengerList, orderServiceList, userId, airportCode);
         return orderInfo.getOrderId();
+    }
+
+    private void executeFlightOperate(Long flightId, OrderInfo orderInfo, Flight flight, Map<String, Object> headerMap) throws UnsupportedEncodingException, URISyntaxException {
+        flight.setFlightId(flightId);
+        Map<String, Object> updateFlightMap = new HashMap<>();
+        updateFlightMap.put("flight", JSON.toJSONString(flight));
+        HttpClientUtil.httpPostRequest("http://flight-info/flight-info/updateFlightInfo", headerMap, updateFlightMap);
+        Boolean isCustom = flightMapper.selectIsCustomById(flightId);
+        if (!isCustom){
+            customFlight(orderInfo,flight,headerMap);
+        }
+    }
+
+    //龙腾定制航班 如果产品为异地贵宾服务，不走定制航班
+    private void customFlight(OrderInfo orderInfo,Flight flight,Map<String, Object> headerMap) throws URISyntaxException {
+        if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
+            Map<String, Object> flightMap = new HashMap<>();
+            flightMap.put("flightId", flight.getFlightId());
+            HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
+        }
     }
 
     private void setFlightInOrOut(Flight flight){
@@ -438,4 +439,5 @@ public class OrderInfoService {
     public void updateOrderInfo(OrderInfo orderInfo) throws Exception{
         orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
     }
+
 }
