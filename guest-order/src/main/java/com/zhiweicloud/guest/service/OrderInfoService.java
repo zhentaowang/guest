@@ -58,9 +58,17 @@ public class OrderInfoService {
 
              //预约订单和服务订单保存的创建人和创建时间不是同一个字段
             if (orderInfo.getOrderType() == 0) {//预约订单
-                orderInfo.setUpdateTime(new Date());
-                orderInfo.setUpdateUser(userId);
-                if (orderInfo.getUpdateUser() != null) {
+                if(orderInfo.getOrderStatus() != null && orderInfo.getOrderStatus().equals("已使用")){//预约订单 转为 服务订单，需要保持 服务订单的更新时间，更新人
+                    orderInfo.setServerUpdateTime(new Date());
+                    orderInfo.setServerUpdateUserId(userId);
+                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    if (updateUserObject != null) {
+                        JSONObject obj = updateUserObject.getJSONObject("data");
+                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
+                    }
+                }else{
+                    orderInfo.setUpdateTime(new Date());
+                    orderInfo.setUpdateUser(userId);
                     JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
@@ -70,12 +78,10 @@ public class OrderInfoService {
             } else {//服务订单
                 orderInfo.setServerUpdateTime(new Date());
                 orderInfo.setServerUpdateUserId(userId);
-                if (orderInfo.getServerUpdateUserId() != null) {
-                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    if (updateUserObject != null) {
-                        JSONObject obj = updateUserObject.getJSONObject("data");
-                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
-                    }
+                JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (updateUserObject != null) {
+                    JSONObject obj = updateUserObject.getJSONObject("data");
+                    orderInfo.setServerUpdateUserName(obj.get("name").toString());
                 }
             }
             Flight flight = orderInfo.getFlight();
@@ -152,25 +158,21 @@ public class OrderInfoService {
              */
             if (orderInfo.getOrderType() == 0) {
                 orderInfo.setCreateTime(new Date());
-                orderInfo.setUpdateUser(userId);
-                if (orderInfo.getCreateUser() != null) {
-                    JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    if (createUserObject != null) {
-                        JSONObject obj = createUserObject.getJSONObject("data");
-                        orderInfo.setCreateUserName(obj.get("name").toString());
-                    }
+                orderInfo.setCreateUser(userId);
+                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (createUserObject != null) {
+                    JSONObject obj = createUserObject.getJSONObject("data");
+                    orderInfo.setCreateUserName(obj.get("name").toString());
                 }
             } else {
                 orderInfo.setServerCreateTime(new Date());
                 orderInfo.setServerCreateUserId(userId);
                 orderInfo.setServerUpdateUserId(userId);
-                if (orderInfo.getServerCreateUserId() != null) {
-                    JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    if (createUserObject != null) {
-                        JSONObject obj = createUserObject.getJSONObject("data");
-                        orderInfo.setServerCreateUserName(obj.get("name").toString());
-                        orderInfo.setServerUpdateUserName(obj.get("name").toString());
-                    }
+                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                if (createUserObject != null) {
+                    JSONObject obj = createUserObject.getJSONObject("data");
+                    orderInfo.setServerCreateUserName(obj.get("name").toString());
+                    orderInfo.setServerUpdateUserName(obj.get("name").toString());
                 }
             }
 
