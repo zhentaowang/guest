@@ -56,7 +56,7 @@ public class CrmConstant {
     public static final String LABEL_NAME_1 = "头等舱";
     public static final String LABEL_NAME_2 = "金银卡";
     public static final String LABEL_NAME_3 = "地方政要";
-    public static final String LABEL_NAME_4 = "副部级vip";
+    public static final String LABEL_NAME_4 = "VVIP";
     public static final String LABEL_NAME_5 = "银行领导";
     public static final String LABEL_NAME_6 = "持卡用户";
 
