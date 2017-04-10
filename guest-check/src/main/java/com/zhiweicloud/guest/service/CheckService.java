@@ -75,6 +75,8 @@ public class CheckService {
     public LZResult<PaginationResult<Map>> getAll(Long userId, String airportCode, CheckQueryParam checkQueryParam, Integer page, Integer rows) throws Exception {
         BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
 
+        checkQueryParam.setAirportCode(airportCode);
+
         int total = checkMapper.selectCheckTotal(checkQueryParam);
         List<Map> checkList = checkMapper.selectCheckList(queryCondition);
         for (int i = 0; i < checkList.size(); i++) {

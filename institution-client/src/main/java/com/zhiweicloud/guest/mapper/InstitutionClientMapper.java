@@ -60,4 +60,6 @@ public interface InstitutionClientMapper{
     void deleteBatchByIdsAndUserId(Map params);
 
     int judgeRepeat(InstitutionClient institutionClient);
+
+    List<Map> queryInstitutionType(String airportCode);
 }
