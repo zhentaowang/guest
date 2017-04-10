@@ -55,7 +55,12 @@
     select schedule_event_id, name
     from schedule_event
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
-    and type = #{scheduleType,jdbcType=VARCHAR} and is_approach = #{isInOrOut,jdbcType=SMALLINT}
+    <if test="scheduleType != null">
+      and type = #{scheduleType,jdbcType=VARCHAR}
+    </if>
+    <if test="isInOrOut != null">
+      and is_approach = #{isInOrOut,jdbcType=SMALLINT}
+    </if>
   </select>
 
   <insert id="insert" parameterType="com.zhiweicloud.guest.model.ScheduleEvent">

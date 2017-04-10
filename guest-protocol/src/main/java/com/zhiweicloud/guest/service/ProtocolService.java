@@ -138,28 +138,29 @@ public class ProtocolService {
     /**
      * 获取协议产品等详细信息
      * @param param
-     * @param protocol
      */
-    public void getDetialById(Map<String,Object> param,Protocol protocol) {
+    public Protocol getDetialById(Map<String,Object> param) {
+        Protocol protocol = protocolMapper.selectById(param);
         if(protocol != null){
             List<Authorizer> authorizerList = authorizerMapper.selectByProtocolId(param);
             if(authorizerList.size() != 0){
                 protocol.setAuthorizerList(authorizerList);
             }
             List<ProtocolProduct> protocolProductList = protocolProductMapper.selectByProtocolId(param);
-            if(protocolProductList != null){
-                for(int i = 0; i < protocolProductList.size(); i++){
-                    ProtocolProduct protocolProduct = protocolProductList.get(i);
-                    param.put("protocolProductId",protocolProduct.getProtocolProductId());
-                    List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
-                    protocolProduct.setProtocolProductServList(protocolProductServiceList);
-                }
-            }
+//            if(protocolProductList != null){
+//                for(int i = 0; i < protocolProductList.size(); i++){
+//                    ProtocolProduct protocolProduct = protocolProductList.get(i);
+//                    param.put("protocolProductId",protocolProduct.getProtocolProductId());
+//                    List<ProtocolProductServ> protocolProductServiceList = protocolProductServiceMapper.selectByProtocolProductId(param);
+//                    protocolProduct.setProtocolProductServList(protocolProductServiceList);
+//                }
+//            }
 
             if(protocolProductList.size() != 0){
                 protocol.setProtocolProductList(protocolProductList);
             }
         }
+        return protocol;
     }
 
     /**

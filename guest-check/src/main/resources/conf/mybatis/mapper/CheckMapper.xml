@@ -42,7 +42,7 @@
     from order_info o
     inner join flight f on o.flight_id = f.flight_id
 
-    where o.is_deleted = 0 and f.is_deleted = 0 and o.airport_code = #{airportCode}
+    where o.is_deleted = 0 and f.is_deleted = 0 and o.airport_code = #{criteria.airportCode}
     <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
       and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
     </if>

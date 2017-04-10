@@ -481,7 +481,10 @@ public class OrderInfoController {
         LZResult<Object> result = new LZResult<>();
         try {
             List<Map> list = orderInfoService.queryCardType(airportCode);
-            return JSON.toJSONString(list);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             e.printStackTrace();
             result.setMsg(LZStatus.ERROR.display());

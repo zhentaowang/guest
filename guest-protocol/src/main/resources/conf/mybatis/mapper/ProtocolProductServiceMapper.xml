@@ -71,9 +71,9 @@
       <if test="updateUser != null">
       update_user = #{updateUser,jdbcType=BIGINT},
     </if>
-      update_time = CURRENT_TIMESTAMP
+      update_time = now()
     </set>
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_id = #{protocolProductId,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and protocol_product_service_id = #{protocolProductServiceId,jdbcType=BIGINT}
   </update>
   <select id="getServiceMenuList" parameterType="java.util.Map" resultMap="BaseResultMap">
     select p.service_type_allocation_id, s.category from protocol_product_service as p
@@ -105,7 +105,7 @@
   </select>
 
   <select id="getServiceDropDownBoxByParam" parameterType="map" resultMap="BaseResultMap">
-    select p.protocol_product_service_id, s.name, p.pricing_rule, p.service_id
+    select p.protocol_product_service_id, s.name, p.pricing_rule, p.service_id, p.is_prioritized
     from protocol_product_service as p left join
     (select serv_id, no, name from v_serv
     where airport_code = #{airportCode,jdbcType=VARCHAR} and service_type_allocation_id = #{typeId,jdbcType=BIGINT} and is_deleted = 0) as s

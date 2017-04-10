@@ -101,7 +101,7 @@ public class ScheduleEventController {
             @QueryParam(value = "flightDate") String flightDate,
             @QueryParam(value = "flightState") String flightState,
             @QueryParam(value = "isInOrOut") Long isInOrOut,
-            @QueryParam(value = "scheduleEventId") Long scheduleEventId,
+            @QueryParam(value = "scheduleEventIds") String scheduleEventIds,
             @QueryParam(value = "servIds") String servIds,
             @QueryParam(value = "typeId") Long typeId,
             @QueryParam(value = "serverComplete") Long serverComplete,
@@ -114,7 +114,7 @@ public class ScheduleEventController {
         param.put("flightDate",flightDate);
         param.put("flightState",flightState);
         param.put("isInOrOut",isInOrOut);
-        param.put("scheduleEventId",scheduleEventId);
+        param.put("scheduleEventIds",scheduleEventIds);
         param.put("servIds",servIds);
         param.put("typeId",typeId);
         param.put("serverComplete",serverComplete);
