@@ -121,8 +121,8 @@ public class ProtocolController {
         Map<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
         param.put("protocolId", protocolId);
-        Protocol protocol = protocolService.getById(param);
-        return JSON.toJSONString(new LZResult<>(protocolService.getDetialById(param,protocol)));
+        Protocol protocol = protocolService.getDetialById(param,protocolService.getById(param));
+        return JSON.toJSONString(new LZResult<>(protocol));
     }
 
     /**
