@@ -227,7 +227,7 @@
       and fs.flight_no = #{criteria.flightNo,jdbcType=VARCHAR}
     </if>
     <if test="criteria.isInOrOut != null and criteria.isInOrOut != ''">
-      and fs.is_in_or_out = #{criteria.isInOrOut,jdbcType=SMALLINT}
+      and fs.is_in_or_out in (${criteria.isInOrOut})
     </if>
     <if test="criteria.flightState != null and criteria.flightState != ''">
       and fs.flight_state in (${criteria.flightState})
@@ -236,10 +236,10 @@
       and fs.schedule_event_id in (${criteria.scheduleEventIds})
     </if>
     order by fs.schedule_time desc,
-    <if test="criteria.isInOrOut == 0">
+    <if test="criteria.isInOrOut.equals(0)">
       fs.flight_deptime_plan_date desc,
     </if>
-    <if test="criteria.isInOrOut == 1">
+    <if test="criteria.isInOrOut.equals(1)">
       fs.flight_arrtime_plan_date desc,
     </if>
       fs.flight_id desc
@@ -280,7 +280,7 @@
       and fs.flight_no = #{flightNo,jdbcType=VARCHAR}
     </if>
     <if test="isInOrOut != null and isInOrOut != ''">
-      and fs.is_in_or_out = #{isInOrOut,jdbcType=SMALLINT}
+      and fs.is_in_or_out in (${isInOrOut})
     </if>
     <if test="flightState != null and flightState != ''">
       and fs.flight_state in (${flightState})
