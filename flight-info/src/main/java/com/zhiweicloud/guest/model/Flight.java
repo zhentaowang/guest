@@ -125,10 +125,10 @@ public class Flight extends BaseEntity{
     @DisplayName(name = "乘机状态")
     private String boardState;
 
-    @ApiModelProperty(value = "航班状态（计划，起飞，到达，延误，取消，备降，返航）(Plan,Take off,Arrivals,Delay,Cancel,Alternate,Return)", name = "flightState")
+    @ApiModelProperty(value = "航班状态（计划，起飞，到达，延误，取消，备降，返航，提前取消）(Plan,Take off,Arrivals,Delay,Cancel,Alternate,Return)", name = "flightState")
     @DisplayName(name = "航班状态", map = {@DisplayValue(key = "Plan", value = "计划"), @DisplayValue(key = "Take off", value = "起飞"),
             @DisplayValue(key = "Arrivals", value = "到达"), @DisplayValue(key = "Delay", value = "延误"), @DisplayValue(key = "Cancel", value = "取消"),
-            @DisplayValue(key = "Alternate", value = "备降"), @DisplayValue(key = "Return", value = "返航")})
+            @DisplayValue(key = "Alternate", value = "备降"), @DisplayValue(key = "Return", value = "返航"),@DisplayValue(key = "Advance cancel", value = "提前取消")})
     private String flightState;
 
     @ApiModelProperty(value="候机楼",name="flightHterminal")
@@ -140,19 +140,15 @@ public class Flight extends BaseEntity{
     private String flightTerminal;
 
     @ApiModelProperty(value="出发城市名",name="flightDep")
-    @DisplayName(name = "出发城市名")
     private String flightDep;
 
     @ApiModelProperty(value="到达城市名",name="flightArr")
-    @DisplayName(name = "到达城市名")
     private String flightArr;
 
     @ApiModelProperty(value="出发机场名",name="flightDepAirport")
-    @DisplayName(name = "出发机场名")
     private String flightDepAirport;
 
     @ApiModelProperty(value="到达机场名",name="flightArrAirport")
-    @DisplayName(name = "到达机场名")
     private String flightArrAirport;
 
     @ApiModelProperty(value="备降信息节点",name="alternateInfo")
@@ -160,11 +156,9 @@ public class Flight extends BaseEntity{
     private String alternateInfo;
 
     @ApiModelProperty(value="出发地时区",name="orgTimezone")
-    @DisplayName(name = "出发地时区")
     private String orgTimezone;
 
     @ApiModelProperty(value="目的地时区",name="dstTimezone")
-    @DisplayName(name = "目的地时区")
     private String dstTimezone;
 
     @ApiModelProperty(value="航班属性（0:国内-国内;1国内-国际;2国内-地区;3:地区-国际;4:国际-国际;5:未知）",name="fcategory")

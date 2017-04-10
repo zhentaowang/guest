@@ -158,6 +158,34 @@ public class FlightInfoController {
         try {
             String data = request.getAttribute("data").toString();
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
+            String flightState = "";
+            switch (flightMatch.getFlightState()){
+                case "计划":
+                    flightState = "Plan";
+                    break;
+                case "起飞":
+                    flightState = "Take off";
+                    break;
+                case "到达":
+                    flightState = "Arrivals";
+                    break;
+                case "延误":
+                    flightState = "Delay";
+                    break;
+                case "取消":
+                    flightState = "Cancel";
+                    break;
+                case "备降":
+                    flightState = "Alternate";
+                    break;
+                case "返航":
+                    flightState = "Return";
+                    break;
+                case "提前取消":
+                    flightState = "Advance cancel";
+                    break;
+            }
+            flightMatch.setFlightState(flightState);
             Flight flight = new Flight();
             BeanUtils.copyProperties(flight, flightMatch);
             Map<String, Object> result = new HashMap<>();
