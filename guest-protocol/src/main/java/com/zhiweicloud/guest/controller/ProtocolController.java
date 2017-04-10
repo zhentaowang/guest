@@ -122,8 +122,7 @@ public class ProtocolController {
         param.put("airportCode", airportCode);
         param.put("protocolId", protocolId);
         Protocol protocol = protocolService.getById(param);
-        protocolService.getDetialById(param,protocol);
-        return JSON.toJSONString(new LZResult<>(protocol));
+        return JSON.toJSONString(new LZResult<>(protocolService.getDetialById(param,protocol)));
     }
 
     /**
