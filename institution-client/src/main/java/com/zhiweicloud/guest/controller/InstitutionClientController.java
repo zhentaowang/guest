@@ -256,4 +256,25 @@ public class InstitutionClientController {
     }
 
 
+    @GET
+    @Path("getInstitutionType")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "机构类型", notes = "返回机构类型下拉框", httpMethod = "GET", produces = "application/json")
+    public String getInstitutionType(@HeaderParam("client-id") String airportCode) {
+        LZResult<Object> result = new LZResult<>();
+        try {
+            List<Map> list = institutionClientService.queryInstitutionType(airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setMsg(LZStatus.ERROR.display());
+            result.setStatus(LZStatus.ERROR.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
+    }
+
 }

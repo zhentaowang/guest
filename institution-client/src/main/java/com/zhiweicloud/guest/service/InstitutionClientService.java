@@ -129,4 +129,8 @@ public class InstitutionClientService {
     public int judgeRepeat(InstitutionClient institutionClient) {
         return institutionClientMapper.judgeRepeat(institutionClient);
     }
+
+    public List<Map> queryInstitutionType(String airportCode) {
+        return institutionClientMapper.queryInstitutionType(airportCode);
+    }
 }

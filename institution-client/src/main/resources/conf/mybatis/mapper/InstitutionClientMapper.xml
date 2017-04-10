@@ -241,4 +241,9 @@
     </if>
   </select>
 
+
+
+  <select id="queryInstitutionType" resultType="map">
+    select intitution_id as id,intitution_name as value from institution_type where is_deleted = 0 and airport_code = #{airportCode}
+  </select>
 </mapper>
