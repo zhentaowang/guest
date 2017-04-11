@@ -111,8 +111,8 @@ public class EmployeeService {
     }
 
 
-    public List<Dropdownlist> queryEmployeeDropdownList(String airportCode) {
-        return employeeMapper.getEmployeeDropdownList(airportCode);
+    public List<Dropdownlist> queryEmployeeDropdownList(String airportCode,String name) {
+        return employeeMapper.getEmployeeDropdownList(airportCode,name);
     }
 
     public List<Dropdownlist> getEmployeeDropdownListByRoleId(String airportCode, Long roleId, String name){

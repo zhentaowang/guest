@@ -18,6 +18,9 @@
 
   <select id="getEmployeeDropdownList" resultMap="DropdownlistMap" parameterType="string">
     select employee_id,name as value from employee where is_deleted = 0 and airport_code = #{airportCode}
+    <if test="name != null and !name.equals('')">
+      AND name like concat('%', #{name}, '%')
+    </if>
   </select>
 
   <select id="getEmployeeDropdownListByRoleId" resultMap="DropdownlistMap" parameterType="string">
