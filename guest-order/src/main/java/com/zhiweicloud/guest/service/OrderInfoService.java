@@ -91,7 +91,7 @@ public class OrderInfoService {
                 Long flightId = flightMapper.isFlightExist(flight);
                 flight.setAirportCode(airportCode);
 
-                this.setFlightInOrOut(flight);
+                //this.setFlightInOrOut(flight);
 
                 if (flightId != null) {
 //                    flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
@@ -122,7 +122,7 @@ public class OrderInfoService {
                 flight.setAirportCode(airportCode);
                 Long flightId = flightMapper.isFlightExist(flight);
 
-                this.setFlightInOrOut(flight);
+                //this.setFlightInOrOut(flight);
 
                 if (flightId != null && !flightId.equals("")) {
                     executeFlightOperate(flightId,orderInfo,flight,headerMap);
@@ -184,7 +184,7 @@ public class OrderInfoService {
         }
     }
 
-    private void setFlightInOrOut(Flight flight){
+    /*private void setFlightInOrOut(Flight flight){
         if (flight.getAirportCode().equals(flight.getFlightDepcode())) {//当前登录三字码 == 航班目的港口
             flight.setIsInOrOut((short) 0);//出港
         } else if (flight.getAirportCode().equals(flight.getFlightArrcode())) {//当前登录三字码 == 航班出发港口
@@ -192,7 +192,7 @@ public class OrderInfoService {
         } else {
             flight.setIsInOrOut((short) 0);//出港
         }
-    }
+    }*/
 
     /**
      * 添加旅客,服务详情

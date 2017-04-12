@@ -38,7 +38,7 @@ import java.util.Map;
  * @since 2016-12-21 22:17
  */
 public interface EmployeeMapper{
-    List<Dropdownlist> getEmployeeDropdownList(String airportCode);
+    List<Dropdownlist> getEmployeeDropdownList(@Param("airportCode") String airportCode,@Param("name") String name);
 
     /**
      * 跟上一个方法有重叠，

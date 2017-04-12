@@ -255,11 +255,11 @@ public class EmployeeController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "系统中用到员工信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
     @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    public String queryEmployeeDropdownList(ContainerRequestContext request) {
-        LZResult<List<Dropdownlist>> result = new LZResult<>();
+    public String queryEmployeeDropdownList(@HeaderParam("client-id") String airportCode,
+                                            @QueryParam(value = "name") String name) {
+        LZResult<Object> result = new LZResult<>();
         try {
-            String airportCode = request.getHeaders().getFirst("client-id").toString();
-            List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode);
+            List<Dropdownlist> list = employeeService.queryEmployeeDropdownList(airportCode,name);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(list);
