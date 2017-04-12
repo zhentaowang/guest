@@ -4,7 +4,7 @@
   <groupId>com.zhiweicloud.guest</groupId>
   <artifactId>guest-util</artifactId>
   <packaging>jar</packaging>
-  <version>1.2</version>
+  <version>1.5</version>
   <name>guest Maven Webapp</name>
   <url>http://maven.apache.org</url>
 
