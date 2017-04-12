@@ -10,6 +10,7 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightInfoQuery;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.service.FlightService;
 import com.zhiweicloud.guest.service.ScheduleEventService;
@@ -78,47 +79,17 @@ public class ScheduleEventController {
         }
     }
 
-    @GET
+    @POST
     @Path("get-flight-list")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "根据航班号，日期，进出港，航班状态，调度事件查询航班列表  - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
-                    @ApiImplicitParam(name = "flightNo", value = "航班号", dataType = "String", paramType = "query"),
-                    @ApiImplicitParam(name = "flightDate", value = "航班日期", dataType = "String", paramType = "query"),
-                    @ApiImplicitParam(name = "flightState", value = "航班状态", dataType = "String", paramType = "query"),
-                    @ApiImplicitParam(name = "isInOrOut", value = "进出港", dataType = "String", paramType = "query"),
-                    @ApiImplicitParam(name = "scheduleEventIds", value = "调度事件id", dataType = "String", paramType = "query"),
-                    @ApiImplicitParam(name = "servIds", value = "服务id", dataType = "String", paramType = "query"),
-                    @ApiImplicitParam(name = "typeId", value = "服务类型id", dataType = "Long", paramType = "query"),
-                    @ApiImplicitParam(name = "serverComplete", value = "订单是否为服务完成状态", dataType = "Long", paramType = "query")
-            })
+    @ApiOperation(value = "根据航班号，日期，进出港，航班状态，调度事件查询航班列表  - 分页查询", notes = "返回分页结果", httpMethod = "POST", produces = "application/json")
     public String getFlightList(
-            @Context final HttpHeaders headers,
-            @QueryParam(value = "flightNo") String flightNo,
-            @QueryParam(value = "flightDate") String flightDate,
-            @QueryParam(value = "flightState") String flightState,
-            @QueryParam(value = "isInOrOut") String isInOrOut,
-            @QueryParam(value = "scheduleEventIds") String scheduleEventIds,
-            @QueryParam(value = "servIds") String servIds,
-            @QueryParam(value = "typeId") Long typeId,
-            @QueryParam(value = "serverComplete") Long serverComplete,
-            @QueryParam(value = "page") Integer page,
-            @QueryParam(value = "rows") Integer rows) {
-        Map<String,Object> param = new HashMap<>();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
-        param.put("airportCode",airportCode);
-        param.put("flightNo",flightNo);
-        param.put("flightDate",flightDate);
-        param.put("flightState",flightState);
-        param.put("isInOrOut",isInOrOut);
-        param.put("scheduleEventIds",scheduleEventIds);
-        param.put("servIds",servIds);
-        param.put("typeId",typeId);
-        param.put("serverComplete",serverComplete);
-        LZResult<PaginationResult<Flight>> result  = scheduleEventService.getFlightList(param,page,rows);
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
+            @RequestBody FlightInfoQuery flightInfoQuery) {
+        flightInfoQuery.setAirportCode(airportCode);
+        LZResult<PaginationResult<Flight>> result  = scheduleEventService.getFlightList(flightInfoQuery);
         return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
@@ -135,11 +106,11 @@ public class ScheduleEventController {
             @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
             @ApiImplicitParam(name = "flightId", value = "航班id", dataType = "Long", defaultValue = "68", required = true, paramType = "query")
     })
-    public String getFlightView(@Context final HttpHeaders headers,
+    public String getFlightView(@HeaderParam("client-id") String airportCode,
+                                @HeaderParam("user-id") Long userId,
                        @QueryParam(value = "flightId") Long flightId
     ) {
         Map<String,Object> param = new HashMap<>();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
         param.put("airportCode",airportCode);
         param.put("flightId",flightId);
         Flight flight = scheduleEventService.getByFlightId(param);
@@ -304,7 +275,7 @@ public class ScheduleEventController {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
             for (Long id : ids) {
                 if (scheduleEventService.selectFlightByScheduleEventId(id, airportCode)) {
-                    return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
+                    return JSON.toJSONString(LXResult.build(LZStatus.DATA_REF_ERROR));
                 }
             }
             scheduleEventService.deleteById(ids,airportCode);

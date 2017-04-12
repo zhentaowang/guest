@@ -25,6 +25,7 @@
 package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightInfoQuery;
 import com.zhiweicloud.guest.model.FlightMatch;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -43,9 +44,9 @@ public interface FlightMapper {
     Integer getFlightListCount(Map<String, Object> map);
 
     //订单状态值不为null时使用
-    List<Flight> getFlightListByOrderStatus(BasePagination<Map<String, Object>> queryCondition);
+    List<Flight> getFlightListByOrderStatus(BasePagination<FlightInfoQuery> queryCondition);
 
-    Integer getFlightListCountByOrderStatus(Map<String, Object> map);
+    Integer getFlightListCountByOrderStatus(FlightInfoQuery map);
 
     Flight selectByPrimaryKey(Map<String, Object> map);
 

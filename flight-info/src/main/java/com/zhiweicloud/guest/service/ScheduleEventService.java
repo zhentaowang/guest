@@ -32,6 +32,7 @@ import com.zhiweicloud.guest.mapper.FlightMapper;
 import com.zhiweicloud.guest.mapper.FlightUpdateLogMapper;
 import com.zhiweicloud.guest.mapper.ScheduleEventMapper;
 import com.zhiweicloud.guest.model.Flight;
+import com.zhiweicloud.guest.model.FlightInfoQuery;
 import com.zhiweicloud.guest.model.FlightUpdateLog;
 import com.zhiweicloud.guest.model.ScheduleEvent;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -78,22 +79,20 @@ public class ScheduleEventService {
     /**
      * 分页条件获取航班列表
      * @param param
-     * @param page
-     * @param rows
      */
-    public LZResult<PaginationResult<Flight>> getFlightList(Map<String,Object> param, Integer page, Integer rows) {
+    public LZResult<PaginationResult<Flight>> getFlightList(FlightInfoQuery param) {
 
         int count;
-        BasePagination<Map<String,Object>> queryCondition;
+        BasePagination<FlightInfoQuery> queryCondition;
         List<Flight> flightList;
         PaginationResult<Flight> eqr;
         count = flightMapper.getFlightListCountByOrderStatus(param);
-        queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        queryCondition = new BasePagination<>(param, new PageModel(param.getPage(), param.getRows()));
         flightList = flightMapper.getFlightListByOrderStatus(queryCondition);
         for(int i = 0; i < flightList.size(); i++){
             Map<String,Object> params = new HashMap<>();
             params.put("flightId",flightList.get(i).getFlightId());
-            params.put("airportCode",param.get("airportCode"));
+            params.put("airportCode",param.getAirportCode());
             Flight flight = flightMapper.selectByPrimaryKey(params);
             if(flight.getServerComplete() == 1){
                 flightList.get(i).setScheduleTime(flight.getServerCompleteTime());
