@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by wzt on 2017/2/23.
+ * ServiceDetail.java
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2016-12-26 13:17:52 Created By wzt
  */
 public enum ServiceDetail {
     guestRoom_departType("departType", 1), guestRoom_region("region", 1), guestRoom_positionNum("positionNum", 1),//贵宾厅
@@ -16,7 +19,7 @@ public enum ServiceDetail {
     private String name;
     private int typeId;
     // 构造方法
-    private ServiceDetail(String name, int typeId) {
+    ServiceDetail(String name, int typeId) {
         this.name = name;
         this.typeId = typeId;
     }

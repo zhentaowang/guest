@@ -42,7 +42,7 @@
     LIMIT #{page.startPageNo},#{page.pCount}
   </select>
 
-  <select id="getListCount" parameterType="map" resultType="int">
+  <select id="getListCount" resultType="int">
     SELECT count(service_type_allocation_id) from service_type_allocation where airport_code = #{airportCode,jdbcType=VARCHAR}
   </select>
 </mapper>

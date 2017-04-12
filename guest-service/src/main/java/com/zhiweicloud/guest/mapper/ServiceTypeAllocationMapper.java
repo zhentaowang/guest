@@ -42,6 +42,6 @@ public interface ServiceTypeAllocationMapper {
     List<Dropdownlist> getServiceCategoryDropdownList(Map<String, Object> param);
     List<ServiceTypeAllocation> getServiceMenuList(Map<String, Object> param);
     List<ServiceTypeAllocation> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
-    int getListCount(Map<String, Object> map);
+    int getListCount(Map<String, Object> param);
 
 }

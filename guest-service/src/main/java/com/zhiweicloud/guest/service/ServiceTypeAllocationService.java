@@ -16,38 +16,42 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by wzt on 2016/12/26.
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2016-12-26 13:17:52 Created By wzt
  */
 @Service
 public class ServiceTypeAllocationService {
 
-    @Autowired
-    private ServiceTypeAllocationMapper serviceTypeAllocationMapper;
+    private final ServiceTypeAllocationMapper serviceTypeAllocationMapper;
+    private final ServMapper servMapper;
 
     @Autowired
-    private ServMapper servMapper;
+    public ServiceTypeAllocationService(ServiceTypeAllocationMapper serviceTypeAllocationMapper,ServMapper servMapper) {
+        this.serviceTypeAllocationMapper = serviceTypeAllocationMapper;
+        this.servMapper = servMapper;
+    }
 
     /**
      * 分页获取产品类型配置列表
-     * @param param
-     * @param page
-     * @param rows
+     * @param param 查询参数
+     * @param page 起始页
+     * @param rows 每页显示数目
      * @return PaginationResult<ServiceTypeAllocation>
      */
-    public LZResult<PaginationResult<ServiceTypeAllocation>> getAll(Map<String,Object> param, Integer page, Integer rows) {
+    public LZResult<PaginationResult<ServiceTypeAllocation>> getAll(Map<String, Object> param, Integer page, Integer rows) {
 
         int count = serviceTypeAllocationMapper.getListCount(param);
 
-        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        BasePagination<Map<String, Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
         List<ServiceTypeAllocation> serviceTypeAllocationList = serviceTypeAllocationMapper.getListByConidition(queryCondition);
         PaginationResult<ServiceTypeAllocation> eqr = new PaginationResult<>(count, serviceTypeAllocationList);
-        LZResult<PaginationResult<ServiceTypeAllocation>> result = new LZResult<>(eqr);
-        return result;
+        return new LZResult<>(eqr);
     }
 
     /**
      * 获取服务名称列表
-     * @param param
+     * @param param 查询参数
      * @return List<Dropdownlist>
      */
     public List<Dropdownlist> getServiceNameDropdownList(Map<String,Object> param){
@@ -56,7 +60,7 @@ public class ServiceTypeAllocationService {
 
     /**
      * 获取服务类别列表
-     * @param param
+     * @param param 查询参数
      * @return List<Dropdownlist>
      */
     public List<Dropdownlist> getServiceTypeDropdownList(Map<String,Object> param){
@@ -65,7 +69,7 @@ public class ServiceTypeAllocationService {
 
     /**
      * 获取服务大类列表
-     * @param param
+     * @param param 查询参数
      * @return List<Dropdownlist>
      */
     public List<Dropdownlist> getServiceCategoryDropdownList(Map<String,Object> param){
@@ -74,17 +78,17 @@ public class ServiceTypeAllocationService {
 
     /**
      * 获取服务菜单列表
-     * @param param
+     * @param param 查询参数
      * @return List<Dropdownlist>
      */
     public List<ServiceTypeAllocation> getServiceMenuList(Map<String,Object> param){
-        Map<String,Object> params = new HashMap();
+        Map<String,Object> params = new HashMap<>();
         params.put("airportCode",param.get("airportCode"));
         List<ServiceTypeAllocation> result = serviceTypeAllocationMapper.getServiceMenuList(param);
-        for(int i = 0; i < result.size(); i++){
-            params.put("category",result.get(i).getCategory());
+        for(ServiceTypeAllocation serviceTypeAllocation : result){
+            params.put("category",serviceTypeAllocation.getCategory());
             List<Dropdownlist> out = serviceTypeAllocationMapper.getServiceTypeDropdownList(params);
-            result.get(i).setServiceTypeList(out);
+            serviceTypeAllocation.setServiceTypeList(out);
         }
         return result;
     }
