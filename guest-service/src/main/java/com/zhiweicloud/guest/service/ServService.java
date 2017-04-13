@@ -1,7 +1,6 @@
 package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
@@ -24,22 +23,27 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 /**
- * Created by wzt on 2016/12/26.
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2016-12-26 13:17:52 Created By wzt
  */
 @Service
 public class ServService {
 
-    @Autowired
-    private ServMapper servMapper;
+    private final ServMapper servMapper;
+    private final ProductServiceTypeMapper productServiceTypeMapper;
 
     @Autowired
-    private ProductServiceTypeMapper productServiceTypeMapper;
+    public ServService(ServMapper servMapper,ProductServiceTypeMapper productServiceTypeMapper) {
+        this.servMapper = servMapper;
+        this.productServiceTypeMapper = productServiceTypeMapper;
+    }
 
     /**
      * 分页获取服务列表
-     * @param param
-     * @param page
-     * @param rows
+     * @param param 查询参数
+     * @param page 起始页
+     * @param rows 每页显示数目
      * @return PaginationResult<Serv>
      */
     public LZResult<PaginationResult<JSONObject>> getAll(Map<String,Object> param, Integer page, Integer rows) {
@@ -49,28 +53,27 @@ public class ServService {
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
         List<Serv> servList = servMapper.getListByConidition(queryCondition);
         List<JSONObject> servJson = new ArrayList<>();
-        for(int i = 0; i < servList.size(); i++){
+        for(Serv serv : servList){
             JSONObject result = new JSONObject();
-            if(servList.get(i).getServiceDetail() != null){
-                result = JSON.parseObject(servList.get(i).getServiceDetail());
+            if(serv.getServiceDetail() != null){
+                result = JSON.parseObject(serv.getServiceDetail());
             }
-            result.put("servId",servList.get(i).getServId());
-            result.put("airportCode",servList.get(i).getAirportCode());
-            result.put("serviceTypeAllocationId",servList.get(i).getServiceTypeAllocationId());
-            result.put("name",servList.get(i).getName());
-            result.put("no",servList.get(i).getNo());
+            result.put("servId",serv.getServId());
+            result.put("airportCode",serv.getAirportCode());
+            result.put("serviceTypeAllocationId",serv.getServiceTypeAllocationId());
+            result.put("name",serv.getName());
+            result.put("no",serv.getNo());
             servJson.add(result);
         }
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, servJson);
-        LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
-        return result;
+        return new LZResult<>(eqr);
     }
 
     /**
      * 分页获取产品列表
-     * @param param
-     * @param page
-     * @param rows
+     * @param param 查询参数
+     * @param page 起始页
+     * @param rows 每页显示数目
      * @return PaginationResult<ProductServiceType>
      */
     public LZResult<PaginationResult<ProductServiceType>> getProductAndServiceList(Map<String,Object> param, Integer page, Integer rows) {
@@ -79,22 +82,21 @@ public class ServService {
 
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
         List<ProductServiceType> productList = productServiceTypeMapper.getListByConidition(queryCondition);
-        for(int i = 0; i < productList.size(); i++){
+        for(ProductServiceType productServiceType : productList){
             Map<String,Object> params = new HashMap<>();
             params.put("airportCode",param.get("airportCode"));
-            params.put("productId",productList.get(i).getProductId());
-            params.put("typeId",productList.get(i).getServiceTypeId());
+            params.put("productId",productServiceType.getProductId());
+            params.put("typeId",productServiceType.getServiceTypeId());
             List<Serv> servList = servMapper.getServListByCondition(params);
-            productList.get(i).setServiceList(servList);
+            productServiceType.setServiceList(servList);
         }
         PaginationResult<ProductServiceType> eqr = new PaginationResult<>(count, productList);
-        LZResult<PaginationResult<ProductServiceType>> result = new LZResult<>(eqr);
-        return result;
+        return new LZResult<>(eqr);
     }
 
     /**
      * 获取服务详情
-     * @param param
+     * @param param 查询参数
      * @return Serv
      */
     public Serv getById(Map<String,Object> param) {
@@ -103,7 +105,7 @@ public class ServService {
 
     /**
      * 服务名称查重
-     * @param serv
+     * @param serv 服务查重参数
      * @return boolean
      */
     public boolean selectByName(Serv serv) {
@@ -112,17 +114,12 @@ public class ServService {
         params.put("airportCode",serv.getAirportCode());
         params.put("id",serv.getServId());
         Long count = servMapper.selectByName(params);
-        if(count > 0){//count大于0，说明该名称已存在
-            return true;
-        }
-        else{
-            return false;
-        }
+        return  count > 0;//count大于0，说明该名称已存在
     }
 
     /**
      * 删除服务时判断是否有订单已经引用
-     * @param serviceId
+     * @param serviceId 服务id
      * @return boolean
      */
     public boolean selectProductByServiceId(Long serviceId,String airportCode) {
@@ -130,17 +127,12 @@ public class ServService {
         params.put("airportCode",airportCode);
         params.put("serviceId",serviceId);
         Long count = servMapper.selectProductByServiceId(params);
-        if(count > 0){//count大于0，说明有订单已经引用该服务
-            return true;
-        }
-        else{
-            return false;
-        }
+        return count > 0;//count大于0，说明有订单已经引用该服务
     }
 
     /**
      * 服务添加与修改
-     * @param serv
+     * @param serv 服务信息
      */
     public void saveOrUpdate(Serv serv) {
         if (serv.getServId() != null) {
@@ -155,15 +147,15 @@ public class ServService {
 
     /**
      * 服务删除
-     * @param ids
-     * @param airportCode
+     * @param ids 多个服务id
+     * @param airportCode 机场代码
      */
     public void deleteById(List<Long> ids,String airportCode, Long userId) {
-        for(int i = 0; i< ids.size();i++){
+        for(Long id : ids){
             Serv serv = new Serv();
             serv.setAirportCode(airportCode);
             serv.setUpdateUser(userId);
-            serv.setServId(ids.get(i));
+            serv.setServId(id);
             serv.setIsDeleted(Constant.MARK_AS_DELETED);
             servMapper.updateByIdAndAirportCode(serv);
         }
@@ -171,9 +163,9 @@ public class ServService {
 
     /**
      * 根据服务类型配置id和产品id查询服务详情
-     * @param param
-     * @param page
-     * @param rows
+     * @param param 查询参数
+     * @param page 起始页
+     * @param rows 每页显示数目
      * @return PaginationResult<JSONObject>
      */
     public LZResult<PaginationResult<JSONObject>> getServiceListByTypeId(Map<String,Object> param, Integer page, Integer rows) {
@@ -183,13 +175,13 @@ public class ServService {
         BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
         List<Serv> serviceList = servMapper.getServListByTypeId(queryCondition);
         List<JSONObject> servJson = new ArrayList<>();
-        for(int i = 0; i < serviceList.size(); i++){
+        for(Serv serv : serviceList){
             JSONObject result = new JSONObject();
-            result.put("servId",serviceList.get(i).getServId());
-            result.put("airportCode",serviceList.get(i).getAirportCode());
-            result.put("serviceTypeAllocationId",serviceList.get(i).getServiceTypeAllocationId());
-            result.put("name",serviceList.get(i).getName());
-            result.put("no",serviceList.get(i).getNo());
+            result.put("servId",serv.getServId());
+            result.put("airportCode",serv.getAirportCode());
+            result.put("serviceTypeAllocationId",serv.getServiceTypeAllocationId());
+            result.put("name",serv.getName());
+            result.put("no",serv.getNo());
             if(param.get("typeId") != null){
                 Map<String,Object> protocolProductFieldName = ProtocolProductDetail.getProtocolProductFieldName(Long.parseLong(param.get("typeId").toString()));
                 if(protocolProductFieldName != null){
@@ -202,15 +194,14 @@ public class ServService {
             servJson.add(result);
         }
         PaginationResult<JSONObject> eqr = new PaginationResult<>(count, servJson);
-        LZResult<PaginationResult<JSONObject>> result = new LZResult<>(eqr);
-        return result;
+        return new LZResult<>(eqr);
     }
 
     /**
      * 根据服务分类查询 服务名，服务人数
-     * @param typeId
-     * @param airportCode
-     * @return
+     * @param typeId 服务类型配置id
+     * @param airportCode 机场代码
+     * @return servList
      */
     public List<Serv> getServNameAndPositionNum(Long typeId, Long userId, String airportCode, Integer page, Integer rows, boolean isShowAll) throws Exception{
         List<Serv> servList = new ArrayList<>();

@@ -26,14 +26,13 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
 
 /**
- * Serv.java
+ * ServController.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2016-12-26 13:17:52 Created By wzt
@@ -43,11 +42,15 @@ import java.util.*;
 @Api(value="服务",description="服务desc", tags={"service"})
 public class ServController {
     private static final Logger logger = LoggerFactory.getLogger(ServController.class);
-    @Autowired
-    private ServService servService;
+
+    private final ServService servService;
+    private final ServDefaultService servDefaultService;
 
     @Autowired
-    private ServDefaultService servDefaultService;
+    public ServController(ServService servService,ServDefaultService servDefaultService) {
+        this.servService = servService;
+        this.servDefaultService = servDefaultService;
+    }
 
     /**
      * 服务管理 - 服务列表
@@ -84,7 +87,7 @@ public class ServController {
      * 需要判断name是否重复
      * @param airportCode 机场代码
      * @param userId 用户id
-     * @param params
+     * @param params 服务信息
      * @return 成功还是失败
      */
     @POST
@@ -113,12 +116,12 @@ public class ServController {
             Set keys = param00.keySet();
             Map<String, Object> serviceFieldName = ServiceDetail.getServiceFieldName(serv.getServiceTypeAllocationId());
             if (keys.size() != serviceFieldName.size()) {
-                return LXResult.build(4995, "传输数据字段错误");
+                return LXResult.build(LZStatus.DATA_TRANSFER_ERROR);
             } else {
                 if (serviceFieldName != null) {
                     for (int i = 0; i < keys.size(); i++) {
                         if (!serviceFieldName.containsKey(keys.toArray()[i])) {
-                            return LXResult.build(4995, "传输数据字段错误");
+                            return LXResult.build(LZStatus.DATA_TRANSFER_ERROR);
                         } else {
                             if (param00.getString(keys.toArray()[i].toString()).isEmpty() & !keys.toArray()[i].toString().equals("plateNumber")) {
                                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
@@ -128,8 +131,7 @@ public class ServController {
                 }
             }
             if (serv.getServId() == null) {
-                if (serv == null || serv.getAirportCode() == null || serv.getServiceTypeAllocationId() == null
-                        || serv.getName() == null) {
+                if (serv.getAirportCode() == null || serv.getServiceTypeAllocationId() == null || serv.getName() == null) {
                     return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
                 }
             } else {
@@ -138,7 +140,7 @@ public class ServController {
                 }
             }
 
-            if (servService.selectByName(serv) == true) {
+            if (servService.selectByName(serv)) {
                 return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
             }
             servService.saveOrUpdate(serv);
@@ -184,7 +186,7 @@ public class ServController {
      * @param airportCode 机场代码
      * @param userId 用户id
      * @param params ids
-     * @return
+     * @return 成功或失败
      */
     @POST
     @Path("delete")
@@ -197,9 +199,9 @@ public class ServController {
             @HeaderParam("user-id") Long userId) {
         try {
             List<Long> ids = params.getData();
-            for (int i = 0; i < ids.size(); i++) {
-                if (servService.selectProductByServiceId(ids.get(i), airportCode) == true) {
-                    return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
+            for (Long id : ids) {
+                if (servService.selectProductByServiceId(id, airportCode)) {
+                    return JSON.toJSONString(LXResult.build(LZStatus.DATA_REF_ERROR));
                 }
             }
             servService.deleteById(ids, airportCode, userId);
@@ -218,7 +220,7 @@ public class ServController {
      * @param productId 产品id
      * @param airportCode 机场代码
      * @param userId 用户id
-     * @return
+     * @return 服务详情分页结果
      */
     @GET
     @Path("get-service-list-by-type-and-product-id")
@@ -247,10 +249,10 @@ public class ServController {
 
     /**
      * 根据服务分类查询 服务名，服务人数
-     * @param typeId
+     * @param typeId 服务类型配置id
      * @param airportCode 机场代码
      * @param userId 用户id
-     * @return
+     * @return 显示服务厅名以及可服务人数
      */
     @GET
     @Path("getServNameAndPositionNum")
@@ -283,7 +285,7 @@ public class ServController {
      * @param rows      每页显示数目
      * @param airportCode 机场代码
      * @param userId 用户id
-     * @return
+     * @return 分页结果
      */
     @GET
     @Path("product-and-service-list")
@@ -306,8 +308,8 @@ public class ServController {
 
     /**
      * 服务查询列表 - 设置默认
-     * @param params
-     * @return
+     * @param params ids
+     * @return 成功还是失败
      */
     @POST
     @Path(value="setDefaultRoom")

@@ -30,6 +30,7 @@ public enum LZStatus {
 	REPNAM(5001, "有重复名称，请检查"),
 	DATA_EMPTY(5003, "参数为空"),
 	DATA_REF_ERROR(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"),
+	DATA_TRANSFER_ERROR(4995, "传输数据字段错误"),
     ORDER_STATUS_FLOW_ERROR(5005,"订单状态更新异常，请检查正常的订单流转流程");
 
 	private int value;
