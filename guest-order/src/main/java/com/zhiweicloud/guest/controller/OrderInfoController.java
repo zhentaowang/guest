@@ -362,7 +362,7 @@ public class OrderInfoController {
 
     /**
      * 订单管理 - 修改订单服务状态
-     *
+     * @author E.in
      * @return
      */
     @POST
@@ -391,9 +391,9 @@ public class OrderInfoController {
         }
     }
 
-    /**3
+    /**
      * 根据订单状态/详细服务id 获取服务人次
-     *
+     * @author E.in
      * @return
      */
     @GET
@@ -406,7 +406,7 @@ public class OrderInfoController {
         LZResult<Integer> result = new LZResult();
         try {
             String airportCode = headers.getRequestHeaders().getFirst("client-id");
-            Integer orderCount = orderInfoService.getServerNumByServlId(OrderConstant.ORDER_STATUS_USED, servId, airportCode);
+            Integer orderCount = orderInfoService.getServerNumByServId(OrderConstant.ORDER_STATUS_USED, servId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(orderCount);
@@ -419,6 +419,13 @@ public class OrderInfoController {
         return JSON.toJSONString(result);
     }
 
+    /**
+     * 根据协议id查询订单数量，判断协议能否删除
+     * @author E.in
+     * @param protocolId
+     * @param headers
+     * @return
+     */
     @GET
     @Path("getOrderCountByProtocolId")
     @Produces("application/json;charset=utf8")

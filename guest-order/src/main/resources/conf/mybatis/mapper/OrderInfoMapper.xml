@@ -848,7 +848,7 @@
 
   </update>
 
-  <select id="getServerNumByServlId" resultType="int">
+  <select id="getServerNumByServId" resultType="int">
     SELECT
       ifnull(sum(sd.serverNum),0) FROM order_info o
     LEFT JOIN

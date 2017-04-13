@@ -75,7 +75,7 @@ public interface OrderInfoMapper{
      * @return
      */
 
-    int getServerNumByServlId(@Param("orderStatus") String orderStatus,@Param("servId") Long servId,@Param("airportCode")String airportCode);
+    int getServerNumByServId(@Param("orderStatus") String orderStatus,@Param("servId") Long servId,@Param("airportCode")String airportCode);
 
     /**
      * 根据协议id 查询订单数量
