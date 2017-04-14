@@ -12,6 +12,10 @@
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update role_permission set is_deleted = 1 where role_permission_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and role_id = #{roleId,jdbcType=BIGINT}
   </select>
+  <select id="SelectByRoleIdAndPermissionId" parameterType="map" resultType="Integer">
+    select count(role_permission_id) from role_permission where airport_code = #{airportCode,jdbcType=VARCHAR} and role_id = #{roleId,jdbcType=BIGINT}
+    and permission_id = #{permissionId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
   <insert id="insertBySelective" parameterType="com.zhiweicloud.guest.model.RolePermission">
     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="rolePermissionId">
       SELECT LAST_INSERT_ID()

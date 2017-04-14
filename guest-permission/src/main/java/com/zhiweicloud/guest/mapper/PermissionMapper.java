@@ -1,7 +1,5 @@
 package com.zhiweicloud.guest.mapper;
 
-import com.zhiweicloud.guest.common.MyMapper;
-import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Permission;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 

@@ -8,6 +8,7 @@
     <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,9 +19,15 @@
     permission_id, airport_code, url, name, create_user, update_user, create_time, update_time, is_deleted
   </sql>
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    SELECT permission_id, airport_code, url, name
+    SELECT permission_id, airport_code, url, name, menu_name
     FROM permission
     where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    <if test="criteria.name != null">
+      and name like concat('%',#{criteria.name},'%')
+    </if>
+    <if test="criteria.menuName != null">
+      and menu_name like concat('%',#{criteria.menuName},'%')
+    </if>
     order by permission_id desc
   </select>
   <select id="getListCount" parameterType="map" resultType="int">
@@ -28,6 +35,12 @@
     count(permission_id) as num
     FROM permission
     where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0
+    <if test="name != null">
+      and name like concat('%',#{name},'%')
+    </if>
+    <if test="menuName != null">
+      and menu_name like concat('%',#{menuName},'%')
+    </if>
   </select>
   <select id="getListByRole" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select r.role_permission_id, r.role_id, p.permission_id, p.name, p.airport_code, p.url from role_permission as r left join
