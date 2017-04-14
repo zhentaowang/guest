@@ -295,9 +295,9 @@ public class OrderInfoService {
 
     public LZResult<PaginationResult<OrderInfo>> getOrderInfoList(Integer page, Integer rows,
                                                                   OrderInfoQuery orderInfoQuery, Long userId) throws Exception {
-        Map<String, Object> headerMap = new HashMap();
-        headerMap.put("user-id", userId);
-        headerMap.put("client-id", orderInfoQuery.getAirportCode());
+//        Map<String, Object> headerMap = new HashMap();
+//        headerMap.put("user-id", userId);
+//        headerMap.put("client-id", orderInfoQuery.getAirportCode());
 
         BasePagination<OrderInfoQuery> queryCondition = new BasePagination<>(orderInfoQuery, new PageModel(page, rows));
 

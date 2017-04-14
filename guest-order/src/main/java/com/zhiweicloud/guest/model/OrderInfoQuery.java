@@ -83,6 +83,12 @@ public class OrderInfoQuery extends BaseEntity{
     @QueryParam("queryOrderNo")
     private String queryOrderNo;
 
+    /**
+     * 格式 "1,2,3"
+     */
+    @ApiModelProperty(value = "服务类别: 1:贵宾厅,5:休息室", name = "serviceId")
+    @QueryParam("serviceId")
+    private String serviceId;
 
     public String getQueryPassengerName() {
         return queryPassengerName;
@@ -218,5 +224,13 @@ public class OrderInfoQuery extends BaseEntity{
 
     public void setQueryOrderNo(String queryOrderNo) {
         this.queryOrderNo = queryOrderNo;
+    }
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 }

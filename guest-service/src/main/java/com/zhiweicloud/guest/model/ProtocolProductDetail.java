@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by wzt on 2017/2/23.
+ * ProtocolProductDetail.java
+ * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * https://www.zhiweicloud.com
+ * 2017-03-07 16:25:01 Created By wzt
  */
 public enum ProtocolProductDetail {
     guestRoom_price("price", 1),//贵宾厅
@@ -15,7 +18,7 @@ public enum ProtocolProductDetail {
     private String name;
     private int typeId;
     // 构造方法
-    private ProtocolProductDetail(String name, int typeId) {
+    ProtocolProductDetail(String name, int typeId) {
         this.name = name;
         this.typeId = typeId;
     }

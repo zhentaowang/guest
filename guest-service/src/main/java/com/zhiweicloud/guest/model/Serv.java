@@ -1,12 +1,5 @@
-/**
- * Serv.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2016-12-27 20:58:17 Created By wzt
-*/
 package com.zhiweicloud.guest.model;
 
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -14,7 +7,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
 
 /**
  * Serv.java

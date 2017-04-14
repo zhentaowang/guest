@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
@@ -25,19 +22,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * SysMenuController.java
+ * ServiceTypeAllocationController.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
- * 2016-12-20 19:34:25 Created By zhangpengfei
+ * 2016-12-26 13:17:52 Created By wzt
  */
 @Component
 @Path("/")
 @Api(value = "服务类型配置", description = "服务类型配置desc", tags = {"serviceTypeAllocation"})
 public class ServiceTypeAllocationController {
+
     private static final Logger logger = LoggerFactory.getLogger(ServiceTypeAllocationController.class);
+    private final ServiceTypeAllocationService serviceTypeAllocationService;
 
     @Autowired
-    private ServiceTypeAllocationService serviceTypeAllocationService;
+    public ServiceTypeAllocationController(ServiceTypeAllocationService serviceTypeAllocationService) {
+        this.serviceTypeAllocationService = serviceTypeAllocationService;
+    }
 
     @GET
     @Path("service-type-allocation-list")
@@ -51,99 +52,94 @@ public class ServiceTypeAllocationController {
     public LZResult<PaginationResult<ServiceTypeAllocation>> list(
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows,
-            @Context final HttpHeaders headers){
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId){
+
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
-        LZResult<PaginationResult<ServiceTypeAllocation>> result  = serviceTypeAllocationService.getAll(param,page,rows);
-        return result;
+        return serviceTypeAllocationService.getAll(param,page,rows);
+
     }
 
     /**
      * 服务类型配置 - 服务大类下拉框 数据
-     * @return
+     * @return 服务菜单列表
      */
     @GET
     @Path("service-menu-list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "服务类型配置 - 服务菜单 数据 ", notes = "返回服务菜单列表", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
-    })
-    public LZResult<List<ServiceTypeAllocation>> getServiceMenuList(@Context final HttpHeaders headers
-    ) {
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+    public LZResult<List<ServiceTypeAllocation>> getServiceMenuList(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         List<ServiceTypeAllocation> serviceMenuList = serviceTypeAllocationService.getServiceMenuList(param);
         return new LZResult<>(serviceMenuList);
+
     }
 
     /**
      * 服务类型配置 - 服务大类下拉框 数据
-     * @return
+     * @return 服务大类列表
      */
     @GET
     @Path("service-category-dropdown-list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "服务类型配置 - 服务大类下拉框 数据 ", notes = "返回服务大类列表", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query")
-    })
-    public LZResult<List<Dropdownlist>> getServiceCategoryDropdownList(@Context final HttpHeaders headers
-    ) {
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+    public LZResult<List<Dropdownlist>> getServiceCategoryDropdownList(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         List<Dropdownlist> serviceCategoryList = serviceTypeAllocationService.getServiceCategoryDropdownList(param);
-        return new LZResult<List<Dropdownlist>>(serviceCategoryList);
+        return new LZResult<>(serviceCategoryList);
     }
 
     /**
      * 服务类型配置 - 根据category查询
-     * @param category
-     * @return
+     * @param category 服务大类
+     * @return 服务类别列表
      */
     @GET
     @Path("service-type-dropdown-list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "服务类型配置 - 根据category查询 ", notes = "返回服务类别列表", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "category", value = "服务大类", dataType = "String", defaultValue = "VIP", required = true, paramType = "query")
-    })
-    public LZResult<List<Dropdownlist>> getServiceTypeDropdownList(@Context final HttpHeaders headers,
-                               @QueryParam(value = "category") String category
-    ) {
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+    @ApiImplicitParam(name = "category", value = "服务大类", dataType = "String", defaultValue = "VIP", required = true, paramType = "query")
+    public LZResult<List<Dropdownlist>> getServiceTypeDropdownList(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
+            @QueryParam(value = "category") String category) {
+
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         param.put("category",category);
         List<Dropdownlist> serviceTypeList = serviceTypeAllocationService.getServiceTypeDropdownList(param);
-        return new LZResult<List<Dropdownlist>>(serviceTypeList);
+        return new LZResult<>(serviceTypeList);
+
     }
 
     /**
      * 服务类型配置 - 根据id查询
-     * @param id
-     * @return
+     * @param id 服务类型配置id
+     * @return 服务名称列表
      */
     @GET
     @Path("service-name-dropdown-list")
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "服务类型配置 - 根据id查询 ", notes = "返回服务名称列表", httpMethod = "GET", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "airportCode", value = "机场code", dataType = "String", defaultValue = "LJG", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
-    })
-    public LZResult<List<Dropdownlist>> getServiceNameDropdownList(@Context final HttpHeaders headers,
-                                                         @QueryParam(value = "id") Long id
-    ) {
-        Map<String,Object> param = new HashMap();
-        String airportCode = headers.getRequestHeaders().getFirst("client-id");
+    @ApiImplicitParam(name = "id", value = "服务类型配置id", dataType = "Long", defaultValue = "1", required = true, paramType = "query")
+    public LZResult<List<Dropdownlist>> getServiceNameDropdownList(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
+            @QueryParam(value = "id") Long id) {
+
+        Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         param.put("id",id);
         List<Dropdownlist> serviceNameList = serviceTypeAllocationService.getServiceNameDropdownList(param);
-        return new LZResult<List<Dropdownlist>>(serviceNameList);
+        return new LZResult<>(serviceNameList);
+
     }
 }
