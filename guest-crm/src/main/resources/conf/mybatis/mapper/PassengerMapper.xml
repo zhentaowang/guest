@@ -138,9 +138,8 @@
   <select id="queryServiceInfoList" resultMap="ServiceInfoResultMap" parameterType="map">
     SELECT
       crm_passenger_id,flight_date, concat(airport_code,lpad(order_id, 6, '0')) AS order_no,product_name,
-	    client_name,concat(airport_code,'H',lpad(`protocol_id`, 4, '0')) AS protocol_no,protocol_type,
-    company_name,card_type,card_no,expire_time,work_unit,`position`
-
+	  client_name,concat(airport_code,'H',lpad(`protocol_id`, 4, '0')) AS protocol_no,protocol_type,
+      company_name,card_type,card_no,expire_time,work_unit,`position`
     FROM
 	  crm_passenger
 	WHERE
@@ -148,7 +147,7 @@
 	  <if test="phone != null">
         AND phone = #{phone}
       </if>
-      <if test="phone == null and (identity_card == null or ''.equals(identityCard))">
+      <if test="phone == null">
         AND crm_passenger_id = #{crmPassengerId}
       </if>
       <if test="protocolTypes != null and !''.equals(protocolTypes)">
