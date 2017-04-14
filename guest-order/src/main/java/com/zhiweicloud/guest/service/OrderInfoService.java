@@ -394,8 +394,8 @@ public class OrderInfoService {
      * @param airportCode
      * @return
      */
-    public int getServerNumByServlId(String orderStatus, Long servId, String airportCode) throws Exception {
-        return orderInfoMapper.getServerNumByServlId(orderStatus, servId, airportCode);
+    public int getServerNumByServId(String orderStatus, Long servId, String airportCode) throws Exception {
+        return orderInfoMapper.getServerNumByServId(orderStatus, servId, airportCode);
     }
 
     /**
