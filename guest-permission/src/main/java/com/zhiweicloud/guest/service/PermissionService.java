@@ -201,12 +201,12 @@ public class PermissionService {
             for(int j = 0; j < permissionList.size(); j++){
                 String url = permissionList.get(j).getUrl();
                 if(urls.get(i).equals(url)){
+                    if(permissionList.get(j).getDataPermission() != null){
+                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
+                        params.put(dataPermission[0],dataPermission[1]);
+                    }
                     params.put(urls.get(i),true);
                     break;
-                }
-                if(permissionList.get(j).getDataPermission() != null){
-                    String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
-                    params.put(dataPermission[0],dataPermission[1]);
                 }
             }
             if(params.get(urls.get(i)) == null){
