@@ -27,9 +27,9 @@ public class PermissionService {
 
     /**
      * 分页获取权限列表
-     * @param param
-     * @param page
-     * @param rows
+     * @param param 查询参数
+     * @param page  起始页
+     * @param rows  每页显示数目
      * @return PaginationResult<Permission>
      */
     public LZResult<PaginationResult<Permission>> getAll(Map<String,Object> param, Integer page, Integer rows) {
@@ -48,6 +48,22 @@ public class PermissionService {
         PaginationResult<Permission> eqr = new PaginationResult<>(count, permissionList);
         LZResult<PaginationResult<Permission>> result = new LZResult<>(eqr);
         return result;
+    }
+
+    /**
+     * 分页获取权限列表
+     * @param param 查询参数
+     * @param page  起始页
+     * @param rows  每页显示数目
+     * @return PaginationResult<Permission>
+     */
+    public LZResult<PaginationResult<Permission>> getPermissionList(Map<String,Object> param, Integer page, Integer rows) {
+
+        int count = permissionMapper.getListCount(param);
+        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        List<Permission> permissionList = permissionMapper.getListByConidition(queryCondition);
+        PaginationResult<Permission> eqr = new PaginationResult<>(count, permissionList);
+        return new LZResult<>(eqr);
     }
 
     /**
@@ -104,6 +120,27 @@ public class PermissionService {
         else{
             params.put("ids",ids.append(0));
             rolePermissionMapper.deleteByIdAndAirportCode(params);
+        }
+    }
+
+    /**
+     * 配置权限给角色
+     * @param rolePermissionList
+     */
+    public void allocatePermissionToRole(List<RolePermission> rolePermissionList) {
+        if(rolePermissionList != null){
+            Map<String, Object> param = new HashMap<>();
+            for(RolePermission rolePermission: rolePermissionList){
+                param.put("airportCode",rolePermission.getAirportCode());
+                param.put("roleId",rolePermission.getRoleId());
+                param.put("permissionId",rolePermission.getPermissionId());
+                if ( rolePermissionMapper.SelectByRoleIdAndPermissionId(param) == 0) {
+                    rolePermission.setCreateTime(new Date());
+                    rolePermission.setUpdateTime(new Date());
+                    rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                    rolePermissionMapper.insertBySelective(rolePermission);
+                }
+            }
         }
     }
 

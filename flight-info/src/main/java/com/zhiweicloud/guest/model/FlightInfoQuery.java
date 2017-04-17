@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.ws.rs.QueryParam;
 
 /**
- *
+ * FlightInfoQuery.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * Created by wzt on 2017/4/11.

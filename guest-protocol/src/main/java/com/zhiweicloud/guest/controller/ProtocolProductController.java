@@ -256,7 +256,7 @@ public class ProtocolProductController {
             List<Long> ids = params.getData();
             for(int i = 0; i< ids.size();i++){
                 if(protocolProductService.selectOrderByProtocolProductId(ids.get(i),airportCode) == true){
-                    return JSON.toJSONString(LXResult.build(5004, "该项已被其他功能引用，无法删除；如需帮助请联系开发者"));
+                    return JSON.toJSONString(LXResult.build(LZStatus.DATA_REF_ERROR));
                 }
             }
             protocolProductService.deleteById(ids,airportCode,userId);

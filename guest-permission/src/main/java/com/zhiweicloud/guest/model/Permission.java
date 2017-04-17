@@ -35,6 +35,9 @@ public class Permission extends BaseEntity {
     @ApiModelProperty(value="权限名称",name="name")
     private String name;
 
+    @ApiModelProperty(value="菜单名称",name="menuName")
+    private String menuName;
+
     @Transient
     @ApiModelProperty(value="角色权限Id",name="rolePermissionId")
     private Long rolePermissionId;
@@ -42,6 +45,14 @@ public class Permission extends BaseEntity {
     @Transient
     @ApiModelProperty(value="角色Id",name="roleId")
     private Long roleId;
+
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public void setMenuName(String menuName) {
+        this.menuName = menuName;
+    }
 
     public Long getRolePermissionId() {
         return rolePermissionId;

@@ -228,7 +228,7 @@
               <schemes>
                 <scheme>http</scheme>
               </schemes>
-              <host>192.168.1.130:8080</host>
+              <host>192.168.0.161:8080</host>
               <!--<basePath>/guest-employee</basePath>-->
               <info>
                 <title>Guest Permission</title>
@@ -239,7 +239,7 @@
                 </termsOfService>
                 <contact>
                   <email>wangzhentao@zhiweicloud.com</email>
-                  <name>WANG Zhen-tao</name>
+                  <name>Wang Zhen Tao</name>
                 </contact>
                 <license>
                   <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
