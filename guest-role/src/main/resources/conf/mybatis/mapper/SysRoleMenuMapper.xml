@@ -78,6 +78,9 @@
   </insert>
 
   <update id="deleteMenus" parameterType="map">
-    update sys_role_menu set is_deleted = 1 where menu_id not in (${menuIds})  and airport_code = #{airportCode} and role_id = #{roleId}
+    update sys_role_menu set is_deleted = 1 where airport_code = #{airportCode} and role_id = #{roleId}
+    <if test="menuIds != null and !''.equals(menuIds)">
+     and menu_id not in (${menuIds})
+    </if>
   </update>
 </mapper>
