@@ -196,19 +196,36 @@ public class PermissionService {
 //        }
 
         Map<String,Object> params = new HashMap<>();
+        List<Permission> permissionList = permissionMapper.getUserPermission(param);
         for(int i = 0; i < urls.size(); i++){
-            param.put("url", urls.get(i));
-            List<Permission> permissionList = permissionMapper.getUserPermission(param);
-            if(permissionList != null){
-                params.put(urls.get(i),"true");
-            }else{
-                params.put(urls.get(i),"false");
-            }
             for(int j = 0; j < permissionList.size(); j++){
-                String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
-                params.put(dataPermission[0],dataPermission[1]);
+                String url = permissionList.get(j).getUrl();
+                if(urls.get(i).equals(url)){
+                    params.put(urls.get(i),true);
+                    break;
+                }
+                if(permissionList.get(j).getDataPermission() != null){
+                    String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
+                    params.put(dataPermission[0],dataPermission[1]);
+                }
+            }
+            if(params.get(urls.get(i)) == null){
+                params.put(urls.get(i),false);
             }
         }
+//        for(int i = 0; i < urls.size(); i++){
+//            param.put("url", urls.get(i));
+//            List<Permission> permissionList = permissionMapper.getUserPermission(param);
+//            if(permissionList != null){
+//                params.put(urls.get(i),"true");
+//            }else{
+//                params.put(urls.get(i),"false");
+//            }
+//            for(int j = 0; j < permissionList.size(); j++){
+//                String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
+//                params.put(dataPermission[0],dataPermission[1]);
+//            }
+//        }
         return params;
     }
 
