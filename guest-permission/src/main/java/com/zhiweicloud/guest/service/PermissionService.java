@@ -205,12 +205,12 @@ public class PermissionService {
                         String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
                         params.put(dataPermission[0],dataPermission[1]);
                     }
-                    params.put(urls.get(i),true);
+                    params.put(urls.get(i),"true");
                     break;
                 }
             }
             if(params.get(urls.get(i)) == null){
-                params.put(urls.get(i),false);
+                params.put(urls.get(i),"false");
             }
         }
 //        for(int i = 0; i < urls.size(); i++){
