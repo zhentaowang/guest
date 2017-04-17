@@ -38,6 +38,15 @@ public class PassengerController {
     @Autowired
     private PassengerService passengerService;
 
+    /**
+     * crm列表
+     * @param page
+     * @param rows
+     * @param airportCode
+     * @param passengerQuery
+     * @author E.in
+     * @return
+     */
     @GET
     @Path(value="getPassengerList")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,6 +79,7 @@ public class PassengerController {
     /**
      * 客户详情信息，以及 服务信息
      * @param crmPassengerId
+     * @author E.in
      * @return
      */
     @GET
@@ -106,12 +116,22 @@ public class PassengerController {
     }
 
 
+    /**
+     * crm详情页 获取标签的信息
+     * @param airportCode
+     * @param crmPassengerId
+     * @param phone
+     * @param identityCard
+     * @param protocolTypes
+     * @author E.in
+     * @return
+     */
     @GET
     @Path(value = "getLabelInfo")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf-8")
     @ApiOperation(value="客户详情 - 标签信息", notes ="返回结果")
-    public String getLableInfo(
+    public String getLabelInfo(
             @HeaderParam("client-id") String airportCode,
             @QueryParam("passengerId") Long crmPassengerId,
             @QueryParam("phone") Long phone,
@@ -134,7 +154,7 @@ public class PassengerController {
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(serviceInfoList);
         }catch (Exception e){
-            logger.error("PassengerController.getLableInfo:", e);
+            logger.error("PassengerController.getLabelInfo:", e);
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);

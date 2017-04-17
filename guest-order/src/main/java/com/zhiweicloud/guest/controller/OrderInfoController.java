@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.ws.rs.*;
@@ -88,10 +89,15 @@ public class OrderInfoController {
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @BeanParam final OrderInfoQuery orderInfoQuery,
             @HeaderParam("user-id") Long userId,
-            @HeaderParam("client-id") String airportCode) {
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("type-id") String serviceId) {
         try {
+            if(StringUtils.isEmpty(serviceId)){
+                return JSON.toJSONString(new LZResult<>(LZStatus.SUCCESS));
+            }
             logger.debug("test - log - position");
             orderInfoQuery.setAirportCode(airportCode);
+            orderInfoQuery.setServiceId(serviceId);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
             return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
