@@ -58,11 +58,11 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		defer resp.Body.Close()
-		var permission map[string]bool
+		var permission map[string]string
 		body, _ = ioutil.ReadAll(resp.Body)
 		json.Unmarshal(body, &permission)
 		fmt.Println(permission)
-		if !permission[dat["url"]] {
+		if permission[dat["url"]] == "false" {
 			println(dat["url"] + ":没有权限")
 			return
 		}
