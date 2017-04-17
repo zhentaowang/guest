@@ -180,31 +180,12 @@ public class PermissionService {
      * @return List<Map<String,Object>>
      */
     public Map<String,Object> getUserPermission(List<String> urls, Map<String,Object> param) {
-        List<Permission> permissionList = permissionMapper.getUserPermission(param);
-        Map<String,Object> params = new HashMap<>();
-        for(int i = 0; i < urls.size(); i++){
-            for(int j = 0; j < permissionList.size(); j++){
-                String url = permissionList.get(j).getUrl();
-                if(urls.get(i).equals(url)){
-                    params.put(urls.get(i),true);
-                    break;
-                }
-            }
-            if(params.get(urls.get(i)) == null){
-                params.put(urls.get(i),false);
-            }
-        }
-
-//        Map<String,Object> params = new HashMap<>();
 //        List<Permission> permissionList = permissionMapper.getUserPermission(param);
+//        Map<String,Object> params = new HashMap<>();
 //        for(int i = 0; i < urls.size(); i++){
 //            for(int j = 0; j < permissionList.size(); j++){
 //                String url = permissionList.get(j).getUrl();
 //                if(urls.get(i).equals(url)){
-//                    if(permissionList.get(j).getDataPermission() != null){
-//                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
-//                        params.put(dataPermission[0],dataPermission[1]);
-//                    }
 //                    params.put(urls.get(i),true);
 //                    break;
 //                }
@@ -213,6 +194,25 @@ public class PermissionService {
 //                params.put(urls.get(i),false);
 //            }
 //        }
+
+        Map<String,Object> params = new HashMap<>();
+        List<Permission> permissionList = permissionMapper.getUserPermission(param);
+        for(int i = 0; i < urls.size(); i++){
+            for(int j = 0; j < permissionList.size(); j++){
+                String url = permissionList.get(j).getUrl();
+                if(urls.get(i).equals(url)){
+                    if(permissionList.get(j).getDataPermission() != null){
+                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": ");
+                        params.put(dataPermission[0],dataPermission[1]);
+                    }
+                    params.put(urls.get(i),true);
+                    break;
+                }
+            }
+            if(params.get(urls.get(i)) == null){
+                params.put(urls.get(i),false);
+            }
+        }
 //        for(int i = 0; i < urls.size(); i++){
 //            param.put("url", urls.get(i));
 //            List<Permission> permissionList = permissionMapper.getUserPermission(param);
