@@ -52,6 +52,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,9 +140,12 @@ public class FlightService {
 
         if (flightScheduleEvent.getFlightScheduleEventId() == null) {
             flightScheduleEvent.setCreateUser(userId);
+            flightScheduleEvent.setCreateTime(new Date());
+            flightScheduleEvent.setUpdateTime(new Date());
             flightScheduleEventMapper.insertSelective(flightScheduleEvent);
         } else {
             flightScheduleEvent.setUpdateUser(userId);
+            flightScheduleEvent.setUpdateTime(new Date());
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
 

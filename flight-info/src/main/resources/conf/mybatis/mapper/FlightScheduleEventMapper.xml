@@ -51,8 +51,15 @@
       <if test="remark != null">
         remark,
       </if>
-      create_time,
-      create_user
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="createUser != null">
+        create_user
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="flightScheduleEventId != null">
@@ -73,7 +80,15 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      now(),#{createUser,jdbcType=BIGINT}
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
     </trim>
   </insert>
 
@@ -86,14 +101,21 @@
       <if test="scheduleEventId != null">
         schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
       </if>
+      <if test="scheduleTime != null">
+        schedule_time = #{scheduleTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="scheduleUpdateUserName != null">
         schedule_update_user_name = #{scheduleUpdateUserName,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      update_time = now(),
-      update_user = #{updateUser,jdbcType=BIGINT}
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT}
+      </if>
     </set>
     WHERE flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>
