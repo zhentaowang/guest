@@ -86,9 +86,6 @@
       <if test="scheduleEventId != null">
         schedule_event_id = #{scheduleEventId,jdbcType=BIGINT},
       </if>
-      <if test="scheduleTime != null">
-        schedule_time = #{scheduleTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="scheduleUpdateUserName != null">
         schedule_update_user_name = #{scheduleUpdateUserName,jdbcType=VARCHAR},
       </if>
