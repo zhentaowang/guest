@@ -871,7 +871,7 @@
   </select>
 
   <select id="queryProtocolIdsInOrderInfoByCustomId" resultType="com.zhiweicloud.guest.model.ProtocolVo">
-    SELECT DISTINCT protocol_id id,protocol_name value,protocol_type type FROM order_info WHERE customer_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
+    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
   </select>
 
 </mapper>
