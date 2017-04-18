@@ -9,6 +9,7 @@
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="data_permission" jdbcType="VARCHAR" property="dataPermission" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -16,7 +17,7 @@
     <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
   </resultMap>
   <sql id="Base_Column_List">
-    permission_id, airport_code, url, name, create_user, update_user, create_time, update_time, is_deleted
+    permission_id, airport_code, url, name, data_permission, create_user, update_user, create_time, update_time, is_deleted
   </sql>
   <select id="getListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     SELECT permission_id, airport_code, url, name, menu_name
@@ -88,10 +89,10 @@
     SELECT permission_id, airport_code, url, name FROM permission where airport_code = #{airportCode,jdbcType=VARCHAR} and permission_id = #{permissionId,jdbcType=BIGINT} and is_deleted = 0
   </select>
   <select id="getUserPermission" parameterType="map" resultMap="BaseResultMap">
-    select p.permission_id, p.url from permission as p inner join
+    select p.permission_id, p.url, p.data_permission from
+    (select * from permission where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p inner join
     (select permission_id from role_permission as r right join
     (select role_id from sys_user_role where airport_code = #{airportCode,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=BIGINT} and is_deleted = 0) as s
     on r.role_id = s.role_id where r.airport_code = #{airportCode,jdbcType=VARCHAR} and r.is_deleted = 0) as rp on p.permission_id = rp.permission_id
-    where p.airport_code = #{airportCode,jdbcType=VARCHAR} and p.is_deleted = 0
   </select>
 </mapper>

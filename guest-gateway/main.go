@@ -58,11 +58,11 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		defer resp.Body.Close()
-		var permission map[string]bool
+		var permission map[string]string
 		body, _ = ioutil.ReadAll(resp.Body)
 		json.Unmarshal(body, &permission)
 		fmt.Println(permission)
-		if !permission[dat["url"]] {
+		if permission[dat["url"]] == "false" {
 			println(dat["url"] + ":没有权限")
 			return
 		}
@@ -70,6 +70,8 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// 将user_id添加到header中
 		r.Header.Set("User-Id", dat["user_id"])
 		r.Header.Set("Client-Id", dat["client_id"])
+		r.Header.Set("Type-Id", permission["typeId"])
+		fmt.Println(permission)
 	} else if uri != "/flight-info/updateFlight" {
 		println("找不到access_token")
 		return

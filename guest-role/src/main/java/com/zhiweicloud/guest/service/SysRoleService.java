@@ -90,13 +90,13 @@ public class SysRoleService {
                     sysRoleMenu.setAirportCode(sysRole.getAirportCode());
                     sysRoleMenuMapper.insertByExists(sysRoleMenu);
                 }
-                //删除
-                Map<String,Object> map = new HashMap<>();
-                map.put("roleId",sysRole.getRoleId());
-                map.put("menuIds",ListUtil.List2String(sysRole.getMenuIdList()));
-                map.put("airportCode",sysRole.getAirportCode());
-                sysRoleMenuMapper.deleteMenus(map);
             }
+            //删除
+            Map<String,Object> map = new HashMap<>();
+            map.put("roleId",sysRole.getRoleId());
+            map.put("menuIds",ListUtil.List2String(sysRole.getMenuIdList()));
+            map.put("airportCode",sysRole.getAirportCode());
+            sysRoleMenuMapper.deleteMenus(map);
 
 
         } else {
