@@ -771,8 +771,8 @@
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
-    <if test="criteria.serviceId != null">
-      and orderService.service_detail->>'$.serviceId' = #{criteria.serviceId}
+    <if test="criteria.serviceId != null and !''.equals(criteria.serviceId)">
+      where orderService.service_detail->>'$.serviceId' in (${criteria.serviceId})
     </if>
 ) as orderFlightClientPassengerService
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
