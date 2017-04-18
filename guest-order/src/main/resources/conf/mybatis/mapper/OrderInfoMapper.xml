@@ -626,7 +626,7 @@
       and datediff(now(),o.create_time) &gt; 0
     </if>
     <if test="criteria.queryAttServerOrderList != null and !''.equals(criteria.queryAttServerOrderList)">
-      and (o.print_check = 1 or o.consign = 1)
+      and (o.print_check = 1 or o.consign = 1 or o.security_check = 1)
     </if>
     <!-- 附加服务单 订单是否被安排，0：未安排与agent_person 比较，1：已安排 agent_person 比较，2：已完成,与server_complete比较 -->
     <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson) and '0'.equals(criteria.queryAgentPerson)">
@@ -731,7 +731,7 @@
               and datediff(now(),o.create_time) &gt; 0
             </if>
             <if test="criteria.queryAttServerOrderList != null and !''.equals(criteria.queryAttServerOrderList)">
-              and (o.print_check = 1 or o.consign = 1)
+              and (o.print_check = 1 or o.consign = 1 or o.security_check = 1)
             </if>
             <!-- 附加服务单 订单是否被安排，0：未安排与agent_person 比较，1：已安排 agent_person 比较，2：已完成,与server_complete比较 -->
             <if test="criteria.queryAgentPerson != null and !''.equals(criteria.queryAgentPerson)">
@@ -771,8 +771,8 @@
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
-    <if test="criteria.serviceId != null">
-      and orderService.service_detail->>'$.serviceId' = #{criteria.serviceId}
+    <if test="criteria.serviceId != null and !''.equals(criteria.serviceId)">
+      where orderService.service_detail->>'$.serviceId' in (${criteria.serviceId})
     </if>
 ) as orderFlightClientPassengerService
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
@@ -871,7 +871,7 @@
   </select>
 
   <select id="queryProtocolIdsInOrderInfoByCustomId" resultType="com.zhiweicloud.guest.model.ProtocolVo">
-    SELECT DISTINCT protocol_id id,protocol_name value,protocol_type type FROM order_info WHERE customer_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
+    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
   </select>
 
 </mapper>

@@ -93,7 +93,11 @@ public class OrderInfoController {
             @HeaderParam("type-id") String serviceId) {
         try {
             if(StringUtils.isEmpty(serviceId)){
-                return JSON.toJSONString(new LZResult<>(LZStatus.SUCCESS));
+                LZResult result = new LZResult<>();
+                result.setMsg(LZStatus.ERROR.display());
+                result.setStatus(LZStatus.ERROR.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
             }
             logger.debug("test - log - position");
             orderInfoQuery.setAirportCode(airportCode);
