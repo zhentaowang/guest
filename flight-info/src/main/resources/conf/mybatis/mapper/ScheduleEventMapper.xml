@@ -10,6 +10,7 @@
     <result column="schedule_update_user_name" jdbcType="VARCHAR" property="scheduleUpdateUserName" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="is_approach" jdbcType="SMALLINT" property="isApproach" />
+    <result column="flight_schedule_update_time" jdbcType="TIMESTAMP" property="flightScheduleUpdateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     schedule_event_id, no, type, name, is_approach
@@ -40,8 +41,8 @@
   </select>
 
   <select id="selectByFlightId" parameterType="map" resultMap="BaseResultMap">
-    select f.flight_schedule_event_id as schedule_event_id, f.schedule_time, f.schedule_update_user_name, f.remark, s.name
-    from schedule_event as s right join (select flight_schedule_event_id, schedule_event_id, schedule_time, schedule_update_user_name, remark from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR}
+    select f.flight_schedule_event_id as schedule_event_id, f.schedule_time, f.schedule_update_user_name, f.remark, f.update_time as flight_schedule_update_time, s.name
+    from schedule_event as s right join (select flight_schedule_event_id, schedule_event_id, schedule_time, schedule_update_user_name, remark, update_time from flight_schedule_event where airport_code = #{airportCode,jdbcType=VARCHAR}
     and flight_id = #{flightId,jdbcType=BIGINT} and is_deleted = 0) as f
     on s.schedule_event_id = f.schedule_event_id
     where s.airport_code = #{airportCode,jdbcType=VARCHAR} and s.is_deleted = 0
