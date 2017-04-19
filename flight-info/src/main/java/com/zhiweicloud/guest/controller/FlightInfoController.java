@@ -237,8 +237,8 @@ public class FlightInfoController {
             JSONArray param = JSON.parseObject(params).getJSONArray("data");
             for (int i = 0; i < param.size(); i++) {
                 FlightScheduleEvent flightScheduleEvent = JSONObject.toJavaObject(JSON.parseObject(param.get(i).toString()), FlightScheduleEvent.class);
-                flightScheduleEvent.setAirportCode(airportCode);
-                flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent, userId);
+                flightScheduleEvent.setAirportCode("LJG");
+                flightService.saveOrUpdateFlightScheduleEvent(flightScheduleEvent, Long.valueOf(108));
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {

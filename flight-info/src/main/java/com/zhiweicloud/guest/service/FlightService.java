@@ -140,12 +140,9 @@ public class FlightService {
 
         if (flightScheduleEvent.getFlightScheduleEventId() == null) {
             flightScheduleEvent.setCreateUser(userId);
-            flightScheduleEvent.setCreateTime(new Date());
-            flightScheduleEvent.setUpdateTime(new Date());
             flightScheduleEventMapper.insertSelective(flightScheduleEvent);
         } else {
             flightScheduleEvent.setUpdateUser(userId);
-            flightScheduleEvent.setUpdateTime(new Date());
             flightScheduleEventMapper.updateByPrimaryKeySelective(flightScheduleEvent);
         }
 

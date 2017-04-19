@@ -51,12 +51,8 @@
       <if test="remark != null">
         remark,
       </if>
-      <if test="createTime != null">
         create_time,
-      </if>
-      <if test="updateTime != null">
         update_time,
-      </if>
       <if test="createUser != null">
         create_user
       </if>
@@ -80,12 +76,8 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+        now(),
+        now(),
       <if test="createUser != null">
         #{createUser,jdbcType=BIGINT},
       </if>
@@ -110,9 +102,7 @@
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+        update_time = now(),
       <if test="updateUser != null">
         update_user = #{updateUser,jdbcType=BIGINT}
       </if>
