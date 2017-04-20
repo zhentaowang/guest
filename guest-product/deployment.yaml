@@ -26,7 +26,7 @@ spec:
             claimName: code-claims
         - name: tz-config
           hostPath:
-            path /etc/localtime
+            path: /etc/localtime
 ---
 apiVersion: v1
 kind: Service
