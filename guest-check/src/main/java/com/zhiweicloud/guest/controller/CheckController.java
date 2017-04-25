@@ -147,4 +147,30 @@ public class CheckController {
         }
     }
 
+    /**
+     * 导出休息室账单
+     * Excel
+     *
+     * @param
+     * @param airportCode 机场码
+     * @param userId      用户ID
+     * @return
+     */
+    @GET
+    @Path("exportOrder")
+    @Produces("application/x-msdownload;charset=utf8")
+    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
+    public void exportOrder(
+//            @BeanParam final OrderCheckDetail orderCheckDetail,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
+            @QueryParam("type") String type,
+            @Context HttpServletResponse response) {
+        try {
+            checkService.exportOrder(type,response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

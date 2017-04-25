@@ -28,6 +28,7 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dragon.sign.DragonApiException;
 import com.dragon.sign.DragonSignature;
 import com.zhiweicloud.guest.common.BeanCompareUtils;
@@ -97,6 +98,8 @@ public class FlightService {
      */
     public void updateFlight(Flight flight) throws Exception {
         Flight queryFlight = flightMapper.isFlightExist(flight);    // 从数据库查询出来的航班信息
+        System.out.println("龙腾获取的数据 " + flight.toString());
+        System.out.println("本地库中的数据 " + queryFlight.toString());
         if (queryFlight == null || queryFlight.getFlightId() == 0) {
             throw new FlightException("没有找到对应的航班信息");
         } else {
@@ -181,7 +184,7 @@ public class FlightService {
      * @throws DragonApiException
      * @throws ParseException
      */
-    public String getFlightInfo(String fnum, String date, String airportCode, Long userId) throws UnsupportedEncodingException, DragonApiException, ParseException {
+    public String getFlightByDragon(String fnum, String date, String airportCode, Long userId) throws UnsupportedEncodingException, DragonApiException, ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Map<String, String> params = new HashMap<>();
         params.put("date", date);
@@ -211,6 +214,7 @@ public class FlightService {
         exchangeDragon.setInvokeResult(Short.valueOf(String.valueOf(crState)));
         exchangeDragon.setAirportCode(airportCode);
         exchangeDragonMapper.insert(exchangeDragon);
+        System.out.println(new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8));
         return new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
     }
 
@@ -260,6 +264,7 @@ public class FlightService {
         // 调用动态表接口
         String fileMessage = new String(HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightByNo_Lg", getParamsForGetFlight(flight)).getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
         // 解析返回值
+        System.out.println(fileMessage);
         JSONObject jsonObject = JSON.parseObject(fileMessage);
         JSONArray data = jsonObject.getJSONArray("Data");
         JSONObject flightObject = data.getJSONObject(0);
@@ -360,6 +365,29 @@ public class FlightService {
         p.put("sysCode", Dictionary.SYSCODE);
         p.put("sign", sign);
         return p;
+    }
+
+    /**
+     * 根据条件查询航班信息
+     * @param flight 查询的航班信息
+     * @return
+     */
+    public String getFlightByCondition(Flight flight) throws Exception {
+        Flight flightExist = flightMapper.isFlightExist(flight);
+        String result;
+        if (flightExist == null) {
+            Flight newFlight = new Flight();
+            newFlight.setFlightDeptimePlanDate(flight.getFlightDeptimePlanDate());
+            newFlight.setFlightArrtimePlanDate(flight.getFlightArrtimePlanDate());
+            newFlight.setIsInOrOut(flight.getIsInOrOut());
+            result = JSONObject.toJSONString(newFlight,SerializerFeature.WriteMapNullValue);
+        }else {
+            flightExist.setFlightDeptimePlanDate(flight.getFlightDeptimePlanDate());
+            flightExist.setFlightArrtimePlanDate(flight.getFlightArrtimePlanDate());
+            flightExist.setIsInOrOut(flight.getIsInOrOut());
+            result = JSONObject.toJSONString(flightExist,SerializerFeature.WriteMapNullValue);
+        }
+        return result;
     }
 
 }
