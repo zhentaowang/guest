@@ -175,4 +175,10 @@ public class CheckService {
         }
     }
 
+    /**
+     * 导出账单
+     */
+    public void exportOrder(String type, HttpServletResponse response) {
+        ExcelUtils.download(type, "测试文件" + System.currentTimeMillis() + ".xls", "测试", response);
+    }
 }
