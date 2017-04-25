@@ -14,6 +14,8 @@ public interface PermissionMapper {
     List<Permission> getUserPermission(Map<String, Object> map);
     List<Permission> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
     int getListCount(Map<String, Object> map);
+    List<Permission> getDataListByConidition(BasePagination<Map<String, Object>> queryCondition);
+    int getDataListCount(Map<String, Object> map);
     List<Permission> getListByRole(BasePagination<Map<String, Object>> queryCondition);
     int getListCountByRole(Map<String, Object> map);
     Long selectByName(Map<String, Object> map);
