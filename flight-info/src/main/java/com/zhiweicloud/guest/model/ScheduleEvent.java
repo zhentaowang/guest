@@ -55,6 +55,18 @@ public class ScheduleEvent extends BaseEntity{
     @ApiModelProperty(value="调度事件备注说明",name="remark")
     private String remark;
 
+    @Transient
+    @ApiModelProperty(value="航班调度事件更新时间",name="flightScheduleUpdateTime")
+    private Date flightScheduleUpdateTime;
+
+    public Date getFlightScheduleUpdateTime() {
+        return flightScheduleUpdateTime;
+    }
+
+    public void setFlightScheduleUpdateTime(Date flightScheduleUpdateTime) {
+        this.flightScheduleUpdateTime = flightScheduleUpdateTime;
+    }
+
     public String getScheduleUpdateUserName() {
         return scheduleUpdateUserName;
     }

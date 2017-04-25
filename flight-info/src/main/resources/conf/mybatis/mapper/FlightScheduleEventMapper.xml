@@ -51,8 +51,11 @@
       <if test="remark != null">
         remark,
       </if>
-      create_time,
-      create_user
+        create_time,
+        update_time,
+      <if test="createUser != null">
+        create_user
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="flightScheduleEventId != null">
@@ -73,7 +76,11 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      now(),#{createUser,jdbcType=BIGINT}
+        now(),
+        now(),
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
     </trim>
   </insert>
 
@@ -95,8 +102,10 @@
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      update_time = now(),
-      update_user = #{updateUser,jdbcType=BIGINT}
+        update_time = now(),
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT}
+      </if>
     </set>
     WHERE flight_schedule_event_id = #{flightScheduleEventId,jdbcType=BIGINT} and airport_code = #{airportCode,jdbcType=VARCHAR}
   </update>

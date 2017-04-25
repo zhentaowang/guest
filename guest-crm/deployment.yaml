@@ -16,12 +16,17 @@ spec:
           - mountPath: "/usr/local/tomcat/webapps"
             name: code
             subPath: guest/guest-crm
+          - mountPath: "/etc/localtime"
+            name: tz-config
           ports:
             - containerPort: 8080
       volumes:
         - name: code
           persistentVolumeClaim:
             claimName: code-claims
+        - name: tz-config
+          hostPath:
+            path: /etc/localtime
 ---
 apiVersion: v1
 kind: Service
