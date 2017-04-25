@@ -7,8 +7,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
-import com.zhiweicloud.guest.common.BeanCompareUtils;
 import com.zhiweicloud.guest.common.CustomStatus;
+import com.zhiweicloud.guest.common.DateUtils;
 import com.zhiweicloud.guest.common.PushStatus;
 import com.zhiweicloud.guest.common.FlightException;
 import com.zhiweicloud.guest.model.Flight;
@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class FlightInfoController {
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId) {
         try {
-            return flightService.getFlightInfo(fnum, date, airportCode, userId);
+            return flightService.getFlightByDragon(fnum, date, airportCode, userId);
         } catch (Exception e) {
             log.debug(e.getMessage());
             return "{ \"Data\": [],\"Info\": \"" + e.getMessage() + "\",\"DPtime\": ,\"Vtime\": ,\"State\": -1}";
@@ -82,7 +83,51 @@ public class FlightInfoController {
     }
 
     /**
-     * 产品品类下拉框 数据.
+     * 获取航班详情
+     *
+     * @param fnum                  航班号
+     * @param date                  航班日期
+     * @param flightDepcode         出发地机场三字码
+     * @param flightArrcode         目的地机场三字码
+     * @param flightDeptimePlanDate 计划起飞时间
+     * @param flightArrtimePlanDate 计划到达时间
+     * @param airportCode           客户端标识
+     * @param userId                用户ID
+     * @return
+     */
+    @GET
+    @Path(value = "getFlightForOrderDetail")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "航班信息 - 查询航班信息 订单页面航班信息详情", notes = "返回航班详情", httpMethod = "GET", produces = "application/json")
+    public String view(
+            @QueryParam(value = "fnum") String fnum,
+            @QueryParam(value = "date") String date,
+            @QueryParam(value = "flightDepcode") String flightDepcode,
+            @QueryParam(value = "flightArrcode") String flightArrcode,
+            @QueryParam(value = "flightDeptimePlanDate") String flightDeptimePlanDate,
+            @QueryParam(value = "flightArrtimePlanDate") String flightArrtimePlanDate,
+            @QueryParam(value = "isInOrOut") Short isInOrOut,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        try {
+            Flight flight = new Flight();
+             flight.setFlightNo(fnum);
+            flight.setFlightDate(DateUtils.stringToDate(date,"yyyy-MM-dd"));
+            flight.setFlightDepcode(flightDepcode);
+            flight.setFlightArrcode(flightArrcode);
+            flight.setFlightDeptimePlanDate(DateUtils.stringToDate(flightDeptimePlanDate,"yyyy-MM-dd HH:mm:ss"));
+            flight.setFlightArrtimePlanDate(DateUtils.stringToDate(flightArrtimePlanDate,"yyyy-MM-dd HH:mm:ss"));
+            flight.setIsInOrOut(isInOrOut);
+            flight.setAirportCode(airportCode);
+            return flightService.getFlightByCondition(flight);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 订单 -- 航段模糊匹配
      *
      * @param airportNameOrCode 机场名或机场码
      * @return
