@@ -69,6 +69,22 @@ public class PermissionService {
     }
 
     /**
+     * 分页获取权限列表
+     * @param param 查询参数
+     * @param page  起始页
+     * @param rows  每页显示数目
+     * @return PaginationResult<Permission>
+     */
+    public LZResult<PaginationResult<Permission>> getDataPermissionList(Map<String,Object> param, Integer page, Integer rows) {
+
+        int count = permissionMapper.getDataListCount(param);
+        BasePagination<Map<String,Object>> queryCondition = new BasePagination<>(param, new PageModel(page, rows));
+        List<Permission> permissionList = permissionMapper.getDataListByConidition(queryCondition);
+        PaginationResult<Permission> eqr = new PaginationResult<>(count, permissionList);
+        return new LZResult<>(eqr);
+    }
+
+    /**
      * 权限添加与修改
      * @param permission
      */
