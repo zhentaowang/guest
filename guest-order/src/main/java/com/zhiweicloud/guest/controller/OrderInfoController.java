@@ -28,19 +28,20 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.CopyProperties;
+import com.zhiweicloud.guest.service.ListUtil;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,18 +91,21 @@ public class OrderInfoController {
             @BeanParam final OrderInfoQuery orderInfoQuery,
             @HeaderParam("user-id") Long userId,
             @HeaderParam("client-id") String airportCode,
-            @HeaderParam("type-id") String serviceId) {
+            @HeaderParam("role-ids") String createRole) {
         try {
-            if(StringUtils.isEmpty(serviceId)){
+//            String createRole = "1,2";
+            //判断有无数据权限，没有直接返回
+            if(StringUtils.isEmpty(createRole)){
                 LZResult result = new LZResult<>();
-                result.setMsg(LZStatus.ERROR.display());
-                result.setStatus(LZStatus.ERROR.value());
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
                 result.setData(null);
                 return JSON.toJSONString(result);
             }
             logger.debug("test - log - position");
             orderInfoQuery.setAirportCode(airportCode);
-            orderInfoQuery.setServiceId(serviceId);
+            //数据角色权限
+            orderInfoQuery.setQueryCreateRole(createRole);
             LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
             return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
@@ -130,6 +134,14 @@ public class OrderInfoController {
     public String saveOrUpdate(@ApiParam(value = "OrderInfo", required = true) String orderInfo,  @HeaderParam("client-id") String airportCode,
                                @HeaderParam("user-id") Long userId) {
         LZResult<Object> result = new LZResult<>();
+        //远程调用参数
+        Map<String, Object> headerMap = new HashMap<>();
+        headerMap.put("user-id", userId);
+        headerMap.put("client-id", airportCode);
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("employeeId", userId);
+
         try {
             JSONObject param = JSON.parseObject(orderInfo);
             JSONObject orderObject = param.getJSONArray("data").getJSONObject(0);
@@ -185,6 +197,15 @@ public class OrderInfoController {
                         }
                     }
                     order.setFlight(targetFlight);
+
+                    //查询当前用户角色
+                    JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/getRoleByUserId", headerMap, paramMap));
+//                    JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("https://api.iairportcloud.com/guest-employee/getRoleByUserId?access_token=JSofwcw0ABIwya5sBNsFvxX9oYqsS8kt76GKm7mu&employeeId=108"));
+                    if (userRoleObject != null) {
+                        JSONArray jsonArray = userRoleObject.getJSONArray("data");
+                        List<Map<Object,Object>> list = JSON.parseObject(jsonArray.toJSONString(), new TypeReference<List<Map<Object,Object>>>(){});
+                        order.setCreateRole(ListUtil.Map2String(list));
+                    }
                     Long orderId = orderInfoService.saveOrUpdate(order, passengerList, orderServiceList, userId, airportCode);
                     result.setMsg(LZStatus.SUCCESS.display());
                     result.setStatus(LZStatus.SUCCESS.value());

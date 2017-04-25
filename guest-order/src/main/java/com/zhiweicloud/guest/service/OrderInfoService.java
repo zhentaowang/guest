@@ -55,8 +55,6 @@ public class OrderInfoService {
 
         if (orderInfo.getOrderId() != null) {
 
-
-
              //预约订单和服务订单保存的创建人和创建时间不是同一个字段
             if (orderInfo.getOrderType() == 0) {//预约订单
                 if(orderInfo.getOrderStatus() != null && orderInfo.getOrderStatus().equals("已使用")){//预约订单 转为 服务订单，需要保持 服务订单的更新时间，更新人
