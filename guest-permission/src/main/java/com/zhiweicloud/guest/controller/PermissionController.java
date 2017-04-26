@@ -283,6 +283,9 @@ public class PermissionController {
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", paramJSON.getString("client_id"));
             param.put("userId", paramJSON.getLong("user_id"));
+            if(paramJSON.containsKey("queryOrderType")){
+                param.put("orderType", paramJSON.getLong("queryOrderType"));
+            }
             return JSON.toJSONString(permissionService.getUserPermission(urls, param));
         } catch (Exception e) {
             logger.error("get permission by urls error", e);
