@@ -50,6 +50,10 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			dat["url"] = uri
 		}
+		if query["queryOrderType"] != nil {
+			fmt.Println(query["queryOrderType"][0])
+			dat["queryOrderType"] = query["queryOrderType"][0]
+		}
 		paramString, _ := json.Marshal(dat)
 
 		resp, err = http.Post("http://guest-permission/guest-permission/get-user-permission", "application/json", bytes.NewReader(paramString))
