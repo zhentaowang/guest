@@ -46,6 +46,9 @@ public interface InstitutionClientMapper{
 
     List<Dropdownlist> getInstitutionClientDropdownList(Map<String,Object> map);
 
+    List<Dropdownlist> specialDropdownList(Map<String,Object> map);
+
+
     InstitutionClient viewByIdAndAirCode(@Param("institutionClientId") Long institutionClientId,@Param("airportCode") String airportCode);
 
     Integer getListByConiditionCount(InstitutionClient queryCondition);

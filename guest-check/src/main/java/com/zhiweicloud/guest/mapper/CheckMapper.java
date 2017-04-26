@@ -58,4 +58,8 @@ public interface CheckMapper {
      * @return
      */
     List<Map<String, Object>> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
+
+    int selectSpecialCheckListTotal(CheckQueryParam checkQueryParam);
+
+    List<Map> selectSpecialCheckList(BasePagination<CheckQueryParam> queryCondition);
 }

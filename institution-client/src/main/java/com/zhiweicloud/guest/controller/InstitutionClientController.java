@@ -255,6 +255,28 @@ public class InstitutionClientController {
         return new LZResult<>(list);
     }
 
+    /**
+     * 客户下拉框 只查询 南方航空股份有限公司，中国国际航空股份有限公司
+     *
+     * @return
+     */
+    @GET
+    @Path(value = "querySpecialDropdownList")
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value = "系统中用到机构客户信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "模糊查询name", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "no", value = "模糊查询编号", dataType = "String", required = false, paramType = "query"),
+            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    })
+    public LZResult<List<Dropdownlist>> querySpecialDropdownList(
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        List<Dropdownlist> list = institutionClientService.querySpecialDropdownList(airportCode);
+        return new LZResult<>(list);
+    }
+
+
 
     @GET
     @Path("getInstitutionType")

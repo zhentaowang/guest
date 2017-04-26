@@ -120,6 +120,14 @@ public class InstitutionClientService {
         return institutionClientMapper.getInstitutionClientDropdownList(map);
     }
 
+    public List<Dropdownlist> querySpecialDropdownList(String airportCode) {
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("airportCode",airportCode);
+        return institutionClientMapper.specialDropdownList(map);
+    }
+
+
+
     /**
      * 新增的时候，没有id。需要判断数据库记录里面
      * 更新的时候，有id。需要判断数据库除本身记录之外 是否有重复的字段值

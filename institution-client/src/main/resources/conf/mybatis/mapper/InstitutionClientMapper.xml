@@ -89,6 +89,11 @@
     </if>
   </select>
 
+  <select id="specialDropdownList" resultMap="DropdownlistMap" parameterType="map">
+    select institution_client_id,name as value from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
+    and name in ('南方航空股份有限公司','中国国际航空股份有限公司')
+  </select>
+
 
   <select id="viewByIdAndAirCode" parameterType="map" resultMap="BaseResultMapPage">
     select ic.institution_client_id, ic.no, ic.name, ic.type, ic.employee_id, ic.remark,ic.airport_code,e.name as employee_name from  institution_client ic

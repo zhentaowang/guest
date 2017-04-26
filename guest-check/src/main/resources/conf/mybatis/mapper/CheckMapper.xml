@@ -4,7 +4,9 @@
 
 
   <select id="selectCheckTotal" parameterType="com.zhiweicloud.guest.model.CheckQueryParam" resultType="int">
-    select count(DISTINCT(customer_id)) from order_info o
+    select count(t.orderId) from
+    (
+    select o.order_id as orderId from order_info o
     inner join flight f on o.flight_id = f.flight_id
 
     and  o.is_deleted = 0 and f.is_deleted = 0 and o.airport_code = #{airportCode}
@@ -35,6 +37,9 @@
     <if test="queryProtocolType != null and !''.equals(queryProtocolType)">
       and o.protocol_type in (${queryProtocolType})
     </if>
+    GROUP BY o.customer_id,o.protocol_id,o.product_id
+    )t
+
   </select>
 
   <select id="selectCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
@@ -70,7 +75,7 @@
     <if test="criteria.queryProtocolType != null and !''.equals(criteria.queryProtocolType)">
       and o.protocol_type in (${criteria.queryProtocolType})
     </if>
-    GROUP BY o.customer_id
+    GROUP BY o.customer_id,o.protocol_id,o.product_id
     limit #{page.startPageNo},#{page.pCount}
   </select>
 
@@ -98,9 +103,56 @@
       from order_info o
       inner join flight f on f.flight_id = o.flight_id
       inner join passenger p on p.order_id = o.order_id
-      where o.airport_code = #{criteria.airportCode}
+      where o.airport_code = #{criteria.airportCode} and o.is_deleted = 0
       GROUP BY o.order_id
     ) t where 1 = 1 ${criteria.queryWhere}
   </select>
+
+  <select id="selectSpecialCheckListTotal" parameterType="com.zhiweicloud.guest.model.CheckQueryParam" resultType="int">
+    select count(f.flight_id) from (
+        select o.flight_id,o.customer_id,o.customer_name,
+        sum(os.service_detail->>'$.serverNum') as serverPersonNum,os.price_rule->>'$.price' as price
+        from order_info o
+        inner join order_service os on o.order_id = os.order_id
+        and o.protocol_type in (9,10)
+        and o.airport_code = #{airportCode} and o.is_deleted = 0
+        and os.service_detail->>'$.serviceId' = 5
+        <if test="queryFlightDateBegin != null and !''.equals(queryFlightDateBegin)">
+          and f.flight_date &gt;= #{queryFlightDateBegin}
+        </if>
+        <if test="queryFlightDateEnd != null and !''.equals(queryFlightDateEnd)">
+          and f.flight_date &lt;= #{queryFlightDateEnd}
+        </if>
+        <if test="queryCustomerName != null and !''.equals(queryCustomerName)">
+          and o.customer_name like concat('%',#{queryCustomerName},'%')
+        </if>
+        GROUP BY o.flight_id,o.customer_id,o.customer_name,os.price_rule
+    ) t INNER JOIN flight f on f.flight_id = t.flight_id
+  </select>
+
+  <select id="selectSpecialCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
+    select f.flight_id as flightId,f.flight_date as flightDate, concat_ws(' - ',f.flight_dep,f.flight_arr) as leg,f.flight_no as flightNo,f.plan_no as planNo,f.flight_depcode as flightDepcode,f.flight_arrcode as flightArrcode,
+     t.customerId,t.customer_name as customerName,
+     t.serverPersonNum,CAST(t.price AS SIGNED) as price,t.serverPersonNum * t.price as amount,t.airport_code as airportCode from (
+        select o.flight_id,o.customer_id as customerId,o.customer_name,o.airport_code,
+        sum(os.service_detail->>'$.serverNum') as serverPersonNum,os.price_rule->>'$.price' as price
+        from order_info o
+        inner join order_service os on o.order_id = os.order_id
+        and o.protocol_type in (9,10)
+        and o.airport_code = #{criteria.airportCode} and o.is_deleted = 0
+        and os.service_detail->>'$.serviceId' = 5
+        <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
+          and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
+        </if>
+        <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
+          and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
+        </if>
+        <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)">
+          and o.customer_name like concat('%',#{criteria.queryCustomerName},'%')
+        </if>
+        GROUP BY o.flight_id,o.customer_id,o.customer_name,o.airport_code,os.price_rule
+    ) t INNER JOIN flight f on f.flight_id = t.flight_id
+  </select>
+
 
 </mapper>
