@@ -149,22 +149,22 @@ public class PermissionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "权限管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult save(@ApiParam(value = "permission", required = true) @RequestBody RequsetParams<Permission> params,
+    public LXResult save(@ApiParam(value = "permission", required = true) @RequestBody RequsetParams<RolePermission> params,
                          @HeaderParam("client-id") String airportCode,
                          @HeaderParam("user-id") Long userId) {
         try {
-            Permission permission = null;
+            RolePermission rolePermission = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
-                permission = params.getData().get(0);
-                permission.setAirportCode(airportCode);
+                rolePermission = params.getData().get(0);
+                rolePermission.setAirportCode(airportCode);
             }
-            if (permission == null || permission.getAirportCode() == null) {
+            if (rolePermission == null || rolePermission.getAirportCode() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
 //            if (permissionService.selectByName(permission)) {
 //                return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
 //            }
-            permissionService.saveOrUpdate(permission);
+            permissionService.saveOrUpdate(rolePermission);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
@@ -283,6 +283,9 @@ public class PermissionController {
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", paramJSON.getString("client_id"));
             param.put("userId", paramJSON.getLong("user_id"));
+            if(paramJSON.containsKey("queryOrderType")){
+                param.put("orderType", paramJSON.getLong("queryOrderType"));
+            }
             return JSON.toJSONString(permissionService.getUserPermission(urls, param));
         } catch (Exception e) {
             logger.error("get permission by urls error", e);

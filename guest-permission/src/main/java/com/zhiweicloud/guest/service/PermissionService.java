@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
@@ -86,16 +87,16 @@ public class PermissionService {
 
     /**
      * 权限添加与修改
-     * @param permission
+     * @param rolePermission
      */
-    public void saveOrUpdate(Permission permission) {
-        if (permission.getPermissionId() != null) {
-            permissionMapper.updateByIdAndAirportCode(permission);
+    public void saveOrUpdate(RolePermission rolePermission) {
+        if (rolePermission.getPermissionId() != null) {
+            rolePermissionMapper.updateByIdAndAirportCode(rolePermission);
 
         } else {
-            permission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-            permission.setCreateTime(new Date());
-            permission.setUpdateTime(new Date());
+            rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            rolePermission.setCreateTime(new Date());
+            rolePermission.setUpdateTime(new Date());
 //            permissionMapper.insertSelective(permission);
         }
     }
@@ -217,12 +218,17 @@ public class PermissionService {
             for(int j = 0; j < permissionList.size(); j++){
                 String url = permissionList.get(j).getUrl();
                 if(urls.get(i).equals(url)){
-                    if(permissionList.get(j).getDataPermission() != null){
-                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": |, ");
-                        params.put(dataPermission[0],dataPermission[1]);
-                    }
                     params.put(urls.get(i),"true");
-                    break;
+                    if(param.containsKey("orderType") && permissionList.get(j).getDataPermission() != null){
+                        JSONObject paramJSON = JSON.parseObject(permissionList.get(j).getDataPermission());
+//                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": |, ");
+                        if(param.get("orderType").toString().equals(paramJSON.getString("orderType"))){
+                            params.put("roleId",paramJSON.getString("roleId"));
+                            break;
+                        }
+                    }else {
+                        break;
+                    }
                 }
             }
             if(params.get(urls.get(i)) == null){

@@ -247,11 +247,13 @@ public class InstitutionClientController {
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
     public LZResult<List<Dropdownlist>> queryInstitutionClientDropdownList(
-            ContainerRequestContext request,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId,
             @QueryParam(value = "name") String name,
-            @QueryParam(value = "no") String no) {
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
-        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode, name, no);
+            @QueryParam(value = "no") String no,
+            @QueryParam(value = "type") String type // 1:南航休息室账单('南方航空股份有限公司','中国国际航空股份有限公司').2:头等舱账单（只带出协议类型为头等舱的客户）. 3:常旅客账单（只带出协议类型为金银卡的客户） ,如果type为空，查询所有客户
+            ) {
+        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode, name, no,type);
         return new LZResult<>(list);
     }
 

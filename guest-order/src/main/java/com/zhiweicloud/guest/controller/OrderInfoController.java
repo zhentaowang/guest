@@ -490,6 +490,7 @@ public class OrderInfoController {
      * 查找客户下有订单的协议ID
      *
      * @param customerIds 客户ID串
+     * @param flag        账单标志 【0（null）:普通账单,1:特殊客户（南航/国航）,2:头等舱,3:常旅客】
      * @param airportCode 机场码
      * @return
      */
@@ -499,11 +500,20 @@ public class OrderInfoController {
     @ApiOperation(value = "查询协议 - 判断协议是否被订单引用 ", notes = "返回协议信息", httpMethod = "GET", produces = "application/json")
     public LZResult<List<ProtocolList>> queryProtocolIdsInOrderInfoByCustomId(
             @QueryParam("customerIds") String customerIds,
+            @QueryParam("flag") Integer flag,
             @HeaderParam("client-id") String airportCode) {
-        List<ProtocolList> protocolLists;
+        List<ProtocolList> protocolLists = null;
         LZResult<List<ProtocolList>> result = new LZResult<>();
         try {
-            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds, airportCode);
+            if (flag == null || flag == 0) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds, airportCode);
+            } else if (flag == 1) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomIdAndType(customerIds, airportCode, new Integer[]{9, 10});
+            } else if (flag == 2) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomIdAndType(customerIds, airportCode, new Integer[]{10});
+            } else if (flag == 3) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomIdAndType(customerIds, airportCode, new Integer[]{9});
+            }
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(protocolLists);

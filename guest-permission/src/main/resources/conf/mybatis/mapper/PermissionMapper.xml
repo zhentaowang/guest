@@ -103,9 +103,9 @@
     SELECT permission_id, airport_code, url, name FROM permission where airport_code = #{airportCode,jdbcType=VARCHAR} and permission_id = #{permissionId,jdbcType=BIGINT} and is_deleted = 0
   </select>
   <select id="getUserPermission" parameterType="map" resultMap="BaseResultMap">
-    select p.permission_id, p.url, p.data_permission from
+    select p.permission_id, p.url, rp.data_permission from
     (select * from permission where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p inner join
-    (select permission_id from role_permission as r right join
+    (select permission_id, data_permission from role_permission as r right join
     (select role_id from sys_user_role where airport_code = #{airportCode,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=BIGINT} and is_deleted = 0) as s
     on r.role_id = s.role_id where r.airport_code = #{airportCode,jdbcType=VARCHAR} and r.is_deleted = 0) as rp on p.permission_id = rp.permission_id
   </select>
