@@ -82,12 +82,7 @@ public class CheckController {
             LZResult<PaginationResult<Map>> result = checkService.getAll(userId,airportCode,checkQueryParam, page, rows);
             return JSON.toJSONString(result);
         } catch (Exception e) {
-            e.printStackTrace();
-            LZResult result = new LZResult<>();
-            result.setMsg(LZStatus.ERROR.display());
-            result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
-            return JSON.toJSONString(result,SerializerFeature.WriteMapNullValue);
+            return this.errorMsg(e);
         }
     }
 
@@ -109,12 +104,7 @@ public class CheckController {
             result.setData(res);
             return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
-            e.printStackTrace();
-
-            result.setMsg(LZStatus.ERROR.display());
-            result.setStatus(LZStatus.ERROR.value());
-            result.setData(null);
-            return JSON.toJSONString(result);
+            return this.errorMsg(e);
         }
     }
 
@@ -173,4 +163,30 @@ public class CheckController {
         }
     }
 
+    @GET
+    @Path("specialCheckList")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "特殊客户账单 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    public String specialCheckList(
+            @DefaultValue("1") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @BeanParam final CheckQueryParam checkQueryParam,
+            @HeaderParam("client-id") String airportCode,
+            @HeaderParam("user-id") Long userId) {
+        try {
+            LZResult<PaginationResult<Map>> result = checkService.getSpecialCheckList(userId,airportCode,checkQueryParam, page, rows);
+            return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd", SerializerFeature.WriteMapNullValue);
+        } catch (Exception e) {
+            return this.errorMsg(e);
+        }
+    }
+
+    private String errorMsg(Exception e){
+        e.printStackTrace();
+        LZResult result = new LZResult<>();
+        result.setMsg(LZStatus.ERROR.display());
+        result.setStatus(LZStatus.ERROR.value());
+        result.setData(null);
+        return JSON.toJSONString(result,SerializerFeature.WriteMapNullValue);
+    }
 }

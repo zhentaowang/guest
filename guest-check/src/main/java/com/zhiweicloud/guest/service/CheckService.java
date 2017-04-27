@@ -181,4 +181,16 @@ public class CheckService {
     public void exportOrder(String type, HttpServletResponse response) {
         ExcelUtils.download(type, "测试文件" + System.currentTimeMillis() + ".xls", "测试", response);
     }
+
+    public LZResult<PaginationResult<Map>> getSpecialCheckList(Long userId, String airportCode, CheckQueryParam checkQueryParam, Integer page, Integer rows) {
+        BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
+
+        checkQueryParam.setAirportCode(airportCode);
+
+        int total = checkMapper.selectSpecialCheckListTotal(checkQueryParam);
+        List<Map> checkList = checkMapper.selectSpecialCheckList(queryCondition);
+        PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
+        LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
+        return result;
+    }
 }

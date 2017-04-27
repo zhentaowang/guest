@@ -80,9 +80,9 @@ public class EmployeeService {
                     for(int i = 0; i < employee.getRoleIdList().size();i++){
                         employeeMapper.insertEmployeeRoleByExists(employee.getEmployeeId(),employee.getRoleIdList().get(i),employee.getAirportCode());
                     }
-                    //删除
-                    employeeMapper.deleteRoles(employee.getEmployeeId(),ListUtil.List2String(employee.getRoleIdList()),employee.getAirportCode());
                 }
+                //删除
+                employeeMapper.deleteRoles(employee.getEmployeeId(),ListUtil.List2String(employee.getRoleIdList()),employee.getAirportCode());
 
             } else if(employee.getIsExist() != null && employee.getIsExist() == 0) { //isExist == 1 新增
                 employeeMapper.insertSelectiveCustom(employee);
