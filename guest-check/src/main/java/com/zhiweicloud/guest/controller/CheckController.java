@@ -181,6 +181,7 @@ public class CheckController {
         }
     }
 
+
     private String errorMsg(Exception e){
         e.printStackTrace();
         LZResult result = new LZResult<>();

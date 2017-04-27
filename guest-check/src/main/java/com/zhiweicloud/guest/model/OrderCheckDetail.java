@@ -55,6 +55,14 @@ public class OrderCheckDetail extends BaseEntity{
     @QueryParam("fileName")
     private String fileName;
 
+    @ApiModelProperty(value = "航班开始日期", name = "queryFlightDateBegin")
+    @QueryParam("queryFlightDateBegin")
+    private String queryFlightDateBegin;
+
+    @ApiModelProperty(value = "航班结束日期", name = "queryFlightDateEnd")
+    @QueryParam("queryFlightDateEnd")
+    private String queryFlightDateEnd;
+
 
 
 
@@ -128,5 +136,21 @@ public class OrderCheckDetail extends BaseEntity{
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getQueryFlightDateBegin() {
+        return queryFlightDateBegin;
+    }
+
+    public void setQueryFlightDateBegin(String queryFlightDateBegin) {
+        this.queryFlightDateBegin = queryFlightDateBegin;
+    }
+
+    public String getQueryFlightDateEnd() {
+        return queryFlightDateEnd;
+    }
+
+    public void setQueryFlightDateEnd(String queryFlightDateEnd) {
+        this.queryFlightDateEnd = queryFlightDateEnd;
     }
 }
