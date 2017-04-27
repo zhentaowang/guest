@@ -26,31 +26,25 @@ package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.ExcelUtils;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
-import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * SysMenuController.java
@@ -138,26 +132,31 @@ public class CheckController {
     }
 
     /**
-     * 导出休息室账单
+     * 导出账单
      * Excel
      *
-     * @param
      * @param airportCode 机场码
      * @param userId      用户ID
+     *         类型【firstClass:头等舱账单,frequentFlyer:常旅客账单,airChina:国际航空账单,chinaSouthernAirlines:南方航空账单】
      * @return
      */
     @GET
-    @Path("exportOrder")
+    @Path("exportBill")
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
-    public void exportOrder(
-//            @BeanParam final OrderCheckDetail orderCheckDetail,
+    public void exportBill(
             @HeaderParam("client-id") String airportCode,
             @HeaderParam("user-id") Long userId,
-            @QueryParam("type") String type,
+            @DefaultValue("1") @QueryParam(value = "page") Integer page,
+            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
+            @BeanParam final CheckQueryParam checkQueryParam,
             @Context HttpServletResponse response) {
         try {
-            checkService.exportOrder(type,response);
+//            airportCode = "LJG";
+            LZResult<PaginationResult<Map>> result = checkService.getSpecialCheckList(userId,airportCode,checkQueryParam, page, Integer.MAX_VALUE);
+            PaginationResult<Map> data = result.getData();
+            List<Map> maps = data.getRows();
+            checkService.exportBill(maps, checkQueryParam.getType(), response);
         } catch (Exception e) {
             e.printStackTrace();
         }
