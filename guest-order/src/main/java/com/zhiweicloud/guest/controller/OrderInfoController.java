@@ -68,7 +68,6 @@ import java.util.Map;
 @Api(value = "订单", description = "订单desc ", tags = {"订单管理"})
 public class OrderInfoController {
 
-//    private static final Log log = LogFactory.getLog(OrderInfoController.class);
 
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoController.class);
 
@@ -90,10 +89,11 @@ public class OrderInfoController {
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @BeanParam final OrderInfoQuery orderInfoQuery,
             @HeaderParam("user-id") Long userId,
-            @HeaderParam("client-id") String airportCode,
-            @HeaderParam("role-ids") String createRole) {
+            @HeaderParam("role-ids") String createRole,
+            @HeaderParam("client-id") String airportCode
+            ) {
         try {
-//            String createRole = "1,2";
+            System.out.println("[userId:" + userId + "---createRole:" + createRole + "---airportCode:" + airportCode + "]");
             //判断有无数据权限，没有直接返回
             if(StringUtils.isEmpty(createRole)){
                 LZResult result = new LZResult<>();
@@ -103,6 +103,12 @@ public class OrderInfoController {
                 return JSON.toJSONString(result);
             }
             logger.debug("test - log - position");
+
+            //orderType传过来是-1 的话，查询全部
+            if(orderInfoQuery != null && orderInfoQuery.getQueryOrderType() == -1){
+                orderInfoQuery.setQueryOrderType(null);
+            }
+
             orderInfoQuery.setAirportCode(airportCode);
             //数据角色权限
             orderInfoQuery.setQueryCreateRole(createRole);
