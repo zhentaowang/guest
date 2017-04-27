@@ -87,16 +87,16 @@ public class PermissionService {
 
     /**
      * 权限添加与修改
-     * @param permission
+     * @param rolePermission
      */
-    public void saveOrUpdate(Permission permission) {
-        if (permission.getPermissionId() != null) {
-            permissionMapper.updateByIdAndAirportCode(permission);
+    public void saveOrUpdate(RolePermission rolePermission) {
+        if (rolePermission.getPermissionId() != null) {
+            rolePermissionMapper.updateByIdAndAirportCode(rolePermission);
 
         } else {
-            permission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
-            permission.setCreateTime(new Date());
-            permission.setUpdateTime(new Date());
+            rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+            rolePermission.setCreateTime(new Date());
+            rolePermission.setUpdateTime(new Date());
 //            permissionMapper.insertSelective(permission);
         }
     }
