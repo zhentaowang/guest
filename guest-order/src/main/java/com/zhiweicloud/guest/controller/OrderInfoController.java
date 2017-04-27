@@ -68,7 +68,6 @@ import java.util.Map;
 @Api(value = "订单", description = "订单desc ", tags = {"订单管理"})
 public class OrderInfoController {
 
-//    private static final Log log = LogFactory.getLog(OrderInfoController.class);
 
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoController.class);
 
@@ -90,10 +89,11 @@ public class OrderInfoController {
             @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
             @BeanParam final OrderInfoQuery orderInfoQuery,
             @HeaderParam("user-id") Long userId,
-            @HeaderParam("client-id") String airportCode,
-            @HeaderParam("role-ids") String createRole) {
+            @HeaderParam("role-ids") String createRole,
+            @HeaderParam("client-id") String airportCode
+            ) {
         try {
-//            String createRole = "1,2";
+            System.out.println("[userId:" + userId + "---createRole:" + createRole + "---airportCode:" + airportCode + "]");
             //判断有无数据权限，没有直接返回
             if(StringUtils.isEmpty(createRole)){
                 LZResult result = new LZResult<>();
@@ -103,6 +103,12 @@ public class OrderInfoController {
                 return JSON.toJSONString(result);
             }
             logger.debug("test - log - position");
+
+            //orderType传过来是-1 的话，查询全部
+            if(orderInfoQuery != null && orderInfoQuery.getQueryOrderType() == -1){
+                orderInfoQuery.setQueryOrderType(null);
+            }
+
             orderInfoQuery.setAirportCode(airportCode);
             //数据角色权限
             orderInfoQuery.setQueryCreateRole(createRole);
@@ -484,6 +490,7 @@ public class OrderInfoController {
      * 查找客户下有订单的协议ID
      *
      * @param customerIds 客户ID串
+     * @param flag        账单标志 【0（null）:普通账单,1:特殊客户（南航/国航）,2:头等舱,3:常旅客】
      * @param airportCode 机场码
      * @return
      */
@@ -493,11 +500,20 @@ public class OrderInfoController {
     @ApiOperation(value = "查询协议 - 判断协议是否被订单引用 ", notes = "返回协议信息", httpMethod = "GET", produces = "application/json")
     public LZResult<List<ProtocolList>> queryProtocolIdsInOrderInfoByCustomId(
             @QueryParam("customerIds") String customerIds,
+            @QueryParam("flag") Integer flag,
             @HeaderParam("client-id") String airportCode) {
-        List<ProtocolList> protocolLists;
+        List<ProtocolList> protocolLists = null;
         LZResult<List<ProtocolList>> result = new LZResult<>();
         try {
-            protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds, airportCode);
+            if (flag == null || flag == 0) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomId(customerIds, airportCode);
+            } else if (flag == 1) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomIdAndType(customerIds, airportCode, new Integer[]{9, 10});
+            } else if (flag == 2) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomIdAndType(customerIds, airportCode, new Integer[]{10});
+            } else if (flag == 3) {
+                protocolLists = orderInfoService.queryProtocolIdsInOrderInfoByCustomIdAndType(customerIds, airportCode, new Integer[]{9});
+            }
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(protocolLists);

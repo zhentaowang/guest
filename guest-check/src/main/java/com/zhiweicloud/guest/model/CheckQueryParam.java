@@ -49,6 +49,10 @@ public class CheckQueryParam extends BaseEntity{
     @QueryParam("queryProductId")
     private String queryProductId;
 
+    @ApiModelProperty(value = "类型", name = "type")
+    @QueryParam("type")
+    private String type;
+
     public String getQueryFlightDateBegin() {
         return queryFlightDateBegin;
     }
@@ -120,4 +124,13 @@ public class CheckQueryParam extends BaseEntity{
     public void setQueryProtocolId(String queryProtocolId) {
         this.queryProtocolId = queryProtocolId;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }
