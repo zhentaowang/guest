@@ -247,35 +247,15 @@ public class InstitutionClientController {
             @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
     })
     public LZResult<List<Dropdownlist>> queryInstitutionClientDropdownList(
-            ContainerRequestContext request,
-            @QueryParam(value = "name") String name,
-            @QueryParam(value = "no") String no) {
-        String airportCode = request.getHeaders().getFirst("client-id").toString();
-        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode, name, no);
-        return new LZResult<>(list);
-    }
-
-    /**
-     * 客户下拉框 只查询 南方航空股份有限公司，中国国际航空股份有限公司
-     *
-     * @return
-     */
-    @GET
-    @Path(value = "querySpecialDropdownList")
-    @Produces("application/json;charset=utf-8")
-    @ApiOperation(value = "系统中用到机构客户信息下来框，只包含id，和value的对象", notes = "根据数据字典的分类名称获取详情数据,下拉", httpMethod = "GET", produces = "application/json", tags = {"common:公共接口"})
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "模糊查询name", dataType = "String", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "no", value = "模糊查询编号", dataType = "String", required = false, paramType = "query"),
-            @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
-    })
-    public LZResult<List<Dropdownlist>> querySpecialDropdownList(
             @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId) {
-        List<Dropdownlist> list = institutionClientService.querySpecialDropdownList(airportCode);
+            @HeaderParam("user-id") Long userId,
+            @QueryParam(value = "name") String name,
+            @QueryParam(value = "no") String no,
+            @QueryParam(value = "type") String type // 1:南航休息室账单('南方航空股份有限公司','中国国际航空股份有限公司').2:头等舱账单（只带出协议类型为头等舱的客户）. 3:常旅客账单（只带出协议类型为金银卡的客户） ,如果type为空，查询所有客户
+            ) {
+        List<Dropdownlist> list = institutionClientService.queryInstitutionClientDropdownList(airportCode, name, no,type);
         return new LZResult<>(list);
     }
-
 
 
     @GET

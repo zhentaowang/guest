@@ -80,18 +80,52 @@
   </resultMap>
 
   <select id="getInstitutionClientDropdownList" resultMap="DropdownlistMap" parameterType="map">
-    select institution_client_id,name as value,no from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
-    <if test="name != null and !name.trim().equals('')" >
-      and name like concat('%',#{name},'%')
-    </if>
-    <if test="no != null and !no.trim().equals('')" >
-      and no like concat('%',#{no},'%')
-    </if>
-  </select>
-
-  <select id="specialDropdownList" resultMap="DropdownlistMap" parameterType="map">
-    select institution_client_id,name as value from v_institution_client where is_deleted = 0 and airport_code = #{airportCode}
-    and name in ('南方航空股份有限公司','中国国际航空股份有限公司')
+    select DISTINCT(vic.institution_client_id),vic.name as value,vic.no from v_institution_client vic
+    <choose>
+        <when test="type != null and !type.trim().equals('') and type == 1">
+          where vic.is_deleted = 0 and vic.airport_code = #{airportCode}
+          and name in ('南方航空股份有限公司','中国国际航空股份有限公司')
+          <if test="name != null and !name.trim().equals('')" >
+            and vic.name like concat('%',#{name},'%')
+          </if>
+          <if test="no != null and !no.trim().equals('')" >
+            and vic.no like concat('%',#{no},'%')
+          </if>
+        </when>
+        <when test="type != null and !type.trim().equals('') and type == 2">
+          inner join protocol p
+          on vic.institution_client_id = p.institution_client_id
+          and p.type = 9
+          where vic.is_deleted = 0 and vic.airport_code = #{airportCode}
+          <if test="name != null and !name.trim().equals('')" >
+            and vic.name like concat('%',#{name},'%')
+          </if>
+          <if test="no != null and !no.trim().equals('')" >
+            and vic.no like concat('%',#{no},'%')
+          </if>
+        </when>
+        <when test="type != null and !type.trim().equals('') and type == 3">
+          inner join protocol p
+          on vic.institution_client_id = p.institution_client_id
+          and p.type = 10
+          where vic.is_deleted = 0 and vic.airport_code = #{airportCode}
+          <if test="name != null and !name.trim().equals('')" >
+            and vic.name like concat('%',#{name},'%')
+          </if>
+          <if test="no != null and !no.trim().equals('')" >
+            and vic.no like concat('%',#{no},'%')
+          </if>
+        </when>
+        <otherwise>
+          where vic.is_deleted = 0 and vic.airport_code = #{airportCode}
+          <if test="name != null and !name.trim().equals('')" >
+            and vic.name like concat('%',#{name},'%')
+          </if>
+          <if test="no != null and !no.trim().equals('')" >
+            and vic.no like concat('%',#{no},'%')
+          </if>
+        </otherwise>
+    </choose>
   </select>
 
 

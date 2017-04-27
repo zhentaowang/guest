@@ -111,21 +111,9 @@ public class InstitutionClientService {
         return names.toString();
     }
 
-    public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name,String no) {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("airportCode",airportCode);
-        map.put("name",name);
-        map.put("no",no);
-
-        return institutionClientMapper.getInstitutionClientDropdownList(map);
+    public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name,String no,String type) {
+        return institutionClientMapper.getInstitutionClientDropdownList(airportCode,name,no,type);
     }
-
-    public List<Dropdownlist> querySpecialDropdownList(String airportCode) {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("airportCode",airportCode);
-        return institutionClientMapper.specialDropdownList(map);
-    }
-
 
 
     /**

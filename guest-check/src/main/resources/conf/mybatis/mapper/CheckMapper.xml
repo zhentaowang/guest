@@ -117,17 +117,19 @@
         and o.protocol_type in (9,10)
         and o.airport_code = #{airportCode} and o.is_deleted = 0
         and os.service_detail->>'$.serviceId' = 5
-        <if test="queryFlightDateBegin != null and !''.equals(queryFlightDateBegin)">
-          and f.flight_date &gt;= #{queryFlightDateBegin}
-        </if>
-        <if test="queryFlightDateEnd != null and !''.equals(queryFlightDateEnd)">
-          and f.flight_date &lt;= #{queryFlightDateEnd}
-        </if>
+
         <if test="queryCustomerName != null and !''.equals(queryCustomerName)">
           and o.customer_name like concat('%',#{queryCustomerName},'%')
         </if>
         GROUP BY o.flight_id,o.customer_id,o.customer_name,os.price_rule
     ) t INNER JOIN flight f on f.flight_id = t.flight_id
+      where 1 = 1
+      <if test="queryFlightDateBegin != null and !''.equals(queryFlightDateBegin)">
+          and f.flight_date &gt;= #{queryFlightDateBegin}
+      </if>
+      <if test="queryFlightDateEnd != null and !''.equals(queryFlightDateEnd)">
+          and f.flight_date &lt;= #{queryFlightDateEnd}
+      </if>
   </select>
 
   <select id="selectSpecialCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
@@ -141,17 +143,20 @@
         and o.protocol_type in (9,10)
         and o.airport_code = #{criteria.airportCode} and o.is_deleted = 0
         and os.service_detail->>'$.serviceId' = 5
-        <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
-          and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
-        </if>
-        <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
-          and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
-        </if>
+
         <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)">
           and o.customer_name like concat('%',#{criteria.queryCustomerName},'%')
         </if>
         GROUP BY o.flight_id,o.customer_id,o.customer_name,o.airport_code,os.price_rule
     ) t INNER JOIN flight f on f.flight_id = t.flight_id
+      where 1 = 1
+      <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
+          and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
+      </if>
+      <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
+          and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
+      </if>
+    limit #{page.startPageNo},#{page.pCount}
   </select>
 
 
