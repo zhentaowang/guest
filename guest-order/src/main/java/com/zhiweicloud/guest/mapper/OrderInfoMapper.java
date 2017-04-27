@@ -88,10 +88,21 @@ public interface OrderInfoMapper{
 
     /**
      * 根据客户ID集合查询客户下被订单引用的协议集合
+     *
      * @param customId
      * @param airportCode
      * @return
      */
     List<ProtocolVo> queryProtocolIdsInOrderInfoByCustomId(@Param("customId")Long customId, @Param("airportCode")String airportCode);
+
+    /**
+     * 根据客户ID、机场码和账单标志获取客户下被订单引用的协议
+     *
+     * @param customId
+     * @param airportCode
+     * @param flag
+     * @return
+     */
+    List<ProtocolVo> queryProtocolIdsInOrderInfoByCustomIdAndType(@Param("customId") Long customId, @Param("airportCode") String airportCode, @Param("types") Integer[] flag);
 
 }
