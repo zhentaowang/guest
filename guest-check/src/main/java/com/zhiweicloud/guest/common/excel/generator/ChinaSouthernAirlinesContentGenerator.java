@@ -92,15 +92,19 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             rowCell12.setCellStyle(cellStyle);
             rowCell12.setCellValue("RMB");
             HSSFCell rowCell13 = rowContent.createCell(12);
-            rowCell3.setCellStyle(cellStyle);
-            rowCell13.setCellValue("1");
+            rowCell13.setCellStyle(cellStyle);
+            rowCell13.setCellValue(1);
         }
         sheetContentPo.setRow(row);
     }
 
     @Override
     void createTailRows(SheetContentPo sheetContentPo) {
-
+        HSSFSheet sheet = sheetContentPo.getSheet();
+        sheet.setColumnWidth(0,"云南空港百事特商务有限公司丽江营业部".getBytes().length * 256);
+        sheet.setColumnWidth(1,"2017-03-26".getBytes().length * 256);
+        sheet.setColumnWidth(4,"洛杉矶 - 亚特兰大".getBytes().length * 256);
+        sheet.setColumnWidth(6,"头等舱休息室费用".getBytes().length * 256);
     }
 
 }

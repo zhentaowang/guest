@@ -142,7 +142,12 @@ public class AirChinaContentGenerator extends ContentGenerator {
 
     @Override
     void createTailRows(SheetContentPo sheetContentPo) {
-
+        HSSFSheet sheet = sheetContentPo.getSheet();
+        sheet.setColumnWidth(0,"云南空港百事特商务有限公司丽江营业部".getBytes().length * 256);
+        sheet.setColumnWidth(6,"业务发生地点（航站）".getBytes().length * 256);
+        sheet.setColumnWidth(7,"业务单据日期".getBytes().length * 256);
+        sheet.setColumnWidth(8,"费用明细（供应商物料）".getBytes().length * 256);
+        sheet.setColumnWidth(15,"业务单据日期".getBytes().length * 256);
     }
 
 }

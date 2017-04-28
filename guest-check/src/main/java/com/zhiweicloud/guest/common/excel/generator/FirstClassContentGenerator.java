@@ -23,10 +23,12 @@ public class FirstClassContentGenerator extends ContentGenerator {
         super(sheetContentPos);
     }
 
+    private void setWidth(HSSFSheet sheet,int width){
+        sheet.setColumnWidth(0,width);
+    }
+
     @Override
     void createHeadRows(SheetContentPo sheetContentPo) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         RowContentPo rowContentPo = sheetContentPo.getRowContentPos().get(0);
@@ -53,18 +55,22 @@ public class FirstClassContentGenerator extends ContentGenerator {
         // 第二行
         row++;
         HSSFRow row2 = sheet.createRow(row);
-        row2.setRowStyle(cellStyle);
         HSSFCell row2Cell1 = row2.createCell(0);
+        row2Cell1.setCellStyle(cellStyle);
         row2Cell1.setCellValue("航 班 号");
         HSSFCell row2Cell2 = row2.createCell(1);
+        row2Cell2.setCellStyle(cellStyle);
         row2Cell2.setCellValue(rowContentPo.getFlightNo());
         HSSFCell row2Cell3 = row2.createCell(2);
+        row2Cell3.setCellStyle(cellStyle);
         row2Cell3.setCellValue("机    型");
         HSSFCell row2Cell4 = row2.createCell(3);
         row2Cell4.setCellValue(new String());
         HSSFCell row2Cell5 = row2.createCell(4);
+        row2Cell5.setCellStyle(cellStyle);
         row2Cell5.setCellValue("机    号");
         HSSFCell row2Cell6 = row2.createCell(5);
+        row2Cell6.setCellStyle(cellStyle);
         row2Cell6.setCellValue(rowContentPo.getPlanNo());
         // 把当前行号设置回去
         sheetContentPo.setRow(row);
@@ -129,6 +135,11 @@ public class FirstClassContentGenerator extends ContentGenerator {
         HSSFCell last2 = rowLast.createCell(2);
         last2.setCellStyle(cellStyle);
         last2.setCellValue(new String());
+
+//        sheet.autoSizeColumn(3, true);
+//        sheet.autoSizeColumn(7, true);
+        sheet.setColumnWidth(1,sheet.getRow(0).getCell(1).getStringCellValue().getBytes().length * 256);
+        sheet.setColumnWidth(3,"洛杉矶 - 亚特兰大".getBytes().length * 256);
     }
 
 }

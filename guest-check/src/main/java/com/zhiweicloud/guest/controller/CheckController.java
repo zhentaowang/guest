@@ -156,7 +156,7 @@ public class CheckController {
             @BeanParam final CheckQueryParam checkQueryParam,
             @Context HttpServletResponse response) {
         try {
-//            airportCode = "LJG";
+            airportCode = "LJG";
             checkService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, airportCode, page, Integer.MAX_VALUE);
         } catch (Exception e) {
             e.printStackTrace();
