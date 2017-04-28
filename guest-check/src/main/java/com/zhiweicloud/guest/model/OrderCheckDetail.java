@@ -63,9 +63,6 @@ public class OrderCheckDetail extends BaseEntity{
     @QueryParam("queryFlightDateEnd")
     private String queryFlightDateEnd;
 
-
-
-
     public String getTotalAmount() {
         return totalAmount;
     }

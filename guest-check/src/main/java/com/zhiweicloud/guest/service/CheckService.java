@@ -216,7 +216,9 @@ public class CheckService {
                 sheetName = "国际航空账单";
                 break;
         }
-        ExcelUtils.exportExcel(contentGenerator, fileName, sheetName,response);
+        if (contentGenerator != null) {
+            ExcelUtils.exportExcel(contentGenerator, fileName, sheetName, response);
+        }
     }
 
     private List<SheetContentPo> getSpecialDateList(CheckQueryParam checkQueryParam, String airportCode, Integer page, Integer rows) throws ParseException {
@@ -233,7 +235,7 @@ public class CheckService {
             rowContentPo.setAmout((Double) map.get("amount"));
             rowContentPo.setFlightDepcode((String) map.get("flightDepcode"));
             rowContentPo.setFlightArrcode((String) map.get("flightArrcode"));
-            rowContentPo.setFlightDate((Date) map.get("flightDate"));
+            rowContentPo.setFlightDate( map.get("flightDate").toString());
             rowContentPo.setServerPersonNum((Double)(map.get("serverPersonNum")));
             rowContentPo.setCustomerName((String) map.get("customerName"));
             rowContentPo.setPrice(((Long)map.get("price")));
@@ -267,11 +269,7 @@ public class CheckService {
                 rowContentPo.setAirpotCode(checkPassengerPo.getAirpotCode());
                 rowContentPo.setLeg(checkPassengerPo.getLeg());
                 rowContentPo.setCustomerName(loungeCheckPo.getCustomerName());
-                if (loungeCheckPo.getFlightDate() == null) {
-                    rowContentPo.setFlightDate(null);
-                }else {
-                    rowContentPo.setFlightDate(new Date(loungeCheckPo.getFlightDate()));
-                }
+                rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null?null:(simpleDateFormat.format(loungeCheckPo.getFlightDate())));
                 rowContentPo.setCabinNo(checkPassengerPo.getCabinNo());
                 rowContentPo.setExpireTime(checkPassengerPo.getExpireTime());
                 rowContentPo.setServerPersonNum(checkPassengerPo.getServerPersonNum());

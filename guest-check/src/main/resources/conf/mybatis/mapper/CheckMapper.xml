@@ -168,7 +168,7 @@
 
   <resultMap id="excel_content" type="com.zhiweicloud.guest.model.LoungeCheckPo">
     <id column="flight_id" jdbcType="BIGINT" property="flightId" />
-    <result column="flight_date" jdbcType="VARCHAR" property="flightDate" />
+    <result column="flight_date" jdbcType="DATE" property="flightDate" />
     <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
     <collection property="checkPassengerPos" column="" ofType="com.zhiweicloud.guest.model.CheckPassengerPo">
       <result column="flight_id" jdbcType="BIGINT" property="flightId" />

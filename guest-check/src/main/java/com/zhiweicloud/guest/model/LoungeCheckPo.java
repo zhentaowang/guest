@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest.model;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class LoungeCheckPo {
 
     private Long flightId;
 
-    private String flightDate;
+    private Date flightDate;
 
     private String customerName;
 
@@ -27,11 +28,11 @@ public class LoungeCheckPo {
         this.flightId = flightId;
     }
 
-    public String getFlightDate() {
+    public Date getFlightDate() {
         return flightDate;
     }
 
-    public void setFlightDate(String flightDate) {
+    public void setFlightDate(Date flightDate) {
         this.flightDate = flightDate;
     }
 

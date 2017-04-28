@@ -84,10 +84,10 @@ public class AirChinaContentGenerator extends ContentGenerator {
             cell6.setCellValue(new String());
             HSSFCell cell7 = rowContent.createCell(6);
             cell7.setCellStyle(cellStyle);
-            cell7.setCellValue(String.valueOf(rowContentPo.getAirpotCode()));
+            cell7.setCellValue(rowContentPo.getAirpotCode());
             HSSFCell cell8 = rowContent.createCell(7);
             cell8.setCellStyle(cellStyle);
-            cell8.setCellValue(String.valueOf(rowContentPo.getFlightDate()));
+            cell8.setCellValue(rowContentPo.getFlightDate());
             HSSFCell cell9 = rowContent.createCell(8);
             cell9.setCellStyle(cellStyle);
             cell9.setCellValue("头等舱旅客服务费");
@@ -96,10 +96,18 @@ public class AirChinaContentGenerator extends ContentGenerator {
             cell10.setCellValue("人次");
             HSSFCell cell11 = rowContent.createCell(10);
             cell11.setCellStyle(cellStyle);
-            cell11.setCellValue(String.valueOf(rowContentPo.getServerPersonNum()));
+            if (rowContentPo.getServerPersonNum() == null) {
+                cell11.setCellValue(new String());
+            }else {
+                cell11.setCellValue(rowContentPo.getServerPersonNum());
+            }
             HSSFCell cell12 = rowContent.createCell(11);
             cell12.setCellStyle(cellStyle);
-            cell12.setCellValue(String.valueOf(rowContentPo.getPrice()));
+            if (rowContentPo.getPrice() == null) {
+                cell12.setCellValue(new String());
+            }else {
+                cell12.setCellValue(rowContentPo.getPrice());
+            }
             HSSFCell cell13 = rowContent.createCell(12);
             cell13.setCellStyle(cellStyle);
             cell13.setCellValue(new String());
@@ -108,22 +116,26 @@ public class AirChinaContentGenerator extends ContentGenerator {
             cell14.setCellValue(new String());
             HSSFCell cell15 = rowContent.createCell(14);
             cell15.setCellStyle(cellStyle);
-            cell15.setCellValue(String.valueOf(rowContentPo.getAmout()));
+            if (rowContentPo.getAmout() == null) {
+                cell15.setCellValue(new String());
+            }else {
+                cell15.setCellValue(rowContentPo.getAmout());
+            }
             HSSFCell cell16 = rowContent.createCell(15);
             cell16.setCellStyle(cellStyle);
-            cell16.setCellValue(String.valueOf(rowContentPo.getFlightDate()));
+            cell16.setCellValue(rowContentPo.getFlightDate());
             HSSFCell cell17 = rowContent.createCell(16);
             cell17.setCellStyle(cellStyle);
-            cell17.setCellValue(String.valueOf(rowContentPo.getFlightNo()));
+            cell17.setCellValue(rowContentPo.getFlightNo());
             HSSFCell cell18 = rowContent.createCell(17);
             cell18.setCellStyle(cellStyle);
-            cell18.setCellValue(String.valueOf(rowContentPo.getPlanNo()));
+            cell18.setCellValue(rowContentPo.getPlanNo());
             HSSFCell cell19 = rowContent.createCell(18);
             cell19.setCellStyle(cellStyle);
-            cell19.setCellValue(String.valueOf(rowContentPo.getFlightDepcode()));
+            cell19.setCellValue(rowContentPo.getFlightDepcode());
             HSSFCell cell20 = rowContent.createCell(19);
             cell20.setCellStyle(cellStyle);
-            cell20.setCellValue(String.valueOf(rowContentPo.getFlightArrcode()));
+            cell20.setCellValue(rowContentPo.getFlightArrcode());
         }
         sheetContentPo.setRow(row);
     }

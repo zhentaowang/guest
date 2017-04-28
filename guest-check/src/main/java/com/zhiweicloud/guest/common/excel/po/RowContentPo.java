@@ -75,7 +75,7 @@ public class RowContentPo {
     /**
      * 航班日期
      */
-    private Date flightDate;
+    private String flightDate;
 
     /**
      * 发生机场
@@ -203,11 +203,11 @@ public class RowContentPo {
         this.customerName = customerName;
     }
 
-    public Date getFlightDate() {
+    public String getFlightDate() {
         return flightDate;
     }
 
-    public void setFlightDate(Date flightDate) {
+    public void setFlightDate(String flightDate) {
         this.flightDate = flightDate;
     }
 
