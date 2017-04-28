@@ -270,7 +270,7 @@ public class CheckService {
                 if (loungeCheckPo.getFlightDate() == null) {
                     rowContentPo.setFlightDate(null);
                 }else {
-                    rowContentPo.setFlightDate(loungeCheckPo.getFlightDate());
+                    rowContentPo.setFlightDate(new Date(loungeCheckPo.getFlightDate()));
                 }
                 rowContentPo.setCabinNo(checkPassengerPo.getCabinNo());
                 rowContentPo.setExpireTime(checkPassengerPo.getExpireTime());
