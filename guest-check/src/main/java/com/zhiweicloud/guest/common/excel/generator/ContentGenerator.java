@@ -42,17 +42,22 @@ public abstract class ContentGenerator {
     /**
      * 创建头部行
      */
-    abstract void createHeadRows(SheetContentPo excelAssistPo);
+    abstract void createHeadRows(SheetContentPo sheetContentPo);
 
     /**
      * 创建内容行
      */
-    abstract void createContentRows(SheetContentPo excelAssistPo);
+    abstract void createContentRows(SheetContentPo sheetContentPo);
 
     /**
      * 创建尾部行
      */
-    abstract void createTailRows(SheetContentPo excelAssistPo);
+    abstract void createTailRows(SheetContentPo sheetContentPo);
+
+    /**
+     * 设置宽度
+     */
+    abstract void setWidthHelp(SheetContentPo sheetContentPo);
 
     /**
      * 创建文件 模版方法
@@ -62,6 +67,7 @@ public abstract class ContentGenerator {
             createHeadRows(sheetContentPo);
             createContentRows(sheetContentPo);
             createTailRows(sheetContentPo);
+            setWidthHelp(sheetContentPo);
         }
     }
 

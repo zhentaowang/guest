@@ -2,10 +2,10 @@ package com.zhiweicloud.guest.common.excel.generator;
 
 import com.zhiweicloud.guest.common.excel.po.RowContentPo;
 import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -38,6 +38,11 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
 
     @Override
     void createContentRows(SheetContentPo sheetContentPo) {
+        HSSFCellStyle priceCellStyle = workbook.createCellStyle();
+        HSSFDataFormat dataFormat = workbook.createDataFormat();
+        priceCellStyle.setDataFormat(dataFormat.getFormat("#,#0.0"));
+        priceCellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         for (RowContentPo rowContentPo : sheetContentPo.getRowContentPos()) {
@@ -72,7 +77,7 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
                 rowCell8.setCellValue(rowContentPo.getServerPersonNum());
             }
             HSSFCell rowCell9 = rowContent.createCell(8);
-            rowCell9.setCellStyle(cellStyle);
+            rowCell9.setCellStyle(priceCellStyle);
             if (rowContentPo.getPrice() == null) {
                 rowCell9.setCellValue(new String());
             }else {
@@ -82,7 +87,7 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             rowCell10.setCellStyle(cellStyle);
             rowCell10.setCellValue(new String());
             HSSFCell rowCell11 = rowContent.createCell(10);
-            rowCell11.setCellStyle(cellStyle);
+            rowCell11.setCellStyle(priceCellStyle);
             if (rowContentPo.getAmout() == null) {
                 rowCell11.setCellValue(new String());
             }else {
@@ -100,6 +105,11 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
 
     @Override
     void createTailRows(SheetContentPo sheetContentPo) {
+
+    }
+
+    @Override
+    void setWidthHelp(SheetContentPo sheetContentPo) {
         HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(0,"云南空港百事特商务有限公司丽江营业部".getBytes().length * 256);
         sheet.setColumnWidth(1,"2017-03-26".getBytes().length * 256);

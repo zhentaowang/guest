@@ -149,10 +149,18 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
         HSSFCell lastCell2 = rowLast.createCell(2);
         lastCell2.setCellStyle(cellStyle);
         lastCell2.setCellValue(new String());
+    }
 
+    @Override
+    void setWidthHelp(SheetContentPo sheetContentPo) {
+        HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(3,"1970-01-01 12:00:00".getBytes().length * 256);
-        sheet.setColumnWidth(4,"1970-01-01 12:00:00".getBytes().length * 256);
-        sheet.setColumnWidth(8,"洛杉矶 - 亚特兰大".getBytes().length * 256);
+        sheet.setColumnWidth(4,12 * 256);
+        sheet.setColumnWidth(8,"1970-01-01 12:00:00".getBytes().length * 256);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("KMG - CAN".getBytes().length);
     }
 
 }
