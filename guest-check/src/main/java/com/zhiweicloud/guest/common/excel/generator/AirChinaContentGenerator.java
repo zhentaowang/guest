@@ -2,9 +2,8 @@ package com.zhiweicloud.guest.common.excel.generator;
 
 import com.zhiweicloud.guest.common.excel.po.RowContentPo;
 import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.List;
@@ -59,6 +58,11 @@ public class AirChinaContentGenerator extends ContentGenerator {
 
     @Override
     void createContentRows(SheetContentPo sheetContentPo) {
+        HSSFCellStyle priceCellStyle = workbook.createCellStyle();
+        HSSFDataFormat dataFormat = workbook.createDataFormat();
+        priceCellStyle.setDataFormat(dataFormat.getFormat("#,#0.0"));
+        priceCellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         for (RowContentPo rowContentPo : sheetContentPo.getRowContentPos()) {
@@ -98,8 +102,12 @@ public class AirChinaContentGenerator extends ContentGenerator {
             cell11.setCellStyle(cellStyle);
             cell11.setCellValue(String.valueOf(rowContentPo.getServerPersonNum()));
             HSSFCell cell12 = rowContent.createCell(11);
-            cell12.setCellStyle(cellStyle);
-            cell12.setCellValue(String.valueOf(rowContentPo.getPrice()));
+            cell12.setCellStyle(priceCellStyle);
+            if (rowContentPo.getPrice() == null) {
+                cell12.setCellValue(new String());
+            }else {
+                cell12.setCellValue(rowContentPo.getPrice());
+            }
             HSSFCell cell13 = rowContent.createCell(12);
             cell13.setCellStyle(cellStyle);
             cell13.setCellValue(new String());
@@ -107,8 +115,12 @@ public class AirChinaContentGenerator extends ContentGenerator {
             cell14.setCellStyle(cellStyle);
             cell14.setCellValue(new String());
             HSSFCell cell15 = rowContent.createCell(14);
-            cell15.setCellStyle(cellStyle);
-            cell15.setCellValue(String.valueOf(rowContentPo.getAmout()));
+            cell15.setCellStyle(priceCellStyle);
+            if (rowContentPo.getAmout() == null) {
+                cell15.setCellValue(new String());
+            }else {
+                cell15.setCellValue(rowContentPo.getAmout());
+            }
             HSSFCell cell16 = rowContent.createCell(15);
             cell16.setCellStyle(cellStyle);
             cell16.setCellValue(String.valueOf(rowContentPo.getFlightDate()));
@@ -131,6 +143,16 @@ public class AirChinaContentGenerator extends ContentGenerator {
     @Override
     void createTailRows(SheetContentPo sheetContentPo) {
 
+    }
+
+    @Override
+    void setWidthHelp(SheetContentPo sheetContentPo) {
+        HSSFSheet sheet = sheetContentPo.getSheet();
+        sheet.setColumnWidth(0,"云南空港百事特商务有限公司丽江".getBytes().length * 256);
+        sheet.setColumnWidth(6,21 * 256);
+        sheet.setColumnWidth(7,18 * 256);
+        sheet.setColumnWidth(8,24 * 256);
+        sheet.setColumnWidth(15,"业务单据日期".getBytes().length * 256);
     }
 
 }

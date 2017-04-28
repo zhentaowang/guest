@@ -2,8 +2,9 @@ package com.zhiweicloud.guest.common.excel.generator;
 
 import com.zhiweicloud.guest.common.excel.po.RowContentPo;
 import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.util.List;
@@ -125,6 +126,13 @@ public class FirstClassContentGenerator extends ContentGenerator {
         HSSFCell last2 = rowLast.createCell(2);
         last2.setCellStyle(cellStyle);
         last2.setCellValue(new String());
+    }
+
+    @Override
+    void setWidthHelp(SheetContentPo sheetContentPo) {
+        HSSFSheet sheet = sheetContentPo.getSheet();
+        sheet.setColumnWidth(1,sheet.getRow(0).getCell(1).getStringCellValue().getBytes().length * 256);
+        sheet.setColumnWidth(3,12 * 256); // 多数据的时候 直接写死大致内容
     }
 
 }

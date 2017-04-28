@@ -137,4 +137,12 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
         lastCell2.setCellValue(new String());
     }
 
+    @Override
+    void setWidthHelp(SheetContentPo sheetContentPo) {
+        HSSFSheet sheet = sheetContentPo.getSheet();
+        sheet.setColumnWidth(3,"1970-01-01 12:00:00".getBytes().length * 256);
+        sheet.setColumnWidth(4,12 * 256);
+        sheet.setColumnWidth(8,"1970-01-01 12:00:00".getBytes().length * 256);
+    }
+
 }
