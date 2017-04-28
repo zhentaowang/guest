@@ -107,6 +107,8 @@ public class EmployeeService {
             temp.setUpdateUser(deleteUser);
             temp.setUpdateTime(new Date());
             employeeMapper.updateByPrimaryKeySelective(temp);
+            //删除
+            employeeMapper.deleteRoles(ids.get(i),null,airportCode);
         }
     }
 
