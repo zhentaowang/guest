@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -125,16 +126,19 @@ public class PermissionController {
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "数据权限列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
     @ApiImplicitParams({@ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")})
+            @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "roleId", value = "角色id", dataType = "Integer", paramType = "query")})
     public String permissionList(@HeaderParam("client-id") String airportCode,
                                  @HeaderParam("user-id") Long userId,
                                  @QueryParam(value = "page") Integer page,
-                                 @QueryParam(value = "rows") Integer rows) {
+                                 @QueryParam(value = "rows") Integer rows,
+                                 @QueryParam(value = "roleId") Integer roleId) {
 
         HashMap<String, Object> param = new HashMap<>();
         param.put("airportCode", airportCode);
+        param.put("roleId", roleId);
         LZResult<PaginationResult<Permission>> result = permissionService.getDataPermissionList(param, page, rows);
-        return JSON.toJSONString(result);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
 
     }
 
