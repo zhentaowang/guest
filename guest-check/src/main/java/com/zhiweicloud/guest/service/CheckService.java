@@ -126,7 +126,7 @@ public class CheckService {
 
 
         List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
-        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","vipPrice","accompanyPersonNum","accompanyPrice","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"));
+        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","accompanyPersonNum","restRoomPersonNum","securityCheckPersonNum","totalAmount"));
         Map<String, Object> totalRow = new HashMap<>();
 
         for(int k = 0; k < checkList.size();k++){
@@ -270,7 +270,7 @@ public class CheckService {
                 if (loungeCheckPo.getFlightDate() == null) {
                     rowContentPo.setFlightDate(null);
                 }else {
-                    rowContentPo.setFlightDate(new Date(loungeCheckPo.getFlightDate()));
+                    rowContentPo.setFlightDate(loungeCheckPo.getFlightDate());
                 }
                 rowContentPo.setCabinNo(checkPassengerPo.getCabinNo());
                 rowContentPo.setExpireTime(checkPassengerPo.getExpireTime());
