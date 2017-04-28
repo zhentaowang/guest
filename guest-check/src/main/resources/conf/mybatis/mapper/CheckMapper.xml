@@ -159,5 +159,66 @@
     limit #{page.startPageNo},#{page.pCount}
   </select>
 
+  <resultMap id="excel_content" type="com.zhiweicloud.guest.model.LoungeCheckPo">
+    <id column="flight_id" jdbcType="BIGINT" property="flightId" />
+    <result column="flight_date" jdbcType="VARCHAR" property="flightDate" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+    <collection property="checkPassengerPos" column="" ofType="com.zhiweicloud.guest.model.CheckPassengerPo">
+      <result column="flight_id" jdbcType="BIGINT" property="flightId" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
+      <result column="card_type" jdbcType="VARCHAR" property="cardType" />
+      <result column="card_no" jdbcType="VARCHAR" property="cardNo" />
+      <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
+      <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+      <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+      <result column="leg" jdbcType="VARCHAR" property="leg" />
+      <result column="flight_type" jdbcType="VARCHAR" property="flightType" />
+      <result column="expire_time" jdbcType="DATE" property="expireTime" />
+      <result column="along_total" jdbcType="INTEGER" property="alongTotal" />
+      <result column="airport_code" jdbcType="VARCHAR" property="airpotCode"/>
+      <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode"/>
+      <result column="flight_arrcode" jdbcType="VARCHAR" property="flightArrcode"/>
+    </collection>
+  </resultMap>
+
+  <select id="selectLoungeCheckList" resultMap="excel_content">
+    SELECT
+    oi.customer_name,
+    f.flight_date,
+    f.flight_id,
+    p.name,
+    p.ticket_no,
+    p.card_type,
+    p.card_no,
+    p.cabin_no,
+    f.plan_no,
+    f.flight_no,
+    f.flight_depcode,
+    f.flight_arrcode,
+    concat_ws(' - ',f.flight_dep,f.flight_arr) AS leg,
+    p.expire_time,
+    oi.along_total,
+    oi.order_id,
+    oi.along_total,
+    f.airport_code
+    FROM
+    order_info oi
+    LEFT JOIN passenger p ON oi.order_id = p.order_id
+    LEFT JOIN flight f ON f.flight_id = p.flight_id
+    WHERE
+    oi.is_deleted = 0
+    AND oi.protocol_type = #{protocolType}
+    AND oi.airport_code = #{param.airportCode}
+    <if test="param.queryCustomerName != null and !''.equals(param.queryCustomerName)">
+      AND oi.customer_name LIKE concat('%',#{param.queryCustomerName},'%')
+    </if>
+    <if test="param.queryFlightDateBegin != null and !''.equals(param.queryFlightDateBegin)">
+      and f.flight_date &gt;= #{param.queryFlightDateBegin}
+    </if>
+    <if test="param.queryFlightDateEnd != null and !''.equals(param.queryFlightDateEnd)">
+      and f.flight_date &lt;= #{param.queryFlightDateEnd}
+    </if>
+  </select>
 
 </mapper>

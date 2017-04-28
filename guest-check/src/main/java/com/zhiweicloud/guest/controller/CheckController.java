@@ -29,6 +29,10 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
+import com.zhiweicloud.guest.common.excel.generator.AirChinaContentGenerator;
+import com.zhiweicloud.guest.common.excel.generator.ChinaSouthernAirlinesContentGenerator;
+import com.zhiweicloud.guest.common.excel.generator.FirstClassContentGenerator;
+import com.zhiweicloud.guest.common.excel.generator.FrequentFlyerContentGenerator;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
@@ -153,10 +157,7 @@ public class CheckController {
             @Context HttpServletResponse response) {
         try {
 //            airportCode = "LJG";
-            LZResult<PaginationResult<Map>> result = checkService.getSpecialCheckList(userId,airportCode,checkQueryParam, page, Integer.MAX_VALUE);
-            PaginationResult<Map> data = result.getData();
-            List<Map> maps = data.getRows();
-            checkService.exportBill(maps, checkQueryParam.getType(), response);
+            checkService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, airportCode, page, Integer.MAX_VALUE);
         } catch (Exception e) {
             e.printStackTrace();
         }
