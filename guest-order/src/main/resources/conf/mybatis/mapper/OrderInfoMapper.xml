@@ -880,7 +880,16 @@
   </select>
 
   <select id="queryProtocolIdsInOrderInfoByCustomId" resultType="com.zhiweicloud.guest.model.ProtocolVo">
-    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
+    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT}
+    AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
+  </select>
+
+  <select id="queryProtocolIdsInOrderInfoByCustomIdAndType" resultType="com.zhiweicloud.guest.model.ProtocolVo">
+    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT} AND type IN
+    <foreach collection="types" item="type" open="(" close=")" separator=",">
+      #{type}
+    </foreach>
+    AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
   </select>
 
 </mapper>

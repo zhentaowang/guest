@@ -104,8 +104,15 @@
       inner join flight f on f.flight_id = o.flight_id
       inner join passenger p on p.order_id = o.order_id
       where o.airport_code = #{criteria.airportCode} and o.is_deleted = 0
+      <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
+        and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
+      </if>
+      <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
+        and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
+      </if>
       GROUP BY o.order_id
     ) t where 1 = 1 ${criteria.queryWhere}
+
   </select>
 
   <select id="selectSpecialCheckListTotal" parameterType="com.zhiweicloud.guest.model.CheckQueryParam" resultType="int">

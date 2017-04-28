@@ -31,28 +31,21 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.ExcelUtils;
+import com.zhiweicloud.guest.common.excel.generator.*;
+import com.zhiweicloud.guest.common.excel.util.ExcelUtils;
 import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.controller.CheckController;
 import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
-import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.container.ContainerResponseContext;
-import java.io.OutputStream;
 import java.util.*;
-
-import static com.alibaba.fastjson.parser.Feature.OrderedField;
 
 /**
  * @author liuzh
@@ -177,9 +170,63 @@ public class CheckService {
 
     /**
      * 导出账单
+     *
+     * @param type     类型
+     * @param response 响应
      */
-    public void exportOrder(String type, HttpServletResponse response) {
-        ExcelUtils.download(type, "测试文件" + System.currentTimeMillis() + ".xls", "测试", response);
+    public void exportBill(List<Map> maps,String type, HttpServletResponse response) {
+
+        List<Map<String,Object>> dataList = new ArrayList<>();
+        Map<String, Object> rowMap = new HashMap<>();
+
+        for (Map map : maps) {
+            rowMap.put("amount", map.get("amount"));
+            rowMap.put("flightDepcode", map.get("flightDepcode"));
+            rowMap.put("flightArrcode", map.get("flightArrcode"));
+            rowMap.put("flightDate", map.get("flightDate"));
+            rowMap.put("serverPersonNum", map.get("serverPersonNum"));
+            rowMap.put("customerName", map.get("customerName"));
+            rowMap.put("price", map.get("price"));
+            rowMap.put("airportCode", map.get("airportCode"));
+            rowMap.put("planNo", map.get("planNo"));
+            rowMap.put("flightNo", map.get("flightNo"));
+            rowMap.put("leg", map.get("leg"));
+            dataList.add(rowMap);
+        }
+
+        /*
+         * 默认文件名字
+         */
+        String fileName = "账单";
+        String sheetName = "账单";
+        ContentGenerator contentGenerator = null;
+
+        /*
+         * 四种定制方法，excel文件用.xls
+         */
+        switch (type) {
+            case "firstClass":
+                contentGenerator = new CreateFileForFirstClass(dataList);
+                fileName = "头等舱账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "头等舱账单";
+                break;
+            case "frequentFlyer":
+                contentGenerator = new CreateFileForFrequentFlyer(dataList);
+                fileName = "常旅客账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "常旅客账单";
+                break;
+            case "airChina":
+                contentGenerator = new AirChinaContentGenerator(dataList);
+                fileName = "国际航空账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "国际航空账单";
+                break;
+            case "chinaSouthernAirlines":
+                contentGenerator = new ChinaSouthernAirlinesContentGenerator(dataList);
+                fileName = "南方航空账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "国际航空账单";
+                break;
+        }
+        ExcelUtils.exportExcel(contentGenerator, fileName, sheetName, response);
     }
 
     public LZResult<PaginationResult<Map>> getSpecialCheckList(Long userId, String airportCode, CheckQueryParam checkQueryParam, Integer page, Integer rows) {
