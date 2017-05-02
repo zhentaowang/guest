@@ -81,7 +81,7 @@
   <update id="deleteRoles" parameterType="map">
     update sys_user_role set is_deleted = 1 where airport_code = #{airportCode} and user_id = #{employeeId}
     <if test="roleIds != null and !roleIds.equals('')">
-      role_id not in (${roleIds})
+      and role_id not in (${roleIds})
     </if>
   </update>
 
