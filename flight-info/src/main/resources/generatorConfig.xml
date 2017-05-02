@@ -37,7 +37,7 @@
 			        <ignoreColumn column="is_deleted"/>
 			        <ignoreColumn column="airport_code"/>
 			        <ignoreColumn column="create_user"/>
-			        <ignoreColumn column="update_user"/>
+					<ignoreColumn column="update_user"/>
 		</table> 
 		
 		
