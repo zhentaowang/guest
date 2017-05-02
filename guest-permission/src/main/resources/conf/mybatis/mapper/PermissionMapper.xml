@@ -10,6 +10,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
     <result column="data_permission" jdbcType="VARCHAR" property="dataPermission" />
+    <result column="role_ids" jdbcType="VARCHAR" property="roleIds" />
     <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -42,6 +43,18 @@
     <if test="menuName != null">
       and menu_name like concat('%',#{menuName},'%')
     </if>
+  </select>
+  <select id="getDataListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
+    SELECT permission_id, airport_code, url, name, data_permission->>"$.roleId" as role_ids
+    FROM permission
+    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(data_permission,'all','$.orderType')
+    order by permission_id desc
+  </select>
+  <select id="getDataListCount" parameterType="map" resultType="int">
+    SELECT
+    count(permission_id) as num
+    FROM permission
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(data_permission,'all','$.orderType')
   </select>
   <select id="getListByRole" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select r.role_permission_id, r.role_id, p.permission_id, p.name, p.airport_code, p.url from role_permission as r left join
@@ -78,6 +91,7 @@
       <if test="url != null">
         url = #{url,jdbcType=VARCHAR},
       </if>
+        data_permission=json_set(data_permission,'$.roleId',#{roleIds}),
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
@@ -89,9 +103,9 @@
     SELECT permission_id, airport_code, url, name FROM permission where airport_code = #{airportCode,jdbcType=VARCHAR} and permission_id = #{permissionId,jdbcType=BIGINT} and is_deleted = 0
   </select>
   <select id="getUserPermission" parameterType="map" resultMap="BaseResultMap">
-    select p.permission_id, p.url, p.data_permission from
+    select p.permission_id, p.url, rp.data_permission from
     (select * from permission where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p inner join
-    (select permission_id from role_permission as r right join
+    (select permission_id, data_permission from role_permission as r right join
     (select role_id from sys_user_role where airport_code = #{airportCode,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=BIGINT} and is_deleted = 0) as s
     on r.role_id = s.role_id where r.airport_code = #{airportCode,jdbcType=VARCHAR} and r.is_deleted = 0) as rp on p.permission_id = rp.permission_id
   </select>

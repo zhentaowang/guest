@@ -55,8 +55,6 @@ public class OrderInfoService {
 
         if (orderInfo.getOrderId() != null) {
 
-
-
              //预约订单和服务订单保存的创建人和创建时间不是同一个字段
             if (orderInfo.getOrderType() == 0) {//预约订单
                 if(orderInfo.getOrderStatus() != null && orderInfo.getOrderStatus().equals("已使用")){//预约订单 转为 服务订单，需要保持 服务订单的更新时间，更新人
@@ -410,14 +408,35 @@ public class OrderInfoService {
     /**
      * 根据客户ID和机场码获取客户下被订单引用的协议
      *
-     * @param customIds
-     * @param airportCode
+     * @param customerIds 客户ID"集合"  eg. 1,2,3
+     * @param airportCode 机场码
      */
-    public List<ProtocolList> queryProtocolIdsInOrderInfoByCustomId(String customIds, String airportCode) throws Exception {
-        String[] customIdArray = customIds.split(",");
+    public List<ProtocolList> queryProtocolIdsInOrderInfoByCustomId(String customerIds, String airportCode) throws Exception {
+        String[] customIdArray = customerIds.split(",");
         List<ProtocolList> protocolLists = new ArrayList<>();
         for (String s : customIdArray) {
             List<ProtocolVo> protocolVos = orderInfoMapper.queryProtocolIdsInOrderInfoByCustomId(Long.valueOf(s), airportCode);
+            ProtocolList protocolList = new ProtocolList();
+            protocolList.setCustomerId(Long.valueOf(s));
+            protocolList.setProtocolVos(protocolVos);
+            protocolLists.add(protocolList);
+        }
+        return protocolLists;
+    }
+
+    /**
+     * 根据客户ID、机场码和账单标志获取客户下被订单引用的协议
+     *
+     * @param customerIds 客户ID"集合"  eg. 1,2,3
+     * @param airportCode 机场码
+     * @param flag        定制账单标志
+     * @return
+     */
+    public List<ProtocolList> queryProtocolIdsInOrderInfoByCustomIdAndType(String customerIds, String airportCode, Integer[] flag) {
+        String[] customIdArray = customerIds.split(",");
+        List<ProtocolList> protocolLists = new ArrayList<>();
+        for (String s : customIdArray) {
+            List<ProtocolVo> protocolVos = orderInfoMapper.queryProtocolIdsInOrderInfoByCustomIdAndType(Long.valueOf(s), airportCode, flag);
             ProtocolList protocolList = new ProtocolList();
             protocolList.setCustomerId(Long.valueOf(s));
             protocolList.setProtocolVos(protocolVos);

@@ -272,6 +272,9 @@
       <if test="serverCompleteTime != null">
         server_complete_time,
       </if>
+      <if test="createRole != null">
+        create_role,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
@@ -414,6 +417,9 @@
       </if>
       <if test="serverCompleteTime != null">
         #{serverCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createRole != null">
+        #{createRole,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -657,15 +663,15 @@
       select order_id from passenger where identity_card like concat('%',#{criteria.queryIdentityCard},'%') and is_deleted = 0 and airport_code = #{criteria.airportCode}
       )
     </if>
+    <if  test="criteria.queryCreateRole != null and !''.equals(criteria.queryCreateRole)">
+      AND create_role regexp replace(#{criteria.queryCreateRole},',','|')
+    </if>
 
     ) as orderFlightClient
     left join passenger p on orderFlightClient.order_id = p.order_id and p.is_deleted = 0
     )as orderFlightClientPassenger
     left join order_service orderService
     on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
-    <if test="criteria.serviceId != null and !''.equals(criteria.serviceId)">
-      where orderService.service_detail->>'$.serviceId' in (${criteria.serviceId})
-    </if>
     ) as orderFlightClientPassengerService
     where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
 
@@ -690,6 +696,7 @@
 			inner join flight f
 			on o.flight_id = f.flight_id
             and o.is_deleted = 0 and f.is_deleted = 0
+
             <if test="criteria.queryCustomerInfo != null and !''.equals(criteria.queryCustomerInfo)">
               and (o.protocol_name like concat('%',#{criteria.queryCustomerInfo},'%') or o.customer_name like concat('%',#{criteria.queryCustomerInfo},'%'))
             </if>
@@ -764,6 +771,10 @@
               select order_id from passenger where identity_card like concat('%',#{criteria.queryIdentityCard},'%') and is_deleted = 0 and airport_code = #{criteria.airportCode}
               )
             </if>
+            <!-- 数据权限 -->
+            <if  test="criteria.queryCreateRole != null and !''.equals(criteria.queryCreateRole)">
+              AND create_role regexp replace(#{criteria.queryCreateRole},',','|')
+            </if>
 
             limit #{page.startPageNo},#{page.pCount}
 		) as orderFlightClient
@@ -771,9 +782,7 @@
 	)as orderFlightClientPassenger
 	left join order_service orderService
 	on orderService.order_id = orderFlightClientPassenger.order_id and orderService.is_deleted = 0
-    <if test="criteria.serviceId != null and !''.equals(criteria.serviceId)">
-      where orderService.service_detail->>'$.serviceId' in (${criteria.serviceId})
-    </if>
+
 ) as orderFlightClientPassengerService
    where orderFlightClientPassengerService.airport_code = #{criteria.airportCode}
     <choose>
@@ -871,7 +880,16 @@
   </select>
 
   <select id="queryProtocolIdsInOrderInfoByCustomId" resultType="com.zhiweicloud.guest.model.ProtocolVo">
-    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT} AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
+    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT}
+    AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
+  </select>
+
+  <select id="queryProtocolIdsInOrderInfoByCustomIdAndType" resultType="com.zhiweicloud.guest.model.ProtocolVo">
+    SELECT protocol_id id,name value,type FROM protocol WHERE institution_client_id = #{customId,jdbcType=BIGINT} AND type IN
+    <foreach collection="types" item="type" open="(" close=")" separator=",">
+      #{type}
+    </foreach>
+    AND airport_code = #{airportCode,jdbcType=VARCHAR} AND is_deleted = 0
   </select>
 
 </mapper>

@@ -115,6 +115,30 @@ public class PermissionController {
     }
 
     /**
+     * 数据权限列表 - 分页查询
+     * @param page   起始页
+     * @param rows   每页显示数目
+     * @return 分页结果
+     */
+    @GET
+    @Path("data-permission-list")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "数据权限列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({@ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")})
+    public String permissionList(@HeaderParam("client-id") String airportCode,
+                                 @HeaderParam("user-id") Long userId,
+                                 @QueryParam(value = "page") Integer page,
+                                 @QueryParam(value = "rows") Integer rows) {
+
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("airportCode", airportCode);
+        LZResult<PaginationResult<Permission>> result = permissionService.getDataPermissionList(param, page, rows);
+        return JSON.toJSONString(result);
+
+    }
+
+    /**
      * 权限管理 - 新增or更新
      * 需要判断name是否重复
      * @param params 权限详情
@@ -125,21 +149,22 @@ public class PermissionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json;charset=utf8")
     @ApiOperation(value = "权限管理 - 新增/修改", notes = "返回成功还是失败", httpMethod = "POST", produces = "application/json")
-    public LXResult save(@ApiParam(value = "permission", required = true) @RequestBody RequsetParams<Permission> params,
-                         @Context final HttpHeaders headers) {
+    public LXResult save(@ApiParam(value = "permission", required = true) @RequestBody RequsetParams<RolePermission> params,
+                         @HeaderParam("client-id") String airportCode,
+                         @HeaderParam("user-id") Long userId) {
         try {
-            Permission permission = null;
+            RolePermission rolePermission = null;
             if (!CollectionUtils.isEmpty(params.getData())) {
-                permission = params.getData().get(0);
-                permission.setAirportCode(headers.getRequestHeaders().getFirst("client-id"));
+                rolePermission = params.getData().get(0);
+                rolePermission.setAirportCode(airportCode);
             }
-            if (permission == null || permission.getName() == null || permission.getUrl() == null || permission.getAirportCode() == null) {
+            if (rolePermission == null || rolePermission.getAirportCode() == null) {
                 return LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display());
             }
-            if (permissionService.selectByName(permission)) {
-                return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
-            }
-            permissionService.saveOrUpdate(permission);
+//            if (permissionService.selectByName(permission)) {
+//                return LXResult.build(LZStatus.REPNAM.value(), LZStatus.REPNAM.display());
+//            }
+            permissionService.saveOrUpdate(rolePermission);
             return LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display());
         } catch (Exception e) {
             e.printStackTrace();
@@ -258,6 +283,9 @@ public class PermissionController {
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", paramJSON.getString("client_id"));
             param.put("userId", paramJSON.getLong("user_id"));
+            if(paramJSON.containsKey("queryOrderType")){
+                param.put("orderType", paramJSON.getLong("queryOrderType"));
+            }
             return JSON.toJSONString(permissionService.getUserPermission(urls, param));
         } catch (Exception e) {
             logger.error("get permission by urls error", e);

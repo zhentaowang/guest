@@ -86,9 +86,9 @@ public class OrderInfoQuery extends BaseEntity{
     /**
      * 格式 "1,2,3"
      */
-    @ApiModelProperty(value = "服务类别: 1:贵宾厅,5:休息室", name = "serviceId")
-    @QueryParam("serviceId")
-    private String serviceId;
+    @ApiModelProperty(value = "数据角色:", name = "createRole")
+    @QueryParam("queryCreateRole")
+    private String queryCreateRole;
 
     public String getQueryPassengerName() {
         return queryPassengerName;
@@ -226,11 +226,11 @@ public class OrderInfoQuery extends BaseEntity{
         this.queryOrderNo = queryOrderNo;
     }
 
-    public String getServiceId() {
-        return serviceId;
+    public String getQueryCreateRole() {
+        return queryCreateRole;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
+    public void setQueryCreateRole(String queryCreateRole) {
+        this.queryCreateRole = queryCreateRole;
     }
 }

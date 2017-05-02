@@ -173,6 +173,16 @@ public class OrderInfo extends BaseEntity{
     @ApiModelProperty(value="服务地点",name="serverLocation")
     private String serverLocation;
 
+    @ApiModelProperty(value="角色id",name="createRole")
+    private String createRole;
+
+    public String getCreateRole() {
+        return createRole;
+    }
+
+    public void setCreateRole(String createRole) {
+        this.createRole = createRole;
+    }
 
     /**
      * 主键自增id

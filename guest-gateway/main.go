@@ -50,6 +50,10 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			dat["url"] = uri
 		}
+		if query["queryOrderType"] != nil {
+			fmt.Println(query["queryOrderType"][0])
+			dat["queryOrderType"] = query["queryOrderType"][0]
+		}
 		paramString, _ := json.Marshal(dat)
 
 		resp, err = http.Post("http://guest-permission/guest-permission/get-user-permission", "application/json", bytes.NewReader(paramString))
@@ -70,7 +74,7 @@ func (h *handle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// 将user_id添加到header中
 		r.Header.Set("User-Id", dat["user_id"])
 		r.Header.Set("Client-Id", dat["client_id"])
-		r.Header.Set("Type-Id", permission["typeId"])
+		r.Header.Set("Role-Ids", permission["roleId"])
 		fmt.Println(permission)
 	} else if uri != "/flight-info/updateFlight" {
 		println("找不到access_token")

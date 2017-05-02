@@ -15,4 +15,5 @@ public interface RolePermissionMapper {
     Integer deleteByIdAndAirportCode(Map<String, Object> map);
     Integer SelectByRoleIdAndPermissionId(Map<String, Object> map);
     void insertBySelective(RolePermission rolePermission);
+    Integer updateByIdAndAirportCode(RolePermission rolePermission);
 }

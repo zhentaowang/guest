@@ -41,21 +41,22 @@ public class CheckDynamicColumn {
         put("routeSegment", new String[]{"航段", "concat(f.flight_dep_airport,' - ',flight_arr_airport) AS routeSegment","0"});
         put("isInOrOut", new String[]{"进出港", "if(f.is_in_or_out=0,'出港','进港') as isInOrOut","0"});
         put("planNo", new String[]{"机号", "f.plan_no as planNo","0"});
-        put("vipPersonNum", new String[]{"贵宾厅人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vipPersonNum","1"});
-        put("vipPrice", new String[]{"贵宾厅费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) as vipPrice","1"});
+        put("vipPersonNum", new String[]{"贵宾厅人次", "IFNULL((select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) ,0) as vipPersonNum","1"});
+        put("vipPrice", new String[]{"贵宾厅费用", "IFNULL((select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 1) ,0) as vipPrice","1"});
         put("passengerName", new String[]{"旅客姓名", "group_concat(p.name) as passengerName","0"});
-        put("accompanyPersonNum", new String[]{"陪同人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompanyPersonNum","1"});
-        put("accompanyPrice", new String[]{"陪同费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3) as accompanyPrice","1"});
-        put("restRoomPersonNum", new String[]{"休息室人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5) as restRoomPersonNum","1"});
-        put("restRoomPrice", new String[]{"休息室费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5) as restRoomPrice","1"});
-        put("securityCheckPersonNum", new String[]{"安检人次", "(select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6) as securityCheckPersonNum","1"});
-        put("securityCheckPrice", new String[]{"安检费用", "(select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6) as securityCheckPrice","1"});
+        put("accompanyPersonNum", new String[]{"陪同人次", "IFNULL((select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3),0) as accompanyPersonNum","1"});
+        put("accompanyPrice", new String[]{"陪同费用", "IFNULL((select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 3),0) as accompanyPrice","1"});
+        put("restRoomPersonNum", new String[]{"休息室人次", "IFNULL((select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5),0) as restRoomPersonNum","1"});
+        put("restRoomPrice", new String[]{"休息室费用", "IFNULL((select os.price_rule ->'$.price' as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 5),0) as restRoomPrice","1"});
+        put("securityCheckPersonNum", new String[]{"安检人次", "IFNULL((select os.service_detail ->'$.serverNum' as personNum from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6),0) as securityCheckPersonNum","1"});
+        put("securityCheckPrice", new String[]{"安检费用", "IFNULL((select os.price_rule ->'$.price'   as price from order_service os where os.order_id = o.order_id and os.service_detail -> '$.serviceId' = 6),0) as securityCheckPrice","1"});
         put("vipCard", new String[]{"卡号", "group_concat(p.vip_card) as vipCard","0"});
         put("ticketNo", new String[]{"客票号", "group_concat(p.ticket_no) as ticketNo","0"});
         put("cardType", new String[]{"金银卡类别", "group_concat(DISTINCT(if(p.card_type=0,'金卡','银卡'))) as cardType","0"});
         put("sitNo", new String[]{"座位号", "group_concat(p.sit_no) as sitNo", "0"});
         put("expireTime", new String[]{"有效期", "group_concat(date_format(p.expire_time, '%Y-%m-%d')) as expireTime","0"});
         put("alongTotal", new String[]{"随行人次", "o.along_total as alongTotal","1"});
+        put("totalAmount", new String[]{"总费用","0"});
     }};
 
     public final Map<String, ColumnType> COLUMN = new HashMap<String, ColumnType>() {{
@@ -63,37 +64,37 @@ public class CheckDynamicColumn {
          *所有-VIP接送机 LONG_DISTANCE
          * @ 订单号，航班日期，航班号，航段，进出港，贵宾厅人次，贵宾厅费用，陪同人次，陪同费用
          */
-        put("VIP接送机", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
+        put("VIP接送机", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice","totalAmount"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
 
         /**
          *所有-异地服务 LONG_DISTANCE
          * @ 订单号，航班日期，航班号，航段，进出港，贵宾厅人次，贵宾厅费用，陪同人次，陪同费用
          */
-        put("异地贵宾服务", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
+        put("异地贵宾服务", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","planNo","vipCard","passengerName","ticketNo","vipPersonNum", "vipPrice", "accompanyPersonNum", "accompanyPrice","totalAmount"}, "vipPersonNum * vipPrice + accompanyPersonNum * accompanyPrice AS totalAmount"));
 
         /**
          * 除头等舱，金银卡 - 两舱休息室 FIRST_CABINS_AND_GOLD_SILVER_CARD
          * @ 订单号，航班日期，航班号，航段，进出港，休息室人次，休息室费用，安检人次，安检费用
          */
-        put("两舱休息室", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"}, "restRoomPersonNum * restRoomPrice + securityCheckPersonNum * securityCheckPrice AS totalAmount"));
+        put("两舱休息室", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice","totalAmount"}, "restRoomPersonNum * restRoomPrice + securityCheckPersonNum * securityCheckPrice AS totalAmount"));
 
         /**
          * 头等舱 - 两舱休息室
          * @ 订单号，航班日期，航班号，航段，机号，旅客姓名，客票号，座位，休息室人次，休息室费用
          */
-        put("两舱休息室10", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","sitNo","restRoomPersonNum", "restRoomPrice"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
+        put("两舱休息室10", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","sitNo","restRoomPersonNum", "restRoomPrice","totalAmount"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
 
         /**
          * 金银卡 - 两舱休息室 GOLD_SILVER_CARD
          * @ 订单号，航班日期，航班号，航段，机号，旅客姓名，客票号，金银卡类型，卡号，有效期，随行人次，休息室人次，休息室费用
          */
-        put("两舱休息室9", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","cardType","expireTime","alongTotal","restRoomPersonNum", "restRoomPrice"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
+        put("两舱休息室9", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","planNo","passengerName","ticketNo","cardType","expireTime","alongTotal","restRoomPersonNum", "restRoomPrice","totalAmount"}, "restRoomPersonNum * restRoomPrice AS totalAmount"));
 
         /**
          * 所有 - 独立安检通道
          * @ 订单号，航班日期，航班号，航段，进出港，安检人次，安检费用
          */
-        put("独立安检通道", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","securityCheckPersonNum", "securityCheckPrice"}, "securityCheckPersonNum * securityCheckPrice AS totalAmount"));
+        put("独立安检通道", new ColumnType(new String[]{"orderNo", "flightDate","flightNo","routeSegment","isInOrOut","securityCheckPersonNum", "securityCheckPrice","totalAmount"}, "securityCheckPersonNum * securityCheckPrice AS totalAmount"));
     }};
 
     /**

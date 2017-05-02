@@ -25,10 +25,12 @@
 package com.zhiweicloud.guest.mapper;
 
 
+import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
 import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.Dropdownlist;
+import com.zhiweicloud.guest.model.LoungeCheckPo;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -58,4 +60,11 @@ public interface CheckMapper {
      * @return
      */
     List<Map<String, Object>> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
+
+    int selectSpecialCheckListTotal(CheckQueryParam checkQueryParam);
+
+    List<Map> selectSpecialCheckList(BasePagination<CheckQueryParam> queryCondition);
+
+    List<LoungeCheckPo> selectLoungeCheckList(@Param("param") CheckQueryParam checkQueryParam, @Param("protocolType") Integer protocolType);
+
 }

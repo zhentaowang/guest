@@ -31,28 +31,29 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.ExcelUtils;
 import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.controller.CheckController;
+import com.zhiweicloud.guest.common.excel.generator.*;
+import com.zhiweicloud.guest.common.excel.po.RowContentPo;
+import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
+import com.zhiweicloud.guest.common.excel.util.ExcelUtils;
 import com.zhiweicloud.guest.mapper.CheckMapper;
+import com.zhiweicloud.guest.model.CheckPassengerPo;
 import com.zhiweicloud.guest.model.CheckQueryParam;
+import com.zhiweicloud.guest.model.LoungeCheckPo;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
-import org.apache.http.HttpResponse;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.container.ContainerResponseContext;
-import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static com.alibaba.fastjson.parser.Feature.OrderedField;
 
 /**
  * @author liuzh
@@ -125,7 +126,7 @@ public class CheckService {
 
 
         List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
-        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","vipPrice","accompanyPersonNum","accompanyPrice","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"));
+        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","accompanyPersonNum","restRoomPersonNum","securityCheckPersonNum","totalAmount"));
         Map<String, Object> totalRow = new HashMap<>();
 
         for(int k = 0; k < checkList.size();k++){
@@ -173,6 +174,129 @@ public class CheckService {
             String sheetName = orderCheckDetail.getQueryProductName();
             ExcelUtils.download(fileName, sheetName, rows, titleMap,response);
         }
+    }
+
+    /**
+     * 导出账单
+     *
+     * @param type     类型
+     * @param response 响应
+     */
+    public void exportBill(CheckQueryParam checkQueryParam, String type, HttpServletResponse response, Long userId, String airportCode, Integer page, Integer rows) throws ParseException {
+
+        /*
+         * 默认文件名字
+         */
+        String fileName = "账单";
+        String sheetName = "账单";
+        ContentGenerator contentGenerator = null;
+
+        /*
+         * 四种定制方法，excel文件用.xls
+         */
+        switch (type) {
+            case "firstClass":
+                contentGenerator = new FirstClassContentGenerator(getLoungeDateList(checkQueryParam, airportCode,10));
+                fileName = "头等舱账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "头等舱账单";
+                break;
+            case "frequentFlyer":
+                contentGenerator = new FrequentFlyerContentGenerator(getLoungeDateList(checkQueryParam, airportCode,9));
+                fileName = "常旅客账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "常旅客账单";
+                break;
+            case "airChina":
+                contentGenerator = new AirChinaContentGenerator(getSpecialDateList(checkQueryParam, airportCode, page, rows));
+                fileName = "国际航空账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "国际航空账单";
+                break;
+            case "chinaSouthernAirlines":
+                contentGenerator = new ChinaSouthernAirlinesContentGenerator(getSpecialDateList(checkQueryParam, airportCode, page, rows));
+                fileName = "南方航空账单" + "_" + System.currentTimeMillis() + ".xls";
+                sheetName = "国际航空账单";
+                break;
+        }
+        ExcelUtils.exportExcel(contentGenerator, fileName, sheetName,response);
+    }
+
+    private List<SheetContentPo> getSpecialDateList(CheckQueryParam checkQueryParam, String airportCode, Integer page, Integer rows) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        checkQueryParam.setAirportCode(airportCode);
+        BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
+        List<Map> maps = checkMapper.selectSpecialCheckList(queryCondition);
+        SheetContentPo sheetContentPo = new SheetContentPo();
+        List<SheetContentPo> sheetContentPos = new LinkedList<>();
+        List<RowContentPo> rowContentPos = new LinkedList<>();
+        RowContentPo rowContentPo;
+        for (Map map : maps) {
+            rowContentPo = new RowContentPo();
+            rowContentPo.setAmout((Double) map.get("amount"));
+            rowContentPo.setFlightDepcode((String) map.get("flightDepcode"));
+            rowContentPo.setFlightArrcode((String) map.get("flightArrcode"));
+            rowContentPo.setFlightDate(String.valueOf(map.get("flightDate")));
+            rowContentPo.setServerPersonNum((Double)(map.get("serverPersonNum")));
+            rowContentPo.setCustomerName((String) map.get("customerName"));
+            rowContentPo.setPrice(((Long)map.get("price")));
+            rowContentPo.setAirpotCode((String)map.get("airportCode"));
+            rowContentPo.setPlanNo((String) map.get("planNo"));
+            rowContentPo.setFlightNo((String) map.get("flightNo"));
+            rowContentPo.setLeg((String) map.get("leg"));
+            rowContentPos.add(rowContentPo);
+        }
+        sheetContentPo.setRowContentPos(rowContentPos);
+        sheetContentPos.add(sheetContentPo);
+        return sheetContentPos;
+    }
+
+    private List<SheetContentPo> getLoungeDateList(CheckQueryParam checkQueryParam, String airportCode,int protocolType) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        checkQueryParam.setAirportCode(airportCode);
+        List<LoungeCheckPo> loungeCheckPos = checkMapper.selectLoungeCheckList(checkQueryParam, protocolType);
+        List<SheetContentPo> sheetContentPos = new LinkedList<>();
+        List<RowContentPo> rowContentPos;
+        RowContentPo rowContentPo;
+        SheetContentPo sheetContentPo;
+        for (LoungeCheckPo loungeCheckPo : loungeCheckPos) {
+            rowContentPos = new LinkedList<>();
+            sheetContentPo = new SheetContentPo();
+            for (CheckPassengerPo checkPassengerPo : loungeCheckPo.getCheckPassengerPos()) {
+                rowContentPo = new RowContentPo();
+                rowContentPo.setFlightNo(checkPassengerPo.getFlightNo());
+                rowContentPo.setPlanNo(checkPassengerPo.getPlanNo());
+                rowContentPo.setAlongTotal(checkPassengerPo.getAlongTotal());
+                rowContentPo.setAirpotCode(checkPassengerPo.getAirpotCode());
+                rowContentPo.setLeg(checkPassengerPo.getLeg());
+                rowContentPo.setCustomerName(loungeCheckPo.getCustomerName());
+                rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null ? "" : simpleDateFormat.format(loungeCheckPo.getFlightDate()));
+                rowContentPo.setCabinNo(checkPassengerPo.getCabinNo());
+                rowContentPo.setExpireTime(checkPassengerPo.getExpireTime());
+                rowContentPo.setServerPersonNum(checkPassengerPo.getServerPersonNum());
+                rowContentPo.setPrice(checkPassengerPo.getPrice());
+                rowContentPo.setAmout(checkPassengerPo.getAmout());
+                rowContentPo.setFlightDepcode(checkPassengerPo.getFlightDepcode());
+                rowContentPo.setFlightArrcode(checkPassengerPo.getFlightArrcode());
+                rowContentPo.setCardNo(checkPassengerPo.getCardNo());
+                rowContentPo.setCardType(checkPassengerPo.getCardType());
+                rowContentPo.setName(checkPassengerPo.getName());
+                rowContentPo.setTicketNo(checkPassengerPo.getTicketNo());
+                rowContentPos.add(rowContentPo);
+            }
+            sheetContentPo.setRowContentPos(rowContentPos);
+            sheetContentPos.add(sheetContentPo);
+        }
+        return sheetContentPos;
+    }
+
+    public LZResult<PaginationResult<Map>> getSpecialCheckList(Long userId, String airportCode, CheckQueryParam checkQueryParam, Integer page, Integer rows) {
+        BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
+
+        checkQueryParam.setAirportCode(airportCode);
+
+        int total = checkMapper.selectSpecialCheckListTotal(checkQueryParam);
+        List<Map> checkList = checkMapper.selectSpecialCheckList(queryCondition);
+        PaginationResult<Map> eqr = new PaginationResult<>(total, checkList);
+        LZResult<PaginationResult<Map>> result = new LZResult<>(eqr);
+        return result;
     }
 
 }

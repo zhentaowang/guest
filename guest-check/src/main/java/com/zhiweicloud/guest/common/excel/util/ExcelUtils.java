@@ -1,7 +1,12 @@
-package com.zhiweicloud.guest.common;
+package com.zhiweicloud.guest.common.excel.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.zhiweicloud.guest.common.excel.generator.ContentGenerator;
+import com.zhiweicloud.guest.common.excel.po.RowContentPo;
+import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
@@ -160,9 +165,10 @@ public class ExcelUtils {
 
     /**
      * 初始化Excel文件对象
+     *
      * @param sheetName 工作表名
      */
-    private static void initHSSFWorkbook(String sheetName){
+    private static void initHSSFWorkbook(String sheetName) {
         workbook = new HSSFWorkbook();
         sheetName = sheetName == null ? getSheetName() : sheetName;
         sheet = workbook.createSheet(sheetName);
@@ -170,6 +176,7 @@ public class ExcelUtils {
 
     /**
      * 创建第一列
+     *
      * @param titleMap 标题栏map
      */
     private static void createFirstRow(Map<String, String> titleMap) {
@@ -179,17 +186,6 @@ public class ExcelUtils {
         font.setBold(true);
         cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
         cellStyle.setFont(font);
-//        int i = 0;
-//        for (String s : titleMap.keySet()) {
-//            HSSFCell textcell = row.createCell(i);
-//            textcell.setCellValue(s);
-//            i++;
-//        }
-        // 中间版本用过
-//        for (int i = 0; i < titleMap.size(); i++) {
-//            HSSFCell textcell = row.createCell(i);
-//            textcell.setCellValue(titleMap.get(i));
-//        }
         int i = 0;
         for (Map.Entry<String, String> entry : titleMap.entrySet()) {
             HSSFCell textcell = row.createCell(i);
@@ -233,73 +229,6 @@ public class ExcelUtils {
             textcell.setCellValue(titleMap.get(titleList.get(i)));
         }
     }
-
-    /**
-     * 创建excel内容
-     * @param dataList 对象数据集合
-     * @param titleMap 标题栏map
-     */
-//    private static void createContentRow(List dataList, Map<String, String> titleMap) {
-//        try {
-//            int i = 0;
-//            for (Object obj : dataList) {
-//                HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
-//                for (int j = 0; j < titleMap.size(); j++) {
-//                    String s = titleMap.get(j);
-//                    String method = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
-//                    Method m = obj.getClass().getMethod(method, null);
-//                    String value =   m.invoke(obj, null).toString();
-//                    HSSFCell textcell = row.createCell(j);
-//                    textcell.setCellValue(value);
-//                }
-//                i++;
-//            }
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    /**
-     * 项目中定制的方法 非通用.
-     * @param dataList 数据集合 *合计行数据格式和数量不一致*
-     * @param titleMap 标题集合
-     */
-//    private static void createContentRowForVipCloud(List dataList, Map<String, String> titleMap) {
-//        HSSFCellStyle contextstyle = workbook.createCellStyle();
-//        HSSFDataFormat hssfDataFormat = workbook.createDataFormat();
-//        for (int i = 0, size = dataList.size(); i < size; i++) {
-//            HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
-//            Map<String, Object> rowMap = (HashMap) dataList.get(i);
-//            int j = 0;
-//            for (Map.Entry<String, String> entry : titleMap.entrySet()) {
-//                HSSFCell textcell = row.createCell(j);
-//                Object value = rowMap.get(entry.getKey());
-//                if (value == null || "".equals(value)) {
-//                    if (i == (size - 1) && j == 0) {
-//                        textcell.setCellValue("合计");
-//                    }else {
-//                        textcell.setCellType(CellType.BLANK);
-//                    }
-//                } else {
-//                    if (isNum(value)) {
-//                        textcell.setCellValue(Double.parseDouble(String.valueOf(value)));
-////                        textcell.setCellType(CellType.NUMERIC);
-//                        if (isInteger(value)) {
-//                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0"));
-//                        } else {
-//                            contextstyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
-//                        }
-//                        textcell.setCellStyle(contextstyle);
-//
-//                    } else {
-//                        textcell.setCellValue(value.toString());
-//                    }
-//                }
-//                j++;
-//            }
-//        }
-//    }
 
     private static void createContentRow(List dataList, Map<String, String> titleMap) {
         HSSFCellStyle contextstyle = workbook.createCellStyle();
@@ -438,6 +367,15 @@ public class ExcelUtils {
         }
     }
 
+    /**
+     * 下载
+     *
+     * @param fileName  文件名
+     * @param sheetName 工作表名
+     * @param rows      数据
+     * @param titleMap  标题
+     * @param response  响应
+     */
     public static void download(String fileName, String sheetName, List rows, Map<String, String> titleMap,HttpServletResponse response) {
         initHSSFWorkbook(sheetName);
         try (OutputStream out = response.getOutputStream()) {
@@ -446,7 +384,108 @@ public class ExcelUtils {
                     + URLEncoder.encode(fileName, "UTF-8"));
             createFirstRow(titleMap);
             createContentRow(rows,titleMap);
-//            createContentRowForVipCloud(rows, titleMap);
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public static void download(String type,String fileName, String sheetName,HttpServletResponse response) {
+//
+//        // 假数据
+//        List<Map<String, Object>> list = new ArrayList<>();
+//        for (int i = 0; i < 10; i++) {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("name", "张" + i);
+//            map.put("flightNo", "MU247" + i);
+//            map.put("planNo", i);
+//            map.put("ticketNo", "CLK2111" + i);
+//            map.put("voyage ", "萧山国际机场-广州白云机场");
+//            map.put("cardType", i % 2 == 0 ? "金卡" : "银卡");
+//            map.put("cabin", i % 2 == 0 ? "经济舱" : "头等舱");
+//            map.put("cardNo", "NNN13213" + i);
+//            map.put("validity", "2017-03-05");
+//            map.put("follow", "王振涛");
+//            list.add(map);
+//        }
+//        Map<String, String> map = new LinkedHashMap<>();
+//        map.put("name", "姓名");
+//        map.put("flightNo", "航班号");
+//        map.put("planNo", "机号");
+//        map.put("ticketNo","客票号码" );
+//        map.put("voyage ", "航程");
+//        map.put("cardType", "卡类别");
+//        map.put("cabin", "舱位");
+//        map.put("cardNo", "卡号");
+//        map.put("validity", "有效期");
+//        map.put("follow", "随行");
+//
+//        ContentGenerator createFileProcess;
+//
+//        initHSSFWorkbook(sheetName);
+//        try (OutputStream out = response.getOutputStream()) {
+//            response.setContentType("application/x-msdownload");
+//            response.setHeader("Content-Disposition", "attachment; filename="
+//                    + URLEncoder.encode(fileName, "UTF-8"));
+//            switch (type) {
+//                case "firstClass":
+//                    createFileProcess = new FirstClassContentGenerator(list, map, workbook, sheet);
+//                    createFileProcess.createFile();
+////                    createFirstClassContent(list,map);
+//                    break;
+//                case "frequentFlyer":
+//                    createFileProcess = new FrequentFlyerContentGenerator(list, map, workbook, sheet);
+//                    createFileProcess.createFile();
+//                    break;
+//                case "airChina":
+//                    createFileProcess = new AirChinaContentGenerator(list, map, workbook, sheet);
+//                    createFileProcess.createFile();
+//                    break;
+//                case "chinaSouthernAirlines":
+//                    createFileProcess = new ChinaSouthernAirlinesContentGenerator(list, map, workbook, sheet);
+//                    createFileProcess.createFile();
+//                    break;
+//            }
+//            workbook.write(out);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    /**
+     * 导出Excel
+     * 为项目提供了四种账单的导出格式 定制化需求
+     *
+     * @param contentGenerator 创建文件流对象
+     * @param fileName          文件名字(带后缀)
+     * @param sheetName         工作表名字
+     * @param response          响应
+     */
+    public static void exportExcel(ContentGenerator contentGenerator, String fileName, String sheetName, HttpServletResponse response) {
+//        initHSSFWorkbook(sheetName);
+        workbook = new HSSFWorkbook();
+        HSSFCellStyle cellStyle= workbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+        contentGenerator.setCellStyle(cellStyle);
+        try (OutputStream out = response.getOutputStream()) {
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+            contentGenerator.setWorkbook(workbook);
+            List<SheetContentPo> sheetContentPos = contentGenerator.getSheetContentPos();
+            if (sheetContentPos.size() > 1) {
+                int i =0;
+                for (SheetContentPo sheetContentPo : sheetContentPos) {
+                    sheet = workbook.createSheet(sheetName + "_" + i);
+                    sheetContentPo.setSheet(sheet);
+                    i++;
+                }
+                contentGenerator.createSheets();
+            } else {
+                sheet = workbook.createSheet(sheetName);
+                sheetContentPos.get(0).setSheet(sheet);
+                contentGenerator.createSheets();
+            }
             workbook.write(out);
         } catch (Exception e) {
             e.printStackTrace();
@@ -491,12 +530,29 @@ public class ExcelUtils {
     }
 
     public static void main(String[] args) {
-        Object o1 = "2017-05-04";
-        Object o2 = "愛尚飛";
-        Object o3 = "99.2";
-        System.out.println(isNum(o1.toString()));
-        System.out.println(isNum(o2.toString()));
-        System.out.println(isNum(o3.toString()));
+//        Object o1 = "2017-05-04";
+//        Object o2 = "愛尚飛";
+//        Object o3 = "99.2";
+//        System.out.println(isNum(o1.toString()));
+//        System.out.println(isNum(o2.toString()));
+//        System.out.println(isNum(o3.toString()));
+
+        JSONArray jsonMembers = new JSONArray();
+        JSONObject member1 = new JSONObject();
+        member1.put("loginname", "zhangfan");
+        member1.put("password", "userpass");
+        member1.put("email", "10371443@qq.com");
+        member1.put("sign_date", "2007-06-12");
+        jsonMembers.add(member1);
+        JSONObject member2 = new JSONObject();
+        member2.put("loginname", "zf");
+        member2.put("password", "userpass");
+        member2.put("email","8223939@qq.com");
+        member2.put("sign_date", "2008-07-16");
+        jsonMembers.add(member2);
+
+        List<Map> list = JSON.parseObject(jsonMembers.toJSONString(), new TypeReference<List<Map>>() {});
+
     }
 
 }
