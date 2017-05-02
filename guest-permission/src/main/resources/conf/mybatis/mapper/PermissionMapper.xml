@@ -45,18 +45,16 @@
     </if>
   </select>
   <select id="getDataListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    select p.permission_id, p.airport_code, p.name, rp.role_ids, rp.role_permission_id from
-    (select permission_id, airport_code, name from permission where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(data_permission,'all','$.orderType')) as p
-    left join (select role_permission_id, role_id, permission_id, data_permission->>"$.roleId" as role_ids from role_permission
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 and role_id = #{criteria.roleId,jdbcType=BIGINT})
-    as rp on p.permission_id = rp.permission_id order by p.permission_id desc
+    SELECT permission_id, airport_code, url, name, data_permission->>"$.roleId" as role_ids
+    FROM permission
+    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(data_permission,'all','$.orderType')
+    order by permission_id desc
   </select>
   <select id="getDataListCount" parameterType="map" resultType="int">
-    select count(p.permission_id) from
-    (select permission_id, airport_code, name from permission where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(data_permission,'all','$.orderType')) as p
-    left join (select role_id, permission_id, data_permission->>"$.roleId" as role_ids from role_permission
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and role_id = #{roleId,jdbcType=BIGINT})
-    as rp on p.permission_id = rp.permission_id
+    SELECT
+    count(permission_id) as num
+    FROM permission
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(data_permission,'all','$.orderType')
   </select>
   <select id="getListByRole" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select r.role_permission_id, r.role_id, p.permission_id, p.name, p.airport_code, p.url from role_permission as r left join
@@ -105,7 +103,7 @@
     SELECT permission_id, airport_code, url, name FROM permission where airport_code = #{airportCode,jdbcType=VARCHAR} and permission_id = #{permissionId,jdbcType=BIGINT} and is_deleted = 0
   </select>
   <select id="getUserPermission" parameterType="map" resultMap="BaseResultMap">
-    select p.permission_id, p.url, json_merge(p.data_permission,rp.data_permission) as data_permission from
+    select p.permission_id, p.url, rp.data_permission from
     (select * from permission where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p inner join
     (select permission_id, data_permission from role_permission as r right join
     (select role_id from sys_user_role where airport_code = #{airportCode,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=BIGINT} and is_deleted = 0) as s

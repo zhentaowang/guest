@@ -5,8 +5,6 @@
     <id column="role_permission_id" jdbcType="BIGINT" property="rolePermissionId" />
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
-    <result column="role_ids" jdbcType="VARCHAR" property="roleIds" />
-    <result column="data_permission" jdbcType="VARCHAR" property="dataPermission" />
   </resultMap>
   <sql id="Base_Column_List">
     role_permission_id, role_id, permission_id
@@ -51,7 +49,6 @@
       <if test="isDeleted != null">
         is_deleted,
       </if>
-        data_permission
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="airportCode != null">
@@ -81,7 +78,6 @@
       <if test="isDeleted != null">
         #{isDeleted,jdbcType=SMALLINT},
       </if>
-        #{dataPermission,jdbcType=VARCHAR}
     </trim>
   </insert>
 
@@ -92,12 +88,12 @@
     -->
     update role_permission
     <set>
-      data_permission = #{dataPermission,jdbcType=VARCHAR},
+      data_permission=json_set(data_permission,'$.roleId',#{roleIds}),
       <if test="isDeleted != null">
         is_deleted = #{isDeleted,jdbcType=SMALLINT},
       </if>
-      update_time = now()
+      update_time = CURRENT_TIMESTAMP
     </set>
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and permission_id = #{permissionId,jdbcType=BIGINT} and role_id = #{roleId, jdbcType=BIGINT} and is_deleted = 0 and role_permission_id = #{rolePermissionId,jdbcType=BIGINT}
+    where airport_code = #{airportCode,jdbcType=VARCHAR} and permission_id = #{permissionId,jdbcType=BIGINT} and role_id = #{roleId, jdbcType=BIGINT}
   </update>
 </mapper>

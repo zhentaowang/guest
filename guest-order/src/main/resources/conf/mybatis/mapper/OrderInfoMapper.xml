@@ -664,7 +664,7 @@
       )
     </if>
     <if  test="criteria.queryCreateRole != null and !''.equals(criteria.queryCreateRole)">
-      AND concat(',',o.create_role,',') regexp concat(',(',replace(#{criteria.queryCreateRole},',','|'),'),')
+      AND create_role regexp replace(#{criteria.queryCreateRole},',','|')
     </if>
 
     ) as orderFlightClient
@@ -773,7 +773,7 @@
             </if>
             <!-- 数据权限 -->
             <if  test="criteria.queryCreateRole != null and !''.equals(criteria.queryCreateRole)">
-              AND concat(',',o.create_role,',') regexp concat(',(',replace(#{criteria.queryCreateRole},',','|'),'),')
+              AND create_role regexp replace(#{criteria.queryCreateRole},',','|')
             </if>
 
             limit #{page.startPageNo},#{page.pCount}

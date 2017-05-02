@@ -90,18 +90,14 @@ public class PermissionService {
      * @param rolePermission
      */
     public void saveOrUpdate(RolePermission rolePermission) {
-        if (rolePermission.getRolePermissionId() != null) {
-            rolePermission.setDataPermission("{\"roleId\": \""+rolePermission.getRoleIds()+"\"}");
-            System.out.println(rolePermission.getDataPermission());
-            System.out.println(JSON.parseObject(rolePermission.getDataPermission()));
+        if (rolePermission.getPermissionId() != null) {
             rolePermissionMapper.updateByIdAndAirportCode(rolePermission);
 
         } else {
-            rolePermission.setDataPermission("{\"roleId\": \""+rolePermission.getRoleIds()+"\"}");
             rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
             rolePermission.setCreateTime(new Date());
             rolePermission.setUpdateTime(new Date());
-            rolePermissionMapper.insertBySelective(rolePermission);
+//            permissionMapper.insertSelective(permission);
         }
     }
 

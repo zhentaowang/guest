@@ -140,7 +140,7 @@
   </select>
 
   <select id="selectSpecialCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
-    select f.flight_id as flightId,f.flight_date as flightDate, concat_ws(' - ',f.flight_dep,f.flight_arr) as leg,f.flight_no as flightNo,f.plan_no as planNo,f.flight_depcode as flightDepcode,f.flight_arrcode as flightArrcode,
+    select f.flight_id as flightId,f.flight_date as flightDate, concat_ws(' - ',f.flight_depcode,f.flight_arrcode) as leg,f.flight_no as flightNo,f.plan_no as planNo,f.flight_depcode as flightDepcode,f.flight_arrcode as flightArrcode,
      t.customerId,t.customer_name as customerName,
      t.serverPersonNum,CAST(t.price AS SIGNED) as price,t.serverPersonNum * t.price as amount,t.airport_code as airportCode from (
         select o.flight_id,o.customer_id as customerId,o.customer_name,o.airport_code,
@@ -168,7 +168,7 @@
 
   <resultMap id="excel_content" type="com.zhiweicloud.guest.model.LoungeCheckPo">
     <id column="flight_id" jdbcType="BIGINT" property="flightId" />
-    <result column="flight_date" jdbcType="DATE" property="flightDate" />
+    <result column="flight_date" jdbcType="VARCHAR" property="flightDate" />
     <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
     <collection property="checkPassengerPos" column="" ofType="com.zhiweicloud.guest.model.CheckPassengerPo">
       <result column="flight_id" jdbcType="BIGINT" property="flightId" />
