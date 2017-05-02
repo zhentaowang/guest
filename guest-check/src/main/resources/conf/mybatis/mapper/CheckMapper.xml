@@ -203,7 +203,7 @@
     f.flight_no,
     f.flight_depcode,
     f.flight_arrcode,
-    concat_ws(' - ',f.flight_dep,f.flight_arr) AS leg,
+    concat_ws(' - ',f.flight_depcode,f.flight_arrcode) AS leg,
     p.expire_time,
     oi.along_total,
     oi.order_id,

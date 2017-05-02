@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -24,8 +25,11 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
 
     String[] names = {"姓名","航班号","机号","客票号码","航程","卡类别","舱位","卡号","有效期","随行"};
 
+
     @Override
     void createHeadRows(SheetContentPo sheetContentPo) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         RowContentPo rowContentPo = sheetContentPo.getRowContentPos().get(0);
@@ -62,6 +66,8 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
 
     @Override
     void createContentRows(SheetContentPo sheetContentPo) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         for (RowContentPo rowContentPo : sheetContentPo.getRowContentPos()) {
@@ -69,34 +75,42 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
             HSSFRow rowContent = sheet.createRow(row);
             HSSFCell cell1 = rowContent.createCell(0);
             cell1.setCellStyle(cellStyle);
-            cell1.setCellValue(String.valueOf(rowContentPo.getName()));
+            cell1.setCellValue(rowContentPo.getName());
             HSSFCell cell2 = rowContent.createCell(1);
             cell2.setCellStyle(cellStyle);
-            cell2.setCellValue(String.valueOf(rowContentPo.getFlightNo()));
+            cell2.setCellValue(rowContentPo.getFlightNo());
             HSSFCell cell3 = rowContent.createCell(2);
             cell3.setCellStyle(cellStyle);
-            cell3.setCellValue(String.valueOf(rowContentPo.getPlanNo()));
+            cell3.setCellValue(rowContentPo.getPlanNo());
             HSSFCell cell4 = rowContent.createCell(3);
             cell4.setCellStyle(cellStyle);
-            cell4.setCellValue(String.valueOf(rowContentPo.getTicketNo()));
+            cell4.setCellValue(rowContentPo.getTicketNo());
             HSSFCell cell5 = rowContent.createCell(4);
             cell5.setCellStyle(cellStyle);
-            cell5.setCellValue(String.valueOf(rowContentPo.getLeg()));
+            cell5.setCellValue(rowContentPo.getLeg());
             HSSFCell cell6 = rowContent.createCell(5);
             cell6.setCellStyle(cellStyle);
-            cell6.setCellValue(String.valueOf(rowContentPo.getCardType()));
+            cell6.setCellValue(rowContentPo.getCardType());
             HSSFCell cell7 = rowContent.createCell(6);
             cell7.setCellStyle(cellStyle);
-            cell7.setCellValue(String.valueOf(rowContentPo.getCabinNo()));
+            cell7.setCellValue(rowContentPo.getCabinNo());
             HSSFCell cell8 = rowContent.createCell(7);
             cell8.setCellStyle(cellStyle);
-            cell8.setCellValue(String.valueOf(rowContentPo.getCardNo()));
+            cell8.setCellValue(rowContentPo.getCardNo());
             HSSFCell cell9 = rowContent.createCell(8);
             cell9.setCellStyle(cellStyle);
-            cell9.setCellValue(String.valueOf(rowContentPo.getExpireTime()));
+            if (rowContentPo.getExpireTime() == null) {
+                cell9.setCellValue(new String());
+            }else {
+                cell9.setCellValue(simpleDateFormat.format(rowContentPo.getExpireTime()));
+            }
             HSSFCell cell10 = rowContent.createCell(9);
             cell10.setCellStyle(cellStyle);
-            cell10.setCellValue(String.valueOf(rowContentPo.getAlongTotal()));
+            if (rowContentPo.getAlongTotal() ==null) {
+                cell10.setCellValue(new String());
+            }else {
+                cell10.setCellValue(String.valueOf(rowContentPo.getAlongTotal()));
+            }
         }
         sheetContentPo.setRow(row);
     }

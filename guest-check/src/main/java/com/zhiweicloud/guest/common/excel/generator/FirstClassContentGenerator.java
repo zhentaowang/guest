@@ -22,6 +22,10 @@ public class FirstClassContentGenerator extends ContentGenerator {
         super(sheetContentPos);
     }
 
+    private void setWidth(HSSFSheet sheet,int width){
+        sheet.setColumnWidth(0,width);
+    }
+
     @Override
     void createHeadRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
@@ -34,35 +38,39 @@ public class FirstClassContentGenerator extends ContentGenerator {
         row1Cell1.setCellValue("航空公司");
         HSSFCell row1Cell2 = row1.createCell(1);
         row1Cell2.setCellStyle(cellStyle);
-        row1Cell2.setCellValue(String.valueOf(rowContentPo.getCustomerName()));
+        row1Cell2.setCellValue(rowContentPo.getCustomerName());
         HSSFCell row1Cell3 = row1.createCell(2);
         row1Cell3.setCellStyle(cellStyle);
         row1Cell3.setCellValue("航    程");
         HSSFCell row1Cell4 = row1.createCell(3);
         row1Cell4.setCellStyle(cellStyle);
-        row1Cell4.setCellValue(String.valueOf(rowContentPo.getLeg()));
+        row1Cell4.setCellValue(rowContentPo.getLeg());
         HSSFCell row1Cell5 = row1.createCell(4);
         row1Cell5.setCellStyle(cellStyle);
         row1Cell5.setCellValue("日    期");
         HSSFCell row1Cell6 = row1.createCell(5);
         row1Cell6.setCellStyle(cellStyle);
-        row1Cell6.setCellValue(String.valueOf(rowContentPo.getFlightDate()));
+        row1Cell6.setCellValue(rowContentPo.getFlightDate());
         // 第二行
         row++;
         HSSFRow row2 = sheet.createRow(row);
-        row2.setRowStyle(cellStyle);
         HSSFCell row2Cell1 = row2.createCell(0);
+        row2Cell1.setCellStyle(cellStyle);
         row2Cell1.setCellValue("航 班 号");
         HSSFCell row2Cell2 = row2.createCell(1);
-        row2Cell2.setCellValue(String.valueOf(rowContentPo.getFlightNo()));
+        row2Cell2.setCellStyle(cellStyle);
+        row2Cell2.setCellValue(rowContentPo.getFlightNo());
         HSSFCell row2Cell3 = row2.createCell(2);
+        row2Cell3.setCellStyle(cellStyle);
         row2Cell3.setCellValue("机    型");
         HSSFCell row2Cell4 = row2.createCell(3);
         row2Cell4.setCellValue(new String());
         HSSFCell row2Cell5 = row2.createCell(4);
+        row2Cell5.setCellStyle(cellStyle);
         row2Cell5.setCellValue("机    号");
         HSSFCell row2Cell6 = row2.createCell(5);
-        row2Cell6.setCellValue(String.valueOf(rowContentPo.getPlanNo()));
+        row2Cell6.setCellStyle(cellStyle);
+        row2Cell6.setCellValue(rowContentPo.getPlanNo());
         // 把当前行号设置回去
         sheetContentPo.setRow(row);
     }
@@ -79,7 +87,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
             cell1.setCellValue("姓名");
             HSSFCell cell2 = contentRow.createCell(1);
             cell2.setCellStyle(cellStyle);
-            cell2.setCellValue(String.valueOf(rowContentPo.getName()));
+            cell2.setCellValue(rowContentPo.getName());
             HSSFCell cell3 = contentRow.createCell(2);
             cell3.setCellStyle(cellStyle);
             cell3.setCellValue("客票号码");
@@ -87,7 +95,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
             sheet.addMergedRegion(cra);
             HSSFCell cell4 = contentRow.createCell(3);
             cell4.setCellStyle(cellStyle);
-            cell4.setCellValue(String.valueOf(rowContentPo.getTicketNo()));
+            cell4.setCellValue(rowContentPo.getTicketNo());
         }
         sheetContentPo.setRow(row);
     }

@@ -126,7 +126,7 @@ public class CheckService {
 
 
         List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
-        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","accompanyPersonNum","restRoomPersonNum","securityCheckPersonNum","totalAmount"));
+        ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","vipPrice","accompanyPersonNum","accompanyPrice","restRoomPersonNum","restRoomPrice","securityCheckPersonNum","securityCheckPrice"));
         Map<String, Object> totalRow = new HashMap<>();
 
         for(int k = 0; k < checkList.size();k++){
@@ -216,7 +216,9 @@ public class CheckService {
                 sheetName = "国际航空账单";
                 break;
         }
-        ExcelUtils.exportExcel(contentGenerator, fileName, sheetName,response);
+        if (contentGenerator != null) {
+            ExcelUtils.exportExcel(contentGenerator, fileName, sheetName, response);
+        }
     }
 
     private List<SheetContentPo> getSpecialDateList(CheckQueryParam checkQueryParam, String airportCode, Integer page, Integer rows) throws ParseException {

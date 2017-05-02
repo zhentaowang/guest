@@ -5,6 +5,7 @@ import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -52,25 +53,29 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             rowCell1.setCellValue("云南空港百事特商务有限公司丽江营业部");
             HSSFCell rowCell2 = rowContent.createCell(1);
             rowCell2.setCellStyle(cellStyle);
-            rowCell2.setCellValue(String.valueOf(rowContentPo.getFlightDate()));
+            rowCell2.setCellValue(rowContentPo.getFlightDate());
             HSSFCell rowCell3 = rowContent.createCell(2);
             rowCell3.setCellStyle(cellStyle);
-            rowCell3.setCellValue(String.valueOf(rowContentPo.getFlightNo()));
+            rowCell3.setCellValue(rowContentPo.getFlightNo());
             HSSFCell rowCell4 = rowContent.createCell(3);
             rowCell4.setCellStyle(cellStyle);
-            rowCell4.setCellValue(String.valueOf(rowContentPo.getFlightNo()));
+            rowCell4.setCellValue(rowContentPo.getPlanNo());
             HSSFCell rowCell5 = rowContent.createCell(4);
             rowCell5.setCellStyle(cellStyle);
-            rowCell5.setCellValue(String.valueOf(rowContentPo.getLeg()));
+            rowCell5.setCellValue(rowContentPo.getLeg());
             HSSFCell rowCell6 = rowContent.createCell(5);
             rowCell6.setCellStyle(cellStyle);
-            rowCell6.setCellValue(String.valueOf(rowContentPo.getAirpotCode()));
+            rowCell6.setCellValue(rowContentPo.getAirpotCode());
             HSSFCell rowCell7 = rowContent.createCell(6);
             rowCell7.setCellStyle(cellStyle);
             rowCell7.setCellValue("头等舱休息室费用");
             HSSFCell rowCell8 = rowContent.createCell(7);
             rowCell8.setCellStyle(cellStyle);
-            rowCell8.setCellValue(String.valueOf(rowContentPo.getServerPersonNum()));
+            if (rowContentPo.getServerPersonNum() == null) {
+                rowCell8.setCellValue(new String());
+            }else {
+                rowCell8.setCellValue(rowContentPo.getServerPersonNum());
+            }
             HSSFCell rowCell9 = rowContent.createCell(8);
             rowCell9.setCellStyle(priceCellStyle);
             if (rowContentPo.getPrice() == null) {
@@ -92,8 +97,8 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             rowCell12.setCellStyle(cellStyle);
             rowCell12.setCellValue("RMB");
             HSSFCell rowCell13 = rowContent.createCell(12);
-            rowCell3.setCellStyle(cellStyle);
-            rowCell13.setCellValue("1");
+            rowCell13.setCellStyle(cellStyle);
+            rowCell13.setCellValue(1);
         }
         sheetContentPo.setRow(row);
     }
