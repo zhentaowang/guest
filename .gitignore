@@ -22,3 +22,14 @@ src/main/resources/generatorConfig.xml
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# 工具类
+guest-util/*
+
+# 数据库配置文件
+src/main/resources/application.properties
+
+# 数据库配置文件
+src/main/resources/log4j.properties
+
+.gitignore
