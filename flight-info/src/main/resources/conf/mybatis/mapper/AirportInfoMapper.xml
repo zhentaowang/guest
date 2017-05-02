@@ -37,6 +37,7 @@
     <if test="airportCode != null ">
       AND airport_code = #{airportCode}
     </if>
+    GROUP BY flight_no
   </select>
 
 </mapper>
