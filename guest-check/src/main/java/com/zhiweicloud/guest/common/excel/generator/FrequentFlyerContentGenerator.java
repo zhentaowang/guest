@@ -159,8 +159,4 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
         sheet.setColumnWidth(8,"1970-01-01 12:00:00".getBytes().length * 256);
     }
 
-    public static void main(String[] args) {
-        System.out.println("KMG - CAN".getBytes().length);
-    }
-
 }

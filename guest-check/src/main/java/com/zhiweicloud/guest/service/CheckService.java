@@ -235,7 +235,7 @@ public class CheckService {
             rowContentPo.setAmout((Double) map.get("amount"));
             rowContentPo.setFlightDepcode((String) map.get("flightDepcode"));
             rowContentPo.setFlightArrcode((String) map.get("flightArrcode"));
-            rowContentPo.setFlightDate( map.get("flightDate").toString());
+            rowContentPo.setFlightDate(String.valueOf(map.get("flightDate")));
             rowContentPo.setServerPersonNum((Double)(map.get("serverPersonNum")));
             rowContentPo.setCustomerName((String) map.get("customerName"));
             rowContentPo.setPrice(((Long)map.get("price")));
@@ -269,7 +269,7 @@ public class CheckService {
                 rowContentPo.setAirpotCode(checkPassengerPo.getAirpotCode());
                 rowContentPo.setLeg(checkPassengerPo.getLeg());
                 rowContentPo.setCustomerName(loungeCheckPo.getCustomerName());
-                rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null?null:(simpleDateFormat.format(loungeCheckPo.getFlightDate())));
+                rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null ? "" : simpleDateFormat.format(loungeCheckPo.getFlightDate()));
                 rowContentPo.setCabinNo(checkPassengerPo.getCabinNo());
                 rowContentPo.setExpireTime(checkPassengerPo.getExpireTime());
                 rowContentPo.setServerPersonNum(checkPassengerPo.getServerPersonNum());
