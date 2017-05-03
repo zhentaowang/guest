@@ -215,7 +215,7 @@
     LEFT JOIN flight f ON f.flight_id = p.flight_id
     WHERE
     oi.is_deleted = 0
-    and o.order_status = '已使用'
+    AND oi.order_status = '已使用'
     AND oi.protocol_type = #{protocolType}
     AND oi.airport_code = #{param.airportCode}
     <if test="param.queryCustomerName != null and !''.equals(param.queryCustomerName)">
