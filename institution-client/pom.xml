@@ -34,7 +34,6 @@
     <httpcore.version>4.5.2</httpcore.version>
     <libthrift.version>0.9.3</libthrift.version>
     <thrift.server.version>1.0-RELEASE</thrift.server.version>
-    <wyun.utils.version>1.0-RELEASE</wyun.utils.version>
   </properties>
 
   <dependencies>
