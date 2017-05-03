@@ -24,7 +24,6 @@ public class InstitutionClientServiceImpl implements MyService.Iface {
 
     @Override
     public Response send(Request request) throws TException {
-        String serviceName = request.getServiceName();
         JSONObject paramJSON = null;
         try {
             byte[] paramJSON_bytes = request.getParamJSON();

@@ -154,11 +154,6 @@
       <artifactId>guest-util</artifactId>
       <version>${util.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.zhiweicloud</groupId>
-      <artifactId>utils</artifactId>
-      <version>${wyun.utils.version}</version>
-    </dependency>
     <!-- cors filter -->
     <dependency>
       <groupId>com.thetransactioncompany</groupId>
