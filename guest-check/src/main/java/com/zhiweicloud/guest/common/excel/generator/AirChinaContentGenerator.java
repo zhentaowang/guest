@@ -107,11 +107,12 @@ public class AirChinaContentGenerator extends ContentGenerator {
             }
             HSSFCell cell12 = rowContent.createCell(11);
             cell12.setCellStyle(priceCellStyle);
-            if (rowContentPo.getPrice() == null) {
-                cell12.setCellValue(new String());
-            }else {
-                cell12.setCellValue(rowContentPo.getPrice());
-            }
+            cell2.setCellValue(new String());
+//            if (rowContentPo.getPrice() == null) {
+//                cell12.setCellValue(new String());
+//            }else {
+//                cell12.setCellValue(rowContentPo.getPrice());
+//            }
             HSSFCell cell13 = rowContent.createCell(12);
             cell13.setCellStyle(cellStyle);
             cell13.setCellValue(new String());
@@ -120,11 +121,12 @@ public class AirChinaContentGenerator extends ContentGenerator {
             cell14.setCellValue(new String());
             HSSFCell cell15 = rowContent.createCell(14);
             cell15.setCellStyle(priceCellStyle);
-            if (rowContentPo.getAmout() == null) {
-                cell15.setCellValue(new String());
-            }else {
-                cell15.setCellValue(rowContentPo.getAmout());
-            }
+            cell5.setCellValue(new String());
+//            if (rowContentPo.getAmout() == null) {
+//                cell15.setCellValue(new String());
+//            }else {
+//                cell15.setCellValue(rowContentPo.getAmout());
+//            }
             HSSFCell cell16 = rowContent.createCell(15);
             cell16.setCellStyle(cellStyle);
             cell16.setCellValue(rowContentPo.getFlightDate());
