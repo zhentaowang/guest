@@ -84,7 +84,7 @@ public class BusinessService implements IBusinessService {
         param.setNo(request.getString("no"));
         param.setName(request.getString("name"));
         param.setType(request.getString("type"));
-        param.setAirportCode(request.getString("client-id"));
+        param.setAirportCode(request.getString("client_id"));
 
         int page = 1;
         if(request.containsKey("page")) {
