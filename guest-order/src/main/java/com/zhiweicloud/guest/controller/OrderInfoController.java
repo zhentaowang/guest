@@ -490,7 +490,7 @@ public class OrderInfoController {
      * 查找客户下有订单的协议ID
      *
      * @param customerIds 客户ID串
-     * @param flag        账单标志 【0（null）:普通账单,1:特殊客户（南航/国航）,2:头等舱,3:常旅客】
+     * @param flag        账单标志 【0（null）:普通账单,1:特殊客户（南航/国航）;头等舱;常旅客2:,3:】
      * @param airportCode 机场码
      * @return
      */
