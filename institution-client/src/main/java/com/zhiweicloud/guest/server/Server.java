@@ -45,7 +45,6 @@ public class Server {
             //二进制协议
             tArgs.protocolFactory(new TBinaryProtocol.Factory());
             TServer server = new TThreadedSelectorServer(tArgs);
-            System.out.println("fund server start....");
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
