@@ -78,21 +78,23 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             }
             HSSFCell rowCell9 = rowContent.createCell(8);
             rowCell9.setCellStyle(priceCellStyle);
-            if (rowContentPo.getPrice() == null) {
-                rowCell9.setCellValue(new String());
-            }else {
-                rowCell9.setCellValue(rowContentPo.getPrice());
-            }
+            rowCell9.setCellValue(new String());
+//            if (rowContentPo.getPrice() == null) {
+//                rowCell9.setCellValue(new String());
+//            }else {
+//                rowCell9.setCellValue(rowContentPo.getPrice());
+//            }
             HSSFCell rowCell10 = rowContent.createCell(9);
             rowCell10.setCellStyle(cellStyle);
             rowCell10.setCellValue(new String());
             HSSFCell rowCell11 = rowContent.createCell(10);
             rowCell11.setCellStyle(priceCellStyle);
-            if (rowContentPo.getAmout() == null) {
-                rowCell11.setCellValue(new String());
-            }else {
-                rowCell11.setCellValue(rowContentPo.getAmout());
-            }
+            rowCell1.setCellValue(new String());
+//            if (rowContentPo.getAmout() == null) {
+//                rowCell11.setCellValue(new String());
+//            }else {
+//                rowCell11.setCellValue(rowContentPo.getAmout());
+//            }
             HSSFCell rowCell12 = rowContent.createCell(11);
             rowCell12.setCellStyle(cellStyle);
             rowCell12.setCellValue("RMB");
