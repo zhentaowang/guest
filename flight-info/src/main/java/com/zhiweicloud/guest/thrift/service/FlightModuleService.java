@@ -2,15 +2,21 @@ package com.zhiweicloud.guest.thrift.service;
 
 import com.alibaba.fastjson.JSONObject;
 
-import com.zhiweicloud.guest.thrift.util.FlightUtil;
-import com.zhiweicloud.guest.thrift.util.ScheduleEventUtil;
+import com.zhiweicloud.guest.common.Dictionary;
+import com.zhiweicloud.guest.thrift.util.FlightUtils;
+import com.zhiweicloud.guest.thrift.util.ScheduleEventUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by tc on 2017/5/5.
+ * 航班服务接口实现类
+ * 根据方法名分配执行方法
+ * Copyright(C) 2017 杭州风数信息技术有限公司
+ *
+ * 2017/5/9 20:25
+ * @author tiecheng
  */
 @Service
 public class FlightModuleService implements IFlightSerivce {
@@ -18,19 +24,21 @@ public class FlightModuleService implements IFlightSerivce {
     private static final Log log = LogFactory.getLog(FlightModuleService.class);
 
     @Autowired
-    private FlightUtil flightUtil;
+    private FlightUtils flightUtil;
 
     @Autowired
-    private ScheduleEventUtil scheduleEventUtil;
+    private ScheduleEventUtils scheduleEventUtil;
 
     @Override
     public String handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
-        if (request.get("operation") != null) {
-            operation = request.getString("operation");
+        if (request.get(Dictionary.REQUEST_METHOD_NAME) != null) {
+            operation = request.getString(Dictionary.REQUEST_METHOD_NAME);
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("request method name: " + operation);
+        }
         switch (operation) {
             case "flightInfo":
                 success = flightUtil.flightInfo(request);

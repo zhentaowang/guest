@@ -56,4 +56,24 @@ public final class Dictionary {
      */
     public static final String ENCODING_ISO8859_1 = "ISO-8859-1";
 
+    /**
+     * 起始打印信息
+     */
+    public static final String START_MESSAGE = "flight-info start";
+
+    /**
+     * go网关请求方法key值
+     */
+    public static final String REQUEST_METHOD_NAME = "operation";
+
+    /**
+     * custom flight url by dragon
+     */
+    public static final String DRAGON_URL_CUSTOMFLIGHT = "http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/CustomFlightNo";
+
+    /**
+     * get flight info url by dragon
+     */
+    public static final String DRAGON_URL_GETFLIGHTINFO ="http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg";
+
 }

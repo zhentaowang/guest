@@ -16,15 +16,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by tc on 2017/5/5.
+ * 航班模块 thrift server
+ * Copyright(C) 2017 杭州风数信息技术有限公司
+ *
+ * 2017/5/9 20:25
+ * @author tiecheng
  */
 @Service
 public class FlightServer {
 
     public static final int SERVER_PORT = 8094;
 
-    private final
-    MyService.Iface flightServiceImpl;
+    private final MyService.Iface flightServiceImpl;
+
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
