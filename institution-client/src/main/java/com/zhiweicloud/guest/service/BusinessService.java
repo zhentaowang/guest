@@ -27,6 +27,7 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
@@ -36,21 +37,21 @@ import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.ws.rs.*;
+import java.util.*;
 
 /**
  * InstitutionClientMapper.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
+ * Copyright(C) 2017 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2016-12-26 15:45:36 Created By zhangpengfei
  */
 @Service
+@Api(value = "客户管理", description = "", tags = {"客户管理"})
 public class BusinessService implements IBusinessService {
 
     private final InstitutionClientMapper institutionClientMapper;
@@ -72,6 +73,21 @@ public class BusinessService implements IBusinessService {
             case "list":
                 success = list(request);
                 break;
+            case "saveOrUpdate":
+                success = save(request);
+                break;
+            case "view":
+                success = view(request);
+                break;
+            case "delete":
+                success = delete(request);
+                break;
+            case "queryInstitutionClientDropdownList":
+                success = queryInstitutionClientDropdownList(request);
+                break;
+            case "getInstitutionType":
+                success = getInstitutionType(request);
+                break;
             default:
                 break;
         }
@@ -79,6 +95,11 @@ public class BusinessService implements IBusinessService {
         return success;
     }
 
+    /**
+     * 客户列表-分页查询
+     * @param request
+     * @return
+     */
     public String list(JSONObject request) {
         InstitutionClient param = new InstitutionClient();
         param.setNo(request.getString("no"));
@@ -108,66 +129,194 @@ public class BusinessService implements IBusinessService {
         return JSON.toJSONString(result);
     }
 
-    public InstitutionClient getById(Long institutionClientId,String airportCode) {
-        return institutionClientMapper.viewByIdAndAirCode(institutionClientId,airportCode);
-    }
+    /**
+     * 新增修改客户
+     * @param request
+     * @return
+     */
+    public String save(JSONObject request) {
+        LZResult<String> result = new LZResult<>();
+        try {
+            InstitutionClient institutionClient = null;
+            JSONArray jsonArray = JSON.parseArray(request.getString("data"));
+            institutionClient = JSON.toJavaObject(jsonArray.getJSONObject(0), InstitutionClient.class);
 
-    public void saveOrUpdate(InstitutionClient institutionClient) {
-        if (institutionClient.getInstitutionClientId() != null) {
-            institutionClientMapper.updateByPrimaryKeySelective(institutionClient);
-        } else {
-            institutionClientMapper.insertSelective(institutionClient);
-        }
-    }
 
-    public String deleteByIds(List<Long> ids, Long userId, String airportCode) throws Exception{
-        List<Long> deleteIds = new ArrayList<>();
-        StringBuilder names = new StringBuilder();
-        Map<String, Object> headerMap = new HashMap<>();
-        headerMap.put("user-id", userId);
-        headerMap.put("client-id", airportCode);
-        for (Long id : ids) {
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("institutionClientId", id);
-            String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
-            JSONObject protocolList = JSON.parseObject(s);
-            if (protocolList != null) {
-                JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
-                if (rows.size() > 0) {
-                    names.append(institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
-                    names.append(",");
-                }else {
-                    deleteIds.add(id);
-                }
+            Long userId = Long.valueOf(request.getString("user_id"));
+            String airportCode = request.getString("client_id");
+
+
+            if (institutionClient == null || institutionClient.getName() == null || "".equals(institutionClient.getName())
+                    || institutionClient.getEmployeeId() == null || "".equals(institutionClient.getEmployeeId())
+                    || institutionClient.getType() == null || "".equals(institutionClient.getType())) {
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
             }
+            institutionClient.setAirportCode(airportCode);
+            //判断是否重名
+            int exists = institutionClientMapper.judgeRepeat(institutionClient);
+            if (institutionClient.getInstitutionClientId() != null) {
+                institutionClient.setUpdateUser(userId);
+                institutionClient.setUpdateTime(new Date());
+            } else {
+                institutionClient.setCreateUser(userId);
+                institutionClient.setCreateTime(new Date());
+            }
+            if (exists > 0) {
+                result.setMsg(LZStatus.REPNAM.display());
+                result.setStatus(LZStatus.REPNAM.value());
+                result.setData(institutionClient.getName());
+                return JSON.toJSONString(result);
+            }
+            if (institutionClient.getInstitutionClientId() != null) {
+                institutionClientMapper.updateByPrimaryKeySelective(institutionClient);
+            } else {
+                institutionClientMapper.insertSelective(institutionClient);
+            }
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            return this.errorMsg(e);
         }
-        if (deleteIds.size() > 0){
-            Map params = new HashMap();
-            params.put("ids",deleteIds);
-            params.put("userId", userId);
-            params.put("airportCode", airportCode);
-            institutionClientMapper.deleteBatchByIdsAndUserId(params);
-        }
-        //names.deleteCharAt(names.length()-1);
-        return names.toString();
-    }
-
-    public List<Dropdownlist> queryInstitutionClientDropdownList(String airportCode,String name,String no,String type) {
-        return institutionClientMapper.getInstitutionClientDropdownList(airportCode,name,no,type);
     }
 
 
     /**
-     * 新增的时候，没有id。需要判断数据库记录里面
-     * 更新的时候，有id。需要判断数据库除本身记录之外 是否有重复的字段值
-     * @param institutionClient
+     * 查询客户详情
+     * @param request
      * @return
      */
-    public int judgeRepeat(InstitutionClient institutionClient) {
-        return institutionClientMapper.judgeRepeat(institutionClient);
+    public String view(JSONObject request) {
+        try {
+            String airportCode = request.getString("client_id");
+            Long institutionClientId = request.getLong("institutionClientId");
+            InstitutionClient institutionClient = institutionClientMapper.viewByIdAndAirCode(institutionClientId,airportCode);
+            return JSON.toJSONString(new LZResult<>(institutionClient));
+        } catch (Exception e) {
+            return this.errorMsg(e);
+        }
     }
 
-    public List<Map> queryInstitutionType(String airportCode) {
-        return institutionClientMapper.queryInstitutionType(airportCode);
+
+    /**
+     * 机构客户管理 - 删除
+     * {
+     * "data": [
+     * 6,7,8
+     * ]
+     * <p>
+     * }
+     *
+     * @return 返回被引用的机构客户ID集合
+     */
+    public String delete(JSONObject request) {
+        LZResult<Object> lzResult = new LZResult();
+        try {
+            Long userId = Long.valueOf(request.getString("user_id"));
+            String airportCode = request.getString("client_id");
+            JSONArray jsonarray = JSON.parseArray(request.getString("data"));
+            List<Long> ids = JSON.parseArray(jsonarray.toJSONString(), Long.class);
+
+            List<Long> deleteIds = new ArrayList<>();
+            StringBuilder names = new StringBuilder();
+            Map<String, Object> headerMap = new HashMap<>();
+            headerMap.put("user_id", userId);
+            headerMap.put("client_id", airportCode);
+            for (Long id : ids) {
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("institutionClientId", id);
+                String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
+                JSONObject protocolList = JSON.parseObject(s);
+                if (protocolList != null) {
+                    JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
+                    if (rows.size() > 0) {
+                        names.append(institutionClientMapper.viewByIdAndAirCode(id, airportCode).getName());
+                        names.append(",");
+                    }else {
+                        deleteIds.add(id);
+                    }
+                }
+            }
+
+            if (deleteIds.size() > 0){
+                Map params = new HashMap();
+                params.put("ids",deleteIds);
+                params.put("userId", userId);
+                params.put("airportCode", airportCode);
+                institutionClientMapper.deleteBatchByIdsAndUserId(params);
+            }
+            if(names != null && names.length() > 0){
+                lzResult.setData(names);
+                lzResult.setMsg(LZStatus.DATA_REF_ERROR.display());
+                lzResult.setStatus(LZStatus.DATA_REF_ERROR.value());
+            }else{
+                lzResult.setData(null);
+                lzResult.setMsg(LZStatus.SUCCESS.display());
+                lzResult.setStatus(LZStatus.SUCCESS.value());
+            }
+        } catch (Exception e) {
+            return this.errorMsg(e);
+        }
+        return JSON.toJSONString(lzResult);
+    }
+
+
+    /**
+     * 产品品类下拉框 数据
+     *
+     * @return
+     */
+    public String queryInstitutionClientDropdownList(JSONObject request) {
+        try{
+            String airportCode = request.getString("client_id");
+            String name = request.getString("name");
+            String no = request.getString("no");
+            // 1:南航休息室账单('南方航空股份有限公司','中国国际航空股份有限公司').2:头等舱账单（只带出协议类型为头等舱的客户）. 3:常旅客账单（只带出协议类型为金银卡的客户） ,如果type为空，查询所有客户
+            String type = request.getString("type");
+
+            List<Dropdownlist> list = institutionClientMapper.getInstitutionClientDropdownList(airportCode, name, no,type);
+            return JSON.toJSONString(list);
+        }catch (Exception e){
+            return this.errorMsg(e);
+        }
+    }
+
+
+    /**
+     * 返回机构类型下拉框
+     * @param request
+     * @return
+     */
+    public String getInstitutionType(JSONObject request) {
+        LZResult<Object> result = new LZResult<>();
+        try {
+            String airportCode = request.getString("client_id");
+            List<Map> list = institutionClientMapper.queryInstitutionType(airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            return this.errorMsg(e);
+        }
+    }
+
+
+    /**
+     * 统一处理错误信息
+     * @param e
+     * @return
+     */
+    private String errorMsg(Exception e){
+        e.printStackTrace();
+        LZResult result = new LZResult<>();
+        result.setMsg(LZStatus.ERROR.display());
+        result.setStatus(LZStatus.ERROR.value());
+        result.setData(null);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
     }
 }

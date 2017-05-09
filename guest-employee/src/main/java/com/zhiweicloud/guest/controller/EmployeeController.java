@@ -20,7 +20,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- */
+ *//*
+
 
 package com.zhiweicloud.guest.controller;
 
@@ -50,12 +51,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
  * SysMenuController.java
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
- */
+ *//*
+
 @Component
 @Path("/")
 @Api(value = "员工管理", description = "", tags = {"Employee"})
@@ -98,12 +101,14 @@ public class EmployeeController {
         }
     }
 
-    /**
+    */
+/**
      * 员工管理 - 新增or更新
      * 需要判断name是否重复
      *
      * @return
-     */
+     *//*
+
     @POST
     @Path("saveOrUpdate")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -145,12 +150,14 @@ public class EmployeeController {
     }
 
 
-    /**
+    */
+/**
      * 员工管理 - 根据id查询员工
      *
      * @param employeeId
      * @return
-     */
+     *//*
+
     @GET
     @Path("view")
     @Produces("application/json;charset=utf8")
@@ -180,12 +187,14 @@ public class EmployeeController {
         }
     }
 
-    /**
+    */
+/**
      * 员工管理 - 根据用户id获取角色列表
      *
      * @param employeeId
      * @return
-     */
+     *//*
+
     @GET
     @Path("getRoleByUserId")
     @Produces("application/json;charset=utf8")
@@ -214,7 +223,8 @@ public class EmployeeController {
         return JSON.toJSONString(result);
     }
 
-    /**
+    */
+/**
      * 员工管理 - 删除
      * {
      * "data": [
@@ -223,7 +233,8 @@ public class EmployeeController {
      * }
      *
      * @return
-     */
+     *//*
+
     @POST
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -245,11 +256,13 @@ public class EmployeeController {
         }
     }
 
-    /**
+    */
+/**
      * 产品品类下拉框 数据
      *
      * @return
-     */
+     *//*
+
     @GET
     @Path("queryEmployeeDropdownList")
     @Produces("application/json;charset=utf8")
@@ -272,11 +285,13 @@ public class EmployeeController {
         return JSON.toJSONString(result);
     }
 
-    /**
+    */
+/**
      * 根据角色查代办人 下拉框
      * （目前用全部员工，前端不传roleId）
      * @return
-     */
+     *//*
+
     @GET
     @Path("getEmployeeDropdownListByRoleId")
     @Produces("application/json;charset=utf8")
@@ -323,3 +338,4 @@ public class EmployeeController {
 
 
 }
+*/

@@ -1,12 +1,13 @@
 package com.zhiweicloud.guest.controller;
 
-import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.Passenger;
+import com.zhiweicloud.guest.service.IBusinessService;
 import com.zhiweicloud.guest.service.PassengerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,29 @@ public class PassengerController {
 
     @Autowired
     private PassengerService passengerService;
+
+
+    /**
+     * 身份证号模糊匹配下拉框 数据
+     * @author zhangpengfei for thrift
+     * @return
+     */
+    public String getIdentityCardDropdownList(JSONObject request) {
+        LZResult<Object> result = new LZResult<>();
+        String identityCard = request.getString("identityCard");
+        String airportCode = request.getString("client_id");
+        if(airportCode == null){
+            result.setMsg(LZStatus.DATA_EMPTY.display());
+            result.setStatus(LZStatus.DATA_EMPTY.value());
+            result.setData(null);
+            return JSON.toJSONString(result);
+        }
+        List<Dropdownlist> list = passengerService.getIdentityCardDropdownList(identityCard, airportCode);
+        result.setMsg(LZStatus.SUCCESS.display());
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setData(list);
+        return JSON.toJSONString(result);
+    }
 
     /**
      * 身份证号模糊匹配下拉框 数据
@@ -52,6 +76,31 @@ public class PassengerController {
         result.setStatus(LZStatus.SUCCESS.value());
         result.setData(list);
         return JSON.toJSONString(result);
+    }
+
+    /**
+     * 根据航班id获取乘客信息
+     * @author zhangpengfei for thirft
+     */
+    public String getPassengerByFlightId(JSONObject request) {
+        LZResult<Object> result = new LZResult<>();
+        Long servId = request.getLong("servId");
+        Long flightId = request.getLong("flightId");
+        String airportCode = request.getString("client_id");
+
+        Long typeId = null;
+
+
+        if(servId == null){
+            typeId = 1L; //1:贵宾厅，5：休息室。不传servId，就默认查全部贵宾厅(调度列表中用到)
+        }
+        List<Passenger> passengerList = passengerService.getPassengerlistByFlightId(flightId,typeId,servId,airportCode);
+
+        result.setMsg(LZStatus.SUCCESS.display());
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setData(passengerList);
+        return JSON.toJSONStringWithDateFormat(result,"yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+
     }
 
     /**
