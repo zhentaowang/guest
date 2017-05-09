@@ -6,8 +6,8 @@
 
     <groupId>com.zhiweicloud.guest</groupId>
     <artifactId>guest-crm</artifactId>
-    <packaging>war</packaging>
-    <version>1.0</version>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
     <name>Guest CRM</name>
     <url>http://maven.apache.org</url>
 
@@ -36,6 +36,8 @@
         <swagger.version>1.5.9</swagger.version>
         <springfox.version>2.2.2</springfox.version>
         <httpcore.version>4.5.2</httpcore.version>
+        <libthrift.version>0.9.3</libthrift.version>
+        <thrift.server.version>1.0-RELEASE</thrift.server.version>
     </properties>
 
     <dependencies>
@@ -161,6 +163,17 @@
             <artifactId>cors-filter</artifactId>
             <version>${cors.filter.version}</version>
         </dependency>
+        <!-- thrift 公共类 -->
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wyun.thrift</groupId>
+            <artifactId>server</artifactId>
+            <version>${thrift.server.version}</version>
+        </dependency>
 
 
         <dependency>
@@ -185,12 +198,17 @@
         <plugins>
             <!-- Deploy -->
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>${tomcat.plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <server>TomcatServer</server>
-                    <path>/</path>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.zhiweicloud.guest.Main</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>

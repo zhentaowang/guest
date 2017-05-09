@@ -1,4 +1,4 @@
-package com.zhiweicloud.guest.server;
+package com.zhiweicloud.guest.thrift.server;
 
 import com.wyun.thrift.server.MyService;
 import org.apache.thrift.TProcessor;
@@ -16,24 +16,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by luojing@wyunbank.com on 02/05/2017.
+ * Created by tc on 2017/5/5.
  */
 @Service
-public class Server {
-    public static final int SERVER_PORT = 8092;
+public class FlightServer {
+
+    public static final int SERVER_PORT = 8094;
 
     private final
-    MyService.Iface institutionClientServiceImpl;
+    MyService.Iface flightServiceImpl;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
-    public Server(MyService.Iface institutionClientServiceImpl) {
-        this.institutionClientServiceImpl = institutionClientServiceImpl;
+    public FlightServer(MyService.Iface flightServiceImpl) {
+        this.flightServiceImpl = flightServiceImpl;
     }
 
     public void startServer() {
         try {
-            TProcessor tprocessor = new MyService.Processor<MyService.Iface>(institutionClientServiceImpl);
+            TProcessor tprocessor = new MyService.Processor<MyService.Iface>(flightServiceImpl);
             // 非阻塞异步通讯模型（服务器端）
             TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(SERVER_PORT);
             // Selector这个类，是不是很熟悉。
@@ -45,6 +46,7 @@ public class Server {
             //二进制协议
             tArgs.protocolFactory(new TBinaryProtocol.Factory());
             TServer server = new TThreadedSelectorServer(tArgs);
+            System.out.println("fund server start....");
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,11 +55,7 @@ public class Server {
 
     @PostConstruct
     public void init() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                startServer();
-            }
-        });
+        executor.execute(() -> startServer());
     }
+
 }

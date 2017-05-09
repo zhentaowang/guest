@@ -1,3 +1,4 @@
+/*
 package com.zhiweicloud.guest.controller;
 
 import javax.ws.rs.*;
@@ -26,9 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
  * Created by zhengyiyin on 2017/2/23.
- */
+ *//*
+
 @Component
 @Path("/")
 @Api(value="客户信息", description = "",tags = "crmInfo")
@@ -38,7 +41,8 @@ public class PassengerController {
     @Autowired
     private PassengerService passengerService;
 
-    /**
+    */
+/**
      * crm列表
      * @param page
      * @param rows
@@ -46,7 +50,8 @@ public class PassengerController {
      * @param passengerQuery
      * @author E.in
      * @return
-     */
+     *//*
+
     @GET
     @Path(value="getPassengerList")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -76,12 +81,14 @@ public class PassengerController {
         return  JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm", SerializerFeature.WriteMapNullValue);
     }
 
-    /**
+    */
+/**
      * 客户详情信息，以及 服务信息
      * @param crmPassengerId
      * @author E.in
      * @return
-     */
+     *//*
+
     @GET
     @Path(value = "getPassengerById")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -116,7 +123,8 @@ public class PassengerController {
     }
 
 
-    /**
+    */
+/**
      * crm详情页 获取标签的信息
      * @param airportCode
      * @param crmPassengerId
@@ -125,7 +133,8 @@ public class PassengerController {
      * @param protocolTypes
      * @author E.in
      * @return
-     */
+     *//*
+
     @GET
     @Path(value = "getLabelInfo")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -162,3 +171,4 @@ public class PassengerController {
         return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm", SerializerFeature.WriteMapNullValue);
     }
 }
+*/
