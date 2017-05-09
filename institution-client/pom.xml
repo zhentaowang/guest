@@ -10,6 +10,7 @@
 
 
   <properties>
+    <encoding>UTF-8</encoding>
     <spring.version>4.2.5.RELEASE</spring.version>
     <jersey.version>2.23.1</jersey.version>
     <mysql.version>5.1.38</mysql.version>
@@ -30,7 +31,6 @@
     <util.version>1.3</util.version>
     <cors.filter.version>1.3.2</cors.filter.version>
     <swagger.version>1.5.9</swagger.version>
-    <springfox.version>2.2.2</springfox.version>
     <httpcore.version>4.5.2</httpcore.version>
     <libthrift.version>0.9.3</libthrift.version>
     <thrift.server.version>1.0-RELEASE</thrift.server.version>
@@ -245,7 +245,7 @@
                 <location>com.zhiweicloud.guest.controller.InstitutionClientController</location>
               </locations>
               <schemes>
-                <scheme>http</scheme>
+                http,https
               </schemes>
               <host>localhost:8080</host>
               <!--<basePath>/guest-employee</basePath>-->
@@ -265,7 +265,19 @@
                   <name>Apache 2.0</name>
                 </license>
               </info>
+
+              <!--输出文件的格式
+                The format types of the generated swagger spec. Valid values are json, yaml or both json,yaml. The json format is default. -->
+              <outputFormats>json</outputFormats>
+
+              <!-- 文件输出路径，
+                The directory of generated swagger.json file. If null, no swagger.json will be generated. -->
               <swaggerDirectory>WebContent</swaggerDirectory>
+
+              <!-- 输出的文件名，
+                The filename of generated filename.json file. If null, swagger.json will be generated. -->
+              <swaggerFileName>swagger</swaggerFileName>
+
             </apiSource>
           </apiSources>
         </configuration>
@@ -303,7 +315,7 @@
           <dependency>
             <groupId>com.project.common.util</groupId>
             <artifactId>MyCommentGeneraotr</artifactId>
-            <version>1.0.RELEASE</version>
+            <version>1.1.RELEASE</version>
           </dependency>
         </dependencies>
         <configuration>
