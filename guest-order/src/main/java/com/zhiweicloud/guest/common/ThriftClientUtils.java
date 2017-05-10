@@ -2,8 +2,6 @@ package com.zhiweicloud.guest.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wyun.thrift.server.MyService;
-
-import com.wyun.thrift.server.RESCODE;
 import com.wyun.thrift.server.Request;
 import com.wyun.thrift.server.Response;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -16,8 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Map;
-
-import static com.zhiweicloud.guest.server.Server.SERVER_PORT;
 
 /**
  * call service util class for thrift

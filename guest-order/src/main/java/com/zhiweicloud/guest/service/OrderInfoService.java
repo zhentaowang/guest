@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
@@ -64,6 +63,7 @@ public class OrderInfoService {
                     orderInfo.setServerUpdateTime(new Date());
                     orderInfo.setServerUpdateUserId(userId);
 //                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    params.put("operation", "view");
                     JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
@@ -73,6 +73,7 @@ public class OrderInfoService {
                     orderInfo.setUpdateTime(new Date());
                     orderInfo.setUpdateUser(userId);
 //                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                    params.put("operation", "view");
                     JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
@@ -83,6 +84,7 @@ public class OrderInfoService {
                 orderInfo.setServerUpdateTime(new Date());
                 orderInfo.setServerUpdateUserId(userId);
 //                JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                params.put("operation", "view");
                 JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
                 if (updateUserObject != null) {
                     JSONObject obj = updateUserObject.getJSONObject("data");
@@ -147,6 +149,7 @@ public class OrderInfoService {
                 orderInfo.setCreateTime(new Date());
                 orderInfo.setCreateUser(userId);
 //                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                params.put("operation", "view");
                 JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE,"localhost"));
                 if (createUserObject != null) {
                     JSONObject obj = createUserObject.getJSONObject("data");
@@ -157,6 +160,7 @@ public class OrderInfoService {
                 orderInfo.setServerCreateUserId(userId);
                 orderInfo.setServerUpdateUserId(userId);
 //                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
+                params.put("operation", "view");
                 JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE,"localhost"));
                 if (createUserObject != null) {
                     JSONObject obj = createUserObject.getJSONObject("data");
@@ -173,7 +177,8 @@ public class OrderInfoService {
     private void executeFlightOperate(Long flightId, OrderInfo orderInfo, Flight flight, Map<String, Object> params) throws UnsupportedEncodingException, URISyntaxException {
         flight.setFlightId(flightId);
         params.put("flight", JSON.toJSONString(flight));
-        ThriftClientUtils.invokeRemoteMethod(params,8094,"localhost");
+        params.put("operation", "updateFlightInfo");
+        ThriftClientUtils.invokeRemoteMethod(params,ThriftClientUtils.SERVER_PORT_FLIGHT_INFO,"localhost");
 //        HttpClientUtil.httpPostRequest("http://flight-info/flight-info/updateFlightInfo", headerMap, updateFlightMap);
         params.remove("flight");
         Boolean isCustom = flightMapper.selectIsCustomById(flightId);
@@ -186,6 +191,7 @@ public class OrderInfoService {
     private void customFlight(OrderInfo orderInfo,Flight flight,Map<String, Object> params) throws URISyntaxException {
         if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
             params.put("flightId", flight.getFlightId());
+            params.put("operation", "customFlight");
             ThriftClientUtils.invokeRemoteMethod(params,ThriftClientUtils.SERVER_PORT_FLIGHT_INFO,"localhost");
 //            Map<String, Object> flightMap = new HashMap<>();
 //            flightMap.put("flightId", flight.getFlightId());
@@ -260,6 +266,7 @@ public class OrderInfoService {
 
                 if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
 //                    JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
+                    params.put("operation", "get-service-box-by-type-and-protocol-product-id");
                     JSONObject jsonObject1 = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_PROTOCOL, "localhost"));
                     if (jsonObject1 != null) {
                         JSONArray jsonArray = jsonObject1.getJSONArray("data");
@@ -398,6 +405,7 @@ public class OrderInfoService {
         params.put("user_id", userId);
         params.put("client_id", airportCode);
         params.put("employeeId", userId);
+        params.put("operation", "view");
         JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE,"localhost"));
 
         if (createUserObject != null) {
