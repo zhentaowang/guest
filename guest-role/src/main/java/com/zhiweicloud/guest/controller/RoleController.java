@@ -25,6 +25,9 @@
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
@@ -63,6 +66,47 @@ public class RoleController {
     @Autowired
     private SysRoleService sysRoleService;
 
+    /**
+     * @author zhangpengfei for thrift
+     * @param request
+     * @return
+     */
+    @GET
+    @Path(value ="list")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "角色列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "参数错误"),
+            @ApiResponse(code = 405, message = "请求方式不对"),
+            @ApiResponse(code = 200, message = "请求成功",response = SysRole.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "角色名称", dataType = "String", required = true, paramType = "query")
+    })
+    public String list(JSONObject request) {
+        try {
+            SysRole SysRoleParam = new SysRole();
+            String name = request.getString("name");
+            SysRoleParam.setName(name);
+            String airportCode = request.getString("client_id");
+            SysRoleParam.setAirportCode(airportCode);
+            int page = 1;
+            if(request.containsKey("page")) {
+                page = request.getInteger("page");
+
+            }
+
+            int rows = 10;
+            if (request.containsKey("rows")) {
+                rows = request.getInteger("rows");
+            }
+            LZResult<PaginationResult<SysRole>> result  = sysRoleService.getAll(SysRoleParam,page,rows);
+            return JSON.toJSONString(result);
+        }catch(Exception e){
+           return errorMsg(e);
+        }
+    }
+
     @GET
     @Path(value ="list")
     @Produces("application/json;charset=utf8")
@@ -94,6 +138,62 @@ public class RoleController {
             result.setData(null);
             return  JSON.toJSONString(result);
         }
+    }
+
+    /**
+     * @author zhangpengfei for thrift
+     * 角色管理 - 新增or更新
+     * 需要判断name是否重复
+     * @return
+     */
+    @POST
+    @Path(value="saveOrUpdate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value="角色管理 - 新增/修改", notes ="返回成功还是失败",httpMethod ="POST", produces="application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "SysRole", value = "角色Object", dataType = "SysRole", required = true, paramType = "query")
+    })
+    public String save(JSONObject request){
+        LZResult<String> result = new LZResult<>();
+        try{
+            String airportCode = request.getString("client_id");
+            SysRole sysRole = null;
+            JSONArray jsonArray = JSON.parseArray(request.getString("data"));
+            sysRole = JSON.toJavaObject(jsonArray.getJSONObject(0), SysRole.class);
+            if (sysRole == null || sysRole.getName() == null || sysRole.getName().equals("")) {
+                result.setMsg(LZStatus.DATA_EMPTY.display());
+                result.setStatus(LZStatus.DATA_EMPTY.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
+            }else{
+                sysRole.setAirportCode(airportCode);
+                //判断是否重名
+                int exists = sysRoleService.judgeRepeat(sysRole);
+//                时区问题 -- 暂时用数据库自动生成的时间
+//                if(sysRole.getRoleId() != null){
+//                    sysRole.setUpdateUser(userId);
+//                    sysRole.setUpdateTime(new Date());
+//                }else{
+//                    sysRole.setCreateUser(userId);
+//                    sysRole.setCreateTime(new Date());
+//                }
+                if (exists > 0) {
+                    result.setMsg(LZStatus.REPNAM.display());
+                    result.setStatus(LZStatus.REPNAM.value());
+                    result.setData(sysRole.getName());
+                    return JSON.toJSONString(result);
+                }
+                sysRoleService.saveOrUpdate(sysRole);
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(null);
+                return JSON.toJSONString(result);
+            }
+        } catch (Exception e) {
+           return this.errorMsg(e);
+        }
+
     }
 
     /**
@@ -158,6 +258,34 @@ public class RoleController {
 
     /**
      * 角色管理 - 根据id查询员工
+     * @author zhangpengfei for thrift
+     * @param
+     * @return
+     */
+    @GET
+    @Path(value = "view")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "角色管理- 根据id查询员工 ", notes = "返回合同详情", httpMethod = "GET", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roleId", value = "角色id", dataType = "Long", required = true, paramType = "query")
+    })
+    public String view(JSONObject request) {
+        LZResult<SysRole> result = new LZResult<>();
+        try {
+            Long roleId =  request.getLong("roleId");
+            String airportCode = request.getString("client_id");
+            SysRole sysRole = sysRoleService.getById(roleId,airportCode);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(sysRole);
+            return JSON.toJSONString(result);
+        }catch (Exception e){
+           return this.errorMsg(e);
+        }
+    }
+
+    /**
+     * 角色管理 - 根据id查询员工
      * @param roleId airportCode
      * @return
      */
@@ -183,6 +311,45 @@ public class RoleController {
             result.setData(null);
         }
         return JSON.toJSONString(result);
+    }
+
+    /**
+     * author zhangpengfei for thrift
+     * 角色管理 - 删除
+     * {
+     "data": [
+     6,7,8
+     ]
+     }
+     * @return
+     */
+    @POST
+    @Path(value = "deleteRoles")
+    @Produces("application/json;charset=utf8")
+    @ApiOperation(value = "角色管理 - 删除", notes = "返回响应结果", httpMethod = "POST", produces = "application/json")
+    @ApiImplicitParam(name = "airportCode", value = "机场编号", dataType = "String", required = true, paramType = "query")
+    public String deleteRoles(JSONObject request) {
+        LZResult<String> result = new LZResult<>();
+        try {
+            JSONArray jsonarray = JSON.parseArray(request.getString("data"));
+            List<Long> ids = JSON.parseArray(jsonarray.toJSONString(), Long.class);
+            Long userId = request.getLong("user_id");
+            String airportCode = request.getString("client_id");
+            String roleName = sysRoleService.deleteById(ids, userId,airportCode);
+            if(roleName != null && roleName.length() > 0){
+                roleName = roleName + " 角色已经被用户引用了，不能删除！";
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(roleName);
+            }else{
+                result.setMsg(LZStatus.SUCCESS.display());
+                result.setStatus(LZStatus.SUCCESS.value());
+                result.setData(roleName);
+            }
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            return this.errorMsg(e);
+        }
     }
 
     /**
@@ -227,7 +394,19 @@ public class RoleController {
     }
 
 
-
+    /**
+     * 统一处理错误信息
+     * @param e
+     * @return
+     */
+    private String errorMsg(Exception e){
+        e.printStackTrace();
+        LZResult result = new LZResult<>();
+        result.setMsg(LZStatus.ERROR.display());
+        result.setStatus(LZStatus.ERROR.value());
+        result.setData(null);
+        return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+    }
 
 
 }
