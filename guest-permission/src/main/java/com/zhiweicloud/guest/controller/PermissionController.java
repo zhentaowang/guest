@@ -238,7 +238,6 @@ public class PermissionController {
 
     /**
      * 权限详情 - 根据permissionId查询
-     *
      * @param permissionId 权限id
      * @return 权限详情
      */
@@ -263,7 +262,6 @@ public class PermissionController {
 
     /**
      * 获取用户权限 - 按钮权限验证
-     *
      * @param params json格式的参数
      * @return 权限验证结果
      */

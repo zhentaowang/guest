@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -32,6 +34,18 @@ public class RolePermission extends BaseEntity {
 
     @ApiModelProperty(value="权限id",name="permissionId")
     private Long permissionId;
+
+    @Transient
+    @ApiModelProperty(value="角色Id字符串",name="roleIds")
+    private String roleIds;
+
+    public String getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(String roleIds) {
+        this.roleIds = roleIds;
+    }
 
     /**
      * 主键自增id
