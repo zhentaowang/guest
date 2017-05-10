@@ -77,7 +77,7 @@ public class FlightInfoController {
         try {
             return flightService.getFlightByDragon(fnum, date, airportCode, userId);
         } catch (Exception e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
             return "{ \"Data\": [],\"Info\": \"" + e.getMessage() + "\",\"DPtime\": ,\"Vtime\": ,\"State\": -1}";
         }
     }

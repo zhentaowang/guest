@@ -208,6 +208,7 @@ public class FlightUtils {
             String sign = request.getString("sign");
             sign = URLDecoder.decode(sign, "UTF-8");
             FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
+            log.info("sign: " + sign + "data: " + data);
             String signPrivate = DragonSignature.rsaSign("data=" + data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
             if (sign.equals(signPrivate)) {
                 String flightState = "";
@@ -483,10 +484,7 @@ public class FlightUtils {
             if (flightId == null || "".equals(flightId)) {
                 return JSON.toJSONString(LXResult.build(LZStatus.BAD_REQUEST.value(), LZStatus.BAD_REQUEST.display()));
             }
-            Map<String, Object> params = new HashMap<>();
-            params.put("flightId", flightId);
-            params.put("airportCode", airportCode);
-            updateFlight(flightMapper.selectByPrimaryKey(params),flight);
+            updateFlight(queryFlightById(flightId,airportCode),flight);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
             log.debug(e.getMessage());
@@ -500,7 +498,7 @@ public class FlightUtils {
      * @param flightNew
      */
     public void updateFlight(Flight flightOld,Flight flightNew){
-        // a json string about local and incoming flight object comparison
+        // a json string about flightOld and flightNew object comparison
         String updateMessage;
         try {
             updateMessage = BeanCompareUtils.compareTwoBean(flightOld, flightNew);
@@ -517,6 +515,19 @@ public class FlightUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * query flight by flightId
+     * @param id
+     * @param airportCode
+     * @return
+     */
+    public Flight queryFlightById(Long id, String airportCode) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("flightId", id);
+        params.put("airportCode", airportCode);
+        return flightMapper.selectByPrimaryKey(params);
     }
 
     /**

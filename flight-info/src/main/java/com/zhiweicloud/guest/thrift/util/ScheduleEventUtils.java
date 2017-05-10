@@ -45,27 +45,34 @@ public class ScheduleEventUtils {
     private FlightMapper flightMapper;
 
     @Autowired
-    private FlightUtils flightUtil;
+    private FlightUtils flightUtils;
 
     /**
-     * 调度管理 航班更新
+     * 调度管理 - 航班更新
+     * 实际上和航班/订单中 航班更新 走的是同一个方法(重复方法)，因为页面调用不同的方法，固暂改后端
      * @param request
      * @return
      */
     public String flightUpdate(JSONObject request) {
+        /*
+        get request params
+         */
         String airportCode = request.getString("client_id");
         Long userId = request.getLong("user_id");
+        JSONArray param = request.getJSONArray("data");
+        if (log.isDebugEnabled()) {
+            log.debug("Head Params airportCode: " + airportCode + "userId: " + userId);
+        }
+        /*
+        do update operator
+         */
         try {
-            JSONArray param = request.getJSONArray("data");
             for (int i = 0; i < param.size(); i++) {
                 Flight flight = param.getJSONObject(i).toJavaObject(Flight.class);
                 flight.setAirportCode(airportCode);
                 flight.setUpdateUser(userId);
                 Long flightId = flight.getFlightId();
-                Map<String, Object> params = new HashMap<>();
-                params.put("flightId", flightId);
-                params.put("airportCode", airportCode);
-                flightUtil.updateFlight(flightMapper.selectByPrimaryKey(params),flight);
+                flightUtils.updateFlight(flightUtils.queryFlightById(flightId,airportCode),flight);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
@@ -81,21 +88,26 @@ public class ScheduleEventUtils {
      * @test
      */
     public String getFlightList(JSONObject request){
+        /*
+        get request params
+         */
         String airportCode = request.getString("client_id");
         FlightInfoQuery flightInfoQuery = request.toJavaObject(FlightInfoQuery.class);
-//        FlightInfoQuery flightInfoQuery = JSONObject.parseObject(request.toJSONString(),FlightInfoQuery.class);
         flightInfoQuery.setAirportCode(airportCode);
+        /*
+        get flight list by page
+         */
         BasePagination<FlightInfoQuery> queryCondition;
         List<Flight> flightList;
         PaginationResult<Flight> eqr;
         int count = flightMapper.getFlightListCountByOrderStatus(flightInfoQuery);
         queryCondition = new BasePagination<>(flightInfoQuery, new PageModel(flightInfoQuery.getPage(), flightInfoQuery.getRows()));
         flightList = flightMapper.getFlightListByOrderStatus(queryCondition);
+        /*
+        set flight scheduleEventName when serverComplete is 1
+         */
         for(int i = 0; i < flightList.size(); i++){
-            Map<String,Object> params = new HashMap<>();
-            params.put("flightId",flightList.get(i).getFlightId());
-            params.put("airportCode",flightInfoQuery.getAirportCode());
-            Flight flight = flightMapper.selectByPrimaryKey(params);
+            Flight flight = flightUtils.queryFlightById(flightList.get(i).getFlightId(), flightInfoQuery.getAirportCode());
             if(flight.getServerComplete() == 1){
                 flightList.get(i).setScheduleTime(flight.getServerCompleteTime());
                 flightList.get(i).setScheduleEventName("服务完成");
@@ -106,18 +118,20 @@ public class ScheduleEventUtils {
     }
 
     /**
+     *
      * 航班管理 - 根据flightId查询航班详情
+     * @position 订单管理 - 调度管理 - 详细信息 - 航班信息
      * @param request
      * @return
      * @test
      */
     public String getFlightView(JSONObject request){
+        /*
+        get request params
+         */
         String airportCode = request.getString("client_id");
         Long flightId = request.getLong("flightId");
-        Map<String,Object> param = new HashMap<>();
-        param.put("airportCode",airportCode);
-        param.put("flightId",flightId);
-        return JSON.toJSONStringWithDateFormat(new LZResult<>( flightMapper.selectByPrimaryKey(param)), "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+        return JSON.toJSONStringWithDateFormat(new LZResult<>( flightUtils.queryFlightById(flightId,airportCode)), "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
     }
 
     /**
@@ -127,13 +141,12 @@ public class ScheduleEventUtils {
      * @test
      */
     public String scheduleEventView(JSONObject request){
+        /*
+        get request params
+         */
         Long scheduleEventId = request.getLong("scheduleEventId");
         String airportCode = request.getString("client_id");
-        Map<String,Object> param = new HashMap<>();
-        param.put("airportCode",airportCode);
-        param.put("scheduleEventId",scheduleEventId);
-        ScheduleEvent scheduleEvent = scheduleEventMapper.selectByPrimaryKey(param);
-        return JSON.toJSONString(new LZResult<>(scheduleEvent));
+        return JSON.toJSONString(new LZResult<>(queryScheduleEventById(scheduleEventId,airportCode)));
     }
 
     /**
@@ -143,11 +156,17 @@ public class ScheduleEventUtils {
      * @test
      */
     public String scheduleEventSaveOrUpdate(JSONObject request){
+        /*
+        get request params
+         */
         String airportCode = request.getString("client_id");
         Long userId = request.getLong("user_id");
         JSONArray data = request.getJSONArray("data");
         ScheduleEvent scheduleEvent = data.getJSONObject(0).toJavaObject(ScheduleEvent.class);
         scheduleEvent.setAirportCode(airportCode);
+        /*
+        method operator
+         */
         if (scheduleEvent.getScheduleEventId() != null) {
             scheduleEvent.setUpdateUser(userId);
             scheduleEventMapper.updateByPrimaryKeySelective(scheduleEvent);
@@ -195,7 +214,6 @@ public class ScheduleEventUtils {
     public String getScheduleEventByFlightId(JSONObject request){
         Long scheduleEventId = request.getLong("scheduleEventId");
         String airportCode = request.getString("client_id");
-        Long userId = request.getLong("user_id");
         Long flightId = request.getLong("flightId");
         Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
@@ -221,7 +239,6 @@ public class ScheduleEventUtils {
      */
     public String getScheduleEventDropDownBox(JSONObject request){
         String airportCode = request.getString("client_id");
-        Long userId = request.getLong("user_id");
         Long flightId = request.getLong("flightId");
         Long isInOrOut = request.getLong("isInOrOut");
         String scheduleType = request.getString("scheduleType");
@@ -242,7 +259,6 @@ public class ScheduleEventUtils {
      */
     public String scheduleEventDelete(JSONObject request){
         String airportCode = request.getString("client_id");
-        Long userId = request.getLong("user_id");
         JSONArray data = request.getJSONArray("data");
         List<Long> ids = JSON.parseArray(data.toJSONString(), Long.class);
             for(int i = 0; i< ids.size();i++){
@@ -260,6 +276,19 @@ public class ScheduleEventUtils {
                 scheduleEventMapper.updateByPrimaryKeySelective(scheduleEvent);
             }
             return JSON.toJSONString(LXResult.success());
+    }
+
+    /**
+     * 根据调度时间ID查询调度事件对象
+     * @param scheduleEventId
+     * @param airportCode
+     * @return
+     */
+    public ScheduleEvent queryScheduleEventById(Long scheduleEventId,String airportCode){
+        Map<String,Object> param = new HashMap<>();
+        param.put("airportCode",airportCode);
+        param.put("scheduleEventId",scheduleEventId);
+        return scheduleEventMapper.selectByPrimaryKey(param);
     }
 
 }
