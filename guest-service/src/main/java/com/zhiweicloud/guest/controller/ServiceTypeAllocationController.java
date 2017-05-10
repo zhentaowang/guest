@@ -49,7 +49,7 @@ public class ServiceTypeAllocationController {
             @ApiImplicitParam(name = "page", value = "起始页", dataType = "Integer", defaultValue = "1", required = true, paramType = "query"),
             @ApiImplicitParam(name = "rows", value = "每页显示数目", dataType = "Integer", defaultValue = "10", required = true, paramType = "query")
             })
-    public LZResult<PaginationResult<ServiceTypeAllocation>> list(
+    public LZResult<PaginationResult<ServiceTypeAllocation>> serviceTypeAllocationList(
             @QueryParam(value = "page") Integer page,
             @QueryParam(value = "rows") Integer rows,
             @HeaderParam("client-id") String airportCode,
@@ -81,20 +81,20 @@ public class ServiceTypeAllocationController {
     }
 
     /**
-     * 服务类型配置 - 服务大类下拉框 数据
-     * @return 服务大类列表
-     */
-    @GET
-    @Path("service-category-dropdown-list")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "服务类型配置 - 服务大类下拉框 数据 ", notes = "返回服务大类列表", httpMethod = "GET", produces = "application/json")
-    public LZResult<List<Dropdownlist>> getServiceCategoryDropdownList(
-            @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId) {
-        Map<String,Object> param = new HashMap<>();
-        param.put("airportCode",airportCode);
-        List<Dropdownlist> serviceCategoryList = serviceTypeAllocationService.getServiceCategoryDropdownList(param);
-        return new LZResult<>(serviceCategoryList);
+         * 服务类型配置 - 服务大类下拉框 数据
+         * @return 服务大类列表
+         */
+        @GET
+        @Path("service-category-dropdown-list")
+        @Produces("application/json;charset=utf8")
+        @ApiOperation(value = "服务类型配置 - 服务大类下拉框 数据 ", notes = "返回服务大类列表", httpMethod = "GET", produces = "application/json")
+        public LZResult<List<Dropdownlist>> getServiceCategoryDropdownList(
+                @HeaderParam("client-id") String airportCode,
+                @HeaderParam("user-id") Long userId) {
+            Map<String,Object> param = new HashMap<>();
+            param.put("airportCode",airportCode);
+            List<Dropdownlist> serviceCategoryList = serviceTypeAllocationService.getServiceCategoryDropdownList(param);
+            return new LZResult<>(serviceCategoryList);
     }
 
     /**
