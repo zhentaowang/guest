@@ -1,10 +1,9 @@
 package com.zhiweicloud.guest;
 
-import com.zhiweicloud.guest.common.Dictionary;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 /**
- * Created by tc on 2017/5/5.
+ * Created by luojing@wyunbank.com on 02/05/2017.
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -14,7 +13,7 @@ public class Main {
         context.load( "classpath:spring.xml", "classpath:mybatis.xml");
         context.refresh();
         while (true) {
-            System.out.println(Dictionary.START_MESSAGE);
+            System.out.println("start");
             Thread.sleep(1000000);
         }
     }

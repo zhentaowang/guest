@@ -1,4 +1,4 @@
-package com.zhiweicloud.guest.thrift.server;
+package com.zhiweicloud.guest.server;
 
 import com.wyun.thrift.server.MyService;
 import org.apache.thrift.TProcessor;
@@ -16,29 +16,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 航班模块 thrift server
- * Copyright(C) 2017 杭州风数信息技术有限公司
- *
- * 2017/5/9 20:25
- * @author tiecheng
+ * Created by luojing@wyunbank.com on 02/05/2017.
  */
 @Service
-public class FlightServer {
+public class Server {
+    public static final int SERVER_PORT = 8098;
 
-    public static final int SERVER_PORT = 8094;
-
-    private final MyService.Iface flightServiceImpl;
-
+    private final
+    MyService.Iface institutionClientServiceImpl;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
-    public FlightServer(MyService.Iface flightServiceImpl) {
-        this.flightServiceImpl = flightServiceImpl;
+    public Server(MyService.Iface institutionClientServiceImpl) {
+        this.institutionClientServiceImpl = institutionClientServiceImpl;
     }
 
     public void startServer() {
         try {
-            TProcessor tprocessor = new MyService.Processor<MyService.Iface>(flightServiceImpl);
+            TProcessor tprocessor = new MyService.Processor<MyService.Iface>(institutionClientServiceImpl);
             // 非阻塞异步通讯模型（服务器端）
             TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(SERVER_PORT);
             // Selector这个类，是不是很熟悉。
@@ -59,7 +54,11 @@ public class FlightServer {
 
     @PostConstruct
     public void init() {
-        executor.execute(() -> startServer());
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                startServer();
+            }
+        });
     }
-
 }

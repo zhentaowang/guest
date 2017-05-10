@@ -15,7 +15,9 @@ public enum PushStatus {
     ERROR(-1, "操作失败"),
     EMPTY(-2, "推送航班信息为空"),
     SUCCESS(1, "接收并处理成功"),
-    REPEAT(2, "接收并处理成功");
+    REPEAT(2, "接收并处理成功"),
+    INVALID_FAIL(-3,"校验失败");
+
 
     private int state;
     private String info;
