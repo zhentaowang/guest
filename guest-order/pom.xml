@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.zhiweicloud</groupId>
   <artifactId>guest-order</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <version>1.0</version>
   <name>Guest Order</name>
   <url>http://maven.apache.org</url>
