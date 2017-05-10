@@ -4,7 +4,7 @@
     <groupId>com.zhiweicloud</groupId>
     <artifactId>guest-employee</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>Guest Employee</name>
     <url>http://maven.apache.org</url>
 
