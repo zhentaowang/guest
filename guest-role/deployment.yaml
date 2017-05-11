@@ -11,10 +11,10 @@ spec:
     spec:
       containers:
         - name: guest-role
-          image: java:1.8
-          command: ["java -jar guest-role.jar"]
+          image: java:8
+          command: ["java", "-jar", "java/guest-role.jar"]
           volumeMounts:
-          - mountPath: "/usr/local/airportjar"
+          - mountPath: "/java"
             name: code
             subPath: guest/guest-role
           - mountPath: "/etc/localtime"
