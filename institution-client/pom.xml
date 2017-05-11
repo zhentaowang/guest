@@ -245,7 +245,7 @@
                 <location>com.zhiweicloud.guest.controller.InstitutionClientController</location>
               </locations>
               <schemes>
-                http,https
+                <scheme>http</scheme>
               </schemes>
               <host>localhost:8080</host>
               <!--<basePath>/guest-employee</basePath>-->

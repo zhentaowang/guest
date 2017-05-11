@@ -484,6 +484,9 @@ public class FlightUtils {
             if (flightId == null || "".equals(flightId)) {
                 return JSON.toJSONString(LXResult.build(LZStatus.BAD_REQUEST.value(), LZStatus.BAD_REQUEST.display()));
             }
+            Map<String, Object> params = new HashMap<>();
+            params.put("flightId", flightId);
+            params.put("airportCode", airportCode);
             updateFlight(queryFlightById(flightId,airportCode),flight);
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {

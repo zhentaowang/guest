@@ -54,11 +54,6 @@ public class Server {
 
     @PostConstruct
     public void init() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                startServer();
-            }
-        });
+        executor.execute(() -> startServer());
     }
 }

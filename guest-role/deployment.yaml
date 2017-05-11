@@ -11,9 +11,10 @@ spec:
     spec:
       containers:
         - name: guest-role
-          image: tomcat:9.0
+          image: java:1.8
+          command: ["java -jar guest-role.jar"]
           volumeMounts:
-          - mountPath: "/usr/local/tomcat/webapps"
+          - mountPath: "/usr/local/airportjar"
             name: code
             subPath: guest/guest-role
           - mountPath: "/etc/localtime"
