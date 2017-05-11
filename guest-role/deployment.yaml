@@ -11,7 +11,8 @@ spec:
     spec:
       containers:
         - name: guest-role
-          image: tomcat:9.0
+          image: java:1.8
+          command: ["java -jar guest-role-1.0-jar-with-dependencies.jar"]
           volumeMounts:
           - mountPath: "/usr/local/tomcat/webapps"
             name: code
