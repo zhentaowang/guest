@@ -14,7 +14,7 @@ spec:
           image: java:8
           command: ["java", "-jar", "java/guest-order.jar"]
           volumeMounts:
-           - mountPath: "/java"
+          - mountPath: "/java"
             name: code
             subPath: guest/guest-order
           - mountPath: "/etc/localtime"
