@@ -23,4 +23,9 @@ public class DateUtils {
         return parse;
     }
 
+    public static String dateToString(Date date,String format) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(date);
+    }
+
 }

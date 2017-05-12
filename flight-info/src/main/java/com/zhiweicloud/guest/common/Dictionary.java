@@ -76,4 +76,9 @@ public final class Dictionary {
      */
     public static final String DRAGON_URL_GETFLIGHTINFO ="http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg";
 
+    /**
+     * get flight info dynamic url by dragon
+     */
+    public static final String DRAGON_URL_GETFLIGHTBYNO_LG = "http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightByNo_Lg";
+
 }

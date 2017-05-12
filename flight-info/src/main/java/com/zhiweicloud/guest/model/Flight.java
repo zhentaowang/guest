@@ -6,6 +6,7 @@
 */
 package com.zhiweicloud.guest.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zhiweicloud.guest.common.DisplayName;
 import com.zhiweicloud.guest.common.DisplayValue;
@@ -35,6 +36,7 @@ public class Flight extends BaseEntity{
 
     @ApiModelProperty(value="航班日期",name="flightDate")
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @JSONField(format = "yyyy-MM-dd")
     private Date flightDate;
 
     @ApiModelProperty(value="航班号",name="flightNo")
@@ -79,26 +81,32 @@ public class Flight extends BaseEntity{
 
     @ApiModelProperty(value="计划起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimePlanDate")
     @DisplayName(name = "计划起飞时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date flightDeptimePlanDate;
 
     @ApiModelProperty(value="计划到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimePlanDate")
     @DisplayName(name = "计划到达时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date flightArrtimePlanDate;
 
     @ApiModelProperty(value="预计起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimeReadyDate")
     @DisplayName(name = "预计起飞时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date flightDeptimeReadyDate;
 
     @ApiModelProperty(value="预计到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimeReadyDate")
     @DisplayName(name = "预计到达时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date flightArrtimeReadyDate;
 
     @ApiModelProperty(value="实际起飞时间（yyyy-mm-dd hh-mm-ss格式）",name="flightDeptimeDate")
     @DisplayName(name = "实际起飞时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date flightDeptimeDate;
 
     @ApiModelProperty(value="实际到达时间（yyyy-mm-dd hh-mm-ss格式）",name="flightArrtimeDate")
     @DisplayName(name = "实际到达时间")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date flightArrtimeDate;
 
     @ApiModelProperty(value="是否 经停 （0:不经停;1:经停 ）",name="stopFlag")

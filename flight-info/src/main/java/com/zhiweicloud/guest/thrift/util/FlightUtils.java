@@ -10,6 +10,7 @@ import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.*;
+import com.zhiweicloud.guest.flight.center.FlightCenterService;
 import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
 import org.apache.commons.beanutils.BeanUtils;
@@ -53,64 +54,24 @@ public class FlightUtils {
     @Autowired
     private FlightScheduleEventMapper flightScheduleEventMapper;
 
+    @Autowired
+    private FlightCenterService flightCenterService;
+
     /**
-     * 从龙腾得到航班信息
+     * 获取航班信息 -- 外部接口
      * @param request
      * @return
      * @test
      */
     public String flightInfo(JSONObject request) {
         try {
-            /*
-            get request params
-             */
             String fnum = request.getString("fnum");
             String date = request.getString("date");
-            String airportCode = request.getString("client_id");
-            Long userId = request.getLong("user_id");
-            /*
-            get sign from dragon
-             */
-            Map<String, String> params = new HashMap<>();
-            params.put("date", date);
-            params.put("fnum", fnum);
-            params.put("lg", Dictionary.LG);
-            params.put("sysCode", Dictionary.SYSCODE);
-            String sign = DragonSignature.rsaSign(params, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
-            params.put("sign", sign);
-            /*
-            get flight info from dragon interface by http request
-             */
-            Map<String, Object> p = new HashMap<>();
-            p.put("date", date);
-            p.put("fnum", fnum);
-            p.put("lg", Dictionary.LG);
-            p.put("sysCode", Dictionary.SYSCODE);
-            p.put("sign", sign);
-            String ret = HttpClientUtil.httpPostRequest(Dictionary.DRAGON_URL_GETFLIGHTINFO, p);
-            /*
-            create operator log
-             */
-            ExchangeDragon exchangeDragon = new ExchangeDragon();
-            exchangeDragon.setFlightDate(new SimpleDateFormat("yyyy-MM-dd").parse(date));
-            exchangeDragon.setFlightNo(fnum);
-            exchangeDragon.setExchangeType((short) 1); // 1 表示查询
-            exchangeDragon.setCreateUser(userId);
-            Integer crState = null;
-            if (ret != null) {
-                JSONObject crObject = JSON.parseObject(ret);
-                crState = crObject.getInteger("State");
-            }
-            exchangeDragon.setInvokeResult(Short.valueOf(String.valueOf(crState)));
-            exchangeDragon.setAirportCode(airportCode);
-            exchangeDragonMapper.insert(exchangeDragon);
-            if (log.isDebugEnabled()) {
-                log.debug(new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8));
-            }
-            return new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
+            System.out.println(flightCenterService.flightInfo(fnum, date));
+            return flightCenterService.flightInfo(fnum, date);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return "{ \"Data\": [],\"Info\": \"" + e.getMessage() + "\",\"DPtime\": ,\"Vtime\": ,\"State\": -1}";
+            return "{ \"data\": [],\"info\": \"" + e.getMessage() + "\",\"state\": -1}";
         }
     }
 
