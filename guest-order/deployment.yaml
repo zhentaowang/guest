@@ -11,9 +11,10 @@ spec:
     spec:
       containers:
         - name: guest-order
-          image: tomcat:9.0
+          image: java:8
+          command: ["java", "-jar", "java/guest-order.jar"]
           volumeMounts:
-          - mountPath: "/usr/local/tomcat/webapps"
+           - mountPath: "/java"
             name: code
             subPath: guest/guest-order
           - mountPath: "/etc/localtime"
