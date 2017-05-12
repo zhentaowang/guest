@@ -366,10 +366,6 @@ public class BusinessService implements IBusinessService {
      * @para userId 用户id
      * @return 显示服务厅名以及可服务人数
      */
-    @GET
-    @Path("getServNameAndPositionNum")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "休息室/服务厅管理 - 服务查询", notes = "显示服务厅名以及可服务人数", httpMethod = "GET", produces = "application/json")
     public String getServNameAndPositionNum(JSONObject request) {
 
         LZResult<List<Serv>> result = new LZResult<>();

@@ -11,9 +11,10 @@ spec:
     spec:
       containers:
         - name: guest-product
-          image: tomcat:9.0
+          image: java:8
+          command: ["java", "-jar", "java/guest-product.jar"]
           volumeMounts:
-          - mountPath: "/usr/local/tomcat/webapps"
+          - mountPath: "/java"
             name: code
             subPath: guest/guest-product
           - mountPath: "/etc/localtime"

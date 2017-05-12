@@ -197,7 +197,28 @@
 
     <build>
         <plugins>
-            <!-- Deploy -->
+            <!-- 项目打包成jar 包含第三方依赖 开始-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -213,13 +234,13 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <warSourceDirectory>WebContent</warSourceDirectory>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
+            <!-- 项目打包成jar 包含第三方依赖 结束-->
             <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
