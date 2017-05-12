@@ -11,9 +11,10 @@ spec:
     spec:
       containers:
         - name: guest-permission
-          image: tomcat:9.0
+          image: java:8
+          command: ["java","-jar","java/guest-permission.jar"]
           volumeMounts:
-          - mountPath: "/usr/local/tomcat/webapps"
+          - mountPath: "/java"
             name: code
             subPath: guest/guest-permission
           - mountPath: "/etc/localtime"
