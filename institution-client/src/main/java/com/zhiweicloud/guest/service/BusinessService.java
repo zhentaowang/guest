@@ -31,7 +31,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.HttpClientUtil;
+import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -41,7 +41,6 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.*;
 import java.util.*;
 
 /**
@@ -226,10 +225,11 @@ public class BusinessService implements IBusinessService {
             Map<String, Object> headerMap = new HashMap<>();
             headerMap.put("user_id", userId);
             headerMap.put("client_id", airportCode);
+            headerMap.put("operation", "protocolList");
             for (Long id : ids) {
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("institutionClientId", id);
-                String s = HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/protocolList", headerMap, paramMap);
+                headerMap.put("institutionClientId", id);
+                String s = ThriftClientUtils.invokeRemoteMethodCallBack(headerMap, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost");
+
                 JSONObject protocolList = JSON.parseObject(s);
                 if (protocolList != null) {
                     JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
