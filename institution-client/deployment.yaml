@@ -14,7 +14,7 @@ spec:
           image: java:8
           command: ["java", "-jar", "java/institution-client.jar"]
           volumeMounts:
-           - mountPath: "/java"
+          - mountPath: "/java"
             name: code
             subPath: guest/institution-client
           - mountPath: "/etc/localtime"
