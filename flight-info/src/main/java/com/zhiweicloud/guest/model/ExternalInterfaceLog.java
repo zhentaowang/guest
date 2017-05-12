@@ -13,14 +13,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.util.Date;
 
 /**
- * ExchangeDragon.java
- * 龙腾接口对接操作信息表
+ * 对外接口日志类
  * Copyright(C) 2016 杭州量子金融信息服务有限公司
  * https://www.zhiweicloud.com
  * 2017-03-28 13:53:00 Created By tc
 */
-@ApiModel(value="ExchangeDragon",description="exchange_dragon")
-public class ExchangeDragon extends BaseEntity {
+@ApiModel(value="ExternalInterfaceLog",description="external_interface_log")
+public class ExternalInterfaceLog extends BaseEntity {
 
     /**
      表名
