@@ -1,7 +1,9 @@
+package com.zhiweicloud.guest;
+
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 /**
- * Created by zhengyiyin on 2017/5/4.
+ * Created by zhengyiyin on 2017/5/12.
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
