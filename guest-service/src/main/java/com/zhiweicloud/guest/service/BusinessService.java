@@ -33,8 +33,8 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.ListUtil;
+import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.ProductServiceTypeMapper;
 import com.zhiweicloud.guest.mapper.ServDefaultMapper;
 import com.zhiweicloud.guest.mapper.ServMapper;
@@ -42,12 +42,10 @@ import com.zhiweicloud.guest.mapper.ServiceTypeAllocationMapper;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.ws.rs.*;
 import java.util.*;
 
 /**
@@ -63,7 +61,6 @@ public class BusinessService implements IBusinessService {
     private final ProductServiceTypeMapper productServiceTypeMapper;
     private final ServDefaultMapper servDefaultMapper;
     private final ServiceTypeAllocationMapper serviceTypeAllocationMapper;
-
     @Autowired
     public BusinessService(ServMapper servMapper,ProductServiceTypeMapper productServiceTypeMapper,ServDefaultMapper servDefaultMapper,ServiceTypeAllocationMapper serviceTypeAllocationMapper) {
         this.servMapper = servMapper;
@@ -400,15 +397,17 @@ public class BusinessService implements IBusinessService {
             }
 
             Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
+            JSONObject paramMap = new JSONObject();
             headerMap.put("user-id", userId);
             headerMap.put("client-id", airportCode);
             for(Serv serv : servList){
                 paramMap.put("servId", serv.getServId());
+                paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
-                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServlId", headerMap, paramMap));
-                //解析协议产品服务对象,统计人数
-                int servNum = Integer.valueOf(orderServiceJSONObject.get("data").toString());
+                JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
+                int servNum = Integer.valueOf(jsonObject.get("data").toString());
+//                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServlId", headerMap, paramMap));
+//                //解析协议产品服务对象,统计人数
                 serv.setServerNum(servNum);
             }
 
