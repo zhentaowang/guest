@@ -27,33 +27,19 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.common.ProtocolTypeEnum;
-import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.common.*;
 import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import java.util.*;
 
 /**
@@ -551,7 +537,9 @@ public class BusinessService implements IBusinessService {
             for (int i = 0; i < ids.size(); i++) {
                 //调用order应用，根据协议id 判断有无被引用
                 paramMap.put("protocolId", ids.get(i));
-                JSONObject orderJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getOrderCountByProtocolId", headerMap, paramMap));
+                paramMap.put("operation", "getOrderCountByProtocolId");
+                JSONObject orderJSONObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
+//                JSONObject orderJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getOrderCountByProtocolId", headerMap, paramMap));
                 //解析协议产品服务对象
                 int orderCount = Integer.valueOf(orderJSONObject.get("data").toString());
                 if(orderCount > 0){
@@ -1049,7 +1037,7 @@ public class BusinessService implements IBusinessService {
 
         LZResult<List<Map>> result = new LZResult<>();
         try {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             map.put("airportCode", request.getString("client_id"));
             map.put("protocolId", request.getLong("protocolId"));
             map.put("protocolName", request.getString("protocolName"));
@@ -1069,7 +1057,9 @@ public class BusinessService implements IBusinessService {
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).get("clientId") != null) {
                     paramMap.put("institutionClientId", list.get(i).get("clientId"));
-                    JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
+                    paramMap.put("operation", "view");
+                    JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "institution-client"));
+//                    JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
                     if (jsonObject != null) {
                         JSONObject institutionClientObject = jsonObject.getJSONObject("data");
                         String clientValue = institutionClientObject.get("name").toString();

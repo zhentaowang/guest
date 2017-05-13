@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest;
 
+import com.zhiweicloud.guest.server.Server;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 /**
@@ -7,6 +8,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+        Server.SERVER_PORT = 8099;
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles("production");
         context.setValidating(false);
