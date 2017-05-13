@@ -141,7 +141,7 @@ public class BusinessService implements IBusinessService {
             institutionClient = JSON.toJavaObject(jsonArray.getJSONObject(0), InstitutionClient.class);
 
 
-            Long userId = Long.valueOf(request.getString("user_id"));
+            Long userId = request.getLong("user_id");
             String airportCode = request.getString("client_id");
 
 
@@ -228,7 +228,7 @@ public class BusinessService implements IBusinessService {
             headerMap.put("operation", "protocolList");
             for (Long id : ids) {
                 headerMap.put("institutionClientId", id);
-                String s = ThriftClientUtils.invokeRemoteMethodCallBack(headerMap, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost");
+                String s = ThriftClientUtils.invokeRemoteMethodCallBack(headerMap, "guest-protocol");
 
                 JSONObject protocolList = JSON.parseObject(s);
                 if (protocolList != null) {
