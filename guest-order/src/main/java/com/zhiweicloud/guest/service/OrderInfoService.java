@@ -64,7 +64,7 @@ public class OrderInfoService {
                     orderInfo.setServerUpdateUserId(userId);
 //                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     params.put("operation", "view");
-                    JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
+                    JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
                         orderInfo.setServerUpdateUserName(obj.get("name").toString());
@@ -74,7 +74,7 @@ public class OrderInfoService {
                     orderInfo.setUpdateUser(userId);
 //                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                     params.put("operation", "view");
-                    JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
+                    JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
                         orderInfo.setCreateUserName(obj.get("name").toString());
@@ -85,7 +85,7 @@ public class OrderInfoService {
                 orderInfo.setServerUpdateUserId(userId);
 //                JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                 params.put("operation", "view");
-                JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
+                JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
                 if (updateUserObject != null) {
                     JSONObject obj = updateUserObject.getJSONObject("data");
                     orderInfo.setServerUpdateUserName(obj.get("name").toString());
@@ -150,7 +150,7 @@ public class OrderInfoService {
                 orderInfo.setCreateUser(userId);
 //                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                 params.put("operation", "view");
-                JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE,"localhost"));
+                JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
                 if (createUserObject != null) {
                     JSONObject obj = createUserObject.getJSONObject("data");
                     orderInfo.setCreateUserName(obj.get("name").toString());
@@ -161,7 +161,7 @@ public class OrderInfoService {
                 orderInfo.setServerUpdateUserId(userId);
 //                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
                 params.put("operation", "view");
-                JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE,"localhost"));
+                JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
                 if (createUserObject != null) {
                     JSONObject obj = createUserObject.getJSONObject("data");
                     orderInfo.setServerCreateUserName(obj.get("name").toString());
@@ -178,7 +178,7 @@ public class OrderInfoService {
         flight.setFlightId(flightId);
         params.put("flight", JSON.toJSONString(flight));
         params.put("operation", "updateFlightInfo");
-        ThriftClientUtils.invokeRemoteMethod(params,ThriftClientUtils.SERVER_PORT_FLIGHT_INFO,"localhost");
+        ThriftClientUtils.invokeRemoteMethod(params,"guest-order");
 //        HttpClientUtil.httpPostRequest("http://flight-info/flight-info/updateFlightInfo", headerMap, updateFlightMap);
         params.remove("flight");
         Boolean isCustom = flightMapper.selectIsCustomById(flightId);
@@ -192,7 +192,7 @@ public class OrderInfoService {
         if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
             params.put("flightId", flight.getFlightId());
             params.put("operation", "customFlight");
-            ThriftClientUtils.invokeRemoteMethod(params,ThriftClientUtils.SERVER_PORT_FLIGHT_INFO,"localhost");
+            ThriftClientUtils.invokeRemoteMethod(params,"guest-order");
 //            Map<String, Object> flightMap = new HashMap<>();
 //            flightMap.put("flightId", flight.getFlightId());
 //            HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
@@ -267,7 +267,7 @@ public class OrderInfoService {
                 if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
 //                    JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
                     params.put("operation", "get-service-box-by-type-and-protocol-product-id");
-                    JSONObject jsonObject1 = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_PROTOCOL, "localhost"));
+                    JSONObject jsonObject1 = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-protocol"));
                     if (jsonObject1 != null) {
                         JSONArray jsonArray = jsonObject1.getJSONArray("data");
                         for (int k = 0; k < jsonArray.size(); k++) {
@@ -406,7 +406,7 @@ public class OrderInfoService {
         params.put("client_id", airportCode);
         params.put("employeeId", userId);
         params.put("operation", "view");
-        JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE,"localhost"));
+        JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
 
         if (createUserObject != null) {
             JSONObject obj = createUserObject.getJSONObject("data");

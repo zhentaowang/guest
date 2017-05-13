@@ -2,8 +2,6 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zhiweicloud.guest.common.HttpClientUtil;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.OrderServiceRecordMapper;
 import com.zhiweicloud.guest.model.OrderServiceRecord;
 import org.springframework.beans.factory.annotation.Autowired;
