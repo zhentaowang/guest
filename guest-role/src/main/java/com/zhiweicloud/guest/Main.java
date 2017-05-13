@@ -6,6 +6,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  * Created by luojing@wyunbank.com on 02/05/2017.
  */
 public class Main {
+    public static final int SERVER_PORT = 8101;
     public static void main(String[] args) throws InterruptedException {
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles("production");

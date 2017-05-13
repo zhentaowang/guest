@@ -37,9 +37,9 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
+import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.CopyProperties;
-import com.zhiweicloud.guest.service.IBusinessService;
 import com.zhiweicloud.guest.service.ListUtil;
 import com.zhiweicloud.guest.service.OrderInfoService;
 import io.swagger.annotations.*;
@@ -186,15 +186,14 @@ public class OrderInfoController {
         LZResult<Object> result = new LZResult<>();
         //远程调用参数
 
-        Long userId = Long.valueOf(request.getString("user_id"));
+        Long userId = request.getLong("user_id");
         String airportCode = request.getString("client_id");
 
-        Map<String, Object> headerMap = new HashMap<>();
-        headerMap.put("user-id", userId);
-        headerMap.put("client-id", airportCode);
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("employeeId", userId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("client_id", airportCode);
+        params.put("employeeId", userId);
 
         try {
             JSONObject orderObject = request.getJSONArray("data").getJSONObject(0);
@@ -252,8 +251,8 @@ public class OrderInfoController {
                     order.setFlight(targetFlight);
 
                     //查询当前用户角色
-                    JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/getRoleByUserId", headerMap, paramMap));
-//                    JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("https://api.iairportcloud.com/guest-employee/getRoleByUserId?access_token=JSofwcw0ABIwya5sBNsFvxX9oYqsS8kt76GKm7mu&employeeId=108"));
+                    //JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/getRoleByUserId", headerMap, paramMap));
+                    JSONObject userRoleObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
                     if (userRoleObject != null) {
                         JSONArray jsonArray = userRoleObject.getJSONArray("data");
                         List<Map<Object,Object>> list = JSON.parseObject(jsonArray.toJSONString(), new TypeReference<List<Map<Object,Object>>>(){});
@@ -358,8 +357,8 @@ public class OrderInfoController {
                     order.setFlight(targetFlight);
 
                     //查询当前用户角色
+                   // JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/getRoleByUserId", headerMap, paramMap));
                     JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/getRoleByUserId", headerMap, paramMap));
-//                    JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("https://api.iairportcloud.com/guest-employee/getRoleByUserId?access_token=JSofwcw0ABIwya5sBNsFvxX9oYqsS8kt76GKm7mu&employeeId=108"));
                     if (userRoleObject != null) {
                         JSONArray jsonArray = userRoleObject.getJSONArray("data");
                         List<Map<Object,Object>> list = JSON.parseObject(jsonArray.toJSONString(), new TypeReference<List<Map<Object,Object>>>(){});

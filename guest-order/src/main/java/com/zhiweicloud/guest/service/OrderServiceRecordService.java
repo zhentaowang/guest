@@ -2,7 +2,6 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.OrderServiceRecordMapper;
 import com.zhiweicloud.guest.model.OrderServiceRecord;
@@ -34,7 +33,7 @@ public class OrderServiceRecordService {
         params.put("employeeId", record.getCreateUser());
         params.put("operation", "view");
 
-        JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, ThriftClientUtils.SERVER_PORT_GUEST_EMPLOYEE, "localhost"));
+        JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
 
 //        JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
         if (updateUserObject != null) {
