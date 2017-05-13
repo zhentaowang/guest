@@ -53,7 +53,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +67,7 @@ public class FlightService {
     private static final Log log = LogFactory.getLog(FlightService.class);
 
     @Autowired
-    private ExchangeDragonMapper exchangeDragonMapper;
+    private ExternalInterfaceLogMapper exchangeDragonMapper;
 
     @Autowired
     private AirportInfoMapper airportInfoMapper;
@@ -201,19 +200,19 @@ public class FlightService {
         p.put("sign", sign);
         String ret = HttpClientUtil.httpPostRequest("http://121.14.200.54:7072/FlightCenter/wcf/FlightWcfService.svc/GetFlightInfo_Lg", p);
         // 生成操作日志
-        ExchangeDragon exchangeDragon = new ExchangeDragon();
-        exchangeDragon.setFlightDate(simpleDateFormat.parse(date));
-        exchangeDragon.setFlightNo(fnum);
-        exchangeDragon.setExchangeType((short) 1); // 1 表示查询
-        exchangeDragon.setCreateUser(userId);
-        Integer crState = null;
-        if (ret != null) {
-            JSONObject crObject = JSON.parseObject(ret);
-            crState = crObject.getInteger("State");
-        }
-        exchangeDragon.setInvokeResult(Short.valueOf(String.valueOf(crState)));
-        exchangeDragon.setAirportCode(airportCode);
-        exchangeDragonMapper.insert(exchangeDragon);
+//        ExchangeDragon exchangeDragon = new ExchangeDragon();
+//        exchangeDragon.setFlightDate(simpleDateFormat.parse(date));
+//        exchangeDragon.setFlightNo(fnum);
+//        exchangeDragon.setExchangeType((short) 1); // 1 表示查询
+//        exchangeDragon.setCreateUser(userId);
+//        Integer crState = null;
+//        if (ret != null) {
+//            JSONObject crObject = JSON.parseObject(ret);
+//            crState = crObject.getInteger("State");
+//        }
+//        exchangeDragon.setInvokeResult(Short.valueOf(String.valueOf(crState)));
+//        exchangeDragon.setAirportCode(airportCode);
+//        exchangeDragonMapper.insert(exchangeDragon);
         System.out.println(new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8));
         return new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
     }
@@ -238,14 +237,14 @@ public class FlightService {
         }
         log.info("FlightService customDragon 生成操作日志");
         // 生成操作日志
-        ExchangeDragon exchangeDragon = new ExchangeDragon();
-        exchangeDragon.setFlightDate(flight.getFlightDate());
-        exchangeDragon.setFlightNo(flight.getFlightNo());
-        exchangeDragon.setExchangeType((short) 2); // 2 表示定制
-        exchangeDragon.setCreateUser(flight.getUpdateUser());
-        exchangeDragon.setInvokeResult(Short.valueOf(String.valueOf(crState)));
-        exchangeDragon.setAirportCode(flight.getAirportCode());
-        exchangeDragonMapper.insert(exchangeDragon);
+//        ExchangeDragon exchangeDragon = new ExchangeDragon();
+//        exchangeDragon.setFlightDate(flight.getFlightDate());
+//        exchangeDragon.setFlightNo(flight.getFlightNo());
+//        exchangeDragon.setExchangeType((short) 2); // 2 表示定制
+//        exchangeDragon.setCreateUser(flight.getUpdateUser());
+//        exchangeDragon.setInvokeResult(Short.valueOf(String.valueOf(crState)));
+//        exchangeDragon.setAirportCode(flight.getAirportCode());
+//        exchangeDragonMapper.insert(exchangeDragon);
         return crState;
     }
 
@@ -269,14 +268,14 @@ public class FlightService {
         JSONArray data = jsonObject.getJSONArray("Data");
         JSONObject flightObject = data.getJSONObject(0);
         // 生成操作日志
-        ExchangeDragon exchangeDragon = new ExchangeDragon();
-        exchangeDragon.setFlightDate(flight.getFlightDate());
-        exchangeDragon.setFlightNo(flight.getFlightNo());
-        exchangeDragon.setExchangeType((short) 3); // 3 表示动态表
-        exchangeDragon.setCreateUser(flight.getUpdateUser());
-        exchangeDragon.setInvokeResult(jsonObject.getShort("State"));
-        exchangeDragon.setAirportCode(flight.getAirportCode());
-        exchangeDragonMapper.insert(exchangeDragon);
+//        ExchangeDragon exchangeDragon = new ExchangeDragon();
+//        exchangeDragon.setFlightDate(flight.getFlightDate());
+//        exchangeDragon.setFlightNo(flight.getFlightNo());
+//        exchangeDragon.setExchangeType((short) 3); // 3 表示动态表
+//        exchangeDragon.setCreateUser(flight.getUpdateUser());
+//        exchangeDragon.setInvokeResult(jsonObject.getShort("State"));
+//        exchangeDragon.setAirportCode(flight.getAirportCode());
+//        exchangeDragonMapper.insert(exchangeDragon);
         // 得到最新的航班信息
         Flight newFlight = new Flight();
         DynamicFlight flightMatch = JSONObject.toJavaObject(flightObject, DynamicFlight.class);

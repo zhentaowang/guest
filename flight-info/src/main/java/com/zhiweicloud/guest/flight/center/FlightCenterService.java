@@ -1,7 +1,5 @@
 package com.zhiweicloud.guest.flight.center;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 /**

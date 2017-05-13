@@ -23,6 +23,8 @@ public final class IbeUtils {
 
     private static final String IBE_HOST = "ws.ibeservice.com";
 
+    private static final String FLIGHT_INFO_UPDATE_FLIGHT = "http://localhost:8081/flight-info/updateFlight";
+
     public static String customFlight(String flightNo, String flightDate) throws Exception {
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("Hashcode", IBE_HASHCODE));
