@@ -26,7 +26,7 @@ import java.util.Map;
  * Created by zhengyiyin on 2017/2/23.
  */
 @Service
-public class PassengerService implements IPassengerService{
+public class PassengerService implements IBusinessService{
 
     private static Logger logger = LoggerFactory.getLogger(PassengerService.class);
 
@@ -80,16 +80,9 @@ public class PassengerService implements IPassengerService{
         }
         try {
             //查询参数
-            PassengerQuery passengerQuery = new PassengerQuery();
+            PassengerQuery passengerQuery = JSON.toJavaObject(request, PassengerQuery.class);
             passengerQuery.setAirportCode(airportCode);
-            passengerQuery.setTypes(ListUtil.StringFormat(request.getString(""),request.getString("labels")));
-            passengerQuery.setPassengerNo(request.getString("passengerNo"));
-            passengerQuery.setName(request.getString("name"));
-            passengerQuery.setPhone(request.getLong("phone"));
-            passengerQuery.setIdentityCard(request.getString("identityCard"));
-            passengerQuery.setClientName(request.getString("clientName"));
-            passengerQuery.setQueryDateBegin(request.getString("queryDateBegin"));
-            passengerQuery.setQueryDateEnd(request.getString("queryDateEnd"));
+            passengerQuery.setTypes(ListUtil.StringFormat(passengerQuery.getProtocolTypes(),request.getString("labels")));
 
             int total = passengerMapper.getListCount(passengerQuery);
             List<Passenger> passengerList = passengerMapper.queryPassengerList(passengerQuery,(page-1)*rows,rows);

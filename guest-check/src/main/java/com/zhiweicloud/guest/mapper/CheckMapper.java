@@ -56,10 +56,10 @@ public interface CheckMapper {
 
     /**
      * 客户对账单详情
-     * @param queryCondition
+     *
      * @return
      */
-    List<Map<String, Object>> customerChecklist(BasePagination<OrderCheckDetail> queryCondition);
+    List<Map<String, Object>> customerChecklist();
 
     int selectSpecialCheckListTotal(CheckQueryParam checkQueryParam);
 

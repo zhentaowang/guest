@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.zhiweicloud</groupId>
     <artifactId>guest-check</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <version>1.0</version>
     <name>Guest Check</name>
     <url>http://maven.apache.org</url>
@@ -21,7 +21,6 @@
         <fastjson.version>1.2.11</fastjson.version>
         <jdk.version>1.8</jdk.version>
         <maven.plugin.version>3.3</maven.plugin.version>
-        <tomcat.plugin.version>2.2</tomcat.plugin.version>
         <maven.war.plugin.version>2.6</maven.war.plugin.version>
         <maven.surefire.plugin.version>2.6</maven.surefire.plugin.version>
         <mybatis.generator.plugin.version>1.3.5</mybatis.generator.plugin.version>
@@ -35,6 +34,8 @@
         <httpcore.version>4.5.2</httpcore.version>
         <!--<poi.version>3.15</poi.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <libthrift.version>0.9.3</libthrift.version>
+        <thrift.server.version>1.0-RELEASE</thrift.server.version>
     </properties>
 
     <dependencies>
@@ -168,6 +169,7 @@
         </dependency>
 
 
+
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
@@ -183,29 +185,71 @@
             <artifactId>jackson-core</artifactId>
             <version>2.8.6</version>
         </dependency>
+        <!-- thrift 公共类 -->
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wyun.thrift</groupId>
+            <artifactId>server</artifactId>
+            <version>${thrift.server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zhiweicloud</groupId>
+            <artifactId>guest-thrift</artifactId>
+            <version>1.3</version>
+        </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Deploy -->
+            <!-- 项目打包成jar 包含第三方依赖 开始-->
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>${tomcat.plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <server>TomcatServer</server>
-                    <path>/</path>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.zhiweicloud.guest.Main</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <warSourceDirectory>WebContent</warSourceDirectory>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
+            <!-- 项目打包成jar 包含第三方依赖 结束-->
             <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -302,6 +346,7 @@
                     <overwrite>true</overwrite>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>

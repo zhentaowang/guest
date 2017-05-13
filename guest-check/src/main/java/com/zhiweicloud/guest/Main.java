@@ -8,12 +8,13 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Server.SERVER_PORT = 8096;
+        Server.SERVER_PORT = 8100;
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles("production");
         context.setValidating(false);
         context.load( "classpath:spring.xml", "classpath:mybatis.xml");
         context.refresh();
+
         while (true) {
             System.out.println("start");
             Thread.sleep(1000000);

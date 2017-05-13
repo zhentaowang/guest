@@ -22,17 +22,14 @@
  * THE SOFTWARE.
  */
 
+
 package com.zhiweicloud.guest.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
-import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.excel.generator.AirChinaContentGenerator;
-import com.zhiweicloud.guest.common.excel.generator.ChinaSouthernAirlinesContentGenerator;
-import com.zhiweicloud.guest.common.excel.generator.FirstClassContentGenerator;
-import com.zhiweicloud.guest.common.excel.generator.FrequentFlyerContentGenerator;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.CheckService;
@@ -46,9 +43,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
 
 /**
  * SysMenuController.java
@@ -56,6 +52,7 @@ import java.util.Objects;
  * https://www.zhiweicloud.com
  * 2016-12-20 19:34:25 Created By zhangpengfei
  */
+
 @Component
 @Path("/")
 @Api(value = "对账单管理", description = "", tags = {"对账单管理"})
@@ -66,47 +63,7 @@ public class CheckController {
     @Autowired
     private CheckService checkService;
 
-    @GET
-    @Path("list")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "服务账单列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    public String list(
-            @DefaultValue("1") @QueryParam(value = "page") Integer page,
-            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-            @BeanParam final CheckQueryParam checkQueryParam,
-            @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId) {
-        try {
-            LZResult<PaginationResult<Map>> result = checkService.getAll(userId,airportCode,checkQueryParam, page, rows);
-            return JSON.toJSONString(result);
-        } catch (Exception e) {
-            return this.errorMsg(e);
-        }
-    }
-
-    @GET
-    @Path("customer-checklist")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "服务账单详情列表 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    public String customerChecklist(
-            @DefaultValue("1") @QueryParam(value = "page") Integer page,
-            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-            @BeanParam final OrderCheckDetail orderCheckDetail,
-            @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId) {
-        LZResult result = new LZResult<>();
-        try {
-            Map res = checkService.customerChecklist(airportCode,orderCheckDetail, page, rows);
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(res);
-            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
-        } catch (Exception e) {
-            return this.errorMsg(e);
-        }
-    }
-
-    /**
+/**
      * 导出文件
      * Excel
      *
@@ -115,6 +72,7 @@ public class CheckController {
      * @param userId           用户ID
      * @return
      */
+
     @GET
     @Path("exportFile")
     @Produces("application/x-msdownload;charset=utf8")
@@ -126,16 +84,20 @@ public class CheckController {
             @HeaderParam("user-id") Long userId,
             @Context HttpServletResponse response) {
         try {
-            Map result = checkService.customerChecklist(airportCode, orderCheckDetail, 1, 10);
+            JSONObject request = JSON.parseObject(orderCheckDetail.toString());
+            String result = checkService.customerChecklist(request);
             if (result != null) {
-                checkService.exportExcel(orderCheckDetail, result, response);
+                JSONObject jsonObjectMap = JSON.parseObject(result);
+                Map<Object, Object> resultMap = (Map)jsonObjectMap;
+                checkService.exportExcel(orderCheckDetail, resultMap, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
+
+/**
      * 导出账单
      * Excel
      *
@@ -144,6 +106,7 @@ public class CheckController {
      *         类型【firstClass:头等舱账单,frequentFlyer:常旅客账单,airChina:国际航空账单,chinaSouthernAirlines:南方航空账单】
      * @return
      */
+
     @GET
     @Path("exportBill")
     @Produces("application/x-msdownload;charset=utf8")
@@ -156,27 +119,9 @@ public class CheckController {
             @BeanParam final CheckQueryParam checkQueryParam,
             @Context HttpServletResponse response) {
         try {
-            checkService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, "LJG", page, Integer.MAX_VALUE);
+//            checkService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, "LJG", page, Integer.MAX_VALUE);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @GET
-    @Path("specialCheckList")
-    @Produces("application/json;charset=utf8")
-    @ApiOperation(value = "特殊客户账单 - 分页查询", notes = "返回分页结果", httpMethod = "GET", produces = "application/json")
-    public String specialCheckList(
-            @DefaultValue("1") @QueryParam(value = "page") Integer page,
-            @DefaultValue("10") @QueryParam(value = "rows") Integer rows,
-            @BeanParam final CheckQueryParam checkQueryParam,
-            @HeaderParam("client-id") String airportCode,
-            @HeaderParam("user-id") Long userId) {
-        try {
-            LZResult<PaginationResult<Map>> result = checkService.getSpecialCheckList(userId,airportCode,checkQueryParam, page, rows);
-            return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd", SerializerFeature.WriteMapNullValue);
-        } catch (Exception e) {
-            return this.errorMsg(e);
         }
     }
 
@@ -189,4 +134,8 @@ public class CheckController {
         result.setData(null);
         return JSON.toJSONString(result,SerializerFeature.WriteMapNullValue);
     }
+
+
+
 }
+
