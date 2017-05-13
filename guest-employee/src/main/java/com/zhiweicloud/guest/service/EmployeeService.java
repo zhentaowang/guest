@@ -53,7 +53,7 @@ import java.util.Map;
  * @since 2015-12-19 11:09
  */
 @Service
-public class EmployeeService implements IEmployeeService{
+public class EmployeeService implements IBusinessService{
 
     private static Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 

@@ -27,7 +27,7 @@ import java.util.Map;
  * Created by zhengyiyin on 2017/2/22.
  */
 @Service
-public class ProductService implements IProductService{
+public class ProductService implements IBusinessService{
 
     @Autowired
     private ProductMapper productMapper;
