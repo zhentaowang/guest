@@ -450,11 +450,10 @@ public class MenuController {
     @Produces("application/json;charset=utf8")
     public String getMenuByUserId(JSONObject request){
         try{
-            LZResult<Object> result = new LZResult<>();
-            Long userId = Long.valueOf(request.getString("user_id"));
+            Long userId = request.getLong("user_id");
             String airportCode = request.getString("client_id");
             List<SysMenu> res = sysMenuService.getMenuByUserId(userId,airportCode);
-            return JSON.toJSONString(result);
+            return JSON.toJSONString(res);
         } catch (Exception e) {
             return this.errorMsg(e);
         }
