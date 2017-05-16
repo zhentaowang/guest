@@ -8,7 +8,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Server.SERVER_PORT = 8080;
+        Server.SERVER_PORT = 8066;
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles("production");
         context.setValidating(false);
