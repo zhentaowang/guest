@@ -82,6 +82,7 @@ public class OrderInfoController {
      * @return
      */
     public String list(JSONObject request) {
+        LZResult<Object> result = new LZResult<>();
         try {
             int page = 1;
             if(request.containsKey("page")) {
@@ -103,7 +104,6 @@ public class OrderInfoController {
             System.out.println("[userId:" + userId + "---createRole:" + createRole + "---airportCode:" + airportCode + "]");
             //判断有无数据权限，没有直接返回
             if(StringUtils.isEmpty(createRole)){
-                LZResult result = new LZResult<>();
                 result.setMsg(LZStatus.SUCCESS.display());
                 result.setStatus(LZStatus.SUCCESS.value());
                 result.setData(null);
@@ -122,7 +122,10 @@ public class OrderInfoController {
             orderInfoQuery.setAirportCode(airportCode);
             //数据角色权限
             orderInfoQuery.setQueryCreateRole(createRole);
-            LZResult<PaginationResult<OrderInfo>> result = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
+            LZResult<PaginationResult<OrderInfo>> res = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(res);
             return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             return this.errorMsg(e);
