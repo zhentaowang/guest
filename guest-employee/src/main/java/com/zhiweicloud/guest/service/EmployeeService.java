@@ -152,12 +152,13 @@ public class EmployeeService implements IBusinessService{
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(employee);
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
+            return JSON.toJSONString(result);
         }
-        return JSON.toJSONString(result);
     }
 
     /**
