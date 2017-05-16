@@ -449,11 +449,15 @@ public class MenuController {
     @Path(value="getMenuByUserId")
     @Produces("application/json;charset=utf8")
     public String getMenuByUserId(JSONObject request){
+        LZResult<Object> result = new LZResult<>();
         try{
             Long userId = request.getLong("user_id");
             String airportCode = request.getString("client_id");
             List<SysMenu> res = sysMenuService.getMenuByUserId(userId,airportCode);
-            return JSON.toJSONString(res);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(res);
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             return this.errorMsg(e);
         }
