@@ -157,7 +157,7 @@ public class EmployeeService implements IBusinessService{
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
         }
-        return JSON.toJSONString(new LZResult<>(result));
+        return JSON.toJSONString(result);
     }
 
     /**
