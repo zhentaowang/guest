@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.thrift.service;
 import com.alibaba.fastjson.JSONObject;
 
 import com.zhiweicloud.guest.common.Dictionary;
+import com.zhiweicloud.guest.service.IBusinessService;
 import com.zhiweicloud.guest.thrift.util.FlightUtils;
 import com.zhiweicloud.guest.thrift.util.ScheduleEventUtils;
 import org.apache.commons.logging.Log;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
  * @author tiecheng
  */
 @Service
-public class FlightModuleService implements IFlightSerivce {
+public class FlightModuleService implements IBusinessService {
 
     private static final Log log = LogFactory.getLog(FlightModuleService.class);
 

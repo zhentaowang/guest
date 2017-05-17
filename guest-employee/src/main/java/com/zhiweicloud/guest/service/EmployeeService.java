@@ -148,16 +148,26 @@ public class EmployeeService implements IBusinessService{
     public String view(JSONObject request) {
         LZResult<Object> result = new LZResult<>();
         try {
-            Map employee = employeeMapper.selectByIdAndAirportCode(request.getLong("employeeId"), request.getString("client_id"));
+            Long userId = null;
+            String airportCode = request.getString("client_id");
+
+            if (request.getLong("employeeId") != null) {
+                userId = request.getLong("employeeId");
+            }else{
+                userId = request.getLong("user_id");
+            }
+
+            Map employee = employeeMapper.selectByIdAndAirportCode(userId, airportCode);
             result.setMsg(LZStatus.SUCCESS.display());
             result.setStatus(LZStatus.SUCCESS.value());
             result.setData(employee);
+            return JSON.toJSONString(result);
         } catch (Exception e) {
             result.setMsg(LZStatus.ERROR.display());
             result.setStatus(LZStatus.ERROR.value());
             result.setData(null);
+            return JSON.toJSONString(result);
         }
-        return JSON.toJSONString(new LZResult<>(result));
     }
 
     /**
