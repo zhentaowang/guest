@@ -57,6 +57,8 @@ import java.util.*;
 @Service
 public class BusinessService implements IBusinessService {
 
+//    private static MyService.Iface client = (MyService.Iface) SpringBeanUtil.getBeanFromSpringByBeanName("portfolioIndexService");
+
     private final ServMapper servMapper;
     private final ProductServiceTypeMapper productServiceTypeMapper;
     private final ServDefaultMapper servDefaultMapper;
@@ -404,6 +406,7 @@ public class BusinessService implements IBusinessService {
                 paramMap.put("servId", serv.getServId());
                 paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
+//                Response response = ClientUtil.clientSendData(client, "guest-order", paramMap);
                 JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
                 int servNum = Integer.valueOf(jsonObject.get("data").toString());
 //                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServlId", headerMap, paramMap));

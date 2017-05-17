@@ -36,7 +36,7 @@ public class MyBatisConfig {
 
     @Profile("production")
     @Bean(name = "dataSource",initMethod = "init",destroyMethod = "close")
-    public DruidDataSource dataSource(Environment environment) throws Exception{
+    public DruidDataSource proDataSource(Environment environment) throws Exception{
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setName("masterDataSource");
         druidDataSource.setUsername(environment.getProperty("spring.datasource.username"));
