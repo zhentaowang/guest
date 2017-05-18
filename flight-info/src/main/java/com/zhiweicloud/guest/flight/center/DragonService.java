@@ -45,13 +45,14 @@ public class DragonService implements FlightCenterService {
         p.put("sysCode", Dictionary.SYSCODE);
         p.put("sign", sign);
         String ret = HttpClientUtil.httpPostRequest(Dictionary.DRAGON_URL_GETFLIGHTINFO, p);
-        JSONObject object = JSON.parseObject(new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8));
-        Map<String, Object> map = new HashMap<>();
-        List<Flight> flightList = JSON.parseArray(object.getString("Data"), Flight.class);
-        map.put("data", flightList);
-        map.put("state", object.getInteger("State"));
-        map.put("info", object.get("Info"));
-        return JSON.toJSONString(map);
+//        JSONObject object = JSON.parseObject(new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8));
+//        Map<String, Object> map = new HashMap<>();
+//        List<Flight> flightList = JSON.parseArray(object.getString("Data"), Flight.class);
+//        map.put("data", flightList);
+//        map.put("state", object.getInteger("State"));
+//        map.put("info", object.get("Info"));
+//        return JSON.toJSONString(map);
+        return new String(ret.getBytes(Dictionary.ENCODING_ISO8859_1), Dictionary.ENCODING_UTF_8);
     }
 
     @Override
