@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zhiweicloud.guest.mapper.ExternalInterfaceLogMapper">
-  
+<mapper namespace="com.zhiweicloud.guest.mapper.ExchangeDragonMapper">
+
   <sql id="selectName">
     <trim suffixOverrides=",">
-      log_id,
-      docking_source,
+      exchange_id,
       flight_date,
       flight_no,
-      method_name,
+      exchange_type,
       invoke_time,
       invoke_result,
-      invoke_result_info,
       is_deleted,
       airport_code,
       create_time,
@@ -23,27 +21,22 @@
 
   <sql id="selectWhere">
     <where>
-      <if test="null != dockingSource">AND docking_source = #{dockingSource},</if>
       <if test="null != flightDate">AND flight_date = #{flightDate},</if>
       <if test="null != flightNo">AND flight_no = #{flightNo},</if>
-      <if test="null != methodName">AND method_name = #{methodName},</if>
+      <if test="null != exchangeType">AND exchange_type = #{exchangeType},</if>
       <if test="null != invokeTime">AND invoke_time = #{invokeTime},</if>
       <if test="null != invokeResult">AND invoke_result = #{invokeResult},</if>
-      <if test="null != invokeResultInfo">AND invoke_result_info = #{invokeResultInfo},</if>
-      <if test="null != airportCode">AND airport_code = #{airportCode},</if>
       AND is_delete = 0
     </where>
   </sql>
 
   <sql id="insertName">
     <trim prefix="(" suffixOverrides="," suffix=")">
-      <if test="null != dockingSource">docking_source,</if>
       <if test="null != flightDate">flight_date,</if>
       <if test="null != flightNo">flight_no,</if>
-      <if test="null != methodName">method_name,</if>
+      <if test="null != exchangeType">exchange_type,</if>
       <if test="null != invokeTime">invoke_time,</if>
       <if test="null != invokeResult">invoke_result,</if>
-      <if test="null != invokeResultInfo">invoke_result_info,</if>
       <if test="null != createUser">create_user,</if>
       <if test="null != airportCode">airport_code,</if>
     </trim>
@@ -51,48 +44,46 @@
 
   <sql id="insertValue">
     <trim prefix="(" suffixOverrides="," suffix=")">
-      <if test="null != dockingSource">#{dockingSource, jdbcType=VARCHAR},</if>
       <if test="null != flightDate">#{flightDate, jdbcType=TIMESTAMP},</if>
       <if test="null != flightNo">UPPER(#{flightNo, jdbcType=VARCHAR}),</if>
-      <if test="null != methodName">#{methodName, jdbcType=VARCHAR},</if>
+      <if test="null != exchangeType">#{exchangeType, jdbcType=SMALLINT},</if>
       <if test="null != invokeTime">#{invokeTime, jdbcType=TIMESTAMP},</if>
       <if test="null != invokeResult">#{invokeResult, jdbcType=SMALLINT},</if>
-      <if test="null != invokeResultInfo">#{invokeResultInfo, jdbcType=VARCHAR},</if>
       <if test="null != createUser">#{createUser, jdbcType=BIGINT},</if>
       <if test="null != airportCode">#{airportCode, jdbcType=VARCHAR},</if>
     </trim>
   </sql>
 
-  <insert id="insert" parameterType="com.zhiweicloud.guest.model.ExternalInterfaceLog">
-    INSERT INTO flight_external_interface_log
+  <insert id="insert" parameterType="com.zhiweicloud.guest.model.ExchangeDragon">
+    INSERT INTO flight_exchange_dragon
     <include refid="insertName"/>
     VALUES
     <include refid="insertValue"/>
   </insert>
 
-  <delete id="deleteByLogId" parameterType="java.lang.Long">
-    DELETE FROM flight_external_interface_log
-    WHERE log_id = #{logId,jdbcType=BIGINT}
+  <delete id="deleteByExchangeId" parameterType="java.lang.Long">
+    DELETE FROM flight_exchange_dragon
+    WHERE exchange_id = #{exchangeId,jdbcType=BIGINT}
   </delete>
 
-  <update id="updateForDeleteByLogId" parameterType="java.lang.Long">
-    UPDATE flight_external_interface_log
+  <update id="updateForDeleteByExchangeId" parameterType="java.lang.Long">
+    UPDATE flight_exchange_dragon
     SET is_deleted = 1
-    WHERE log_id = #{logId,jdbcType=BIGINT}
+    WHERE exchange_id = #{exchangeId,jdbcType=BIGINT}
   </update>
 
-  <select id="selectByLogId" resultType="com.zhiweicloud.guest.model.ExternalInterfaceLog">
+  <select id="selectByExchangeId" resultType="com.zhiweicloud.guest.model.ExchangeDragon">
     SELECT
     <include refid="selectName"/>
-    FROM flight_external_interface_log
+    FROM flight_exchange_dragon
     WHERE
-    log_id = #{logId,jdbcType=BIGINT} AND is_delete = 0 AND airport_code = #{airportCode,jdbcType=VARCHAR}
+    exchange_id = #{exchangeId,jdbcType=BIGINT} AND is_delete = 0 AND airport_code = #{airportCode,jdbcType=VARCHAR}
   </select>
 
-  <select id="selectByCondition" parameterType="com.zhiweicloud.guest.model.ExternalInterfaceLog" resultType="com.zhiweicloud.guest.model.ExternalInterfaceLog">
+  <select id="selectByCondition" parameterType="com.zhiweicloud.guest.model.ExchangeDragon" resultType="com.zhiweicloud.guest.model.ExchangeDragon">
     SELECT
     <include refid="selectName"/>
-    FROM flight_external_interface_log
+    FROM flight_exchange_dragon
     <include refid="selectWhere"/>
   </select>
 

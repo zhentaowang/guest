@@ -101,6 +101,7 @@ public class ScheduleEventUtils {
         List<Flight> flightList;
         PaginationResult<Flight> eqr;
         int count = flightMapper.getFlightListCountByOrderStatus(flightInfoQuery);
+        System.out.println(count);
         queryCondition = new BasePagination<>(flightInfoQuery, new PageModel(flightInfoQuery.getPage(), flightInfoQuery.getRows()));
         flightList = flightMapper.getFlightListByOrderStatus(queryCondition);
         /*
@@ -162,6 +163,9 @@ public class ScheduleEventUtils {
         String airportCode = request.getString("client_id");
         Long userId = request.getLong("user_id");
         JSONArray data = request.getJSONArray("data");
+        if (data ==null) {
+            System.out.println("data is null");
+        }
         ScheduleEvent scheduleEvent = data.getJSONObject(0).toJavaObject(ScheduleEvent.class);
         scheduleEvent.setAirportCode(airportCode);
         /*
