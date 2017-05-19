@@ -266,12 +266,13 @@ public class BusinessService implements IBusinessService {
 
 
     /**
-     * 产品品类下拉框 数据
+     * 客户下拉框 数据
      *
      * @return
      */
     public String queryInstitutionClientDropdownList(JSONObject request) {
         try{
+            LZResult<Object> result = new LZResult<>();
             String airportCode = request.getString("client_id");
             String name = request.getString("name");
             String no = request.getString("no");
@@ -279,7 +280,10 @@ public class BusinessService implements IBusinessService {
             String type = request.getString("type");
 
             List<Dropdownlist> list = institutionClientMapper.getInstitutionClientDropdownList(airportCode, name, no,type);
-            return JSON.toJSONString(list);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(list);
+            return JSON.toJSONString(result);
         }catch (Exception e){
             return this.errorMsg(e);
         }
