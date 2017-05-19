@@ -178,7 +178,7 @@ public class OrderInfoService {
         flight.setFlightId(flightId);
         params.put("flight", JSON.toJSONString(flight));
         params.put("operation", "updateFlightInfo");
-        ThriftClientUtils.invokeRemoteMethod(params,"guest-order");
+        ThriftClientUtils.invokeRemoteMethod(params,"flight-info");
 //        HttpClientUtil.httpPostRequest("http://flight-info/flight-info/updateFlightInfo", headerMap, updateFlightMap);
         params.remove("flight");
         Boolean isCustom = flightMapper.selectIsCustomById(flightId);
@@ -192,7 +192,9 @@ public class OrderInfoService {
         if(orderInfo.getProductName()!=null && !orderInfo.getProductName().equals("异地贵宾服务")){
             params.put("flightId", flight.getFlightId());
             params.put("operation", "customFlight");
-            ThriftClientUtils.invokeRemoteMethod(params,"guest-order");
+//            暂时先不去定制，因为定制以后的推送会去线上
+//            ThriftClientUtils.invokeRemoteMethod(params,"flight-info");
+
 //            Map<String, Object> flightMap = new HashMap<>();
 //            flightMap.put("flightId", flight.getFlightId());
 //            HttpClientUtil.httpGetRequest("http://flight-info/flight-info/customFlight", headerMap,flightMap);
