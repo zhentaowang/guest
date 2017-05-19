@@ -1057,6 +1057,7 @@ public class BusinessService implements IBusinessService {
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).get("clientId") != null) {
                     paramMap.put("institutionClientId", list.get(i).get("clientId"));
+                    paramMap.put("client_id", request.getString("client_id"));
                     paramMap.put("operation", "view");
                     JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "institution-client"));
 //                    JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
