@@ -67,7 +67,6 @@ public class FlightUtils {
         try {
             String fnum = request.getString("fnum");
             String date = request.getString("date");
-            System.out.println(flightCenterService.flightInfo(fnum, date));
             return flightCenterService.flightInfo(fnum, date);
         } catch (Exception e) {
             log.error(e.getMessage());
