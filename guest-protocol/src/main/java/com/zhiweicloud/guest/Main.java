@@ -9,19 +9,11 @@ import java.util.concurrent.Executors;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-//        Server.SERVER_PORT = 8080;
-//        ExecutorService executor = Executors.newSingleThreadExecutor();
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles("production");
         context.setValidating(false);
         context.load( "classpath:spring.xml", "classpath:mybatis.xml","classpath:spring-client.xml");
         context.refresh();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                Server.startServer();
-//            }
-//        });
 
         while (true) {
             System.out.println("start");
