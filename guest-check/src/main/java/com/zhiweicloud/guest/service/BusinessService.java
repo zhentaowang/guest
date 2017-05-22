@@ -68,9 +68,9 @@ import java.util.*;
  * @since 2015-12-19 11:09
  */
 @Service
-public class CheckService implements IBusinessService {
+public class BusinessService implements IBusinessService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CheckService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BusinessService.class);
 
     private final CheckMapper checkMapper;
     private final CheckDynamicColumn checkDynamicColumn;
@@ -78,7 +78,7 @@ public class CheckService implements IBusinessService {
     private static MyService.Iface protocolClient = SpringBeanUtil.getBean("protocolClient");
 
     @Autowired
-    public CheckService(CheckMapper checkMapper, CheckDynamicColumn checkDynamicColumn) {
+    public BusinessService(CheckMapper checkMapper, CheckDynamicColumn checkDynamicColumn) {
         this.checkMapper = checkMapper;
         this.checkDynamicColumn = checkDynamicColumn;
     }

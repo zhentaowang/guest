@@ -12,7 +12,7 @@
     <bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl"></bean>
     <bean id="server" class="com.wyun.thrift.server.server.Server">
         <!-- setServer_port -->
-        <property name="serverPort" value="8080"></property>
+        <property name="serverPort" value="9999"></property>
         <property name="processorName" value="airPortServiceImpl"></property>
     </bean>
 </beans>
