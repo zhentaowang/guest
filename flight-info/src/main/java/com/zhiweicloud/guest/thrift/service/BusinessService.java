@@ -1,9 +1,10 @@
 package com.zhiweicloud.guest.thrift.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import com.wyun.thrift.server.business.IBusinessService;
 import com.zhiweicloud.guest.common.Dictionary;
-import com.zhiweicloud.guest.service.IBusinessService;
 import com.zhiweicloud.guest.thrift.util.FlightUtils;
 import com.zhiweicloud.guest.thrift.util.ScheduleEventUtils;
 import org.apache.commons.logging.Log;
@@ -20,9 +21,9 @@ import org.springframework.stereotype.Service;
  * @author tiecheng
  */
 @Service
-public class FlightModuleService implements IBusinessService {
+public class BusinessService implements IBusinessService {
 
-    private static final Log log = LogFactory.getLog(FlightModuleService.class);
+    private static final Log log = LogFactory.getLog(BusinessService.class);
 
     @Autowired
     private FlightUtils flightUtil;
@@ -31,7 +32,7 @@ public class FlightModuleService implements IBusinessService {
     private ScheduleEventUtils scheduleEventUtil;
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get(Dictionary.REQUEST_METHOD_NAME) != null) {
@@ -98,7 +99,7 @@ public class FlightModuleService implements IBusinessService {
             default:
                 break;
         }
-        return success;
+        return JSON.parseObject(success);
     }
 
 }
