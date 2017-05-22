@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <bean id="institutionClient" class="com.wyun.thrift.client.Factory.ServiceClientProxyFactory" destroy-method="close">
+        <property name="maxActive" value="20" />
+        <property name="idleTime" value="1800000" />
+        <property name="serverName" value="MyService" />
+        <property name="serverPackage" value="com.wyun.thrift.server." />
+        <!--<property name="service" value="stcn-fund-indice" />-->
+        <!--<property name="port" value="80" />-->
+        <property name="service" value="institution-client" />
+        <property name="port" value="8080" />
+    </bean>
+    <bean id="orderClient" class="com.wyun.thrift.client.Factory.ServiceClientProxyFactory" destroy-method="close">
+        <property name="maxActive" value="20" />
+        <property name="idleTime" value="1800000" />
+        <property name="serverName" value="MyService" />
+        <property name="serverPackage" value="com.wyun.thrift.server." />
+        <!--<property name="service" value="stcn-fund-indice" />-->
+        <!--<property name="port" value="80" />-->
+        <property name="service" value="guest-order" />
+        <property name="port" value="8080" />
+    </bean>
+</beans>

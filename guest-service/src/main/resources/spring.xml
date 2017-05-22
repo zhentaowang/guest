@@ -7,4 +7,11 @@
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-4.2.xsd">
     <context:component-scan base-package="com.zhiweicloud.guest.conf" />
+    <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
+    <bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl"/>
+    <bean id="server" class="com.wyun.thrift.server.server.Server">
+        <!-- setServer_port -->
+        <property name="serverPort" value="8080"></property>
+        <property name="processorName" value="airPortServiceImpl"></property>
+    </bean>
 </beans>

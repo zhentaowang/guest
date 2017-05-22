@@ -28,13 +28,18 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.thrift.server.business.IBusinessService;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
 import com.zhiweicloud.guest.common.ListUtil;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.ProductServiceTypeMapper;
 import com.zhiweicloud.guest.mapper.ServDefaultMapper;
 import com.zhiweicloud.guest.mapper.ServMapper;
@@ -57,7 +62,7 @@ import java.util.*;
 @Service
 public class BusinessService implements IBusinessService {
 
-//    private static MyService.Iface client = (MyService.Iface) SpringBeanUtil.getBeanFromSpringByBeanName("portfolioIndexService");
+    private static MyService.Iface orderClient = SpringBeanUtil.getBean("orderClient");
 
     private final ServMapper servMapper;
     private final ProductServiceTypeMapper productServiceTypeMapper;
@@ -72,7 +77,7 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -122,7 +127,7 @@ public class BusinessService implements IBusinessService {
             default:
                 break;
         }
-        return success;
+        return JSON.parseObject(success);
     }
 
     /**
@@ -406,9 +411,13 @@ public class BusinessService implements IBusinessService {
                 paramMap.put("servId", serv.getServId());
                 paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
-//                Response response = ClientUtil.clientSendData(client, "guest-order", paramMap);
-                JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
-                int servNum = Integer.valueOf(jsonObject.get("data").toString());
+                JSONObject data=new JSONObject();
+                Response response = ClientUtil.clientSendData(orderClient, "businessService", paramMap);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
+                int servNum = Integer.valueOf(data.get("data").toString());
+//                JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
 //                JSONObject orderServiceJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getServerNumByServlId", headerMap, paramMap));
 //                //解析协议产品服务对象,统计人数
                 serv.setServerNum(servNum);
