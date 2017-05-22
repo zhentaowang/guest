@@ -27,6 +27,12 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.thrift.server.business.IBusinessService;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -61,6 +67,8 @@ public class BusinessService implements IBusinessService {
 
     private final ProtocolTypeMapper protocolTypeMapper;
 
+    private static MyService.Iface institutionClient = SpringBeanUtil.getBean("institutionClient");
+    private static MyService.Iface orderClient = SpringBeanUtil.getBean("orderClient");
 
     @Autowired
     public BusinessService(ProtocolMapper protocolMapper, AuthorizerMapper authorizerMapper, ProtocolProductMapper protocolProductMapper,
@@ -73,7 +81,7 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -168,7 +176,7 @@ public class BusinessService implements IBusinessService {
             default:
                 break;
         }
-        return success;
+        return JSON.parseObject(success);
     }
 
     /**
@@ -531,17 +539,22 @@ public class BusinessService implements IBusinessService {
             String airportCode = request.getString("client_id");
 
             Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
+            JSONObject paramMap = new JSONObject();
             headerMap.put("user-id", userId);
             headerMap.put("client-id", airportCode);
             for (int i = 0; i < ids.size(); i++) {
                 //调用order应用，根据协议id 判断有无被引用
                 paramMap.put("protocolId", ids.get(i));
                 paramMap.put("operation", "getOrderCountByProtocolId");
-                JSONObject orderJSONObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
+                JSONObject data = new JSONObject();
+                Response response = ClientUtil.clientSendData(orderClient, "businessService", paramMap);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
+//                JSONObject orderJSONObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-order"));
 //                JSONObject orderJSONObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-order/guest-order/getOrderCountByProtocolId", headerMap, paramMap));
-                //解析协议产品服务对象
-                int orderCount = Integer.valueOf(orderJSONObject.get("data").toString());
+               // 解析协议产品服务对象
+                int orderCount = Integer.valueOf(data.get("data").toString());
                 if(orderCount > 0){
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_REF_ERROR));
                 }
@@ -1049,7 +1062,7 @@ public class BusinessService implements IBusinessService {
             List<Map> list = protocolMapper.getProtocolNameDropdownList(map);
 
             Map<String, Object> headerMap = new HashMap<>();
-            Map<String, Object> paramMap = new HashMap<>();
+            JSONObject paramMap = new JSONObject();
             headerMap.put("user-id", request.getLong("user_id"));
             headerMap.put("client-id", request.getString("client_id"));
 
@@ -1059,10 +1072,16 @@ public class BusinessService implements IBusinessService {
                     paramMap.put("institutionClientId", list.get(i).get("clientId"));
                     paramMap.put("client_id", request.getString("client_id"));
                     paramMap.put("operation", "view");
-                    JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "institution-client"));
+                    JSONObject data=new JSONObject();
+                    Response response = ClientUtil.clientSendData(institutionClient, "businessService", paramMap);
+                    if (response != null && response.getResponeCode().getValue() == 200) {
+                        data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                    }
+
+//                    JSONObject jsonObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "institution-client"));
 //                    JSONObject jsonObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://institution-client/institution-client/view", headerMap, paramMap));
-                    if (jsonObject != null) {
-                        JSONObject institutionClientObject = jsonObject.getJSONObject("data");
+                    if (data != null) {
+                        JSONObject institutionClientObject = data.getJSONObject("data");
                         String clientValue = institutionClientObject.get("name").toString();
                         list.get(i).put("clientValue",clientValue);
                     }
