@@ -13,7 +13,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySource({"classpath:application.properties"})
-@ComponentScan("com.zhiweicloud.guest")
+@ComponentScan(basePackages = {"com.zhiweicloud.guest","com.wyun.thrift"})
 public class SpringConfiguration {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
