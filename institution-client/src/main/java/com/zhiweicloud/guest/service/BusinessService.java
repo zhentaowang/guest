@@ -28,10 +28,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.thrift.server.business.IBusinessService;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.InstitutionClientMapper;
 import com.zhiweicloud.guest.model.Dropdownlist;
 import com.zhiweicloud.guest.model.InstitutionClient;
@@ -60,8 +65,10 @@ public class BusinessService implements IBusinessService {
         this.institutionClientMapper = institutionClientMapper;
     }
 
+    private static MyService.Iface protocolClient = SpringBeanUtil.getBean("protocolClient");
+
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -91,7 +98,7 @@ public class BusinessService implements IBusinessService {
                 break;
         }
 
-        return success;
+        return JSON.parseObject(success);
     }
 
     /**
@@ -222,15 +229,19 @@ public class BusinessService implements IBusinessService {
 
             List<Long> deleteIds = new ArrayList<>();
             StringBuilder names = new StringBuilder();
-            Map<String, Object> headerMap = new HashMap<>();
-            headerMap.put("user_id", userId);
-            headerMap.put("client_id", airportCode);
-            headerMap.put("operation", "protocolList");
-            for (Long id : ids) {
-                headerMap.put("institutionClientId", id);
-                String s = ThriftClientUtils.invokeRemoteMethodCallBack(headerMap, "guest-protocol");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_id", userId);
+            jsonObject.put("client_id", airportCode);
+            jsonObject.put("operation", "protocolList");
 
-                JSONObject protocolList = JSON.parseObject(s);
+            for (Long id : ids) {
+                jsonObject.put("institutionClientId", id);
+                JSONObject protocolList = new JSONObject();
+                Response response = ClientUtil.clientSendData(protocolClient, "businessService", jsonObject);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    protocolList = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
+
                 if (protocolList != null) {
                     JSONArray rows = protocolList.getJSONObject("data").getJSONArray("rows");
                     if (rows.size() > 0) {

@@ -29,10 +29,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.thrift.server.business.IBusinessService;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.common.excel.generator.*;
 import com.zhiweicloud.guest.common.excel.po.RowContentPo;
 import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
@@ -63,12 +68,14 @@ import java.util.*;
  * @since 2015-12-19 11:09
  */
 @Service
-public class CheckService implements IBusinessService{
+public class CheckService implements IBusinessService {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckService.class);
 
     private final CheckMapper checkMapper;
     private final CheckDynamicColumn checkDynamicColumn;
+
+    private static MyService.Iface protocolClient = SpringBeanUtil.getBean("protocolClient");
 
     @Autowired
     public CheckService(CheckMapper checkMapper, CheckDynamicColumn checkDynamicColumn) {
@@ -76,8 +83,7 @@ public class CheckService implements IBusinessService{
         this.checkDynamicColumn = checkDynamicColumn;
     }
 
-    @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -106,7 +112,7 @@ public class CheckService implements IBusinessService{
                 break;
         }
 
-        return success;
+        return JSON.parseObject(success);
     }
 
     public String list(JSONObject request){
@@ -131,14 +137,17 @@ public class CheckService implements IBusinessService{
             List<Map> checkList = checkMapper.selectCheckList(queryCondition);
             for (int i = 0; i < checkList.size(); i++) {
 
-                Map<String, Object> paramMap = new HashMap();
-                paramMap.put("user_id", request.getString("user_id"));
-                paramMap.put("client_id", request.getString("client_id"));
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("user_id", request.getLong("user_id"));
+                jsonObject.put("client_id", request.getString("client_id"));
+                jsonObject.put("protocolTypeId", checkList.get(i).get("protocolType"));
+                jsonObject.put("operation", "getProtocolTypeDropdownList");
 
-                paramMap.put("protocolTypeId", checkList.get(i).get("protocolType"));
-                paramMap.put("operation", "getProtocolTypeDropdownList");
-                JSONObject protocolObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(paramMap, "guest-protocol"));
-
+                JSONObject protocolObject = new JSONObject();
+                Response response = ClientUtil.clientSendData(protocolClient, "businessService", jsonObject);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    protocolObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
                 if (protocolObject != null && protocolObject.get("data") != null && JSON.parseArray(protocolObject.get("data").toString()).size() > 0) {
 
                     JSONObject protocolObj = JSON.parseObject(JSON.parseArray(protocolObject.get("data").toString()).get(0).toString());

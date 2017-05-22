@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: export-file
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: export-file
+    spec:
+      containers:
+        - name: export-file
+          image: tomcat:9.0
+          volumeMounts:
+          - mountPath: "/usr/local/tomcat/webapps"
+            name: code
+            subPath: guest/export-file
+          - mountPath: "/etc/localtime"
+            name: tz-config
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+        - name: tz-config
+          hostPath:
+            path: /etc/localtime
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: export-file
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: export-file
