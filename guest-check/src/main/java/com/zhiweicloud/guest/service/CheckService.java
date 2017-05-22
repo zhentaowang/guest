@@ -67,7 +67,7 @@ import java.util.*;
  * @since 2015-12-19 11:09
  */
 @Service
-public class CheckService implements IBusinessService {
+public class CheckService implements IBusinessServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckService.class);
 

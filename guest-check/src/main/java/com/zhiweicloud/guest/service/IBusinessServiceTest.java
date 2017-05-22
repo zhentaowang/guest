@@ -5,6 +5,6 @@ package com.zhiweicloud.guest.service;
  */
 import com.alibaba.fastjson.JSONObject;
 
-public interface IBusinessService {
+public interface IBusinessServiceTest {
     JSONObject handle(JSONObject var1);
 }
