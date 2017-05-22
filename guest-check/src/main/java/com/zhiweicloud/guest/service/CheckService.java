@@ -83,7 +83,6 @@ public class CheckService implements IBusinessService {
         this.checkDynamicColumn = checkDynamicColumn;
     }
 
-    @Override
     public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
