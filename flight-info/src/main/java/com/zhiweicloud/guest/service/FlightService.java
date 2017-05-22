@@ -67,7 +67,7 @@ public class FlightService {
     private static final Log log = LogFactory.getLog(FlightService.class);
 
     @Autowired
-    private ExternalInterfaceLogMapper exchangeDragonMapper;
+    private ExchangeDragonMapper exchangeDragonMapper;
 
     @Autowired
     private AirportInfoMapper airportInfoMapper;

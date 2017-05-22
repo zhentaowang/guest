@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * 航班中心配置类
+ * 测试环境 使用 -- 也可以在线上尝试
  * Copyright(C) 2017 杭州风数信息技术有限公司
  *
  * 2017/5/11 16:59

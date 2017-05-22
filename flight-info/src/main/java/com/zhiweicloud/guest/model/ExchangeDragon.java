@@ -20,22 +20,17 @@ import java.util.Date;
  * https://www.zhiweicloud.com
  * 2017-03-28 13:53:00 Created By tc
 */
-@ApiModel(value="ExternalInterfaceLog",description="external_interface_log")
-public class ExternalInterfaceLog extends BaseEntity {
+@ApiModel(value="ExchangeDragon",description="exchange_dragon")
+public class ExchangeDragon extends BaseEntity {
 
     /**
      表名
      */
-    public transient static final String TABLE_NAME = "flight_external_interface_log";
+    public transient static final String TABLE_NAME = "flight_exchange_dragon";
 
     @ApiModelProperty(value="主键自增id",name="logId", required=true)
     @NotEmpty
     private Long logId;
-
-    /**
-     * 对接源 龙腾（非常准）/IBE
-     */
-    private String dockingSource ;
 
     @ApiModelProperty(value="航班日期",name="flightDate", required=true)
     @NotEmpty
@@ -46,7 +41,7 @@ public class ExternalInterfaceLog extends BaseEntity {
     private String flightNo;
 
     @ApiModelProperty(value="执行方法")
-    private String methodName;
+    private Short exchangeType;
 
     @ApiModelProperty(value="调用时间",name="invokeTime", required=true)
     @NotEmpty
@@ -56,23 +51,12 @@ public class ExternalInterfaceLog extends BaseEntity {
     @NotEmpty
     private Short invokeResult;
 
-    @ApiModelProperty(value="调用结果信息")
-    private String invokeResultInfo;
-
     public Long getLogId() {
         return logId;
     }
 
     public void setLogId(Long logId) {
         this.logId = logId;
-    }
-
-    public String getDockingSource() {
-        return dockingSource;
-    }
-
-    public void setDockingSource(String dockingSource) {
-        this.dockingSource = dockingSource;
     }
 
     public Date getFlightDate() {
@@ -91,12 +75,12 @@ public class ExternalInterfaceLog extends BaseEntity {
         this.flightNo = flightNo;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public Short getExchangeType() {
+        return exchangeType;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public void setExchangeType(Short exchangeType) {
+        this.exchangeType = exchangeType;
     }
 
     public Date getInvokeTime() {
@@ -113,14 +97,6 @@ public class ExternalInterfaceLog extends BaseEntity {
 
     public void setInvokeResult(Short invokeResult) {
         this.invokeResult = invokeResult;
-    }
-
-    public String getInvokeResultInfo() {
-        return invokeResultInfo;
-    }
-
-    public void setInvokeResultInfo(String invokeResultInfo) {
-        this.invokeResultInfo = invokeResultInfo;
     }
 
 }
