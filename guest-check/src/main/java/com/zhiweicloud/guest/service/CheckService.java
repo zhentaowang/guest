@@ -32,6 +32,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
+import com.wyun.thrift.server.business.IBusinessService;
 import com.wyun.utils.ByteBufferUtil;
 import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LZResult;
@@ -67,7 +68,7 @@ import java.util.*;
  * @since 2015-12-19 11:09
  */
 @Service
-public class CheckService implements IBusinessServiceTest {
+public class CheckService implements IBusinessService {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckService.class);
 
