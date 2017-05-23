@@ -32,7 +32,7 @@ import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
-import com.zhiweicloud.guest.service.CheckService;
+import com.zhiweicloud.guest.service.BusinessService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class CheckController {
     private static final Logger logger = LoggerFactory.getLogger(CheckController.class);
 
     @Autowired
-    private CheckService checkService;
+    private BusinessService checkService;
 
 /**
      * 导出文件
