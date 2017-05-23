@@ -39,7 +39,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- thrift -->
     <libthrift.version>0.9.3</libthrift.version>
-    <thrift.server.version>1.0-RELEASE</thrift.server.version>
+    <thrift.server.version>2.0-RELEASE</thrift.server.version>
   </properties>
 
   <dependencies>

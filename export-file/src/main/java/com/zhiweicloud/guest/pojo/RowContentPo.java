@@ -1,20 +1,16 @@
-package com.zhiweicloud.guest.model;
+package com.zhiweicloud.guest.pojo;
 
 import java.util.Date;
 
 /**
- * 账单乘客 对象
+ * 休息室账单 一行对应实体
  * Copyright(C) 2017 杭州风数信息技术有限公司
+ * <p>
+ * 2017/4/27 16:06
  *
- * 2017/4/27 20:11
  * @author tiecheng
  */
-public class CheckPassengerPo {
-
-    /**
-     * 航班ID
-     */
-    private Long flightId;
+public class RowContentPo {
 
     /**
      * 名字
@@ -72,6 +68,16 @@ public class CheckPassengerPo {
     private Integer alongTotal;
 
     /**
+     * 航空公司名
+     */
+    private String customerName;
+
+    /**
+     * 航班日期
+     */
+    private String flightDate;
+
+    /**
      * 发生机场
      */
     private String airpotCode;
@@ -101,13 +107,20 @@ public class CheckPassengerPo {
      */
     private Double serverPersonNum;
 
-    public Long getFlightId() {
-        return flightId;
-    }
+    /**
+     * 座位号
+     */
+    private String sitNo;
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
+    /**
+     * 随行
+     */
+    private Integer entourage;
+
+    /**
+     * 客户类型
+     */
+    private Short passengerType;
 
     public String getName() {
         return name;
@@ -197,6 +210,22 @@ public class CheckPassengerPo {
         this.alongTotal = alongTotal;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getFlightDate() {
+        return flightDate;
+    }
+
+    public void setFlightDate(String flightDate) {
+        this.flightDate = flightDate;
+    }
+
     public String getAirpotCode() {
         return airpotCode;
     }
@@ -243,6 +272,30 @@ public class CheckPassengerPo {
 
     public void setServerPersonNum(Double serverPersonNum) {
         this.serverPersonNum = serverPersonNum;
+    }
+
+    public String getSitNo() {
+        return sitNo;
+    }
+
+    public void setSitNo(String sitNo) {
+        this.sitNo = sitNo;
+    }
+
+    public Integer getEntourage() {
+        return entourage;
+    }
+
+    public void setEntourage(Integer entourage) {
+        this.entourage = entourage;
+    }
+
+    public Short getPassengerType() {
+        return passengerType;
+    }
+
+    public void setPassengerType(Short passengerType) {
+        this.passengerType = passengerType;
     }
 
 }

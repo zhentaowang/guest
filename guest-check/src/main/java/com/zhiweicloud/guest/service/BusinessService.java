@@ -35,18 +35,15 @@ import com.wyun.thrift.server.Response;
 import com.wyun.thrift.server.business.IBusinessService;
 import com.wyun.utils.ByteBufferUtil;
 import com.wyun.utils.SpringBeanUtil;
+import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
-import com.zhiweicloud.guest.common.excel.generator.*;
 import com.zhiweicloud.guest.common.excel.po.RowContentPo;
 import com.zhiweicloud.guest.common.excel.po.SheetContentPo;
 import com.zhiweicloud.guest.common.excel.util.ExcelUtils;
 import com.zhiweicloud.guest.mapper.CheckMapper;
-import com.zhiweicloud.guest.model.CheckPassengerPo;
-import com.zhiweicloud.guest.model.CheckQueryParam;
-import com.zhiweicloud.guest.model.LoungeCheckPo;
-import com.zhiweicloud.guest.model.OrderCheckDetail;
+import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
 import org.slf4j.Logger;
@@ -59,7 +56,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -90,8 +86,6 @@ public class BusinessService implements IBusinessService {
             operation = request.getString("operation");
         }
 
-
-
         switch (operation) {
             case "list":
                 success = list(request);
@@ -99,12 +93,12 @@ public class BusinessService implements IBusinessService {
             case "customer-checklist":
                 success = customerChecklist(request);
                 break;
-//            case "exportFile":
-//                exportExcel(request);
-//                break;
-//            case "exportBill":
-//                exportBill(request);
-//                break;
+            case "getSpecialDateList":
+                success = getSpecialDateList(request);
+                break;
+            case "getLoungeDateList":
+                success = getLoungeDateList(request);
+                break;
             case "specialCheckList":
                 success = getSpecialCheckList(request);
                 break;
@@ -298,72 +292,20 @@ public class BusinessService implements IBusinessService {
 
     }
 
-    /**
-     * 导出账单
-     *
-     */
-    public void exportBill(JSONObject request){
+    public String getSpecialDateList(JSONObject request) {
         CheckQueryParam checkQueryParam = JSON.toJavaObject(request, CheckQueryParam.class);
+        checkQueryParam.setType("9,10");
         String airportCode = request.getString("client_id");
-        try {
-            //分页参数
-            int page = 1;
-            if(request.containsKey("page")) {
-                page = request.getInteger("page");
-            }
-
-            int rows = 10;
-            if (request.containsKey("rows")) {
-                rows = request.getInteger("rows");
-            }
-        /*
-         * 默认文件名字
-         */
-            String fileName = "账单";
-            String sheetName = "账单";
-            ContentGenerator contentGenerator = null;
-
-        /*
-         * 四种定制方法，excel文件用.xls
-         */
-            switch (checkQueryParam.getType()) {
-                case "firstClass":
-                    contentGenerator = new FirstClassContentGenerator(getLoungeDateList(checkQueryParam, airportCode,10));
-                    fileName = "头等舱账单" + "_" + System.currentTimeMillis() + ".xls";
-                    sheetName = "头等舱账单";
-                    break;
-                case "frequentFlyer":
-                    contentGenerator = new FrequentFlyerContentGenerator(getLoungeDateList(checkQueryParam, airportCode,9));
-                    fileName = "常旅客账单" + "_" + System.currentTimeMillis() + ".xls";
-                    sheetName = "常旅客账单";
-                    break;
-                case "airChina":
-                    contentGenerator = new AirChinaContentGenerator(getSpecialDateList(checkQueryParam, airportCode, page, rows));
-                    fileName = "国际航空账单" + "_" + System.currentTimeMillis() + ".xls";
-                    sheetName = "国际航空账单";
-                    break;
-                case "chinaSouthernAirlines":
-                    contentGenerator = new ChinaSouthernAirlinesContentGenerator(getSpecialDateList(checkQueryParam, airportCode, page, rows));
-                    fileName = "南方航空账单" + "_" + System.currentTimeMillis() + ".xls";
-                    sheetName = "国际航空账单";
-                    break;
-            }
-//            ExcelUtils.exportExcel(contentGenerator, fileName, sheetName,response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private List<SheetContentPo> getSpecialDateList(CheckQueryParam checkQueryParam, String airportCode, Integer page, Integer rows) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
         checkQueryParam.setAirportCode(airportCode);
-        BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(page, rows));
+        BasePagination<CheckQueryParam> queryCondition = new BasePagination<>(checkQueryParam, new PageModel(1, Integer.MAX_VALUE));
+
         List<Map> maps = checkMapper.selectSpecialCheckList(queryCondition);
+
         SheetContentPo sheetContentPo = new SheetContentPo();
         List<SheetContentPo> sheetContentPos = new LinkedList<>();
         List<RowContentPo> rowContentPos = new LinkedList<>();
         RowContentPo rowContentPo;
+
         for (Map map : maps) {
             rowContentPo = new RowContentPo();
             rowContentPo.setAmout((Double) map.get("amount"));
@@ -381,46 +323,90 @@ public class BusinessService implements IBusinessService {
         }
         sheetContentPo.setRowContentPos(rowContentPos);
         sheetContentPos.add(sheetContentPo);
-        return sheetContentPos;
+
+        LXResult result = new LXResult();
+        result.setData(sheetContentPos);
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setMsg(LZStatus.SUCCESS.display());
+        return JSON.toJSONString(result);
     }
 
-    private List<SheetContentPo> getLoungeDateList(CheckQueryParam checkQueryParam, String airportCode,int protocolType) throws ParseException {
+    public String getLoungeDateList(JSONObject request){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        CheckQueryParam checkQueryParam = JSON.toJavaObject(request, CheckQueryParam.class);
+        String airportCode = request.getString("client_id");
         checkQueryParam.setAirportCode(airportCode);
+        Integer protocolType = request.getInteger("protocolType");
+
         List<LoungeCheckPo> loungeCheckPos = checkMapper.selectLoungeCheckList(checkQueryParam, protocolType);
+
         List<SheetContentPo> sheetContentPos = new LinkedList<>();
         List<RowContentPo> rowContentPos;
         RowContentPo rowContentPo;
         SheetContentPo sheetContentPo;
-        for (LoungeCheckPo loungeCheckPo : loungeCheckPos) {
-            rowContentPos = new LinkedList<>();
-            sheetContentPo = new SheetContentPo();
-            for (CheckPassengerPo checkPassengerPo : loungeCheckPo.getCheckPassengerPos()) {
-                rowContentPo = new RowContentPo();
-                rowContentPo.setFlightNo(checkPassengerPo.getFlightNo());
-                rowContentPo.setPlanNo(checkPassengerPo.getPlanNo());
-                rowContentPo.setAlongTotal(checkPassengerPo.getAlongTotal());
-                rowContentPo.setAirpotCode(checkPassengerPo.getAirpotCode());
-                rowContentPo.setLeg(checkPassengerPo.getLeg());
-                rowContentPo.setCustomerName(loungeCheckPo.getCustomerName());
-                rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null ? "" : simpleDateFormat.format(loungeCheckPo.getFlightDate()));
-                rowContentPo.setCabinNo(checkPassengerPo.getCabinNo());
-                rowContentPo.setExpireTime(checkPassengerPo.getExpireTime());
-                rowContentPo.setServerPersonNum(checkPassengerPo.getServerPersonNum());
-                rowContentPo.setPrice(checkPassengerPo.getPrice());
-                rowContentPo.setAmout(checkPassengerPo.getAmout());
-                rowContentPo.setFlightDepcode(checkPassengerPo.getFlightDepcode());
-                rowContentPo.setFlightArrcode(checkPassengerPo.getFlightArrcode());
-                rowContentPo.setCardNo(checkPassengerPo.getCardNo());
-                rowContentPo.setCardType(checkPassengerPo.getCardType());
-                rowContentPo.setName(checkPassengerPo.getName());
-                rowContentPo.setTicketNo(checkPassengerPo.getTicketNo());
-                rowContentPos.add(rowContentPo);
+
+        if(loungeCheckPos.size()>0){
+            for (LoungeCheckPo loungeCheckPo : loungeCheckPos) {
+                rowContentPos = new LinkedList<>();
+                sheetContentPo = new SheetContentPo();
+                int total = 0;
+                for (OrderCheckPo orderCheckPo : loungeCheckPo.getOrderCheckPos()) {
+                    Integer serverNum = orderCheckPo.getServerNum();
+                    total += serverNum;
+                    Integer guestNum = orderCheckPo.getGuestNum();
+                    int length = orderCheckPo.getCheckPassengerPos().size();
+                    int value = serverNum - length;
+                    for (PassengerCheckPo passengerCheckPo : orderCheckPo.getCheckPassengerPos()) {
+                        rowContentPo = new RowContentPo();
+                        if (passengerCheckPo.getPassengerType() == 0) { // 主宾
+                            if(guestNum == 1){ // 最后一个主宾了,需要把随从都设置进去
+                                rowContentPo.setAlongTotal(value == 0 ? null : value);
+                            }else {
+                                if (value == 0) { // 不需要添加随从人数
+                                    rowContentPo.setAlongTotal(null);
+                                }
+                                if(value > 0){
+                                    int average = value / guestNum == 0 ? 1 : value / guestNum; // 随从人数少于贵宾人数
+                                    rowContentPo.setAlongTotal(average);
+                                    guestNum --;
+                                    value = value - average;
+                                }
+                            }
+                        }
+                        if (passengerCheckPo.getPassengerType() == 1) { // 随行
+                            rowContentPo.setAlongTotal(null);
+                        }
+                        rowContentPo.setFlightNo(passengerCheckPo.getFlightNo());
+                        rowContentPo.setPlanNo(passengerCheckPo.getPlanNo());
+                        rowContentPo.setSitNo(passengerCheckPo.getSitNo());
+                        rowContentPo.setPassengerType(passengerCheckPo.getPassengerType());
+                        rowContentPo.setAirpotCode(passengerCheckPo.getAirpotCode());
+                        rowContentPo.setLeg(passengerCheckPo.getLeg());
+                        rowContentPo.setCustomerName(loungeCheckPo.getCustomerName());
+                        rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null ? "" : simpleDateFormat.format(loungeCheckPo.getFlightDate()));
+                        rowContentPo.setCabinNo(passengerCheckPo.getCabinNo());
+                        rowContentPo.setExpireTime(passengerCheckPo.getExpireTime());
+                        rowContentPo.setFlightDepcode(passengerCheckPo.getFlightDepcode());
+                        rowContentPo.setFlightArrcode(passengerCheckPo.getFlightArrcode());
+                        rowContentPo.setCardNo(passengerCheckPo.getCardNo());
+                        rowContentPo.setCardType(passengerCheckPo.getCardType());
+                        rowContentPo.setName(passengerCheckPo.getName());
+                        rowContentPo.setTicketNo(passengerCheckPo.getTicketNo());
+                        rowContentPos.add(rowContentPo);
+                    }
+                }
+                sheetContentPo.setTotal(total);
+                sheetContentPo.setRowContentPos(rowContentPos);
+                sheetContentPos.add(sheetContentPo);
             }
-            sheetContentPo.setRowContentPos(rowContentPos);
-            sheetContentPos.add(sheetContentPo);
         }
-        return sheetContentPos;
+
+        LXResult result = new LXResult();
+        result.setData(sheetContentPos);
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setMsg(LZStatus.SUCCESS.display());
+        return JSON.toJSONString(result);
     }
 
     /**

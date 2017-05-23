@@ -1,9 +1,12 @@
 package com.zhiweicloud.guest.generator;
 
+import com.zhiweicloud.guest.common.utils.ExcelUtils;
+import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.pojo.RowContentPo;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import java.util.List;
 
@@ -37,11 +40,6 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
 
     @Override
     void createContentRows(SheetContentPo sheetContentPo) {
-        HSSFCellStyle priceCellStyle = workbook.createCellStyle();
-        HSSFDataFormat dataFormat = workbook.createDataFormat();
-        priceCellStyle.setDataFormat(dataFormat.getFormat("#,#0.0"));
-        priceCellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         for (RowContentPo rowContentPo : sheetContentPo.getRowContentPos()) {
@@ -58,7 +56,11 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             rowCell3.setCellValue(rowContentPo.getFlightNo());
             HSSFCell rowCell4 = rowContent.createCell(3);
             rowCell4.setCellStyle(cellStyle);
-            rowCell4.setCellValue(rowContentPo.getPlanNo());
+            if (StringUtils.isNotNone(rowContentPo.getPlanNo()) && ExcelUtils.isInteger(rowContentPo.getPlanNo())) {
+                rowCell4.setCellValue(Double.parseDouble(rowContentPo.getPlanNo()));
+            } else {
+                rowCell4.setCellValue(rowContentPo.getPlanNo());
+            }
             HSSFCell rowCell5 = rowContent.createCell(4);
             rowCell5.setCellStyle(cellStyle);
             rowCell5.setCellValue(rowContentPo.getLeg());
@@ -76,7 +78,7 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
                 rowCell8.setCellValue(rowContentPo.getServerPersonNum());
             }
             HSSFCell rowCell9 = rowContent.createCell(8);
-            rowCell9.setCellStyle(priceCellStyle);
+            rowCell9.setCellStyle(numCellStyle);
             rowCell9.setCellValue(new String());
 //            if (rowContentPo.getPrice() == null) {
 //                rowCell9.setCellValue(new String());
@@ -87,8 +89,8 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
             rowCell10.setCellStyle(cellStyle);
             rowCell10.setCellValue(new String());
             HSSFCell rowCell11 = rowContent.createCell(10);
-            rowCell11.setCellStyle(priceCellStyle);
-            rowCell1.setCellValue(new String());
+            rowCell11.setCellStyle(numCellStyle);
+            rowCell11.setCellValue(new String());
 //            if (rowContentPo.getAmout() == null) {
 //                rowCell11.setCellValue(new String());
 //            }else {

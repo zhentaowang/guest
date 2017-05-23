@@ -1,16 +1,25 @@
-package com.zhiweicloud.guest.common.excel.po;
+package com.zhiweicloud.guest.model;
 
 import java.util.Date;
 
 /**
- * 休息室账单 一行对应实体
+ * 账单乘客 对象
  * Copyright(C) 2017 杭州风数信息技术有限公司
- * <p>
- * 2017/4/27 16:06
  *
+ * 2017/4/27 20:11
  * @author tiecheng
  */
-public class RowContentPo {
+public class PassengerCheckPo {
+
+    /**
+     * 订单ID
+     */
+    private Long orderId;
+
+    /**
+     * 座位号
+     */
+    private String sitNo;
 
     /**
      * 名字
@@ -68,16 +77,6 @@ public class RowContentPo {
     private Integer alongTotal;
 
     /**
-     * 航空公司名
-     */
-    private String customerName;
-
-    /**
-     * 航班日期
-     */
-    private String flightDate;
-
-    /**
      * 发生机场
      */
     private String airpotCode;
@@ -93,34 +92,25 @@ public class RowContentPo {
     private String flightArrcode;
 
     /**
-     * 价格
-     */
-    private Long price;
-
-    /**
-     * 总价
-     */
-    private Double amout;
-
-    /**
-     * 服务人数
-     */
-    private Double serverPersonNum;
-
-    /**
-     * 座位号
-     */
-    private String sitNo;
-
-    /**
-     * 随行
-     */
-    private Integer entourage;
-
-    /**
      * 客户类型
      */
     private Short passengerType;
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getSitNo() {
+        return sitNo;
+    }
+
+    public void setSitNo(String sitNo) {
+        this.sitNo = sitNo;
+    }
 
     public String getName() {
         return name;
@@ -210,22 +200,6 @@ public class RowContentPo {
         this.alongTotal = alongTotal;
     }
 
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getFlightDate() {
-        return flightDate;
-    }
-
-    public void setFlightDate(String flightDate) {
-        this.flightDate = flightDate;
-    }
-
     public String getAirpotCode() {
         return airpotCode;
     }
@@ -250,46 +224,6 @@ public class RowContentPo {
         this.flightArrcode = flightArrcode;
     }
 
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-
-    public Double getAmout() {
-        return amout;
-    }
-
-    public void setAmout(Double amout) {
-        this.amout = amout;
-    }
-
-    public Double getServerPersonNum() {
-        return serverPersonNum;
-    }
-
-    public void setServerPersonNum(Double serverPersonNum) {
-        this.serverPersonNum = serverPersonNum;
-    }
-
-    public String getSitNo() {
-        return sitNo;
-    }
-
-    public void setSitNo(String sitNo) {
-        this.sitNo = sitNo;
-    }
-
-    public Integer getEntourage() {
-        return entourage;
-    }
-
-    public void setEntourage(Integer entourage) {
-        this.entourage = entourage;
-    }
-
     public Short getPassengerType() {
         return passengerType;
     }
@@ -297,4 +231,5 @@ public class RowContentPo {
     public void setPassengerType(Short passengerType) {
         this.passengerType = passengerType;
     }
+
 }

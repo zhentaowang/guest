@@ -1,10 +1,8 @@
 package com.zhiweicloud.guest.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.wyun.thrift.client.utils.ClientUtil;
-import com.wyun.thrift.server.MyService;
-import com.wyun.thrift.server.Response;
-import com.wyun.utils.ByteBufferUtil;
+import com.alibaba.fastjson.JSON;
+import com.zhiweicloud.guest.APIUtil.LXResult;
+import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.ExportFileService;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import java.util.Map;
 
 /**
  * ExportFileController.java
@@ -33,9 +30,6 @@ public class ExportFileController {
     @Autowired
     private ExportFileService exportFileService;
 
-    @Autowired
-    private MyService.Iface client;
-
     /**
      * 导出文件
      * Excel
@@ -49,31 +43,24 @@ public class ExportFileController {
     @Path("exportFile")
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
-    public void exportFile(
+    public String exportFile(
         @BeanParam final OrderCheckDetail orderCheckDetail,
-        @HeaderParam("client-id") String airportCode,
-        @HeaderParam("user-id") Long userId,
+        @HeaderParam("client_id") String airportCode,
+        @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
+        LXResult result = new LXResult();
         try {
-            // 获取数据 -- 服务间调用
-            Map result = null;
-            JSONObject params = new JSONObject();
-            params.put("client_id", airportCode);
-            params.put("user_id", userId);
-            params.put("queryCustomerId", orderCheckDetail.getQueryCustomerId());
-            params.put("queryProtocolType",orderCheckDetail.getQueryProtocolType());
-            params.put("queryProtocolId",orderCheckDetail.getQueryProtocolId());
-            params.put("queryProductName",orderCheckDetail.getQueryProductName());
-            Response re = ClientUtil.clientSendData(client, "businessService", params);
-            if (re !=null && re.getResponeCode().getValue() == 200) {
-                result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
-            }
-            if (result != null) {
-                exportFileService.exportExcel(orderCheckDetail, result, response);
-            }
+            exportFileService.exportExcel(orderCheckDetail, airportCode,userId, response);
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
+            result.setStatus(LZStatus.ERROR.value());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setData(null);
         }
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -89,16 +76,24 @@ public class ExportFileController {
     @Path("exportBill")
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
-    public void exportBill(
-        @HeaderParam("client-id") String airportCode,
-        @HeaderParam("user-id") Long userId,
+    public String exportBill(
         @BeanParam final CheckQueryParam checkQueryParam,
+        @HeaderParam("client_id") String airportCode,
+        @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
+        LXResult result = new LXResult();
         try {
             exportFileService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, airportCode);
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
+            result.setStatus(LZStatus.ERROR.value());
+            result.setMsg(LZStatus.ERROR.display());
+            result.setData(null);
         }
+        return JSON.toJSONString(result);
     }
 
 }
