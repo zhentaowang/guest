@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest.generator;
 
+import com.zhiweicloud.guest.common.utils.ExcelUtils;
+import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.pojo.RowContentPo;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -20,10 +22,6 @@ public class FirstClassContentGenerator extends ContentGenerator {
 
     public FirstClassContentGenerator(List<SheetContentPo> sheetContentPos) {
         super(sheetContentPos);
-    }
-
-    private void setWidth(HSSFSheet sheet,int width){
-        sheet.setColumnWidth(0,width);
     }
 
     @Override
@@ -69,8 +67,12 @@ public class FirstClassContentGenerator extends ContentGenerator {
         row2Cell5.setCellStyle(cellStyle);
         row2Cell5.setCellValue("机    号");
         HSSFCell row2Cell6 = row2.createCell(5);
-        row2Cell6.setCellStyle(cellStyle);
-        row2Cell6.setCellValue(rowContentPo.getPlanNo());
+        row2Cell6.setCellStyle(numCellStyle);
+        if (StringUtils.isNotNone(rowContentPo.getPlanNo()) && ExcelUtils.isInteger(rowContentPo.getPlanNo())) {
+            row2Cell6.setCellValue(Double.parseDouble(rowContentPo.getPlanNo()));
+        }else {
+            row2Cell6.setCellValue(rowContentPo.getPlanNo());
+        }
         // 把当前行号设置回去
         sheetContentPo.setRow(row);
     }
@@ -87,15 +89,33 @@ public class FirstClassContentGenerator extends ContentGenerator {
             cell1.setCellValue("姓名");
             HSSFCell cell2 = contentRow.createCell(1);
             cell2.setCellStyle(cellStyle);
-            cell2.setCellValue(rowContentPo.getName());
+            if (StringUtils.isNotNone(rowContentPo.getName()) && ExcelUtils.isInteger(rowContentPo.getName())) {
+                cell2.setCellValue(Integer.valueOf(rowContentPo.getName()));
+            } else {
+                cell2.setCellValue(rowContentPo.getName());
+            }
             HSSFCell cell3 = contentRow.createCell(2);
             cell3.setCellStyle(cellStyle);
             cell3.setCellValue("客票号码");
-            CellRangeAddress cra = new CellRangeAddress(row, row, 3, 5);
-            sheet.addMergedRegion(cra);
+//            CellRangeAddress cra = new CellRangeAddress(row, row, 3, 4);
+//            sheet.addMergedRegion(cra);
             HSSFCell cell4 = contentRow.createCell(3);
-            cell4.setCellStyle(cellStyle);
-            cell4.setCellValue(rowContentPo.getTicketNo());
+            cell4.setCellStyle(numCellStyle);
+            if (StringUtils.isNotNone(rowContentPo.getTicketNo()) && ExcelUtils.isInteger(rowContentPo.getTicketNo())) {
+                cell4.setCellValue(Double.parseDouble(rowContentPo.getTicketNo()));
+            } else {
+                cell4.setCellValue(rowContentPo.getTicketNo());
+            }
+            HSSFCell cell5 = contentRow.createCell(4);
+            cell5.setCellStyle(cellStyle);
+            cell5.setCellValue("座位号");
+            HSSFCell cell6 = contentRow.createCell(5);
+            cell6.setCellStyle(numCellStyle);
+            if (StringUtils.isNotNone(rowContentPo.getSitNo()) && ExcelUtils.isInteger(rowContentPo.getSitNo())) {
+                cell6.setCellValue(Double.parseDouble(rowContentPo.getSitNo()));
+            } else {
+                cell6.setCellValue(rowContentPo.getSitNo());
+            }
         }
         sheetContentPo.setRow(row);
     }
@@ -140,7 +160,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
     void setWidthHelp(SheetContentPo sheetContentPo) {
         HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(1,sheet.getRow(0).getCell(1).getStringCellValue().getBytes().length * 256);
-        sheet.setColumnWidth(3,12 * 256); // 多数据的时候 直接写死大致内容
+        sheet.setColumnWidth(3,14 * 256); // 多数据的时候 直接写死大致内容
     }
 
 }

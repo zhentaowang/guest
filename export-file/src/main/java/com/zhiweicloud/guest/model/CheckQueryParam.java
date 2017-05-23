@@ -53,6 +53,14 @@ public class CheckQueryParam extends BaseEntity{
     @QueryParam("type")
     private String type;
 
+    @ApiModelProperty(value = "客户ID", name = "client_id")
+    @QueryParam("client_id")
+    private String airportCode;
+
+    @ApiModelProperty(value = "用户ID", name = "user_id")
+    @QueryParam("user_id")
+    private Long userId;
+
     public String getQueryFlightDateBegin() {
         return queryFlightDateBegin;
     }
@@ -131,6 +139,24 @@ public class CheckQueryParam extends BaseEntity{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String getAirportCode() {
+        return airportCode;
+    }
+
+    @Override
+    public void setAirportCode(String airportCode) {
+        this.airportCode = airportCode;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
 }

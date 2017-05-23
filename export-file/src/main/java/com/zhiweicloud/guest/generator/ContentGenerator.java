@@ -31,6 +31,11 @@ public abstract class ContentGenerator {
      */
     HSSFCellStyle cellStyle;
 
+    /**
+     * 数字 -- 非科学计数法默认样式
+     */
+    HSSFCellStyle numCellStyle;
+
     public ContentGenerator() {
 
     }
@@ -93,6 +98,10 @@ public abstract class ContentGenerator {
 
     public void setCellStyle(HSSFCellStyle cellStyle) {
         this.cellStyle = cellStyle;
+    }
+
+    public void setNumCellStyle(HSSFCellStyle numCellStyle) {
+        this.numCellStyle = numCellStyle;
     }
 
 }
