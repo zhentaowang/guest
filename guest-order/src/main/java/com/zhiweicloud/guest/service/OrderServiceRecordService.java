@@ -2,7 +2,11 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.mapper.OrderServiceRecordMapper;
 import com.zhiweicloud.guest.model.OrderServiceRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +25,26 @@ public class OrderServiceRecordService {
     @Autowired
     private OrderServiceRecordMapper orderServiceRecordMapper;
 
+    private static MyService.Iface employeeClient = SpringBeanUtil.getBean("employeeClient");
+
     /**
      * 插入服务动态
      * @param record
      * @return
      */
     public int insert(OrderServiceRecord record) throws Exception {
-        Map<String, Object> params = new HashMap<>();
+        JSONObject params = new JSONObject();
         params.put("user-id", record.getCreateUser());
         params.put("client-id", record.getAirportCode());
         params.put("employeeId", record.getCreateUser());
         params.put("operation", "view");
 
-        JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
+
+        JSONObject updateUserObject = new JSONObject();
+        Response response = ClientUtil.clientSendData(employeeClient, "businessService", params);
+        if (response != null && response.getResponeCode().getValue() == 200) {
+            updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+        }
 
 //        JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
         if (updateUserObject != null) {

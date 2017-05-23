@@ -139,6 +139,7 @@ public class BusinessService implements IBusinessService {
 
                 JSONObject protocolObject = new JSONObject();
                 Response response = ClientUtil.clientSendData(protocolClient, "businessService", jsonObject);
+
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     protocolObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }

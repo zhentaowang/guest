@@ -1,9 +1,9 @@
 package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wyun.thrift.server.business.IBusinessService;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
@@ -26,15 +26,15 @@ import java.util.Map;
  * Created by zhengyiyin on 2017/2/23.
  */
 @Service
-public class PassengerService implements IBusinessService{
+public class BusinessService implements IBusinessService {
 
-    private static Logger logger = LoggerFactory.getLogger(PassengerService.class);
+    private static Logger logger = LoggerFactory.getLogger(BusinessService.class);
 
     @Autowired
     private PassengerMapper passengerMapper;
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -55,7 +55,7 @@ public class PassengerService implements IBusinessService{
                 break;
         }
 
-        return success;
+        return JSON.parseObject(success);
     }
 
     /**
