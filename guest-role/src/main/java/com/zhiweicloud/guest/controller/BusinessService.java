@@ -1,7 +1,8 @@
 package com.zhiweicloud.guest.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zhiweicloud.guest.service.IBusinessService;
+import com.wyun.thrift.server.business.IBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
  * Created by THINK on 2017-05-09.
  */
 @Component
-public class ServiceSender implements IBusinessService {
+public class BusinessService implements IBusinessService {
     @Autowired
     private MenuController menuController;
 
@@ -18,13 +19,13 @@ public class ServiceSender implements IBusinessService {
 
 
     @Autowired
-    public ServiceSender(MenuController menuController, RoleController roleController) {
+    public BusinessService(MenuController menuController, RoleController roleController) {
         this.menuController = menuController;
         this.roleController = roleController;
     }
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -67,7 +68,7 @@ public class ServiceSender implements IBusinessService {
                 break;
         }
 
-        return success;
+        return JSON.parseObject(success);
     }
 
 }
