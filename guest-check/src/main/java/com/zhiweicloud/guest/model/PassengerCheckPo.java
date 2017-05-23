@@ -9,12 +9,17 @@ import java.util.Date;
  * 2017/4/27 20:11
  * @author tiecheng
  */
-public class CheckPassengerPo {
+public class PassengerCheckPo {
 
     /**
-     * 航班ID
+     * 订单ID
      */
-    private Long flightId;
+    private Long orderId;
+
+    /**
+     * 座位号
+     */
+    private String sitNo;
 
     /**
      * 名字
@@ -87,26 +92,24 @@ public class CheckPassengerPo {
     private String flightArrcode;
 
     /**
-     * 价格
+     * 客户类型
      */
-    private Long price;
+    private Short passengerType;
 
-    /**
-     * 总价
-     */
-    private Double amout;
-
-    /**
-     * 服务人数
-     */
-    private Double serverPersonNum;
-
-    public Long getFlightId() {
-        return flightId;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getSitNo() {
+        return sitNo;
+    }
+
+    public void setSitNo(String sitNo) {
+        this.sitNo = sitNo;
     }
 
     public String getName() {
@@ -221,28 +224,12 @@ public class CheckPassengerPo {
         this.flightArrcode = flightArrcode;
     }
 
-    public Long getPrice() {
-        return price;
+    public Short getPassengerType() {
+        return passengerType;
     }
 
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-
-    public Double getAmout() {
-        return amout;
-    }
-
-    public void setAmout(Double amout) {
-        this.amout = amout;
-    }
-
-    public Double getServerPersonNum() {
-        return serverPersonNum;
-    }
-
-    public void setServerPersonNum(Double serverPersonNum) {
-        this.serverPersonNum = serverPersonNum;
+    public void setPassengerType(Short passengerType) {
+        this.passengerType = passengerType;
     }
 
 }

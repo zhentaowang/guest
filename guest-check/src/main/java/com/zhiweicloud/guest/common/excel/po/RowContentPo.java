@@ -107,6 +107,21 @@ public class RowContentPo {
      */
     private Double serverPersonNum;
 
+    /**
+     * 座位号
+     */
+    private String sitNo;
+
+    /**
+     * 随行
+     */
+    private Integer entourage;
+
+    /**
+     * 客户类型
+     */
+    private Short passengerType;
+
     public String getName() {
         return name;
     }
@@ -257,5 +272,29 @@ public class RowContentPo {
 
     public void setServerPersonNum(Double serverPersonNum) {
         this.serverPersonNum = serverPersonNum;
+    }
+
+    public String getSitNo() {
+        return sitNo;
+    }
+
+    public void setSitNo(String sitNo) {
+        this.sitNo = sitNo;
+    }
+
+    public Integer getEntourage() {
+        return entourage;
+    }
+
+    public void setEntourage(Integer entourage) {
+        this.entourage = entourage;
+    }
+
+    public Short getPassengerType() {
+        return passengerType;
+    }
+
+    public void setPassengerType(Short passengerType) {
+        this.passengerType = passengerType;
     }
 }

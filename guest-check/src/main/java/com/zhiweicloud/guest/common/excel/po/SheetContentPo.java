@@ -30,9 +30,9 @@ public class SheetContentPo {
     private List<RowContentPo> rowContentPos;
 
     /**
-     * 循环数据行数
+     * 显示人数
      */
-    public int rowLenght;
+    public int total;
 
     public int getRow() {
         return row;
@@ -58,12 +58,12 @@ public class SheetContentPo {
         this.rowContentPos = rowContentPos;
     }
 
-    public int getRowLenght() {
-        return rowLenght;
+    public int getTotal() {
+        return total;
     }
 
-    public void setRowLenght(int rowLenght) {
-        this.rowLenght = rowLenght;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
 }

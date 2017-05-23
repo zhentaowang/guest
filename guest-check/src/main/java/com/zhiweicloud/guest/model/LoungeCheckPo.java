@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,15 +11,27 @@ import java.util.List;
  * 2017/4/27 20:10
  * @author tiecheng
  */
-public class LoungeCheckPo {
+public class LoungeCheckPo implements Serializable {
 
+    /**
+     * 航班ID
+     */
     private Long flightId;
 
+    /**
+     * 航班日期
+     */
     private Date flightDate;
 
+    /**
+     * 客户名字
+     */
     private String customerName;
 
-    private List<CheckPassengerPo> checkPassengerPos;
+    /**
+     * 航班下订单
+     */
+    private List<OrderCheckPo> orderCheckPos;
 
     public Long getFlightId() {
         return flightId;
@@ -44,12 +57,12 @@ public class LoungeCheckPo {
         this.customerName = customerName;
     }
 
-    public List<CheckPassengerPo> getCheckPassengerPos() {
-        return checkPassengerPos;
+    public List<OrderCheckPo> getOrderCheckPos() {
+        return orderCheckPos;
     }
 
-    public void setCheckPassengerPos(List<CheckPassengerPo> checkPassengerPos) {
-        this.checkPassengerPos = checkPassengerPos;
+    public void setOrderCheckPos(List<OrderCheckPo> orderCheckPos) {
+        this.orderCheckPos = orderCheckPos;
     }
 
 }
