@@ -27,6 +27,7 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wyun.thrift.server.business.IBusinessService;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -53,15 +54,15 @@ import java.util.Map;
  * @since 2015-12-19 11:09
  */
 @Service
-public class EmployeeService implements IBusinessService{
+public class BusinessService implements IBusinessService {
 
-    private static Logger logger = LoggerFactory.getLogger(EmployeeService.class);
+    private static Logger logger = LoggerFactory.getLogger(BusinessService.class);
 
     @Autowired
     private EmployeeMapper employeeMapper;
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -97,7 +98,7 @@ public class EmployeeService implements IBusinessService{
                 break;
         }
 
-        return success;
+        return JSON.parseObject(success);
     }
 
     /**

@@ -3,10 +3,14 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.Constant;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
@@ -35,6 +39,9 @@ public class OrderInfoService {
 
     private final CardTypeMapper cardTypeMapper;
 
+    private static MyService.Iface employeeClient = SpringBeanUtil.getBean("employeeClient");
+
+    private static MyService.Iface protocolClient = SpringBeanUtil.getBean("protocolClient");
     @Autowired
     public OrderInfoService(OrderInfoMapper orderInfoMapper, PassengerMapper passengerMapper, OrderServiceMapper orderServiceMapper, FlightMapper flightMapper,CardTypeMapper cardTypeMapper) {
         this.orderInfoMapper = orderInfoMapper;
@@ -47,13 +54,12 @@ public class OrderInfoService {
     public Long saveOrUpdate(OrderInfo orderInfo, List<Passenger> passengerList, List<OrderService> orderServiceList, Long userId, String airportCode) throws Exception {
         orderInfo.setAirportCode(airportCode);
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("user_id", userId);
-        params.put("client_id", airportCode);
-        params.put("employeeId", userId);
-//
-//        Map<String, Object> paramMap = new HashMap<>();
-//        paramMap.put("employeeId", userId);
+
+        JSONObject jsonObjectParam = new JSONObject();
+        jsonObjectParam.put("user_id", userId);
+        jsonObjectParam.put("client_id", airportCode);
+        jsonObjectParam.put("employeeId", userId);
+
 
         if (orderInfo.getOrderId() != null) {
 
@@ -62,9 +68,14 @@ public class OrderInfoService {
                 if(orderInfo.getOrderStatus() != null && orderInfo.getOrderStatus().equals("已使用")){//预约订单 转为 服务订单，需要保持 服务订单的更新时间，更新人
                     orderInfo.setServerUpdateTime(new Date());
                     orderInfo.setServerUpdateUserId(userId);
-//                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    params.put("operation", "view");
-                    JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
+                    jsonObjectParam.put("operation", "view");
+
+                    JSONObject updateUserObject = new JSONObject();
+                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                    if (response != null && response.getResponeCode().getValue() == 200) {
+                        updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                    }
+
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
                         orderInfo.setServerUpdateUserName(obj.get("name").toString());
@@ -72,9 +83,13 @@ public class OrderInfoService {
                 }else{
                     orderInfo.setUpdateTime(new Date());
                     orderInfo.setUpdateUser(userId);
-//                    JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                    params.put("operation", "view");
-                    JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
+
+                    JSONObject updateUserObject = new JSONObject();
+                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                    if (response != null && response.getResponeCode().getValue() == 200) {
+                        updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                    }
+
                     if (updateUserObject != null) {
                         JSONObject obj = updateUserObject.getJSONObject("data");
                         orderInfo.setCreateUserName(obj.get("name").toString());
@@ -83,9 +98,12 @@ public class OrderInfoService {
             } else {//服务订单
                 orderInfo.setServerUpdateTime(new Date());
                 orderInfo.setServerUpdateUserId(userId);
-//                JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                params.put("operation", "view");
-                JSONObject updateUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-employee"));
+                jsonObjectParam.put("operation", "view");
+                JSONObject updateUserObject = new JSONObject();
+                Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
                 if (updateUserObject != null) {
                     JSONObject obj = updateUserObject.getJSONObject("data");
                     orderInfo.setServerUpdateUserName(obj.get("name").toString());
@@ -97,18 +115,15 @@ public class OrderInfoService {
                 Long flightId = flightMapper.isFlightExist(flight);
                 flight.setAirportCode(airportCode);
 
-                //this.setFlightInOrOut(flight);
-                params.remove("employeeId");
+                jsonObjectParam.remove("employeeId");
                 if (flightId != null) {
-//                    flightMapper.updateByFlithIdAndAirportCodeSelective(flight);
-//                    HttpClientUtil.httpPostRequest("http://127.0.0.1:8989/updateFlightInfo", headerMap, updateFlightMap);
-                    executeFlightOperate(flightId,orderInfo,flight,params);
+                    executeFlightOperate(flightId,orderInfo,flight,jsonObjectParam);
                 } else {
                     flight.setCreateTime(new Date());
                     flight.setCreateUser(userId);
                     flight.setFlightId(null);
                     flightMapper.insertSelective(flight);
-                    customFlight(orderInfo,flight,params);
+                    customFlight(orderInfo,flight,jsonObjectParam);
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
@@ -131,12 +146,12 @@ public class OrderInfoService {
                 //this.setFlightInOrOut(flight);
 
                 if (flightId != null && !flightId.equals("")) {
-                    executeFlightOperate(flightId,orderInfo,flight,params);
+                    executeFlightOperate(flightId,orderInfo,flight,jsonObjectParam);
                 } else {
                     flight.setCreateTime(new Date());
                     flight.setCreateUser(userId);
                     flightMapper.insertSelective(flight);
-                    customFlight(orderInfo,flight,params);
+                    customFlight(orderInfo,flight,jsonObjectParam);
                 }
                 orderInfo.setFlightId(flight.getFlightId());
             }
@@ -149,8 +164,12 @@ public class OrderInfoService {
                 orderInfo.setCreateTime(new Date());
                 orderInfo.setCreateUser(userId);
 //                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                params.put("operation", "view");
-                JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
+                jsonObjectParam.put("operation", "view");
+                JSONObject createUserObject = new JSONObject();
+                Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
                 if (createUserObject != null) {
                     JSONObject obj = createUserObject.getJSONObject("data");
                     orderInfo.setCreateUserName(obj.get("name").toString());
@@ -159,9 +178,12 @@ public class OrderInfoService {
                 orderInfo.setServerCreateTime(new Date());
                 orderInfo.setServerCreateUserId(userId);
                 orderInfo.setServerUpdateUserId(userId);
-//                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                params.put("operation", "view");
-                JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
+                jsonObjectParam.put("operation", "view");
+                JSONObject createUserObject = new JSONObject();
+                Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                if (response != null && response.getResponeCode().getValue() == 200) {
+                    createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                }
                 if (createUserObject != null) {
                     JSONObject obj = createUserObject.getJSONObject("data");
                     orderInfo.setServerCreateUserName(obj.get("name").toString());
@@ -174,16 +196,15 @@ public class OrderInfoService {
         return orderInfo.getOrderId();
     }
 
-    private void executeFlightOperate(Long flightId, OrderInfo orderInfo, Flight flight, Map<String, Object> params) throws UnsupportedEncodingException, URISyntaxException {
+    private void executeFlightOperate(Long flightId, OrderInfo orderInfo, Flight flight, JSONObject jsonObjectParam) throws UnsupportedEncodingException, URISyntaxException {
         flight.setFlightId(flightId);
-        params.put("flight", JSON.toJSONString(flight));
-        params.put("operation", "updateFlightInfo");
-        ThriftClientUtils.invokeRemoteMethod(params,"flight-info");
-//        HttpClientUtil.httpPostRequest("http://flight-info/flight-info/updateFlightInfo", headerMap, updateFlightMap);
-        params.remove("flight");
+        jsonObjectParam.put("flight", JSON.toJSONString(flight));
+        jsonObjectParam.put("operation", "updateFlightInfo");
+        ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+        jsonObjectParam.remove("flight");
         Boolean isCustom = flightMapper.selectIsCustomById(flightId);
         if (!isCustom){
-            customFlight(orderInfo,flight,params);
+            customFlight(orderInfo,flight,jsonObjectParam);
         }
     }
 
@@ -260,7 +281,7 @@ public class OrderInfoService {
 //                paramMap.put("protocolProductId", orderInfo.getProductId());
 //                paramMap.put("typeId", jsonObject.get("serviceId"));
 
-                Map<String, Object> params = new HashMap<>();
+                JSONObject params = new JSONObject();
                 params.put("user_id", userId);
                 params.put("client_id", airportCode);
                 params.put("protocolProductId", orderInfo.getProductId());
@@ -269,7 +290,12 @@ public class OrderInfoService {
                 if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
 //                    JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
                     params.put("operation", "get-service-box-by-type-and-protocol-product-id");
-                    JSONObject jsonObject1 = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params, "guest-protocol"));
+                    JSONObject jsonObject1 = new JSONObject();
+                    Response response = ClientUtil.clientSendData(protocolClient, "businessService", params);
+                    if (response != null && response.getResponeCode().getValue() == 200) {
+                        jsonObject1 = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                    }
+
                     if (jsonObject1 != null) {
                         JSONArray jsonArray = jsonObject1.getJSONArray("data");
                         for (int k = 0; k < jsonArray.size(); k++) {
@@ -403,12 +429,17 @@ public class OrderInfoService {
 //        paramMap.put("employeeId", userId);
 //        //远程调用查询该用户id，的用户名字，存到订单表（多余的字段）
 //        JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-        Map<String, Object> params = new HashMap<>();
+        JSONObject params = new JSONObject();
         params.put("user_id", userId);
         params.put("client_id", airportCode);
         params.put("employeeId", userId);
         params.put("operation", "view");
-        JSONObject createUserObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
+        JSONObject createUserObject = new JSONObject();
+        Response response = ClientUtil.clientSendData(protocolClient, "businessService", params);
+        if (response != null && response.getResponeCode().getValue() == 200) {
+            createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+        }
+
 
         if (createUserObject != null) {
             JSONObject obj = createUserObject.getJSONObject("data");

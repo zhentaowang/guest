@@ -1,6 +1,5 @@
 package com.zhiweicloud.guest.service;
 
-import com.zhiweicloud.guest.model.Dropdownlist;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
-
 /**
  * Created by luojing@wyunbank.com on 09/02/2017.
  */
@@ -20,7 +17,7 @@ import java.util.List;
 @ActiveProfiles("production")
 public class EmployeeServiceTest {
     @Autowired
-    EmployeeService employeeService;
+    BusinessService employeeService;
 
     @Autowired
     Environment environment;

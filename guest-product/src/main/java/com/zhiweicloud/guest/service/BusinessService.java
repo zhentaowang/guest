@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wyun.thrift.server.business.IBusinessService;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -27,7 +28,7 @@ import java.util.Map;
  * Created by zhengyiyin on 2017/2/22.
  */
 @Service
-public class ProductService implements IBusinessService{
+public class BusinessService implements IBusinessService {
 
     @Autowired
     private ProductMapper productMapper;
@@ -36,7 +37,7 @@ public class ProductService implements IBusinessService{
     private ProductServiceTypeMapper productServiceTypeMapper;
 
     @Override
-    public String handle(JSONObject request) {
+    public JSONObject handle(JSONObject request) {
         String success = null;
         String operation = null; //operation表示从参数中获取的操作类型"operation"
         if (request.get("operation") != null) {
@@ -63,7 +64,7 @@ public class ProductService implements IBusinessService{
                 break;
         }
 
-        return success;
+        return JSON.parseObject(success);
     }
 
     /**
