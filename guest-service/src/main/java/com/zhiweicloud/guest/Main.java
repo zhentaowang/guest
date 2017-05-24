@@ -10,7 +10,7 @@ public class Main {
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles("production");
         context.setValidating(false);
-        context.load( "classpath:spring.xml", "classpath:mybatis.xml");
+        context.load( "classpath:spring.xml", "classpath:mybatis.xml", "classpath:spring-client.xml");
         context.refresh();
         while (true) {
             System.out.println("start");
