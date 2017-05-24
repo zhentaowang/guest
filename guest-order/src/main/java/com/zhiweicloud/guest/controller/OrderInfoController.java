@@ -30,6 +30,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wyun.thrift.client.utils.ClientUtil;
+import com.wyun.thrift.server.MyService;
+import com.wyun.thrift.server.Response;
+import com.wyun.utils.ByteBufferUtil;
+import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
@@ -37,7 +42,6 @@ import com.zhiweicloud.guest.APIUtil.PaginationResult;
 import com.zhiweicloud.guest.common.HttpClientUtil;
 import com.zhiweicloud.guest.common.OrderConstant;
 import com.zhiweicloud.guest.common.RequsetParams;
-import com.zhiweicloud.guest.common.ThriftClientUtils;
 import com.zhiweicloud.guest.model.*;
 import com.zhiweicloud.guest.service.CopyProperties;
 import com.zhiweicloud.guest.service.ListUtil;
@@ -74,6 +78,8 @@ public class OrderInfoController {
 
     @Autowired
     private OrderInfoService orderInfoService;
+
+    private static MyService.Iface employeeClient = SpringBeanUtil.getBean("employeeClient");
 
 
     /**
@@ -193,10 +199,12 @@ public class OrderInfoController {
         String airportCode = request.getString("client_id");
 
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("user_id", userId);
-        params.put("client_id", airportCode);
-        params.put("employeeId", userId);
+        JSONObject jsonObjectParam = new JSONObject();
+        jsonObjectParam.put("user_id", userId);
+        jsonObjectParam.put("client_id", airportCode);
+        jsonObjectParam.put("employeeId", userId);
+        jsonObjectParam.put("operation", "getRoleByUserId");
+
 
         try {
             JSONObject orderObject = request.getJSONArray("data").getJSONObject(0);
@@ -254,8 +262,12 @@ public class OrderInfoController {
                     order.setFlight(targetFlight);
 
                     //查询当前用户角色
-                    //JSONObject userRoleObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/getRoleByUserId", headerMap, paramMap));
-                    JSONObject userRoleObject = JSON.parseObject(ThriftClientUtils.invokeRemoteMethodCallBack(params,"guest-employee"));
+                    JSONObject userRoleObject = new JSONObject();
+                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                    if (response != null && response.getResponeCode().getValue() == 200) {
+                        userRoleObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+                    }
+
                     if (userRoleObject != null) {
                         JSONArray jsonArray = userRoleObject.getJSONArray("data");
                         List<Map<Object,Object>> list = JSON.parseObject(jsonArray.toJSONString(), new TypeReference<List<Map<Object,Object>>>(){});
