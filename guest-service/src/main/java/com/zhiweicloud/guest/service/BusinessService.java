@@ -62,12 +62,13 @@ import java.util.*;
 @Service
 public class BusinessService implements IBusinessService {
 
-    private static MyService.Iface orderClient = SpringBeanUtil.getBean("orderClient");
-
     private final ServMapper servMapper;
     private final ProductServiceTypeMapper productServiceTypeMapper;
     private final ServDefaultMapper servDefaultMapper;
     private final ServiceTypeAllocationMapper serviceTypeAllocationMapper;
+
+    private static MyService.Iface orderClient = SpringBeanUtil.getBean("orderClient");
+
     @Autowired
     public BusinessService(ServMapper servMapper,ProductServiceTypeMapper productServiceTypeMapper,ServDefaultMapper servDefaultMapper,ServiceTypeAllocationMapper serviceTypeAllocationMapper) {
         this.servMapper = servMapper;
@@ -403,10 +404,7 @@ public class BusinessService implements IBusinessService {
                 return null;
             }
 
-            Map<String, Object> headerMap = new HashMap<>();
             JSONObject paramMap = new JSONObject();
-            headerMap.put("user-id", userId);
-            headerMap.put("client-id", airportCode);
             for(Serv serv : servList){
                 paramMap.put("servId", serv.getServId());
                 paramMap.put("client_id", request.getString("client_id"));
