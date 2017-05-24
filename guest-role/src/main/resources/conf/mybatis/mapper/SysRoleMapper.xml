@@ -121,7 +121,7 @@
     select count(role_id) from sys_role r
     where r.is_deleted = 0 and r.airport_code = #{airportCode}
     <if test="name != null ">
-      and r.name like  like concat('%',#{name},'%')
+      and r.name like concat('%',#{name},'%')
     </if>
   </select>
 

@@ -409,6 +409,8 @@ public class BusinessService implements IBusinessService {
             headerMap.put("client-id", airportCode);
             for(Serv serv : servList){
                 paramMap.put("servId", serv.getServId());
+                paramMap.put("client_id", request.getString("client_id"));
+                paramMap.put("user_id", request.getString("user_id"));
                 paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
                 JSONObject data=new JSONObject();
