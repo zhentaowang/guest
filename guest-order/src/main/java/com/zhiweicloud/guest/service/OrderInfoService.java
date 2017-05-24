@@ -435,7 +435,7 @@ public class OrderInfoService {
         params.put("employeeId", userId);
         params.put("operation", "view");
         JSONObject createUserObject = new JSONObject();
-        Response response = ClientUtil.clientSendData(protocolClient, "businessService", params);
+        Response response = ClientUtil.clientSendData(employeeClient, "businessService", params);
         if (response != null && response.getResponeCode().getValue() == 200) {
             createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
         }
