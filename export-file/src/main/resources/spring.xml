@@ -24,8 +24,8 @@
         <property name="serverPackage" value="com.wyun.thrift.server." />
         <!--<property name="service" value="stcn-fund-indice" />-->
         <!--<property name="port" value="80" />-->
-        <property name="service" value="127.0.0.1" />
-        <property name="port" value="8900" />
+        <property name="service" value="guest-check" />
+        <property name="port" value="80" />
     </bean>
 
 </beans>
