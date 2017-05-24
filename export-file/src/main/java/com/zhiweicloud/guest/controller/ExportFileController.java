@@ -1,8 +1,5 @@
 package com.zhiweicloud.guest.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.zhiweicloud.guest.APIUtil.LXResult;
-import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.service.ExportFileService;
@@ -43,24 +40,16 @@ public class ExportFileController {
     @Path("exportFile")
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
-    public String exportFile(
+    public void exportFile(
         @BeanParam final OrderCheckDetail orderCheckDetail,
         @HeaderParam("client_id") String airportCode,
         @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
-        LXResult result = new LXResult();
         try {
             exportFileService.exportExcel(orderCheckDetail, airportCode,userId, response);
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
-            result.setStatus(LZStatus.ERROR.value());
-            result.setMsg(LZStatus.ERROR.display());
-            result.setData(null);
         }
-        return JSON.toJSONString(result);
     }
 
     /**
@@ -76,24 +65,16 @@ public class ExportFileController {
     @Path("exportBill")
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
-    public String exportBill(
+    public void exportBill(
         @BeanParam final CheckQueryParam checkQueryParam,
         @HeaderParam("client_id") String airportCode,
         @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
-        LXResult result = new LXResult();
         try {
             exportFileService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, airportCode);
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setData(null);
         } catch (Exception e) {
             e.printStackTrace();
-            result.setStatus(LZStatus.ERROR.value());
-            result.setMsg(LZStatus.ERROR.display());
-            result.setData(null);
         }
-        return JSON.toJSONString(result);
     }
 
 }

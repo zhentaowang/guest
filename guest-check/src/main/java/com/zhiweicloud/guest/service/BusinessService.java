@@ -192,7 +192,9 @@ public class BusinessService implements IBusinessService {
                         " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");
             }
             //去掉了分页
-            List<Map<String, Object>> checkList = checkMapper.customerChecklist();
+            BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(0, 0));
+
+            List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
             ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","accompanyPersonNum","restRoomPersonNum","securityCheckPersonNum","totalAmount"));
             Map<String, Object> totalRow = new HashMap<>();
 

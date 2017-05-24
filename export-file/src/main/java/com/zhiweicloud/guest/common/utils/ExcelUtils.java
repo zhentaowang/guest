@@ -231,15 +231,19 @@ public class ExcelUtils {
     }
 
     private static void createContentRow(List dataList, Map<String, String> titleMap) {
-        HSSFCellStyle contextstyle = workbook.createCellStyle();
+        HSSFCellStyle contextStyle = workbook.createCellStyle();
+        contextStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+        HSSFDataFormat dataFormat = workbook.createDataFormat();
+        contextStyle.setDataFormat(dataFormat.getFormat("#"));
         for (int i = 0,size = dataList.size(); i < size; i++) {
             HSSFRow row = sheet.createRow(CONTENT_START_POSITION + i);
             Map<String,Object> rowMap = (HashMap) dataList.get(i);
             int j = 0;
             for (Map.Entry<String, String> entry : titleMap.entrySet()) {
                 HSSFCell textcell = row.createCell(j);
+                textcell.setCellStyle(contextStyle);
                 Object value = rowMap.get(entry.getKey());
-                setValue(textcell,value,contextstyle);
+                setValue(textcell,value,contextStyle);
                 j++;
             }
         }

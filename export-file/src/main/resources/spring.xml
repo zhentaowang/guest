@@ -10,20 +10,14 @@
     <context:component-scan base-package="com.zhiweicloud.guest.conf" />
 
     <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
-    <bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl"></bean>
-    <bean id="server" class="com.wyun.thrift.server.server.Server">
-        <!-- setServer_port -->
-        <property name="serverPort" value="8900"></property>
-        <property name="processorName" value="airPortServiceImpl"></property>
-    </bean>
 
     <bean id="checkClient" class="com.wyun.thrift.client.Factory.ServiceClientProxyFactory" destroy-method="close">
         <property name="maxActive" value="20" />
         <property name="idleTime" value="1800000" />
         <property name="serverName" value="MyService" />
         <property name="serverPackage" value="com.wyun.thrift.server." />
-        <!--<property name="service" value="stcn-fund-indice" />-->
-        <!--<property name="port" value="80" />-->
+        <!--<property name="service" value="127.0.0.1" />-->
+        <!--<property name="port" value="8899" />-->
         <property name="service" value="guest-check" />
         <property name="port" value="80" />
     </bean>
