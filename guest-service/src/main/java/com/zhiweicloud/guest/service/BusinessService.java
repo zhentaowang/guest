@@ -391,7 +391,7 @@ public class BusinessService implements IBusinessService {
             }
 
             //查该用户默认选择的 服务厅
-            if(!request.getBoolean("isShowAll")){
+            if(request.containsKey("isShowAll") && !request.getBoolean("isShowAll")){
                 servList = servMapper.getServNameAndPositionNum(typeId,userId,airportCode,(page-1)*rows,rows,true);
 
             }
@@ -408,7 +408,7 @@ public class BusinessService implements IBusinessService {
             for(Serv serv : servList){
                 paramMap.put("servId", serv.getServId());
                 paramMap.put("client_id", request.getString("client_id"));
-                paramMap.put("user_id", request.getString("user_id"));
+                paramMap.put("user_id", request.getLong("user_id"));
                 paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
                 JSONObject data=new JSONObject();
