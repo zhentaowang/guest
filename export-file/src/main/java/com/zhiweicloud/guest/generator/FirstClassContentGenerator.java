@@ -25,7 +25,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createHeadRows(SheetContentPo sheetContentPo) {
+    public void createHeadRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         RowContentPo rowContentPo = sheetContentPo.getRowContentPos().get(0);
@@ -78,7 +78,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createContentRows(SheetContentPo sheetContentPo) {
+    public void createContentRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         for (RowContentPo rowContentPo : sheetContentPo.getRowContentPos()) {
@@ -121,7 +121,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createTailRows(SheetContentPo sheetContentPo) {
+    public void createTailRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         row++;
@@ -157,7 +157,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void setWidthHelp(SheetContentPo sheetContentPo) {
+    public void setWidthHelp(SheetContentPo sheetContentPo) {
         HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(1,sheet.getRow(0).getCell(1).getStringCellValue().getBytes().length * 256);
         sheet.setColumnWidth(3,14 * 256); // 多数据的时候 直接写死大致内容

@@ -26,7 +26,7 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
     String[] names = {"供应商","日期","航班号","飞机号","航段","发生机场","费用名称","数量","单价","手续费","金额","币种","汇率"};
 
     @Override
-    void createHeadRows(SheetContentPo sheetContentPo) {
+    public void createHeadRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         // 第一行
@@ -39,7 +39,7 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createContentRows(SheetContentPo sheetContentPo) {
+    public void createContentRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         for (RowContentPo rowContentPo : sheetContentPo.getRowContentPos()) {
@@ -107,12 +107,12 @@ public class ChinaSouthernAirlinesContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createTailRows(SheetContentPo sheetContentPo) {
+    public void createTailRows(SheetContentPo sheetContentPo) {
 
     }
 
     @Override
-    void setWidthHelp(SheetContentPo sheetContentPo) {
+    public void setWidthHelp(SheetContentPo sheetContentPo) {
         HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(0,"云南空港百事特商务有限公司丽江营业部".getBytes().length * 256);
         sheet.setColumnWidth(1,"2017-03-26".getBytes().length * 256);
