@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.controller;
 
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
+import com.zhiweicloud.guest.model.TrainPojo;
 import com.zhiweicloud.guest.service.ExportFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -82,12 +83,12 @@ public class ExportFileController {
     @Produces("application/x-msdownload;charset=utf8")
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
     public void exportExcelForTrain(
-        @BeanParam final CheckQueryParam checkQueryParam,
+        @BeanParam final TrainPojo trainPojo,
         @HeaderParam("client_id") String airportCode,
         @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
         try {
-            exportFileService.exportExcelForTrain();
+            exportFileService.exportExcelForTrain(trainPojo);
         } catch (Exception e) {
             e.printStackTrace();
         }

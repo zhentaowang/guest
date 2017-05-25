@@ -1,10 +1,7 @@
 package com.zhiweicloud.guest.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
@@ -13,8 +10,13 @@ import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.utils.ExcelUtils;
 import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.generator.*;
+import com.zhiweicloud.guest.generator.train.SingleSheetGenerator;
+import com.zhiweicloud.guest.generator.train.CountBillGenerator;
+import com.zhiweicloud.guest.generator.train.DetailBillGenerator;
+import com.zhiweicloud.guest.generator.train.RetailBillGenerator;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
+import com.zhiweicloud.guest.model.TrainPojo;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -24,9 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 导出文件Service
@@ -38,7 +38,9 @@ import java.util.Map;
 @Service
 public class ExportFileService {
 
-    private static MyService.Iface client = SpringBeanUtil.getBean("checkClient");
+    private static MyService.Iface checkClient = SpringBeanUtil.getBean("checkClient");
+
+    private static MyService.Iface trainClient = SpringBeanUtil.getBean("trainClient");
 
     public void exportBill(CheckQueryParam checkQueryParam, String type, HttpServletResponse response, Long userId, String airportCode)throws Exception {
 
@@ -169,8 +171,68 @@ public class ExportFileService {
         }
     }
 
-    public void exportExcelForTrain(String trainName){
+    public void exportExcelForTrain(TrainPojo trainPojo){
+        if (trainPojo.getType() <0 || trainPojo.getType() == null){
+            return;
+        }
 
+        SingleSheetGenerator generator = null;
+
+        JSONObject result = null;
+
+        switch (trainPojo.getType()){
+            case 1:
+                result  = getDate(trainPojo.getClientName(),trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime());
+                generator = new CountBillGenerator(result.getJSONObject("data"));
+                break;
+            case 2:
+                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
+                generator = new DetailBillGenerator(result.getJSONObject("data"));
+
+                break;
+            case 3:
+                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
+                generator = new RetailBillGenerator(result.getJSONObject("data"));
+                break;
+        }
+        generator.create();
+    }
+
+    private JSONObject getDate(String clientName,String trainName,String productName,String startTime,String endTime){
+        JSONObject result = null;
+        JSONObject params = new JSONObject();
+        params.put("operation", "getCountBill");
+        params.put("clientName", clientName);
+        params.put("trainName",trainName);
+        params.put("productName",productName);
+        params.put("startTime",startTime);
+        params.put("endTime",endTime);
+        Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
+        if (re !=null && re.getResponeCode().getValue() == 200) {
+            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        }
+        return result;
+    }
+
+    private JSONObject getDate(String trainName,String productName,String startTime,String endTime,Integer type){
+        JSONObject result = null;
+        JSONObject params = new JSONObject();
+        params.put("trainName",trainName);
+        params.put("productName",productName);
+        params.put("startTime",startTime);
+        params.put("endTime",endTime);
+        if (type == 2){
+            params.put("operation", "getDetailBill");
+
+        }
+        if (type == 3){
+            params.put("operation", "getRetailBill");
+        }
+        Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
+        if (re !=null && re.getResponeCode().getValue() == 200) {
+            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        }
+        return result;
     }
 
     private JSONObject getMap(OrderCheckDetail orderCheckDetail,String airportCode, Long userId){
@@ -185,7 +247,7 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(client, "businessService", params);
+        Response re = ClientUtil.clientSendData(checkClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
         }
@@ -206,7 +268,7 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(client, "businessService", params);
+        Response re = ClientUtil.clientSendData(checkClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
         }
@@ -227,7 +289,7 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(client, "businessService", params);
+        Response re = ClientUtil.clientSendData(checkClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
         }
