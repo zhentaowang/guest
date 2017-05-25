@@ -38,6 +38,10 @@ public class Permission extends BaseEntity {
     @ApiModelProperty(value="菜单名称",name="menuName")
     private String menuName;
 
+    @ApiModelProperty(value="数据权限类型",name="dataPermission")
+    private String permissionType;
+
+    @Transient
     @ApiModelProperty(value="数据权限",name="dataPermission")
     private String dataPermission;
 
@@ -52,6 +56,14 @@ public class Permission extends BaseEntity {
     @Transient
     @ApiModelProperty(value="角色Id字符串",name="roleIds")
     private String roleIds;
+
+    public String getPermissionType() {
+        return permissionType;
+    }
+
+    public void setPermissionType(String permissionType) {
+        this.permissionType = permissionType;
+    }
 
     public String getRoleIds() {
         return roleIds;
