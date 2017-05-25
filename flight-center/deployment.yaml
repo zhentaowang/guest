@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: flight-center
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flight-center
+    spec:
+      containers:
+        - name: flight-center
+          image: java:8
+          command: ["java","-jar","java/flight-center.jar"]
+          volumeMounts:
+          - mountPath: "/java"
+            name: code
+            subPath: guest/flight-center
+          - mountPath: "/etc/localtime"
+            name: tz-config
+          ports:
+            - containerPort: 8080
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code-claims
+        - name: tz-config
+          hostPath:
+            path: /etc/localtime
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flight-center
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: flight-center

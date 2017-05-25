@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.StationPoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.po.StationPo">
+        <id column="station_id" jdbcType="BIGINT" property="stationId" />
+        <result column="train_id" jdbcType="VARCHAR" property="trainId" />
+        <result column="ticket_entrance" jdbcType="VARCHAR" property="ticketEntrance" />
+        <result column="station_type" jdbcType="VARCHAR" property="stationType" />
+        <result column="station_no" jdbcType="VARCHAR" property="stationNo" />
+        <result column="waiting_room" jdbcType="VARCHAR" property="waitingRoom" />
+        <result column="station_ordinal" jdbcType="INTEGER" property="stationOrdinal" />
+        <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+        <result column="arrived_time" jdbcType="VARCHAR" property="arrivedTime" />
+        <result column="leave_time" jdbcType="VARCHAR" property="leaveTime" />
+        <result column="stay" jdbcType="VARCHAR" property="stay" />
+        <result column="mileage" jdbcType="VARCHAR" property="mileage" />
+        <result column="first_class" jdbcType="VARCHAR" property="firstClass" />
+        <result column="economy_class" jdbcType="VARCHAR" property="economyClass" />
+        <result column="business_seat" jdbcType="VARCHAR" property="businessSeat" />
+        <result column="hard_seat" jdbcType="VARCHAR" property="hardSeat" />
+        <result column="soft_seat" jdbcType="VARCHAR" property="softSeat" />
+        <result column="hard_berth_sleeper" jdbcType="VARCHAR" property="hardBerthSleeper" />
+        <result column="soft_berth_sleeper" jdbcType="VARCHAR" property="softBerthSleeper" />
+        <result column="standing_room" jdbcType="VARCHAR" property="standingRoom" />
+        <result column="wuzuo" jdbcType="VARCHAR" property="wuzuo" />
+        <result column="swz" jdbcType="VARCHAR" property="swz" />
+        <result column="tdz" jdbcType="VARCHAR" property="tdz" />
+        <result column="gjrw" jdbcType="VARCHAR" property="gjrw" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        station_id, station_type, station_no, waiting_room, station_ordinal, station_name, 
+        arrived_time, leave_time, stay, mileage, first_class, economy_class, business_seat, 
+        hard_seat, soft_seat, hard_berth_sleeper, soft_berth_sleeper, standing_room, wuzuo, 
+        swz, tdz, gjrw, is_deleted, create_time, update_time
+    </sql>
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stationId != null">station_id,</if>
+            <if test="trainId != null">train_id,</if>
+            <if test="ticketEntrance != null">ticket_entrance,</if>
+            <if test="stationType != null">station_type,</if>
+            <if test="stationNo != null">station_no,</if>
+            <if test="waitingRoom != null">waiting_room,</if>
+            <if test="stationOrdinal != null">station_ordinal,</if>
+            <if test="stationName != null">station_name,</if>
+            <if test="arrivedTime != null">arrived_time,</if>
+            <if test="leaveTime != null">leave_time,</if>
+            <if test="stay != null">stay,</if>
+            <if test="mileage != null">mileage,</if>
+            <if test="firstClass != null">first_class,</if>
+            <if test="economyClass != null">economy_class,</if>
+            <if test="businessSeat != null">business_seat,</if>
+            <if test="hardSeat != null">hard_seat,</if>
+            <if test="softSeat != null">soft_seat,</if>
+            <if test="hardBerthSleeper != null">hard_berth_sleeper,</if>
+            <if test="softBerthSleeper != null">soft_berth_sleeper,</if>
+            <if test="standingRoom != null">standing_room,</if>
+            <if test="wuzuo != null">wuzuo,</if>
+            <if test="swz != null">swz,</if>
+            <if test="tdz != null">tdz,</if>
+            <if test="gjrw != null">gjrw,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stationId != null">
+                #{stationId,jdbcType=BIGINT},
+            </if>
+            <if test="trainId != null">
+                #{trainId,jdbcType=BIGINT},
+            </if>
+            <if test="ticketEntrance != null">
+                #{ticketEntrance,jdbcType=VARCHAR},
+            </if>
+            <if test="stationType != null">
+                #{stationType,jdbcType=VARCHAR},
+            </if>
+            <if test="stationNo != null">
+                #{stationNo,jdbcType=VARCHAR},
+            </if>
+            <if test="waitingRoom != null">
+                #{waitingRoom,jdbcType=VARCHAR},
+            </if>
+            <if test="stationOrdinal != null">
+                #{stationOrdinal,jdbcType=INTEGER},
+            </if>
+            <if test="stationName != null">
+                #{stationName,jdbcType=VARCHAR},
+            </if>
+            <if test="arrivedTime != null">
+                #{arrivedTime,jdbcType=VARCHAR},
+            </if>
+            <if test="leaveTime != null">
+                #{leaveTime,jdbcType=VARCHAR},
+            </if>
+            <if test="stay != null">
+                #{stay,jdbcType=VARCHAR},
+            </if>
+            <if test="mileage != null">
+                #{mileage,jdbcType=VARCHAR},
+            </if>
+            <if test="firstClass != null">
+                #{firstClass,jdbcType=VARCHAR},
+            </if>
+            <if test="economyClass != null">
+                #{economyClass,jdbcType=VARCHAR},
+            </if>
+            <if test="businessSeat != null">
+                #{businessSeat,jdbcType=VARCHAR},
+            </if>
+            <if test="hardSeat != null">
+                #{hardSeat,jdbcType=VARCHAR},
+            </if>
+            <if test="softSeat != null">
+                #{softSeat,jdbcType=VARCHAR},
+            </if>
+            <if test="hardBerthSleeper != null">
+                #{hardBerthSleeper,jdbcType=VARCHAR},
+            </if>
+            <if test="softBerthSleeper != null">
+                #{softBerthSleeper,jdbcType=VARCHAR},
+            </if>
+            <if test="standingRoom != null">
+                #{standingRoom,jdbcType=VARCHAR},
+            </if>
+            <if test="wuzuo != null">
+                #{wuzuo,jdbcType=VARCHAR},
+            </if>
+            <if test="swz != null">
+                #{swz,jdbcType=VARCHAR},
+            </if>
+            <if test="tdz != null">
+                #{tdz,jdbcType=VARCHAR},
+            </if>
+            <if test="gjrw != null">
+                #{gjrw,jdbcType=VARCHAR},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=SMALLINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="com.zhiweicloud.guest.po.StationPo">
+        INSERT INTO base_station
+        <include refid="insertName"/>
+        VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <insert id="insertBatch">
+        INSERT INTO base_station(
+            station_id,
+            train_id,
+            ticket_entrance,
+            station_type,
+            station_no,
+            waiting_room,
+            station_ordinal,
+            station_name,
+            arrived_time,
+            leave_time,
+            stay,
+            mileage,
+            first_class,
+            economy_class,
+            business_seat,
+            hard_seat,
+            soft_seat,
+            hard_berth_sleeper,
+            soft_berth_sleeper,
+            standing_room,
+            wuzuo,
+            swz,
+            tdz,
+            gjrw)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.stationId,jdbcType=BIGINT},
+            #{trainId,jdbcType=BIGINT},
+            #{item.ticketEntrance,jdbcType=VARCHAR},
+            #{item.stationType,jdbcType=VARCHAR},
+            #{item.stationNo,jdbcType=VARCHAR},
+            #{item.waitingRoom,jdbcType=VARCHAR},
+            #{item.stationOrdinal,jdbcType=INTEGER},
+            #{item.stationName,jdbcType=VARCHAR},
+            #{item.arrivedTime,jdbcType=VARCHAR},
+            #{item.leaveTime,jdbcType=VARCHAR},
+            #{item.stay,jdbcType=VARCHAR},
+            #{item.mileage,jdbcType=VARCHAR},
+            <choose>
+                <when test="'-'.equals(item.firstClass)">'',</when>
+                <otherwise>#{item.firstClass,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.economyClass)">'',</when>
+                <otherwise>#{item.economyClass,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.businessSeat)">'',</when>
+                <otherwise>#{item.businessSeat,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.hardSeat)">'',</when>
+                <otherwise>#{item.hardSeat,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.softSeat)">'',</when>
+                <otherwise>#{item.softSeat,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.hardBerthSleeper)">'',</when>
+                <otherwise>#{item.hardBerthSleeper,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.softBerthSleeper)">'',</when>
+                <otherwise>#{item.softBerthSleeper,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="'-'.equals(item.standingRoom)">'',</when>
+                <otherwise>#{item.standingRoom,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            #{item.wuzuo,jdbcType=VARCHAR},
+            #{item.swz,jdbcType=VARCHAR},
+            #{item.tdz,jdbcType=VARCHAR},
+            #{item.gjrw,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <sql id="updateSet">
+        <set>
+            <if test="ticketEntrance != null">ticket_entrance = #{ticketEntrance,jdbcType=VARCHAR},</if>
+            <if test="stationType != null">station_type = #{stationType,jdbcType=VARCHAR},</if>
+            <if test="stationNo != null">station_no = #{stationNo,jdbcType=VARCHAR},</if>
+            <if test="waitingRoom != null">waiting_room = #{waitingRoom,jdbcType=VARCHAR},</if>
+            <if test="stationOrdinal != null">station_ordinal = #{stationOrdinal,jdbcType=INTEGER},</if>
+            <if test="arrivedTime != null">arrived_time = #{arrivedTime,jdbcType=VARCHAR},</if>
+            <if test="leaveTime != null">leave_time = #{leaveTime,jdbcType=VARCHAR},</if>
+            <if test="stay != null">stay = #{stay,jdbcType=VARCHAR},</if>
+            <if test="mileage != null">mileage = #{mileage,jdbcType=VARCHAR},</if>
+            <if test="firstClass != null">first_class = #{firstClass,jdbcType=VARCHAR},</if>
+            <if test="economyClass != null">economy_class = #{economyClass,jdbcType=VARCHAR},</if>
+            <if test="businessSeat != null">business_seat = #{businessSeat,jdbcType=VARCHAR},</if>
+            <if test="hardSeat != null">hard_seat = #{hardSeat,jdbcType=VARCHAR},</if>
+            <if test="softSeat != null">soft_seat = #{softSeat,jdbcType=VARCHAR},</if>
+            <if test="hardBerthSleeper != null">hard_berth_sleeper = #{hardBerthSleeper,jdbcType=VARCHAR},</if>
+            <if test="softBerthSleeper != null">soft_berth_sleeper = #{softBerthSleeper,jdbcType=VARCHAR},</if>
+            <if test="standingRoom != null">standing_room = #{standingRoom,jdbcType=VARCHAR},</if>
+            <if test="wuzuo != null">wuzuo = #{wuzuo,jdbcType=VARCHAR},</if>
+            <if test="swz != null">swz = #{swz,jdbcType=VARCHAR},</if>
+            <if test="tdz != null">tdz = #{tdz,jdbcType=VARCHAR},</if>
+            <if test="gjrw != null">gjrw = #{gjrw,jdbcType=VARCHAR},</if>
+        </set>
+    </sql>
+
+    <update id="updateByCondition" parameterType="com.zhiweicloud.guest.po.StationPo">
+        UPDATE base_station
+        <include refid="updateSet"/>
+        WHERE 1=1
+        <if test="trainId != null">AND train_id = #{trainId,jdbcType=BIGINT},</if>
+        <if test="stationName != null">AND station_name = #{stationName,jdbcType=VARCHAR},</if>
+    </update>
+
+</mapper>

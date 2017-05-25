@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.TrainPojoMapper">
+
+    <resultMap id="baseMap" type="com.zhiweicloud.guest.pojo.TrainPojo">
+        <id column="train_id" jdbcType="BIGINT" property="trainId" />
+        <result column="train_type" jdbcType="VARCHAR" property="trainType" />
+        <result column="train_date" jdbcType="DATE" property="trainDate" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="start" jdbcType="VARCHAR" property="start" />
+        <result column="end" jdbcType="VARCHAR" property="end" />
+        <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+        <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+        <result column="mileage" jdbcType="VARCHAR" property="mileage" />
+        <collection property="stationPos" ofType="com.zhiweicloud.guest.po.StationPo">
+            <id column="station_id" jdbcType="BIGINT" property="stationId" />
+            <result column="train_id" jdbcType="VARCHAR" property="trainId" />
+            <result column="ticket_entrance" jdbcType="VARCHAR" property="ticketEntrance" />
+            <result column="station_type" jdbcType="VARCHAR" property="stationType" />
+            <result column="station_no" jdbcType="VARCHAR" property="stationNo" />
+            <result column="waiting_room" jdbcType="VARCHAR" property="waitingRoom" />
+            <result column="station_ordinal" jdbcType="INTEGER" property="stationOrdinal" />
+            <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+            <result column="arrived_time" jdbcType="VARCHAR" property="arrivedTime" />
+            <result column="leave_time" jdbcType="VARCHAR" property="leaveTime" />
+            <result column="stay" jdbcType="VARCHAR" property="stay" />
+            <result column="first_class" jdbcType="VARCHAR" property="firstClass" />
+            <result column="economy_class" jdbcType="VARCHAR" property="economyClass" />
+            <result column="business_seat" jdbcType="VARCHAR" property="businessSeat" />
+            <result column="hard_seat" jdbcType="VARCHAR" property="hardSeat" />
+            <result column="soft_seat" jdbcType="VARCHAR" property="softSeat" />
+            <result column="hard_berth_sleeper" jdbcType="VARCHAR" property="hardBerthSleeper" />
+            <result column="soft_berth_sleeper" jdbcType="VARCHAR" property="softBerthSleeper" />
+            <result column="standing_room" jdbcType="VARCHAR" property="standingRoom" />
+            <result column="wuzuo" jdbcType="VARCHAR" property="wuzuo" />
+            <result column="swz" jdbcType="VARCHAR" property="swz" />
+            <result column="tdz" jdbcType="VARCHAR" property="tdz" />
+            <result column="gjrw" jdbcType="VARCHAR" property="gjrw" />
+        </collection>
+    </resultMap>
+
+    <select id="queryTrainByCondition" parameterType="Map" resultMap="baseMap">
+      SELECT
+        t.train_id,
+        t.train_type,
+        t.train_date,
+        t.name,
+        t.start,
+        t.end,
+        t.start_time,
+        t.end_time,
+        t.mileage,
+        s.station_id,
+        s.ticket_entrance,
+        s.station_type,
+        s.station_no,
+        s.waiting_room,
+        s.station_ordinal,
+        s.station_name,
+        s.arrived_time,
+        s.leave_time,
+        s.stay,
+        s.first_class,
+        s.economy_class,
+        s.business_seat,
+        s.hard_seat,
+        s.soft_seat,
+        s.hard_berth_sleeper,
+        s.soft_berth_sleeper,
+        s.standing_room,
+        s.wuzuo,
+        s.swz,
+        s.tdz,
+        s.gjrw
+      FROM base_train t
+      INNER JOIN base_station s
+      ON t.train_id = s.train_id
+      WHERE 1 =1
+        <!--<if test="start !=null and !''.equals(start)">AND s.station_name <![CDATA[ <> ]]> #{start}</if>-->
+        <if test="name !=null and !''.equals(name)">AND t.name = #{name}</if>
+        <if test="trainDate !=null and !''.equals(trainDate)">AND t.train_date = #{trainDate}</if>
+    </select>
+    
+</mapper>
