@@ -39,6 +39,7 @@ import com.zhiweicloud.guest.model.Permission;
 import com.zhiweicloud.guest.model.RolePermission;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import com.zhiweicloud.guest.pageUtil.PageModel;
+import jersey.repackaged.com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -358,10 +359,10 @@ public class BusinessService implements IBusinessService {
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", request.getString("client_id"));
             param.put("userId", request.getLong("user_id"));
+            param.put("urlStr", Joiner.on(",").join(urls));
             if(request.containsKey("queryOrderType")){
                 param.put("orderType", request.getLong("queryOrderType"));
             }
-
             Map<String,Object> params = new HashMap<>();
             List<Permission> permissionList = permissionMapper.getUserPermission(param);
             for(int i = 0; i < urls.size(); i++){
@@ -370,10 +371,11 @@ public class BusinessService implements IBusinessService {
                     if(urls.get(i).equals(url)){
                         params.put(urls.get(i),"true");
                         if(param.containsKey("orderType") && permissionList.get(j).getDataPermission() != null){
-                            JSONObject paramJSON = JSON.parseObject(permissionList.get(j).getDataPermission());
+                            JSONObject permissionTypeJSON = JSON.parseObject(permissionList.get(j).getPermissionType());
+                            JSONObject dataPermissionJSON = JSON.parseObject(permissionList.get(j).getDataPermission());
 //                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": |, ");
-                            if(param.get("orderType").toString().equals(paramJSON.getString("orderType"))){
-                                params.put("roleId",paramJSON.getString("roleId"));
+                            if(param.get("orderType").toString().equals(permissionTypeJSON.getString("orderType"))){
+                                params.put("roleId",dataPermissionJSON.getString("roleId"));
                                 break;
                             }
                         }else {
