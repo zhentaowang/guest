@@ -30,7 +30,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
 
 
     @Override
-    void createHeadRows(SheetContentPo sheetContentPo) {
+    public void createHeadRows(SheetContentPo sheetContentPo) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         int row = sheetContentPo.getRow();
@@ -68,7 +68,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createContentRows(SheetContentPo sheetContentPo) {
+    public void createContentRows(SheetContentPo sheetContentPo) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         int row = sheetContentPo.getRow();
@@ -139,7 +139,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createTailRows(SheetContentPo sheetContentPo) {
+    public void createTailRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         row++;
@@ -175,7 +175,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void setWidthHelp(SheetContentPo sheetContentPo) {
+    public void setWidthHelp(SheetContentPo sheetContentPo) {
         HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(0,"LU/CHIENTSUNG".getBytes().length * 256);
         sheet.setColumnWidth(4,"781242215781111".getBytes().length * 256);

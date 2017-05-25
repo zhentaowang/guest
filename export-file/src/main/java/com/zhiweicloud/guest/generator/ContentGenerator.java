@@ -47,22 +47,22 @@ public abstract class ContentGenerator {
     /**
      * 创建头部行
      */
-    abstract void createHeadRows(SheetContentPo sheetContentPo);
+    public abstract void createHeadRows(SheetContentPo sheetContentPo);
 
     /**
      * 创建内容行
      */
-    abstract void createContentRows(SheetContentPo sheetContentPo);
+    public abstract void createContentRows(SheetContentPo sheetContentPo);
 
     /**
      * 创建尾部行
      */
-    abstract void createTailRows(SheetContentPo sheetContentPo);
+    public abstract void createTailRows(SheetContentPo sheetContentPo);
 
     /**
      * 设置宽度
      */
-    abstract void setWidthHelp(SheetContentPo sheetContentPo);
+    public abstract void setWidthHelp(SheetContentPo sheetContentPo);
 
     /**
      * 创建文件 模版方法

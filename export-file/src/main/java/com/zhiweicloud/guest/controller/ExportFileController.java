@@ -77,4 +77,21 @@ public class ExportFileController {
         }
     }
 
+    @GET
+    @Path("exportExcelForTrain")
+    @Produces("application/x-msdownload;charset=utf8")
+    @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
+    public void exportExcelForTrain(
+        @BeanParam final CheckQueryParam checkQueryParam,
+        @HeaderParam("client_id") String airportCode,
+        @HeaderParam("user_id") Long userId,
+        @Context HttpServletResponse response) {
+        try {
+            exportFileService.exportExcelForTrain();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

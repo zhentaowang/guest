@@ -25,7 +25,7 @@ public class AirChinaContentGenerator extends ContentGenerator {
     String[] names = {"供应商名称","账单编号","账单日期","结算币种","汇率","业务单据编号","业务发生地点（航站）","业务单据日期","费用明细（供应商物料）","计量单位","结算数量","结算单价","单据行币种","单据行汇率","结算金额","航班日期","航班号","飞机号","起飞航站","到达航站"};
 
     @Override
-    void createHeadRows(SheetContentPo sheetContentPo) {
+    public void createHeadRows(SheetContentPo sheetContentPo) {
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         // 第一行
@@ -58,7 +58,7 @@ public class AirChinaContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createContentRows(SheetContentPo sheetContentPo) {
+    public void createContentRows(SheetContentPo sheetContentPo) {
 
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
@@ -148,12 +148,12 @@ public class AirChinaContentGenerator extends ContentGenerator {
     }
 
     @Override
-    void createTailRows(SheetContentPo sheetContentPo) {
+    public void createTailRows(SheetContentPo sheetContentPo) {
 
     }
 
     @Override
-    void setWidthHelp(SheetContentPo sheetContentPo) {
+    public void setWidthHelp(SheetContentPo sheetContentPo) {
         HSSFSheet sheet = sheetContentPo.getSheet();
         sheet.setColumnWidth(0,"云南空港百事特商务有限公司丽江".getBytes().length * 256);
         sheet.setColumnWidth(6,21 * 256);

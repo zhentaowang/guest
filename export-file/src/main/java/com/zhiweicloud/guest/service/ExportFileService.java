@@ -11,13 +11,18 @@ import com.wyun.thrift.server.Response;
 import com.wyun.utils.ByteBufferUtil;
 import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.utils.ExcelUtils;
+import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.generator.*;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,26 +83,94 @@ public class ExportFileService {
     }
 
     public void exportExcel(OrderCheckDetail orderCheckDetail,String airportCode, Long userId,HttpServletResponse response){
-        Map result = getMap(orderCheckDetail, airportCode, userId);
-        JSONArray column = (JSONArray) result.get("column");
-        List rows = (List) result.get("rows");
-        if (rows.size() > 1) {
-            Map<String, String> titleMap = new LinkedHashMap<>();
-            column.forEach(x -> {
-                String row1 = JSONObject.toJSONString(x, SerializerFeature.WriteMapNullValue);
-                Map<String, String> map = JSON.parseObject(row1, LinkedHashMap.class, Feature.OrderedField);
-                String[] strArray = new String[2];
-                int i = 0;
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    strArray[i] = entry.getValue();
-                    i++;
-                }
-                titleMap.put(strArray[1], strArray[0]);
-            });
-            String fileName = orderCheckDetail.getQueryProductName() + "_" + System.currentTimeMillis() + ".xls";
+        JSONObject jsonObject = getMap(orderCheckDetail, airportCode, userId);
+        JSONObject data = jsonObject.getJSONObject("data");
+        JSONArray column = data.getJSONArray("column");
+        List rows = JSONArray.parseArray(data.getString("rows"));
+
+        String fileName = orderCheckDetail.getQueryProductName() + "_" + System.currentTimeMillis() + ".xls";
+
+        for (int i = 0; i < 1; i++) {
+            HSSFWorkbook workbook = new HSSFWorkbook();
+
+            HSSFCellStyle cellStyle1 = workbook.createCellStyle();
+            HSSFFont font = workbook.createFont();
+            font.setBold(true);
+            cellStyle1.setAlignment(HorizontalAlignment.CENTER); // 居中
+            cellStyle1.setFont(font);
+
+            HSSFCellStyle cellStyle2 = workbook.createCellStyle();
+            HSSFDataFormat dataFormat = workbook.createDataFormat();
+            cellStyle2.setAlignment(HorizontalAlignment.CENTER); // 居中
+            cellStyle2.setDataFormat(dataFormat.getFormat("#"));
+
+            HSSFCellStyle cellStyle3 = workbook.createCellStyle();
+            cellStyle3.setAlignment(HorizontalAlignment.CENTER); // 居中
+
             String sheetName = orderCheckDetail.getQueryProductName();
-            ExcelUtils.download(fileName, sheetName, rows, titleMap,response);
+            HSSFSheet sheet = workbook.createSheet(sheetName);
+
+            String[] key = new String[column.size()];
+            String[] value = new String[column.size()];
+
+            HSSFRow row = sheet.createRow(0);
+
+            int n = 0;
+            for (Object o : column) {
+                JSONObject object = (JSONObject) o;
+                String v = object.getString("displayName");
+                String k = object.getString("columnName");
+                System.out.println(k);
+                System.out.println(v);
+                key[n] = k;
+                value[n] = v;
+                HSSFCell row1Cell = row.createCell(n);
+                if (StringUtils.isNotNone(v) && ExcelUtils.isInteger(v)) {
+                    row1Cell.setCellStyle(cellStyle2);
+                    row1Cell.setCellValue(Double.valueOf(v));
+                } else {
+                    row1Cell.setCellStyle(cellStyle1);
+                    row1Cell.setCellValue(v);
+                }
+                n++;
+            }
+
+            int m = 0;
+            for (Object o : rows) {
+                HSSFRow rowContent = sheet.createRow(m + 1);
+                JSONObject object = (JSONObject) o;
+                for (int j = 0; j < key.length; j++) {
+                    HSSFCell cell = rowContent.createCell(j);
+                    String va = object.getString(key[j]);
+                    if (StringUtils.isNotNone(va) && ExcelUtils.isInteger(va)) {
+                        cell.setCellStyle(cellStyle2);
+                        cell.setCellValue(Double.parseDouble(va));
+                    }else {
+                        cell.setCellStyle(cellStyle3);
+                        cell.setCellValue(va);
+                    }
+                }
+                m++;
+            }
+
+            for (int j = 0; j < column.size() ; j++) {
+                sheet.setColumnWidth(j,sheet.getRow(1).getCell(j).getStringCellValue().getBytes().length * 256);
+            }
+
+            try (OutputStream out = response.getOutputStream()) {
+                response.setContentType("application/x-msdownload");
+                response.setHeader("Content-Disposition", "attachment; filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+                workbook.write(out);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
+    }
+
+    public void exportExcelForTrain(String trainName){
+
     }
 
     private JSONObject getMap(OrderCheckDetail orderCheckDetail,String airportCode, Long userId){
