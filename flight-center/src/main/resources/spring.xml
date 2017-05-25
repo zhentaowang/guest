@@ -18,8 +18,8 @@
     </bean>
     <bean id="server" class="com.wyun.thrift.server.server.Server">
         <!-- setServer_port -->
-        <!--<property name="serverPort" value="8080"></property>-->
-        <property name="serverPort" value="8901"></property>
+        <property name="serverPort" value="8080"></property>
+        <!--<property name="serverPort" value="8901"></property>-->
         <property name="processorName" value="airPortServiceImpl"></property>
     </bean>
 

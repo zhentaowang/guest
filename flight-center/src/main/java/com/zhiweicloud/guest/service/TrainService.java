@@ -51,12 +51,10 @@ public class TrainService {
 
         FlightCenterResult<TrainPojo> re = new FlightCenterResult<>();
         try{
-            String start = request.getString("start");
             String name = request.getString("name");
             String trainDate = request.getString("trainDate");
 
             Map<String, String> params = new HashMap<>();
-            params.put("start", start);
             params.put("name", name);
             params.put("trainDate", trainDate);
 
