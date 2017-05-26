@@ -199,35 +199,35 @@
             #{item.stay,jdbcType=VARCHAR},
             #{item.mileage,jdbcType=VARCHAR},
             <choose>
-                <when test="'-'.equals(item.firstClass)">'',</when>
+                <when test="item.firstClass != null and '-'.toString() == item.firstClass.trim()">'',</when>
                 <otherwise>#{item.firstClass,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.economyClass)">'',</when>
+                <when test="item.economyClass != null and '-'.toString() == item.economyClass.trim()">'',</when>
                 <otherwise>#{item.economyClass,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.businessSeat)">'',</when>
+                <when test="item.businessSeat != null and '-'.toString() == item.businessSeat.trim()">'',</when>
                 <otherwise>#{item.businessSeat,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.hardSeat)">'',</when>
+                <when test="item.hardSeat != null and '-'.toString() == item.hardSeat.trim()">'',</when>
                 <otherwise>#{item.hardSeat,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.softSeat)">'',</when>
+                <when test="item.softSeat != null and '-'.toString() == item.softSeat.trim()">'',</when>
                 <otherwise>#{item.softSeat,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.hardBerthSleeper)">'',</when>
+                <when test="item.hardBerthSleeper != null and '-'.toString() == item.hardBerthSleeper.trim()">'',</when>
                 <otherwise>#{item.hardBerthSleeper,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.softBerthSleeper)">'',</when>
+                <when test="item.softBerthSleeper != null and '-'.toString() == item.softBerthSleeper.trim()">'',</when>
                 <otherwise>#{item.softBerthSleeper,jdbcType=VARCHAR},</otherwise>
             </choose>
             <choose>
-                <when test="'-'.equals(item.standingRoom)">'',</when>
+                <when test="item.standingRoom != null and '-'.toString() == item.standingRoom.trim()">'',</when>
                 <otherwise>#{item.standingRoom,jdbcType=VARCHAR},</otherwise>
             </choose>
             #{item.wuzuo,jdbcType=VARCHAR},

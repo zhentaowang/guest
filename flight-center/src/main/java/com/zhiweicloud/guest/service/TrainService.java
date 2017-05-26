@@ -104,7 +104,7 @@ public class TrainService {
 
                     stationPoMapper.insertBatch(stations,trainPo.getTrainId());
                     trainPojo = new TrainPojo();
-                    BeanUtils.copyProperties(trainPojo,trainPo);
+                    BeanUtils.copyProperties(trainPo,trainPojo);
                     trainPojo.setStationPos(stations);
                 }
             }
