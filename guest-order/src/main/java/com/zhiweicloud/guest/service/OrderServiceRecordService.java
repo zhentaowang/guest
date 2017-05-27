@@ -46,7 +46,7 @@ public class OrderServiceRecordService {
             JSONObject updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
             if (updateUserObject != null) {
                 JSONObject obj = updateUserObject.getJSONObject("data");
-                record.setCreateUserName(obj.get("name").toString());
+                record.setCreateUserName(obj.get("name") == null ? "" :obj.get("name").toString());
             }
         }
         return orderServiceRecordMapper.insert(record);
