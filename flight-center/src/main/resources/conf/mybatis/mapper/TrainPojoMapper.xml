@@ -76,7 +76,6 @@
       INNER JOIN base_station s
       ON t.train_id = s.train_id
       WHERE 1 =1
-        <!--<if test="start !=null and !''.equals(start)">AND s.station_name <![CDATA[ <> ]]> #{start}</if>-->
         <if test="name !=null and !''.equals(name)">AND t.name = #{name}</if>
         <if test="trainDate !=null and !''.equals(trainDate)">AND t.train_date = #{trainDate}</if>
     </select>

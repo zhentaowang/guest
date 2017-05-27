@@ -12,6 +12,8 @@ import com.zhiweicloud.guest.po.StationPo;
 import com.zhiweicloud.guest.po.TrainPo;
 import com.zhiweicloud.guest.pojo.TrainPojo;
 import com.zhiweicloud.guest.source.juhe.service.JuheService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ import java.util.Map;
  */
 @Service
 public class TrainService {
+
+    private static final Log log = LogFactory.getLog(TrainService.class);
 
     @Autowired
     private TrainPojoMapper trainPojoMapper;
@@ -54,6 +58,8 @@ public class TrainService {
             String name = request.getString("name");
             String trainDate = request.getString("trainDate");
 
+            log.info("【参数   name:" +name + " trainDate:"+ trainDate +"】");
+
             Map<String, String> params = new HashMap<>();
             params.put("name", name);
             params.put("trainDate", trainDate);
@@ -61,7 +67,12 @@ public class TrainService {
             TrainPojo trainPojo = trainPojoMapper.queryTrainByCondition(params);
 
             if (trainPojo == null) {
+
+                log.info("【需要从聚合数据获取数据解析】");
+
                 String success = juheService.queryTrainInfoByName(name);
+
+                log.info("【聚合数据:】" + success);
 
                 // begin to parse source data
                 JSONObject object = JSON.parseObject(success);
@@ -93,7 +104,7 @@ public class TrainService {
 
                     stationPoMapper.insertBatch(stations,trainPo.getTrainId());
                     trainPojo = new TrainPojo();
-                    BeanUtils.copyProperties(trainPojo,trainPo);
+                    BeanUtils.copyProperties(trainPo,trainPojo);
                     trainPojo.setStationPos(stations);
                 }
             }
