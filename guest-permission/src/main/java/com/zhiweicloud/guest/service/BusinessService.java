@@ -368,6 +368,8 @@ public class BusinessService implements IBusinessService {
             for(int i = 0; i < urls.size(); i++){
                 for(int j = 0; j < permissionList.size(); j++){
                     String url = permissionList.get(j).getUrl();
+                    System.out.println(url);
+                    System.out.println(urls.get(i));
                     if(urls.get(i).equals(url)){
                         params.put(urls.get(i),"true");
                         if(param.containsKey("orderType") && permissionList.get(j).getDataPermission() != null){
@@ -376,6 +378,7 @@ public class BusinessService implements IBusinessService {
 //                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": |, ");
                             if(param.get("orderType").toString().equals(permissionTypeJSON.getString("orderType"))){
                                 params.put("roleId",dataPermissionJSON.getString("roleId"));
+                                System.out.printf("角色id：%s\n", params.get("roleId"));
                                 break;
                             }
                         }else {
