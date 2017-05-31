@@ -4,6 +4,7 @@ import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.model.TickPassenger;
+import com.zhiweicloud.guest.po.FlightPo;
 import com.zhiweicloud.guest.source.ibe.model.FlightStatus;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTkt;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
@@ -26,7 +27,7 @@ public class IbeService {
 
     public FlightCenterResult queryFlightNo(String flightNo) throws Exception {
         RootResult rootResult = IbeUtils.queryFlightNo(flightNo);
-        FlightCenterResult<List<Flight>> result = new FlightCenterResult();
+        FlightCenterResult<List<FlightPo>> result = new FlightCenterResult();
         result.setMessage(rootResult.getErrorRes().getErrContent());
         result.setState(Integer.valueOf(rootResult.getErrorRes().getErrCode()));
         result.setData(parse(rootResult.getFlightStatuses(), DateUtils.getDate("yyyy-MM-dd")));
@@ -35,7 +36,7 @@ public class IbeService {
 
     public FlightCenterResult queryFlightNoByDate(String flightNo, String flightDate) throws Exception {
         RootResult rootResult = IbeUtils.queryFlightNoByDate(flightNo, flightDate);
-        FlightCenterResult<List<Flight>> result = new FlightCenterResult();
+        FlightCenterResult<List<FlightPo>> result = new FlightCenterResult();
         result.setMessage(rootResult.getErrorRes().getErrContent());
         result.setState(Integer.valueOf(rootResult.getErrorRes().getErrCode()));
         result.setData(parse(rootResult.getFlightStatuses(), DateUtils.stringToDate(flightDate, "yyyy-MM-dd")));
@@ -59,12 +60,12 @@ public class IbeService {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    private List<Flight> parse(List<FlightStatus> flightStatuses, Date flightDate) throws InvocationTargetException, IllegalAccessException {
-        List<Flight> flights = new ArrayList<>();
+    private List<FlightPo> parse(List<FlightStatus> flightStatuses, Date flightDate) throws InvocationTargetException, IllegalAccessException {
+        List<FlightPo> flights = new ArrayList<>();
         if (flightStatuses != null) {
             for (FlightStatus flightStatus : flightStatuses) {
-                Flight flight = new Flight();
-                flight.setFlightDate(flightDate);
+                FlightPo flight = new FlightPo();
+                flight.setDepDate(flightDate);
                 BeanUtils.copyProperties(flight, flightStatus);
                 flights.add(flight);
             }

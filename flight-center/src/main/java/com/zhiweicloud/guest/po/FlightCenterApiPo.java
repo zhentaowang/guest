@@ -1,7 +1,7 @@
 /**
 Copyright 2016-2017 author IronC.
 */
-package com.zhiweicloud.guest.model;
+package com.zhiweicloud.guest.po;
 
 import java.util.Date;
 
@@ -11,18 +11,18 @@ import java.util.Date;
  * @author IronC
  * @version 1.0  2017-05-18
  */
-public class FlightCenterApiLog {
+public class FlightCenterApiPo {
 
     /**
     * 表名
     */
-    public static final transient String TABLE_NAME = "flight_center_api_log";
+    public static final transient String TABLE_NAME = "operator_flight_center_api";
 
     /**
      * 主键自增id
      * 不能为空
      */
-    private Long flightInfoApiLogId;
+    private Long flightCenterApiId;
 
     /**
      * flightCenter接口名字
@@ -63,12 +63,12 @@ public class FlightCenterApiLog {
      */
     private Date updateTime;
 
-    public Long getFlightInfoApiLogId() {
-        return flightInfoApiLogId;
+    public Long getFlightCenterApiId() {
+        return flightCenterApiId;
     }
 
-    public void setFlightInfoApiLogId(Long flightInfoApiLogId) {
-        this.flightInfoApiLogId = flightInfoApiLogId;
+    public void setFlightCenterApiId(Long flightCenterApiId) {
+        this.flightCenterApiId = flightCenterApiId;
     }
 
     public String getApiName() {
@@ -76,7 +76,7 @@ public class FlightCenterApiLog {
     }
 
     public void setApiName(String apiName) {
-        this.apiName = apiName == null ? null : apiName.trim();
+        this.apiName = apiName;
     }
 
     public Long getCustomerId() {
@@ -92,7 +92,7 @@ public class FlightCenterApiLog {
     }
 
     public void setInvokeState(String invokeState) {
-        this.invokeState = invokeState == null ? null : invokeState.trim();
+        this.invokeState = invokeState;
     }
 
     public String getInvokeResult() {
@@ -100,7 +100,7 @@ public class FlightCenterApiLog {
     }
 
     public void setInvokeResult(String invokeResult) {
-        this.invokeResult = invokeResult == null ? null : invokeResult.trim();
+        this.invokeResult = invokeResult;
     }
 
     public Short getIsDeleted() {
@@ -135,7 +135,7 @@ public class FlightCenterApiLog {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
-        sb.append(", flightInfoApiLogId=").append(flightInfoApiLogId);
+        sb.append(", flightCenterApiId=").append(flightCenterApiId);
         sb.append(", apiName=").append(apiName);
         sb.append(", customerId=").append(customerId);
         sb.append(", invokeState=").append(invokeState);

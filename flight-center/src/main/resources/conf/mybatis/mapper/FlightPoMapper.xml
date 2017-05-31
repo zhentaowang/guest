@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.FlightPoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.po.FlightPo">
+        <id column="flight_id" jdbcType="BIGINT" property="flightId" />
+        <result column="fd_id" jdbcType="INT" property="fdId" />
+        <result column="airline_code" jdbcType="VARCHAR" property="airlineCode" />
+        <result column="airline_en_name" jdbcType="VARCHAR" property="airlineEnName" />
+        <result column="airline_name" jdbcType="VARCHAR" property="airlineName" />
+        <result column="transfer_airport" jdbcType="VARCHAR" property="transferAirport" />
+        <result column="transfer_airport_code_en_name" jdbcType="VARCHAR" property="transferAirportCodeEnName" />
+        <result column="transfer_airport_code" jdbcType="VARCHAR" property="transferAirportCode" />
+        <result column="board_gate" jdbcType="VARCHAR" property="boardGate" />
+        <result column="board_time" jdbcType="TIMESTAMP" property="boardTime" />
+        <result column="board_state" jdbcType="VARCHAR" property="boardState" />
+        <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+        <result column="flight_type" jdbcType="VARCHAR" property="flightType" />
+        <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+        <result column="flight_state_code" jdbcType="VARCHAR" property="flightStateCode" />
+        <result column="flight_state" jdbcType="VARCHAR" property="flightState" />
+        <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+        <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
+        <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+        <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+        <result column="check_in_counter" jdbcType="VARCHAR" property="checkInCounter" />
+        <result column="carousel" jdbcType="VARCHAR" property="carousel" />
+        <result column="stop_flag" jdbcType="SMALLINT" property="stopFlag" />
+        <result column="share_flag" jdbcType="SMALLINT" property="shareFlag" />
+        <result column="share_flight_no" jdbcType="VARCHAR" property="shareFlightNo" />
+        <result column="fill_flight_no" jdbcType="VARCHAR" property="fillFlightNo" />
+        <result column="alternate_info" jdbcType="VARCHAR" property="alternateInfo" />
+        <result column="fcategory" jdbcType="VARCHAR" property="fcategory" />
+        <result column="board_gate_time" jdbcType="VARCHAR" property="boardGateTime" />
+        <result column="dep_en_name" jdbcType="VARCHAR" property="depEnName" />
+        <result column="dep_city" jdbcType="VARCHAR" property="depCity" />
+        <result column="dep_date" jdbcType="DATE" property="depDate" />
+        <result column="dep_airport" jdbcType="VARCHAR" property="depAirport" />
+        <result column="dep_airport_code" jdbcType="VARCHAR" property="depAirportCode" />
+        <result column="dep_airport_name" jdbcType="VARCHAR" property="depAirportName" />
+        <result column="dep_time_zone" jdbcType="VARCHAR" property="depTimeZone" />
+        <result column="dep_terminal" jdbcType="VARCHAR" property="depTerminal" />
+        <result column="dep_scheduled_date" jdbcType="TIMESTAMP" property="depScheduledDate" />
+        <result column="dep_estimated_date" jdbcType="TIMESTAMP" property="depEstimatedDate" />
+        <result column="dep_actual_date" jdbcType="TIMESTAMP" property="depActualDate" />
+        <result column="arr_en_name" jdbcType="VARCHAR" property="arrEnName" />
+        <result column="arr_city" jdbcType="VARCHAR" property="arrCity" />
+        <result column="arr_date" jdbcType="DATE" property="arrDate" />
+        <result column="arr_airport" jdbcType="VARCHAR" property="arrAirport" />
+        <result column="arr_airport_code" jdbcType="VARCHAR" property="arrAirportCode" />
+        <result column="arr_airport_name" jdbcType="VARCHAR" property="arrAirportName" />
+        <result column="arr_time_zone" jdbcType="VARCHAR" property="arrTimeZone" />
+        <result column="arr_terminal" jdbcType="VARCHAR" property="arrTerminal" />
+        <result column="arr_scheduled_date" jdbcType="TIMESTAMP" property="arrScheduledDate" />
+        <result column="arr_estimated_date" jdbcType="TIMESTAMP" property="arrEstimatedDate" />
+        <result column="arr_actual_date" jdbcType="TIMESTAMP" property="arrActualDate" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        flight_id, fd_id, airline_code, airline_en_name, airline_name, transfer_airport,
+        transfer_airport_code_en_name, transfer_airport_code, board_gate, board_time, board_state,
+        flight_no, flight_type, plan_no, flight_state_code, flight_state, flight_position,
+        board_in_out, is_in_or_out, is_near_or_far, check_in_counter, carousel, stop_flag,
+        share_flag, share_flight_no, fill_flight_no, alternate_info, fcategory, board_gate_time,
+        dep_en_name, dep_city, dep_date, dep_airport, dep_airport_code, dep_airport_name,
+        dep_time_zone, dep_terminal, dep_scheduled_date, dep_estimated_date, dep_actual_date,
+        arr_en_name, arr_city, arr_date, arr_airport, arr_airport_code, arr_airport_name,
+        arr_time_zone, arr_terminal, arr_scheduled_date, arr_estimated_date, arr_actual_date
+    </sql>
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fdId != null">fd_id,</if>
+            <if test="airlineCode != null">airline_code,</if>
+            <if test="airlineEnName != null">airline_en_name,</if>
+            <if test="airlineName != null">airline_name,</if>
+            <if test="transferAirport != null">transfer_airport,</if>
+            <if test="transferAirportCodeEnName != null">transfer_airport_code_en_name,</if>
+            <if test="transferAirportCode != null">transfer_airport_code,</if>
+            <if test="boardGate != null">board_gate,</if>
+            <if test="boardTime != null">board_time,</if>
+            <if test="boardState != null">board_state,</if>
+            <if test="flightNo != null">flight_no,</if>
+            <if test="flightType != null">flight_type,</if>
+            <if test="planNo != null">plan_no,</if>
+            <if test="flightStateCode != null">flight_state_code,</if>
+            <if test="flightState != null">flight_state,</if>
+            <if test="flightPosition != null">flight_position,</if>
+            <if test="boardInOut != null">board_in_out,</if>
+            <if test="isInOrOut != null">is_in_or_out,</if>
+            <if test="isNearOrFar != null">is_near_or_far,</if>
+            <if test="checkInCounter != null">check_in_counter,</if>
+            <if test="carousel != null">carousel,</if>
+            <if test="stopFlag != null">stop_flag,</if>
+            <if test="shareFlag != null">share_flag,</if>
+            <if test="shareFlightNo != null">share_flight_no,</if>
+            <if test="fillFlightNo != null">fill_flight_no,</if>
+            <if test="alternateInfo != null">alternate_info,</if>
+            <if test="fcategory != null">fcategory,</if>
+            <if test="boardGateTime != null">board_gate_time,</if>
+            <if test="depEnName != null">dep_en_name,</if>
+            <if test="depCity != null">dep_city,</if>
+            <if test="depDate != null">dep_date,</if>
+            <if test="depAirport != null">dep_airport,</if>
+            <if test="depAirportCode != null">dep_airport_code,</if>
+            <if test="depAirportName != null">dep_airport_name,</if>
+            <if test="depTimeZone != null">dep_time_zone,</if>
+            <if test="depTerminal != null">dep_terminal,</if>
+            <if test="depScheduledDate != null">dep_scheduled_date,</if>
+            <if test="depEstimatedDate != null">dep_estimated_date,</if>
+            <if test="depActualDate != null">dep_actual_date,</if>
+            <if test="arrEnName != null">arr_en_name,</if>
+            <if test="arrCity != null">arr_city,</if>
+            <if test="arrDate != null">arr_date,</if>
+            <if test="arrAirport != null">arr_airport,</if>
+            <if test="arrAirportCode != null">arr_airport_code,</if>
+            <if test="arrAirportName != null">arr_airport_name,</if>
+            <if test="arrTimeZone != null">arr_time_zone,</if>
+            <if test="arrTerminal != null">arr_terminal,</if>
+            <if test="arrScheduledDate != null">arr_scheduled_date,</if>
+            <if test="arrEstimatedDate != null">arr_estimated_date,</if>
+            <if test="arrActualDate != null">arr_actual_date,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fdId != null">#{fdId,jdbcType=INT},</if>
+            <if test="airlineCode != null">#{airlineCode,jdbcType=VARCHAR},</if>
+            <if test="airlineEnName != null">#{airlineEnName,jdbcType=VARCHAR},</if>
+            <if test="airlineName != null">#{airlineName,jdbcType=VARCHAR},</if>
+            <if test="transferAirport != null">#{transferAirport,jdbcType=VARCHAR},</if>
+            <if test="transferAirportCodeEnName != null">#{transferAirportCodeEnName,jdbcType=VARCHAR},</if>
+            <if test="transferAirportCode != null">#{transferAirportCode,jdbcType=VARCHAR},</if>
+            <if test="boardGate != null">#{boardGate,jdbcType=VARCHAR},</if>
+            <if test="boardTime != null">#{boardTime,jdbcType=TIMESTAMP},</if>
+            <if test="boardState != null">#{boardState,jdbcType=VARCHAR},</if>
+            <if test="flightNo != null">#{flightNo,jdbcType=VARCHAR},</if>
+            <if test="flightType != null">#{flightType,jdbcType=VARCHAR},</if>
+            <if test="planNo != null">#{planNo,jdbcType=VARCHAR},</if>
+            <if test="flightStateCode != null">#{flightStateCode,jdbcType=VARCHAR},</if>
+            <if test="flightState != null">#{flightState,jdbcType=VARCHAR},</if>
+            <if test="flightPosition != null">#{flightPosition,jdbcType=VARCHAR},</if>
+            <if test="boardInOut != null">#{boardInOut,jdbcType=SMALLINT},</if>
+            <if test="isInOrOut != null">#{isInOrOut,jdbcType=SMALLINT},</if>
+            <if test="isNearOrFar != null">#{isNearOrFar,jdbcType=SMALLINT},</if>
+            <if test="checkInCounter != null">#{checkInCounter,jdbcType=VARCHAR},</if>
+            <if test="carousel != null">#{carousel,jdbcType=VARCHAR},</if>
+            <if test="stopFlag != null">#{stopFlag,jdbcType=SMALLINT},</if>
+            <if test="shareFlag != null">#{shareFlag,jdbcType=SMALLINT},</if>
+            <if test="shareFlightNo != null">#{shareFlightNo,jdbcType=VARCHAR},</if>
+            <if test="fillFlightNo != null">#{fillFlightNo,jdbcType=VARCHAR},</if>
+            <if test="alternateInfo != null">#{alternateInfo,jdbcType=VARCHAR},</if>
+            <if test="fcategory != null">#{fcategory,jdbcType=VARCHAR},</if>
+            <if test="boardGateTime != null">#{boardGateTime,jdbcType=VARCHAR},</if>
+            <if test="depEnName != null">#{depEnName,jdbcType=VARCHAR},</if>
+            <if test="depCity != null">#{depCity,jdbcType=VARCHAR},</if>
+            <if test="depDate != null">#{depDate,jdbcType=DATE},</if>
+            <if test="depAirport != null">#{depAirport,jdbcType=VARCHAR},</if>
+            <if test="depAirportCode != null">#{depAirportCode,jdbcType=VARCHAR},</if>
+            <if test="depAirportName != null">#{depAirportName,jdbcType=VARCHAR},</if>
+            <if test="depTimeZone != null">#{depTimeZone,jdbcType=VARCHAR},</if>
+            <if test="depTerminal != null">#{depTerminal,jdbcType=VARCHAR},</if>
+            <if test="depScheduledDate != null">#{depScheduledDate,jdbcType=TIMESTAMP},</if>
+            <if test="depEstimatedDate != null">#{depEstimatedDate,jdbcType=TIMESTAMP},</if>
+            <if test="depActualDate != null">#{depActualDate,jdbcType=TIMESTAMP},</if>
+            <if test="arrEnName != null">#{arrEnName,jdbcType=VARCHAR},</if>
+            <if test="arrCity != null">#{arrCity,jdbcType=VARCHAR},</if>
+            <if test="arrDate != null">#{arrDate,jdbcType=DATE},</if>
+            <if test="arrAirport != null">#{arrAirport,jdbcType=VARCHAR},</if>
+            <if test="arrAirportCode != null">#{arrAirportCode,jdbcType=VARCHAR},</if>
+            <if test="arrAirportName != null">#{arrAirportName,jdbcType=VARCHAR},</if>
+            <if test="arrTimeZone != null">#{arrTimeZone,jdbcType=VARCHAR},</if>
+            <if test="arrTerminal != null">#{arrTerminal,jdbcType=VARCHAR},</if>
+            <if test="arrScheduledDate != null">#{arrScheduledDate,jdbcType=TIMESTAMP},</if>
+            <if test="arrEstimatedDate != null">#{arrEstimatedDate,jdbcType=TIMESTAMP},</if>
+            <if test="arrActualDate != null">#{arrActualDate,jdbcType=TIMESTAMP},</if>
+        </trim>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="flightId" parameterType="com.zhiweicloud.guest.po.FlightPo">
+      INSERT INTO base_flight
+        <include refid="insertName"/>
+      VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <update id="deleteByIdBogus" parameterType="java.lang.Long">
+        UPDATE base_flight
+        SET is_deleted = 1
+        WHERE flight_id = #{flightId,jdbcType=BIGINT}
+    </update>
+
+    <sql id="updateSet">
+        <set>
+            <if test="fdId != null">fd_id = #{fdId,jdbcType=INT},</if>
+            <if test="airlineCode != null">airline_code = #{airlineCode,jdbcType=VARCHAR},</if>
+            <if test="airlineEnName != null">airline_en_name = #{airlineEnName,jdbcType=VARCHAR},</if>
+            <if test="airlineName != null">airline_name = #{airlineName,jdbcType=VARCHAR},</if>
+            <if test="transferAirport != null">transfer_airport = #{transferAirport,jdbcType=VARCHAR},</if>
+            <if test="transferAirportCodeEnName != null">transfer_airport_code_en_name = #{transferAirportCodeEnName,jdbcType=VARCHAR},</if>
+            <if test="transferAirportCode != null">transfer_airport_code = #{transferAirportCode,jdbcType=VARCHAR},</if>
+            <if test="boardGate != null">board_gate = #{boardGate,jdbcType=VARCHAR},</if>
+            <if test="boardTime != null">board_time = #{boardTime,jdbcType=TIMESTAMP},</if>
+            <if test="boardState != null">board_state = #{boardState,jdbcType=VARCHAR},</if>
+            <if test="flightNo != null">flight_no = #{flightNo,jdbcType=VARCHAR},</if>
+            <if test="flightType != null">flight_type = #{flightType,jdbcType=VARCHAR},</if>
+            <if test="planNo != null">plan_no = #{planNo,jdbcType=VARCHAR},</if>
+            <if test="flightStateCode != null">flight_state_code = #{flightStateCode,jdbcType=VARCHAR},</if>
+            <if test="flightState != null">flight_state = #{flightState,jdbcType=VARCHAR},</if>
+            <if test="flightPosition != null">flight_position = #{flightPosition,jdbcType=VARCHAR},</if>
+            <if test="boardInOut != null">board_in_out = #{boardInOut,jdbcType=SMALLINT},</if>
+            <if test="isInOrOut != null">is_in_or_out = #{isInOrOut,jdbcType=SMALLINT},</if>
+            <if test="isNearOrFar != null">is_near_or_far = #{isNearOrFar,jdbcType=SMALLINT},</if>
+            <if test="checkInCounter != null">check_in_counter = #{checkInCounter,jdbcType=VARCHAR},</if>
+            <if test="carousel != null">carousel = #{carousel,jdbcType=VARCHAR},</if>
+            <if test="stopFlag != null">stop_flag = #{stopFlag,jdbcType=SMALLINT},</if>
+            <if test="shareFlag != null">share_flag = #{shareFlag,jdbcType=SMALLINT},</if>
+            <if test="shareFlightNo != null">share_flight_no = #{shareFlightNo,jdbcType=VARCHAR},</if>
+            <if test="fillFlightNo != null">fill_flight_no = #{fillFlightNo,jdbcType=VARCHAR},</if>
+            <if test="alternateInfo != null">alternate_info = #{alternateInfo,jdbcType=VARCHAR},</if>
+            <if test="fcategory != null">fcategory = #{fcategory,jdbcType=VARCHAR},</if>
+            <if test="boardGateTime != null">board_gate_time = #{boardGateTime,jdbcType=VARCHAR},</if>
+            <if test="depEnName != null">dep_en_name = #{depEnName,jdbcType=VARCHAR},</if>
+            <if test="depCity != null">dep_city = #{depCity,jdbcType=VARCHAR},</if>
+            <if test="depDate != null">dep_date = #{depDate,jdbcType=DATE},</if>
+            <if test="depAirport != null">dep_airport = #{depAirport,jdbcType=VARCHAR},</if>
+            <if test="depAirportCode != null">dep_airport_code = #{depAirportCode,jdbcType=VARCHAR},</if>
+            <if test="depAirportName != null">dep_airport_name = #{depAirportName,jdbcType=VARCHAR},</if>
+            <if test="depTimeZone != null">dep_time_zone = #{depTimeZone,jdbcType=VARCHAR},</if>
+            <if test="depTerminal != null">dep_terminal = #{depTerminal,jdbcType=VARCHAR},</if>
+            <if test="depScheduledDate != null">dep_scheduled_date = #{depScheduledDate,jdbcType=TIMESTAMP},</if>
+            <if test="depEstimatedDate != null">dep_estimated_date = #{depEstimatedDate,jdbcType=TIMESTAMP},</if>
+            <if test="depActualDate != null">dep_actual_date = #{depActualDate,jdbcType=TIMESTAMP},</if>
+            <if test="arrEnName != null">arr_en_name = #{arrEnName,jdbcType=VARCHAR},</if>
+            <if test="arrCity != null">arr_city = #{arrCity,jdbcType=VARCHAR},</if>
+            <if test="arrDate != null">arr_date = #{arrDate,jdbcType=DATE},</if>
+            <if test="arrAirport != null">arr_airport = #{arrAirport,jdbcType=VARCHAR},</if>
+            <if test="arrAirportCode != null">arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR},</if>
+            <if test="arrAirportName != null">arr_airport_name = #{arrAirportName,jdbcType=VARCHAR},</if>
+            <if test="arrTimeZone != null">arr_time_zone = #{arrTimeZone,jdbcType=VARCHAR},</if>
+            <if test="arrTerminal != null">arr_terminal = #{arrTerminal,jdbcType=VARCHAR},</if>
+            <if test="arrScheduledDate != null">arr_scheduled_date = #{arrScheduledDate,jdbcType=TIMESTAMP},</if>
+            <if test="arrEstimatedDate != null">arr_estimated_date = #{arrEstimatedDate,jdbcType=TIMESTAMP},</if>
+            <if test="arrActualDate != null">arr_actual_date = #{arrActualDate,jdbcType=TIMESTAMP},</if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.zhiweicloud.guest.po.FlightPo">
+        UPDATE base_flight
+        <include refid="updateSet"/>
+        WHERE flight_id = #{flightId,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+      SELECT
+      <include refid="baseColumn" />
+      FROM base_flight
+      WHERE flight_id = #{flightId,jdbcType=BIGINT} AND is_deleted = 0
+    </select>
+
+    <select id="select" parameterType="com.zhiweicloud.guest.po.FlightPo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn" />
+        FROM base_flight
+        WHERE
+        is_deleted = 0 AND
+        dep_airport_code = #{depAirportCode,jdbcType=VARCHAR} AND
+        arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR} AND
+        dep_date = #{depDate,jdbcType=DATE} AND
+        flight_no = #{flight_no,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByDateAndNo" parameterType="com.zhiweicloud.guest.po.FlightPo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn" />
+        FROM base_flight
+        WHERE
+        is_deleted = 0 AND
+        dep_date = #{depDate,jdbcType=DATE} AND
+        flight_no = #{flightNo,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

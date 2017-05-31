@@ -1,4 +1,4 @@
-package com.zhiweicloud.guest.generator.train;
+package com.zhiweicloud.guest.generator;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
@@ -20,6 +20,8 @@ import java.util.Map;
 public abstract class SingleSheetGenerator {
 
     protected String fileName;
+
+    protected String sheetName;
 
     protected HttpServletResponse response;
 
@@ -51,7 +53,7 @@ public abstract class SingleSheetGenerator {
 
         HSSFCellStyle cellStyle4 = workbook.createCellStyle();
         cellStyle4.setAlignment(HorizontalAlignment.CENTER); // 居中
-        cellStyle4.setDataFormat(dataFormat.getFormat("#.##"));
+        cellStyle4.setDataFormat(dataFormat.getFormat("#,#0.00"));
         cellStyleMap.put("numCenter##", cellStyle4);
     }
 
@@ -75,15 +77,15 @@ public abstract class SingleSheetGenerator {
     }
 
     public SingleSheetGenerator(JSONObject object) {
-        init();
         this.workbook = new HSSFWorkbook();
+        init();
         this.object = object;
     }
 
     public SingleSheetGenerator(JSONObject object,HttpServletResponse response) {
+        this.workbook = new HSSFWorkbook();
         init();
         this.response = response;
-        this.workbook = new HSSFWorkbook();
         this.object = object;
     }
 
@@ -99,6 +101,19 @@ public abstract class SingleSheetGenerator {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getSheetName() {
+        return sheetName;
+    }
+
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+        if (this.sheetName == null) {
+            initSheet();
+        }else {
+            initSheet(getSheetName());
+        }
     }
 
 }

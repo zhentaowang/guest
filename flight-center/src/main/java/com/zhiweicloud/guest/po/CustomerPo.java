@@ -1,7 +1,7 @@
 /**
 Copyright 2016-2017 author IronC.
 */
-package com.zhiweicloud.guest.model;
+package com.zhiweicloud.guest.po;
 
 import java.util.Date;
 
@@ -11,12 +11,12 @@ import java.util.Date;
  * @author IronC
  * @version 1.0  2017-05-15
  */
-public class ApiCustomer {
+public class CustomerPo {
 
     /**
     * 表名
     */
-    public static final transient String TABLE_NAME = "api_customer";
+    public static final transient String TABLE_NAME = "base_customer";
 
     /**
      * 主键自增id
@@ -31,6 +31,21 @@ public class ApiCustomer {
     private String customerName;
 
     /**
+     * 定制URL
+     */
+    private String custom_url;
+
+    /**
+     * 客户类型 0：内部客户 1：外部客户
+     */
+    private Short type;
+
+    /**
+     * 所剩次数
+     */
+    private Long total;
+
+    /**
      * 系统码
      * 不能为空
      */
@@ -41,6 +56,16 @@ public class ApiCustomer {
      * 不能为空
      */
     private Date expiryDate;
+
+    /**
+     * 公钥
+     */
+    private String publicKey;
+
+    /**
+     * 私钥
+     */
+    private String privateKey;
 
     /**
      * 是否删除：默认为0，0：不删除，1：删除
@@ -73,6 +98,30 @@ public class ApiCustomer {
         this.customerName = customerName == null ? null : customerName.trim();
     }
 
+    public String getCustom_url() {
+        return custom_url;
+    }
+
+    public void setCustom_url(String custom_url) {
+        this.custom_url = custom_url;
+    }
+
+    public Short getType() {
+        return type;
+    }
+
+    public void setType(Short type) {
+        this.type = type;
+    }
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public void setTotal(Long total) {
+        this.total = total;
+    }
+
     public String getSysCode() {
         return sysCode;
     }
@@ -87,6 +136,22 @@ public class ApiCustomer {
 
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
     public Short getIsDeleted() {

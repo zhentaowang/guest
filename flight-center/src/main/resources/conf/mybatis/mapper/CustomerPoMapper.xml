@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.CustomerPoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.po.CustomerPo">
+        <id column="customer_id" jdbcType="BIGINT" property="customerId" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="custom_url" jdbcType="VARCHAR" property="customUrl" />
+        <result column="type" jdbcType="SMALLINT" property="type" />
+        <result column="total" jdbcType="VARCHAR" property="total" />
+        <result column="sys_code" jdbcType="VARCHAR" property="sysCode" />
+        <result column="expiry_date" jdbcType="DATE" property="expiryDate" />
+        <result column="public_key" jdbcType="VARCHAR" property="publicKey" />
+        <result column="private_key" jdbcType="VARCHAR" property="privateKey" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        customer_id,
+        customer_name,
+        custom_url,
+        type,
+        total,
+        sys_code,
+        expiry_date,
+        public_key,
+        private_key
+    </sql>
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">customer_id,</if>
+            <if test="customerName != null">customer_name,</if>
+            <if test="customUrl != null">customUrl,</if>
+            <if test="type != null">type,</if>
+            <if test="total != null">total,</if>
+            <if test="sysCode != null">sys_code,</if>
+            <if test="expiryDate != null">expiry_date,</if>
+            <if test="publicKey != null">public_key,</if>
+            <if test="privateKey != null">private_key,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerId != null">#{customerId,jdbcType=BIGINT},</if>
+            <if test="customerName != null">#{customerName,jdbcType=VARCHAR},</if>
+            <if test="customUrl != null">#{customUrl,jdbcType=VARCHAR},</if>
+            <if test="type != null">#{type,jdbcType=SMALLINT},</if>
+            <if test="total != null">#{total,jdbcType=BIGINT},</if>
+            <if test="sysCode != null">#{sysCode,jdbcType=VARCHAR},</if>
+            <if test="expiryDate != null">#{expiryDate,jdbcType=DATE},</if>
+            <if test="publicKey != null">#{publicKey,jdbcType=VARCHAR},</if>
+            <if test="privateKey != null">#{privateKey,jdbcType=VARCHAR},</if>
+        </trim>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="customerId" parameterType="com.zhiweicloud.guest.po.CustomerPo">
+        INSERT INTO
+          base_customer
+        <include refid="insertName"/>
+          VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM base_customer
+        WHERE customer_id = #{customerId,jdbcType=BIGINT}
+    </delete>
+
+    <update id="deleteByIdBogus" parameterType="java.lang.Long">
+        UPDATE base_customer
+        SET is_deleted = 1
+        WHERE customer_id = #{customerId,jdbcType=BIGINT}
+    </update>
+
+    <sql id="updateSet">
+        <set>
+            <if test="customerName != null">customer_name = #{customerName,jdbcType=VARCHAR},</if>
+            <if test="customUrl != null">#{customUrl,jdbcType=VARCHAR},</if>
+            <if test="type != null">#{type,jdbcType=SMALLINT},</if>
+            <if test="total != null">total = #{total,jdbcType=BIGINT},</if>
+            <if test="sysCode != null">sys_code = #{sysCode,jdbcType=VARCHAR},</if>
+            <if test="expiryDate != null">expiry_date = #{expiryDate,jdbcType=DATE},</if>
+            <if test="publicKey != null">public_key = #{publicKey,jdbcType=VARCHAR},</if>
+            <if test="privateKey != null">private_key = #{privateKey,jdbcType=VARCHAR},</if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.zhiweicloud.guest.po.CustomerPo">
+        UPDATE base_customer
+        <include refid="updateSet"/>
+        WHERE customer_id = #{customerId,jdbcType=BIGINT} AND is_deleted = 0
+    </update>
+
+    <update id="updateTotal" parameterType="com.zhiweicloud.guest.po.CustomerPo">
+        UPDATE base_customer
+        SET total = #{total,jdbcType=BIGINT}
+        WHERE customer_id = #{customerId,jdbcType=BIGINT} AND is_deleted = 0
+    </update>
+
+    <select id="select" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        base_customer
+        WHERE customer_id = #{customerId,jdbcType=BIGINT} AND is_deleted = 0
+    </select>
+
+    <select id="selectBySysCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+          <include refid="Base_Column_List"/>
+        FROM
+          base_customer
+        WHERE sys_code = #{sysCode,jdbcType=VARCHAR} AND is_deleted = 0
+    </select>
+
+</mapper>

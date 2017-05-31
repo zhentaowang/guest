@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.FlightCenterApiPoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.po.FlightCenterApiPo">
+        <id column="flight_center_api_id" jdbcType="BIGINT" property="flightCenterApiId" />
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="invoke_state" jdbcType="VARCHAR" property="invokeState" />
+        <result column="invoke_result" jdbcType="VARCHAR" property="invokeResult" />
+    </resultMap>
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="apiName != null">api_name,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="invokeState != null">invoke_state,</if>
+            <if test="invokeResult != null">invoke_result,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="apiName != null">#{apiName,jdbcType=VARCHAR},</if>
+            <if test="customerId != null">#{customerId,jdbcType=BIGINT},</if>
+            <if test="invokeState != null">#{invokeState,jdbcType=VARCHAR},</if>
+            <if test="invokeResult != null">#{invokeResult,jdbcType=VARCHAR},</if>
+        </trim>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="flightCenterApiId" parameterType="com.zhiweicloud.guest.po.FlightCenterApiPo">
+        INSERT INTO operator_flight_center_api
+        <include refid="insertName"/>
+        VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM operator_flight_center_api
+        WHERE flight_center_api_id = #{flightCenterApiId,jdbcType=BIGINT}
+    </delete>
+
+    <update id="deleteByIdBogus" parameterType="java.lang.Long">
+      UPDATE operator_flight_center_api
+      SET is_deleted = 1 WHERE flight_center_api_id = #{flightCenterApiId,jdbcType=BIGINT}
+    </update>
+
+    <sql id="updateSet">
+        <set>
+            <if test="apiName != null">api_name = #{apiName,jdbcType=VARCHAR},</if>
+            <if test="customerId != null">customer_id = #{customerId,jdbcType=VARCHAR},</if>
+            <if test="invokeState != null">invoke_state = #{invokeState,jdbcType=VARCHAR},</if>
+            <if test="invokeResult != null">invoke_result = #{invokeResult,jdbcType=VARCHAR},</if>
+        </set>
+    </sql>
+
+    <update id="update" parameterType="com.zhiweicloud.guest.po.FlightCenterApiPo">
+        UPDATE operator_flight_center_api
+        <include refid="updateSet"/>
+        WHERE flight_center_api_id = #{flightCenterApiId,jdbcType=BIGINT} AND is_deleted =0
+    </update>
+
+    <sql id="selectName">
+        flight_center_api_id,
+        api_name,
+        customer_id,
+        invoke_state,
+        invoke_result
+    </sql>
+
+    <sql id="selectWhere">
+      <where>
+          <if test="flightCenterApiPo.apiName != null">api_name = #{flightCenterApiPo.apiName,jdbcType=VARCHAR},</if>
+          <if test="flightCenterApiPo.customerId != null">customer_id = #{flightCenterApiPo.customerId,jdbcType=VARCHAR},</if>
+          <if test="flightCenterApiPo.invokeState != null">invoke_state = #{flightCenterApiPo.invokeState,jdbcType=VARCHAR},</if>
+          <if test="flightCenterApiPo.invokeResult != null">invoke_result = #{flightCenterApiPo.invokeResult,jdbcType=VARCHAR},</if>
+      </where>
+    </sql>
+
+    <select id="select" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="selectName"/>
+        FROM operator_flight_center_api
+        WHERE flight_center_api_id = #{flightCenterApiId,jdbcType=BIGINT} AND is_deleted =0
+    </select>
+
+    <select id="selects" parameterType="com.zhiweicloud.guest.po.FlightCenterApiPo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="selectName"/>
+        FROM operator_flight_center_api
+        <include refid="selectWhere"/>
+    </select>
+
+    <select id="selectForPage" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="selectName"/>
+        FROM operator_flight_center_api
+        <include refid="selectWhere"/>
+        LIMIT #{start}, #{len}
+    </select>
+
+</mapper>

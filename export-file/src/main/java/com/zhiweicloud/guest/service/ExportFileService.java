@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wyun.thrift.client.utils.ClientUtil;
@@ -10,7 +11,7 @@ import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.utils.ExcelUtils;
 import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.generator.*;
-import com.zhiweicloud.guest.generator.train.SingleSheetGenerator;
+import com.zhiweicloud.guest.generator.SingleSheetGenerator;
 import com.zhiweicloud.guest.generator.train.CountBillGenerator;
 import com.zhiweicloud.guest.generator.train.DetailBillGenerator;
 import com.zhiweicloud.guest.generator.train.RetailBillGenerator;
@@ -171,30 +172,45 @@ public class ExportFileService {
         }
     }
 
-    public void exportExcelForTrain(TrainPojo trainPojo){
+    /**
+     * 导出账单 - 高铁项目
+     * @param trainPojo type 1:统计账单;2:明细账单;3:零售客户统计账单
+     * @param response
+     */
+    public void exportExcelForTrain(TrainPojo trainPojo,HttpServletResponse response){
         if (trainPojo.getType() <0 || trainPojo.getType() == null){
             return;
         }
 
+        String fileName = "账单";
+        String sheetName = "账单";
+
         SingleSheetGenerator generator = null;
 
-        JSONObject result = null;
+        JSONObject result;
 
         switch (trainPojo.getType()){
             case 1:
                 result  = getDate(trainPojo.getClientName(),trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime());
-                generator = new CountBillGenerator(result.getJSONObject("data"));
+                generator = new CountBillGenerator(result.getJSONObject("data"),response);
+                fileName = "统计账单_" + System.currentTimeMillis() + ".xls";
+                sheetName = "统计账单";
                 break;
             case 2:
                 result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
-                generator = new DetailBillGenerator(result.getJSONObject("data"));
-
+                generator = new DetailBillGenerator(result.getJSONObject("data"),response);
+                fileName = "明细账单" + System.currentTimeMillis() + ".xls";
+                sheetName = "明细账单";
                 break;
             case 3:
                 result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
-                generator = new RetailBillGenerator(result.getJSONObject("data"));
+                generator = new RetailBillGenerator(result.getJSONObject("data"),response);
+                fileName = "零售客户统计账单" + System.currentTimeMillis() + ".xls";
+                sheetName = "零售客户统计账单";
                 break;
         }
+        generator.setFileName(fileName);
+        generator.setSheetName(sheetName);
         generator.create();
     }
 

@@ -1,7 +1,7 @@
 /**
 Copyright 2016-2017 author IronC.
 */
-package com.zhiweicloud.guest.model;
+package com.zhiweicloud.guest.po;
 
 import java.util.Date;
 
@@ -11,18 +11,24 @@ import java.util.Date;
  * @author IronC
  * @version 1.0  2017-05-18
  */
-public class SourceApiLog {
+public class SourceApiPo {
 
     /**
     * 表名
     */
-    public static final transient String TABLE_NAME = "source_api_log";
+    public static final transient String TABLE_NAME = "operator_source_api";
 
     /**
      * 主键自增id
      * 不能为空
      */
-    private Long sourceApiLogId;
+    private Long sourceApiId;
+
+    /**
+     * 资源名字
+     * 不能为空
+     */
+    private String sourceName;
 
     /**
      * source接口名字
@@ -57,12 +63,20 @@ public class SourceApiLog {
      */
     private Date updateTime;
 
-    public Long getSourceApiLogId() {
-        return sourceApiLogId;
+    public Long getSourceApiId() {
+        return sourceApiId;
     }
 
-    public void setSourceApiLogId(Long sourceApiLogId) {
-        this.sourceApiLogId = sourceApiLogId;
+    public void setSourceApiId(Long sourceApiId) {
+        this.sourceApiId = sourceApiId;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     public String getApiName() {
@@ -121,7 +135,8 @@ public class SourceApiLog {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
-        sb.append(", sourceApiLogId=").append(sourceApiLogId);
+        sb.append(", sourceApiLogId=").append(sourceApiId);
+        sb.append(", sourceName=").append(sourceName);
         sb.append(", apiName=").append(apiName);
         sb.append(", invokeState=").append(invokeState);
         sb.append(", invokeResult=").append(invokeResult);

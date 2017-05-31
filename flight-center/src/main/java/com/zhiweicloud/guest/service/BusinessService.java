@@ -24,6 +24,9 @@ public class BusinessService implements IBusinessService {
     @Autowired
     private TrainService trainService;
 
+    @Autowired
+    private FlightService flightService;
+
     @Override
     public JSONObject handle(JSONObject request) {
         String success = null;
@@ -35,12 +38,9 @@ public class BusinessService implements IBusinessService {
             log.debug("request method name: " + operation);
         }
         switch (operation) {
-//            case "trainInfoByStation":
-//                success = juheService.queryTrainByStation(request);
-//                break;
-//            case "queryTrainInfoByName":
-//                success = juheService.queryTrainInfoByName(request);
-//                break;
+            case "queryFlightInfo":
+                success = flightService.queryFlightInfo(request);
+                break;
             case "queryTrainByCondition":
                 success = trainService.queryTrainByCondition(request);
                 break;

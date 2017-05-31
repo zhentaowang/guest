@@ -1,20 +1,28 @@
 package com.zhiweicloud.guest.model;
 
+import javax.ws.rs.QueryParam;
+
 /**
  * Created by tc on 2017/5/24.
  */
 public class TrainPojo {
 
+    @QueryParam("clientName")
     private String clientName;
 
+    @QueryParam("trainName")
     private String trainName;
 
+    @QueryParam("productName")
     private String productName;
 
+    @QueryParam("startTime")
     private String startTime;
 
+    @QueryParam("endTime")
     private String endTime;
 
+    @QueryParam("type")
     private Integer type;
 
     public String getClientName() {

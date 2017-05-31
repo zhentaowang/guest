@@ -13,29 +13,29 @@ public class FlightStatus implements Serializable{
 
     private String flightNo;
 
-    private String flightDepcode;
+    private String depAirportCode;
 
-    private String flightArrcode;
+    private String arrAirportCode;
 
-    private String flightDep;
+    private String depCity;
 
-    private String flightArr;
+    private String arrCity;
 
-    private String flightHterminal;
+    private String depTerminal;
 
-    private String flightTerminal;
+    private String arrTerminal;
 
-    private Date flightDeptimePlanDate;
+    private Date depScheduledDate;
 
-    private Date flightArrtimePlanDate;
+    private Date depEstimatedDate;
 
-    private Date flightDeptimeReadyDate;
+    private Date depActualDate;
 
-    private Date flightArrtimeReadyDate;
+    private Date arrScheduledDate;
 
-    private Date flightDeptimeDate;
+    private Date arrEstimatedDate;
 
-    private Date flightArrtimeDate;
+    private Date arrActualDate;
 
     private String flightState;
 
@@ -63,144 +63,144 @@ public class FlightStatus implements Serializable{
      * 出发城市三字码
      */
     @XmlElement(name = "DepCode")
-    public String getFlightDepcode() {
-        return flightDepcode;
+    public String getDepAirportCode() {
+        return depAirportCode;
     }
 
-    public void setFlightDepcode(String flightDepcode) {
-        this.flightDepcode = flightDepcode;
+    public void setDepAirportCode(String depAirportCode) {
+        this.depAirportCode = depAirportCode;
     }
 
     /**
      * 到达城市三字码
      */
     @XmlElement(name = "ArrCode")
-    public String getFlightArrcode() {
-        return flightArrcode;
+    public String getArrAirportCode() {
+        return arrAirportCode;
     }
 
-    public void setFlightArrcode(String flightArrcode) {
-        this.flightArrcode = flightArrcode;
+    public void setArrAirportCode(String arrAirportCode) {
+        this.arrAirportCode = arrAirportCode;
     }
 
     /**
      * 出发城市名
      */
     @XmlElement(name = "DepCity")
-    public String getFlightDep() {
-        return flightDep;
+    public String getDepCity() {
+        return depCity;
     }
 
-    public void setFlightDep(String flightDep) {
-        this.flightDep = flightDep;
+    public void setDepCity(String flightDep) {
+        this.depCity = depCity;
     }
 
     /**
      * 到达城市名
      */
     @XmlElement(name = "ArrCity")
-    public String getFlightArr() {
-        return flightArr;
+    public String getArrCity() {
+        return arrCity;
     }
 
-    public void setFlightArr(String flightArr) {
-        this.flightArr = flightArr;
+    public void setArrCity(String flightArr) {
+        this.arrCity = arrCity;
     }
 
     /**
      * 候机楼（始发机场航站楼）
      */
     @XmlElement(name = "DepTerminal")
-    public String getFlightHterminal() {
-        return flightHterminal;
+    public String getDepTerminal() {
+        return depTerminal;
     }
 
-    public void setFlightHterminal(String flightHterminal) {
-        this.flightHterminal = flightHterminal;
+    public void setDepTerminal(String depTerminal) {
+        this.depTerminal = depTerminal;
     }
 
     /**
      * 接机楼（到达机场航站楼）
      */
     @XmlElement(name = "ArrTerminal")
-    public String getFlightTerminal() {
-        return flightTerminal;
+    public String getArrTerminal() {
+        return arrTerminal;
     }
 
-    public void setFlightTerminal(String flightTerminal) {
-        this.flightTerminal = flightTerminal;
+    public void setArrTerminal(String arrTerminal) {
+        this.arrTerminal = arrTerminal;
     }
 
     /**
      * 航班计划起飞时间
      */
     @XmlElement(name = "DepScheduled")
-    public Date getFlightDeptimePlanDate() {
-        return flightDeptimePlanDate;
+    public Date getDepScheduledDate() {
+        return depScheduledDate;
     }
 
-    public void setFlightDeptimePlanDate(Date flightDeptimePlanDate) {
-        this.flightDeptimePlanDate = flightDeptimePlanDate;
+    public void setDepScheduledDate(Date depScheduledDate) {
+        this.depScheduledDate = depScheduledDate;
     }
 
     /**
      * 航班计划到达时间
      */
     @XmlElement(name = "ArrScheduled")
-    public Date getFlightArrtimePlanDate() {
-        return flightArrtimePlanDate;
+    public Date getArrScheduledDate() {
+        return arrScheduledDate;
     }
 
-    public void setFlightArrtimePlanDate(Date flightArrtimePlanDate) {
-        this.flightArrtimePlanDate = flightArrtimePlanDate;
+    public void setArrScheduledDate(Date arrScheduledDate) {
+        this.arrScheduledDate = arrScheduledDate;
     }
 
     /**
      * 航班预计起飞时间
      */
     @XmlElement(name = "DepEstimated")
-    public Date getFlightDeptimeReadyDate() {
-        return flightDeptimeReadyDate;
+    public Date getDepEstimatedDate() {
+        return depEstimatedDate;
     }
 
-    public void setFlightDeptimeReadyDate(Date flightDeptimeReadyDate) {
-        this.flightDeptimeReadyDate = flightDeptimeReadyDate;
+    public void setDepEstimatedDate(Date depEstimatedDate) {
+        this.depEstimatedDate = depEstimatedDate;
     }
 
     /**
      * 航班预计到达时间
      */
     @XmlElement(name = "ArrEstimated")
-    public Date getFlightArrtimeReadyDate() {
-        return flightArrtimeReadyDate;
+    public Date getArrEstimatedDate() {
+        return arrEstimatedDate;
     }
 
-    public void setFlightArrtimeReadyDate(Date flightArrtimeReadyDate) {
-        this.flightArrtimeReadyDate = flightArrtimeReadyDate;
+    public void setArrEstimatedDate(Date arrEstimatedDate) {
+        this.arrEstimatedDate = arrEstimatedDate;
     }
 
     /**
      * 航班实际起飞时间
      */
     @XmlElement(name = "DepActual")
-    public Date getFlightDeptimeDate() {
-        return flightDeptimeDate;
+    public Date getDepActualDate() {
+        return depActualDate;
     }
 
-    public void setFlightDeptimeDate(Date flightDeptimeDate) {
-        this.flightDeptimeDate = flightDeptimeDate;
+    public void setDepActualDate(Date depActualDate) {
+        this.depActualDate = depActualDate;
     }
 
     /**
      * 航班实际到达时间
      */
     @XmlElement(name = "ArrActual")
-    public Date getFlightArrtimeDate() {
-        return flightArrtimeDate;
+    public Date getArrActualDate() {
+        return arrActualDate;
     }
 
-    public void setFlightArrtimeDate(Date flightArrtimeDate) {
-        this.flightArrtimeDate = flightArrtimeDate;
+    public void setArrActualDate(Date arrActualDate) {
+        this.arrActualDate = arrActualDate;
     }
 
     /**

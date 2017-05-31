@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.SourceApiPoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.po.SourceApiPo">
+        <id column="source_api_id" jdbcType="BIGINT" property="sourceApiId" />
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName" />
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="invoke_state" jdbcType="VARCHAR" property="invokeState" />
+        <result column="invoke_result" jdbcType="VARCHAR" property="invokeResult" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        source_api_id,
+        source_name,
+        api_name,
+        invoke_state,
+        invoke_result
+    </sql>
+
+    <!--<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from source_api_log-->
+        <!--where source_api_log_id = #{sourceApiLogId,jdbcType=BIGINT}-->
+    <!--</select>-->
+
+    <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">-->
+        <!--delete from source_api_log-->
+        <!--where source_api_log_id = #{sourceApiLogId,jdbcType=BIGINT}-->
+    <!--</delete>-->
+
+    <!--<insert id="insert" parameterType="com.ironc.pojo.SourceApiLog">-->
+        <!--insert into source_api_log (source_api_log_id, api_name, invoke_state,-->
+        <!--invoke_result, is_deleted, create_time,-->
+        <!--update_time)-->
+        <!--values (#{sourceApiLogId,jdbcType=BIGINT}, #{apiName,jdbcType=VARCHAR}, #{invokeState,jdbcType=VARCHAR},-->
+        <!--#{invokeResult,jdbcType=VARCHAR}, #{isDeleted,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP},-->
+        <!--#{updateTime,jdbcType=TIMESTAMP})-->
+    <!--</insert>-->
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sourceApiId != null">source_api_id,</if>
+            <if test="sourceName != null">source_name,</if>
+            <if test="apiName != null">api_name,</if>
+            <if test="invokeState != null">invoke_state,</if>
+            <if test="invokeResult != null">invoke_result,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sourceApiId != null">#{sourceApiId,jdbcType=BIGINT},</if>
+            <if test="sourceName != null">#{sourceName,jdbcType=VARCHAR},</if>
+            <if test="apiName != null">#{apiName,jdbcType=VARCHAR},</if>
+            <if test="invokeState != null">#{invokeState,jdbcType=VARCHAR},</if>
+            <if test="invokeResult != null">#{invokeResult,jdbcType=VARCHAR},</if>
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="com.zhiweicloud.guest.po.SourceApiPo">
+        INSERT INTO operator_source_api
+        <include refid="insertName"/>
+        VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <!--<update id="updateByPrimaryKeySelective" parameterType="com.ironc.pojo.SourceApiLog">-->
+        <!--update source_api_log-->
+        <!--<set>-->
+            <!--<if test="apiName != null">-->
+                <!--api_name = #{apiName,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="invokeState != null">-->
+                <!--invoke_state = #{invokeState,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="invokeResult != null">-->
+                <!--invoke_result = #{invokeResult,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="isDeleted != null">-->
+                <!--is_deleted = #{isDeleted,jdbcType=SMALLINT},-->
+            <!--</if>-->
+            <!--<if test="createTime != null">-->
+                <!--create_time = #{createTime,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            <!--<if test="updateTime != null">-->
+                <!--update_time = #{updateTime,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+        <!--</set>-->
+        <!--where source_api_log_id = #{sourceApiLogId,jdbcType=BIGINT}-->
+    <!--</update>-->
+
+    <!--<update id="updateByPrimaryKey" parameterType="com.ironc.pojo.SourceApiLog">-->
+        <!--update source_api_log-->
+        <!--set api_name = #{apiName,jdbcType=VARCHAR},-->
+        <!--invoke_state = #{invokeState,jdbcType=VARCHAR},-->
+        <!--invoke_result = #{invokeResult,jdbcType=VARCHAR},-->
+        <!--is_deleted = #{isDeleted,jdbcType=SMALLINT},-->
+        <!--create_time = #{createTime,jdbcType=TIMESTAMP},-->
+        <!--update_time = #{updateTime,jdbcType=TIMESTAMP}-->
+        <!--where source_api_log_id = #{sourceApiLogId,jdbcType=BIGINT}-->
+    <!--</update>-->
+
+</mapper>

@@ -419,12 +419,12 @@ public class ExcelUtils {
         }
     }
 
-    private static boolean isNum(Object data){
+    public static boolean isNum(Object data){
         return data.toString().matches("^(-?\\d+)(\\.\\d+)?$");
     }
 
-    private static boolean isInteger(Object data){
-        return data.toString().matches("^[-+]?[\\d]*$");
+    public static boolean isInteger(Object data){
+        return data.toString().matches("^[-\\+]?[\\d]*$");
     }
 
     public static boolean isInteger(String str) {
@@ -432,29 +432,7 @@ public class ExcelUtils {
         return pattern.matcher(str).matches();
     }
 
-    public static void main(String[] args) {
-//        Object o1 = "2017-05-04";
-//        Object o2 = "愛尚飛";
-//        Object o3 = "99.2";
-//        System.out.println(isNum(o1.toString()));
-//        System.out.println(isNum(o2.toString()));
-//        System.out.println(isNum(o3.toString()));
-
-        JSONArray jsonMembers = new JSONArray();
-        JSONObject member1 = new JSONObject();
-        member1.put("loginname", "zhangfan");
-        member1.put("password", "userpass");
-        member1.put("email", "10371443@qq.com");
-        member1.put("sign_date", "2007-06-12");
-        jsonMembers.add(member1);
-        JSONObject member2 = new JSONObject();
-        member2.put("loginname", "zf");
-        member2.put("password", "userpass");
-        member2.put("email","8223939@qq.com");
-        member2.put("sign_date", "2008-07-16");
-        jsonMembers.add(member2);
-
-        List<Map> list = JSON.parseObject(jsonMembers.toJSONString(), new TypeReference<List<Map>>() {});
+    public static void setCellValue(HSSFCell cell,Object value){
 
     }
 

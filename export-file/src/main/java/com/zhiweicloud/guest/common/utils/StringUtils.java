@@ -6,7 +6,7 @@ package com.zhiweicloud.guest.common.utils;
 public class StringUtils {
 
     public static boolean isNone(String string) {
-        if (string == null || "".equals(string) || " ".equals(string)) {
+        if (string == null || "".equals(string) || " ".equals(string)|| "null".equals(string)) {
             return true;
         } else {
             return false;
