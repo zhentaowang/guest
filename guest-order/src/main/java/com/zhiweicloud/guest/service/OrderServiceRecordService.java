@@ -40,16 +40,14 @@ public class OrderServiceRecordService {
         params.put("operation", "view");
 
 
-        JSONObject updateUserObject = new JSONObject();
+
         Response response = ClientUtil.clientSendData(employeeClient, "businessService", params);
         if (response != null && response.getResponeCode().getValue() == 200) {
-            updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
-        }
-
-//        JSONObject updateUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-        if (updateUserObject != null) {
-            JSONObject obj = updateUserObject.getJSONObject("data");
-            record.setCreateUserName(obj.get("name").toString());
+            JSONObject updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
+            if (updateUserObject != null) {
+                JSONObject obj = updateUserObject.getJSONObject("data");
+                record.setCreateUserName(obj.get("name") == null ? "" :obj.get("name").toString());
+            }
         }
         return orderServiceRecordMapper.insert(record);
     }

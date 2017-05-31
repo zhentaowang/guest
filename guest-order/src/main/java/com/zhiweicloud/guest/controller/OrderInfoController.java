@@ -129,10 +129,9 @@ public class OrderInfoController {
             //数据角色权限
             orderInfoQuery.setQueryCreateRole(createRole);
             LZResult<PaginationResult<OrderInfo>> res = orderInfoService.getOrderInfoList(page, rows, orderInfoQuery, userId);
-            result.setMsg(LZStatus.SUCCESS.display());
-            result.setStatus(LZStatus.SUCCESS.value());
-            result.setData(res);
-            return JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
+            res.setMsg(LZStatus.SUCCESS.display());
+            res.setStatus(LZStatus.SUCCESS.value());
+            return JSON.toJSONStringWithDateFormat(res, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteMapNullValue);
         } catch (Exception e) {
             return this.errorMsg(e);
         }
