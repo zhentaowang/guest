@@ -1,6 +1,5 @@
 package com.zhiweicloud.guest.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wyun.thrift.client.utils.ClientUtil;
@@ -11,7 +10,6 @@ import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.utils.ExcelUtils;
 import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.generator.*;
-import com.zhiweicloud.guest.generator.SingleSheetGenerator;
 import com.zhiweicloud.guest.generator.train.CountBillGenerator;
 import com.zhiweicloud.guest.generator.train.DetailBillGenerator;
 import com.zhiweicloud.guest.generator.train.RetailBillGenerator;
@@ -217,7 +215,7 @@ public class ExportFileService {
     private JSONObject getDate(String clientName,String trainName,String productName,String startTime,String endTime){
         JSONObject result = null;
         JSONObject params = new JSONObject();
-        params.put("operation", "getCountBill");
+        params.put("operation", "reportCountBill");
         params.put("clientName", clientName);
         params.put("trainName",trainName);
         params.put("productName",productName);
@@ -238,11 +236,11 @@ public class ExportFileService {
         params.put("startTime",startTime);
         params.put("endTime",endTime);
         if (type == 2){
-            params.put("operation", "getDetailBill");
+            params.put("operation", "reportDetailBill");
 
         }
         if (type == 3){
-            params.put("operation", "getRetailBill");
+            params.put("operation", "reportRetailBill");
         }
         Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
