@@ -17,6 +17,8 @@ import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.model.TrainPojo;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ import java.util.List;
  */
 @Service
 public class ExportFileService {
+
+    private static final Log log = LogFactory.getLog(ExportFileService.class);
 
     private static MyService.Iface checkClient = SpringBeanUtil.getBean("checkClient");
 
@@ -185,7 +189,7 @@ public class ExportFileService {
 
         SingleSheetGenerator generator = null;
 
-        JSONObject result;
+        JSONObject result = new JSONObject();
 
         switch (trainPojo.getType()){
             case 1:
@@ -207,6 +211,11 @@ public class ExportFileService {
                 sheetName = "零售客户统计账单";
                 break;
         }
+
+        if(result.getJSONObject("data") == null){
+            return;
+        }
+
         generator.setFileName(fileName);
         generator.setSheetName(sheetName);
         generator.create();
@@ -223,7 +232,13 @@ public class ExportFileService {
         params.put("endTime",endTime);
         Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
+            if (log.isInfoEnabled()) {
+                log.info(new String(re.getResponseJSON()));
+            }
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        }
+        if (log.isInfoEnabled()) {
+            log.info("【 结果: " + result.toString() +" ");
         }
         return result;
     }
@@ -244,7 +259,13 @@ public class ExportFileService {
         }
         Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
+            if (log.isInfoEnabled()) {
+                log.info(new String(re.getResponseJSON()));
+            }
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        }
+        if (log.isInfoEnabled()) {
+            log.info("【 结果: " + result.toString() +" ");
         }
         return result;
     }
