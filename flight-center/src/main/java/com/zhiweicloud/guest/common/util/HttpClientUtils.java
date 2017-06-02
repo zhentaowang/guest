@@ -46,6 +46,12 @@ public class HttpClientUtils {
         return getWebServiceResult(get);
     }
 
+    public static String HttpPostForWebService(String url,Map<String,String> params) throws Exception {
+        HttpPost post = new HttpPost(url);
+        post.setEntity(new UrlEncodedFormEntity(getNameValuePairs(params), Consts.UTF_8));
+        return getWebServiceResult(post);
+    }
+
     public static String HttpPostForWebService(String scheme,String host,String path,Map<String,String> params) throws Exception {
         HttpPost post = new HttpPost(getPostURI(scheme,host,path));
         post.setEntity(new UrlEncodedFormEntity(getNameValuePairs(params), Consts.UTF_8));

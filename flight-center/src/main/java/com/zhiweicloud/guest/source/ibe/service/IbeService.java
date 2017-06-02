@@ -1,17 +1,15 @@
 package com.zhiweicloud.guest.source.ibe.service;
 
-import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
-import com.zhiweicloud.guest.model.Flight;
-import com.zhiweicloud.guest.model.TickPassenger;
+import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.po.FlightPo;
+import com.zhiweicloud.guest.pojo.PassengerTicketPojo;
 import com.zhiweicloud.guest.source.ibe.model.FlightStatus;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTkt;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
 import com.zhiweicloud.guest.source.ibe.model.RootResult;
 import com.zhiweicloud.guest.source.ibe.util.IbeUtils;
 import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +18,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by tc on 2017/5/18.
+ * IbeService.java
+ * Copyright(C) 2017 杭州风数信息技术有限公司
+ * 
+ * 2017/5/31 17:02 
+ * @author tiecheng
  */
 @Service
 public class IbeService {
@@ -45,11 +47,15 @@ public class IbeService {
 
     public FlightCenterResult queryPassengerByTickNo(String tickNo) throws Exception {
         IbeDetrTktResult ibeDetrTktResult = IbeUtils.queryPassengerByTickNo(tickNo);
-        FlightCenterResult<TickPassenger> result = new FlightCenterResult();
+        FlightCenterResult<PassengerTicketPojo> result = new FlightCenterResult();
         result.setMessage(ibeDetrTktResult.getErrorRes().getErrContent());
         result.setState(Integer.valueOf(ibeDetrTktResult.getErrorRes().getErrCode()));
         result.setData(parse(ibeDetrTktResult.getTktGroup().getIbeDetrTkt()));
         return result;
+    }
+
+    public void executeCustomFlight(String flightNo, Date depDate) throws Exception {
+        IbeUtils.customFlight(flightNo, DateUtils.dateToString(depDate,"yyyy-MM-dd"));
     }
 
     /**
@@ -73,11 +79,11 @@ public class IbeService {
         return flights;
     }
 
-    private TickPassenger parse(IbeDetrTkt ibeDetrTkt) throws InvocationTargetException, IllegalAccessException {
-        TickPassenger tickPassenger = new TickPassenger();
-        BeanUtils.copyProperties(tickPassenger,ibeDetrTkt);
-        BeanUtils.copyProperties(tickPassenger,ibeDetrTkt.getSegmentGroup());
-        return tickPassenger;
+    private PassengerTicketPojo parse(IbeDetrTkt ibeDetrTkt) throws InvocationTargetException, IllegalAccessException {
+        PassengerTicketPojo passengerTicketPojo = new PassengerTicketPojo();
+        BeanUtils.copyProperties(passengerTicketPojo,ibeDetrTkt);
+        BeanUtils.copyProperties(passengerTicketPojo,ibeDetrTkt.getSegmentGroup().getIbeDetrTktSegment());
+        return passengerTicketPojo;
     }
 
 }

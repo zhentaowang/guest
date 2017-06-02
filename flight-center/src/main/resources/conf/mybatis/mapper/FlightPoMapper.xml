@@ -4,7 +4,7 @@
 
     <resultMap id="BaseResultMap" type="com.zhiweicloud.guest.po.FlightPo">
         <id column="flight_id" jdbcType="BIGINT" property="flightId" />
-        <result column="fd_id" jdbcType="INT" property="fdId" />
+        <result column="fd_id" jdbcType="INTEGER" property="fdId" />
         <result column="airline_code" jdbcType="VARCHAR" property="airlineCode" />
         <result column="airline_en_name" jdbcType="VARCHAR" property="airlineEnName" />
         <result column="airline_name" jdbcType="VARCHAR" property="airlineName" />
@@ -125,7 +125,7 @@
 
     <sql id="insertValue">
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="fdId != null">#{fdId,jdbcType=INT},</if>
+            <if test="fdId != null">#{fdId,jdbcType=INTEGER},</if>
             <if test="airlineCode != null">#{airlineCode,jdbcType=VARCHAR},</if>
             <if test="airlineEnName != null">#{airlineEnName,jdbcType=VARCHAR},</if>
             <if test="airlineName != null">#{airlineName,jdbcType=VARCHAR},</if>
@@ -193,7 +193,7 @@
 
     <sql id="updateSet">
         <set>
-            <if test="fdId != null">fd_id = #{fdId,jdbcType=INT},</if>
+            <if test="fdId != null">fd_id = #{fdId,jdbcType=INTEGER},</if>
             <if test="airlineCode != null">airline_code = #{airlineCode,jdbcType=VARCHAR},</if>
             <if test="airlineEnName != null">airline_en_name = #{airlineEnName,jdbcType=VARCHAR},</if>
             <if test="airlineName != null">airline_name = #{airlineName,jdbcType=VARCHAR},</if>
@@ -247,9 +247,34 @@
     </sql>
 
     <update id="update" parameterType="com.zhiweicloud.guest.po.FlightPo">
-        UPDATE base_flight
+        UPDATE
+          base_flight
         <include refid="updateSet"/>
-        WHERE flight_id = #{flightId,jdbcType=BIGINT}
+        WHERE
+          flight_id = #{flightId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateIsCustom" parameterType="com.zhiweicloud.guest.po.FlightPo">
+        UPDATE
+          base_flight
+        SET
+          is_custom = 1
+        WHERE 1 =1
+          <if test="flightId != null and !''.equals(flightId)">AND flight_id = #{flightId,jdbcType=BIGINT},</if>
+          <if test="flightNo != null and !''.equals(flightNo)">AND flight_no = #{flightNo,jdbcType=VARCHAR},</if>
+          <if test="depDate != null and !''.equals(depDate)">AND dep_date = #{depDate,jdbcType=DATE},</if>
+          <if test="depAirportCode != null and !''.equals(depAirportCode)">AND dep_airport_code = #{depAirportCode,jdbcType=VARCHAR},</if>
+          <if test="arrAirportCode != null and !''.equals(arrAirportCode)">AND arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR},</if>
+    </update>
+
+    <update id="updateByCondition" useGeneratedKeys="true" keyProperty="flightId" parameterType="com.zhiweicloud.guest.po.FlightPo">
+        UPDATE base_flight
+          <include refid="updateSet"/>
+        WHERE
+          dep_date = #{depDate,jdbcType=DATE} AND
+          flight_no = #{flightNo,jdbcType = VARCHAR} AND
+          dep_airport_code = #{depAirportCode,jdbcType = VARCHAR} AND
+          arr_airport_code = #{arrAirportCode,jdbcType = VARCHAR}
     </update>
 
     <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -261,14 +286,15 @@
 
     <select id="select" parameterType="com.zhiweicloud.guest.po.FlightPo" resultMap="BaseResultMap">
         SELECT
-        <include refid="baseColumn" />
-        FROM base_flight
+          <include refid="baseColumn" />
+        FROM
+          base_flight
         WHERE
-        is_deleted = 0 AND
-        dep_airport_code = #{depAirportCode,jdbcType=VARCHAR} AND
-        arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR} AND
-        dep_date = #{depDate,jdbcType=DATE} AND
-        flight_no = #{flight_no,jdbcType=VARCHAR}
+          is_deleted = 0 AND
+          dep_airport_code = #{depAirportCode,jdbcType=VARCHAR} AND
+          arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR} AND
+          dep_date = #{depDate,jdbcType=DATE} AND
+          flight_no = #{flight_no,jdbcType=VARCHAR}
     </select>
 
     <select id="selectByDateAndNo" parameterType="com.zhiweicloud.guest.po.FlightPo" resultMap="BaseResultMap">

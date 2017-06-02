@@ -43,12 +43,12 @@ public class IbeDetrTkt {
     /**
      * 婴儿的生日（年月）
      */
-    private Date infantBirthDay;
+    private Date infantBirthday;
 
     /**
      * ISI信息
      */
-    private String ISI;
+    private String isi;
 
     /**
      * 出票航空公司
@@ -194,21 +194,21 @@ public class IbeDetrTkt {
     }
 
     @XmlElement(name = "infantBirthDay")
-    public Date getInfantBirthDay() {
-        return infantBirthDay;
+    public Date getInfantBirthday() {
+        return infantBirthday;
     }
 
-    public void setInfantBirthDay(Date infantBirthDay) {
-        this.infantBirthDay = infantBirthDay;
+    public void setInfantBirthday(Date infantBirthday) {
+        this.infantBirthday = infantBirthday;
     }
 
     @XmlElement(name = "ISI")
-    public String getISI() {
-        return ISI;
+    public String getIsi() {
+        return isi;
     }
 
-    public void setISI(String ISI) {
-        this.ISI = ISI;
+    public void setIsi(String isi) {
+        this.isi = isi;
     }
 
     @XmlElement(name = "issueAirline")

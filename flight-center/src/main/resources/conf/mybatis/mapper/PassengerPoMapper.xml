@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.PassengerPoMapper">
+
+    <resultMap id="baseResultMap" type="com.zhiweicloud.guest.po.PassengerPo">
+        <id column="passenger_id" jdbcType="BIGINT" property="passengerId" />
+        <result column="passenger_name" jdbcType="VARCHAR" property="passengerName" />
+        <result column="infant_birthDay" jdbcType="DATE" property="infantBirthday" />
+        <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+        <result column="sex" jdbcType="SMALLINT" property="sex" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        passenger_id,
+        passenger_name,
+        infant_birthDay,
+        id_card,
+        sex
+    </sql>
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passengerId != null">passenger_id,</if>
+            <if test="passengerName != null">passenger_name,</if>
+            <if test="infantBirthday != null">infant_birthDay,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="sex != null">sex,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passengerId != null">#{passengerId,jdbcType=BIGINT},</if>
+            <if test="passengerName != null">#{passengerName,jdbcType=VARCHAR},</if>
+            <if test="infantBirthday != null">#{infantBirthday,jdbcType=DATE},</if>
+            <if test="idCard != null">#{idCard,jdbcType=VARCHAR},</if>
+            <if test="sex != null">#{sex,jdbcType=SMALLINT},</if>
+        </trim>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="passengerId" parameterType="com.zhiweicloud.guest.po.PassengerPo">
+      INSERT INTO
+      base_passenger
+        <include refid="insertName"/>
+      VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="baseResultMap">
+        SELECT
+          <include refid="baseColumn"/>
+        FROM
+          base_passenger
+        WHERE passenger_name = #{passengerName,jdbcType = VARCHAR}
+    </select>
+
+</mapper>

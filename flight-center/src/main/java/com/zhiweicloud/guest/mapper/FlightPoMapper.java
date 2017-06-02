@@ -19,6 +19,10 @@ public interface FlightPoMapper {
 
     int update(FlightPo flightPo);
 
+    int updateIsCustom(FlightPo flightPo);
+
+    int updateByCondition(FlightPo flightPo);
+
     FlightPo selectById(@Param("flightId") Long flightId);
 
     FlightPo select(FlightPo flightPo);

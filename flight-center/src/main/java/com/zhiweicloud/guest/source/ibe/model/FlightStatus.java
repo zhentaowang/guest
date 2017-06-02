@@ -45,7 +45,7 @@ public class FlightStatus implements Serializable{
 
     private String carousel;
 
-    private String flightzj;
+    private String checkInCounter;
 
     /**
      * 航班号
@@ -246,12 +246,12 @@ public class FlightStatus implements Serializable{
     }
 
     @XmlElement(name = "flightzj")
-    public String getFlightzj() {
-        return flightzj;
+    public String getCheckInCounter() {
+        return checkInCounter;
     }
 
-    public void setFlightzj(String flightzj) {
-        this.flightzj = flightzj;
+    public void setCheckInCounter(String checkInCounter) {
+        this.checkInCounter = checkInCounter;
     }
 
 }
