@@ -29,7 +29,7 @@
         <property name="serverPackage" value="com.wyun.thrift.server." />
 <!--        <property name="service" value="127.0.0.1" />
         <property name="port" value="8899" />-->
-        <property name="service" value="hsr-order.hsr-namespace" />
+        <property name="service" value="hsr-order.hsr" />
         <property name="port" value="80" />
     </bean>
 
