@@ -216,6 +216,10 @@ public class ExportFileService {
             return;
         }
 
+        if(result.getJSONObject("data").getJSONArray("rows") == null || result.getJSONObject("data").getJSONArray("rows").size() == 0){
+            return;
+        }
+
         generator.setFileName(fileName);
         generator.setSheetName(sheetName);
         generator.create();
