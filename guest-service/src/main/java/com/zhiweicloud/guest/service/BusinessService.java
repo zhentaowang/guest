@@ -67,7 +67,10 @@ public class BusinessService implements IBusinessService {
     private final ServDefaultMapper servDefaultMapper;
     private final ServiceTypeAllocationMapper serviceTypeAllocationMapper;
 
-    private static MyService.Iface orderClient = SpringBeanUtil.getBean("orderClient");
+    @Autowired
+    SpringBeanUtil springBeanUtil;
+
+    private MyService.Iface orderClient = springBeanUtil.getBean("orderClient");
 
     @Autowired
     public BusinessService(ServMapper servMapper,ProductServiceTypeMapper productServiceTypeMapper,ServDefaultMapper servDefaultMapper,ServiceTypeAllocationMapper serviceTypeAllocationMapper) {
