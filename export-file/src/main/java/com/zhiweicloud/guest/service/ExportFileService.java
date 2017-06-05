@@ -179,7 +179,7 @@ public class ExportFileService {
      * @param trainPojo type 1:统计账单;2:明细账单;3:零售客户统计账单
      * @param response
      */
-    public void exportExcelForTrain(TrainPojo trainPojo,HttpServletResponse response){
+    public void exportExcelForTrain(TrainPojo trainPojo,HttpServletResponse response,Long userId){
         if (trainPojo.getType() <0 || trainPojo.getType() == null){
             return;
         }
@@ -193,19 +193,19 @@ public class ExportFileService {
 
         switch (trainPojo.getType()){
             case 1:
-                result  = getDate(trainPojo.getClientName(),trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime());
+                result  = getDate(trainPojo.getClientName(),trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),userId);
                 generator = new CountBillGenerator(result.getJSONObject("data"),response);
                 fileName = "统计账单_" + System.currentTimeMillis() + ".xls";
                 sheetName = "统计账单";
                 break;
             case 2:
-                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
+                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType(),userId);
                 generator = new DetailBillGenerator(result.getJSONObject("data"),response);
                 fileName = "明细账单" + System.currentTimeMillis() + ".xls";
                 sheetName = "明细账单";
                 break;
             case 3:
-                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
+                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType(),userId);
                 generator = new RetailBillGenerator(result.getJSONObject("data"),response);
                 fileName = "零售客户统计账单" + System.currentTimeMillis() + ".xls";
                 sheetName = "零售客户统计账单";
@@ -221,9 +221,10 @@ public class ExportFileService {
         generator.create();
     }
 
-    private JSONObject getDate(String clientName,String trainName,String productName,String startTime,String endTime){
+    private JSONObject getDate(String clientName,String trainName,String productName,String startTime,String endTime,Long userId){
         JSONObject result = null;
         JSONObject params = new JSONObject();
+        params.put("user_id", userId);
         params.put("operation", "reportCountBill");
         params.put("clientName", clientName);
         params.put("trainName",trainName);
@@ -243,9 +244,10 @@ public class ExportFileService {
         return result;
     }
 
-    private JSONObject getDate(String trainName,String productName,String startTime,String endTime,Integer type){
+    private JSONObject getDate(String trainName,String productName,String startTime,String endTime,Integer type,Long userId){
         JSONObject result = null;
         JSONObject params = new JSONObject();
+        params.put("user_id", userId);
         params.put("trainName",trainName);
         params.put("productName",productName);
         params.put("startTime",startTime);

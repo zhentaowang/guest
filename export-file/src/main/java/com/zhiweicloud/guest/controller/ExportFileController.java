@@ -84,9 +84,10 @@ public class ExportFileController {
     @ApiOperation(value = "导出文件 - 默认Excel", notes = "返回分页结果", httpMethod = "GET", produces = "application/x-msdownload")
     public void exportExcelForTrain(
         @BeanParam final TrainPojo trainPojo,
+        @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
         try {
-            exportFileService.exportExcelForTrain(trainPojo,response);
+            exportFileService.exportExcelForTrain(trainPojo,response,userId);
         } catch (Exception e) {
             e.printStackTrace();
         }
