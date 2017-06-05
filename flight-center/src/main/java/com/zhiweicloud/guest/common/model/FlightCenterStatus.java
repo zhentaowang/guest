@@ -20,7 +20,18 @@ public enum  FlightCenterStatus {
     // 415 - Unsupported Media Type
     UNSUPPORTED_MEDIA_TYPE(415, "不支持当前媒体类型"),
 
+    NON_TRAIN(202,"查询不到高铁信息记录"),
+
     FLIGHT_CENTER_ERROR(303,"航班中心异常"),
+
+    // 缺少参数
+    NONE_SYS_CODE(309,"缺少参数sysCode"),
+    NONE_FLIGHT_DATE(310,"缺少参数depDate"),
+    NONE_FLIGHT_NO(311,"缺少参数flightNo"),
+    NONE_DEP_AIRPORT_CODE(312,"缺少参数depAirportCode"),
+    NONE_ARR_AIRPORT_CODE(313,"缺少参数arrAirportCode"),
+
+    NONE_FLIGHT(318,"没有此航班"),
 
     NONE_CUSTOMER(320,"此客户不存在，请先购买"),
     NONE_TIME_ENOUGH(330,"次数不足，请续费购买"),

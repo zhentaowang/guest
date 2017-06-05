@@ -25,6 +25,11 @@ public class CustomFlightPo {
     private Long customerId;
 
     /**
+     * 定制的URL
+     */
+    private String customUrl;
+
+    /**
      * 航班ID
      * 不能为空
      */
@@ -51,6 +56,14 @@ public class CustomFlightPo {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public String getCustomUrl() {
+        return customUrl;
+    }
+
+    public void setCustomUrl(String customUrl) {
+        this.customUrl = customUrl;
     }
 
     public Long getFlightId() {

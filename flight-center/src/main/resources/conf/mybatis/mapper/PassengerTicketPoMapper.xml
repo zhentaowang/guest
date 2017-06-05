@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.PassengerTicketPoMapper">
+
+    <resultMap id="passengerTicketPojoMap" type="com.zhiweicloud.guest.pojo.PassengerTicketPojo">
+        <id column="passenger_ticket_id" jdbcType="BIGINT" property="passengerTicketId" />
+        <result column="passenger_id" jdbcType="BIGINT" property="passengerId" />
+        <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
+        <result column="dep_airport_code" jdbcType="VARCHAR" property="depAirportCode" />
+        <result column="arr_airport_code" jdbcType="VARCHAR" property="arrAirportCode" />
+        <result column="currency_type" jdbcType="VARCHAR" property="currencyType" />
+        <result column="exchange_info" jdbcType="VARCHAR" property="exchangeInfo" />
+        <result column="fare" jdbcType="DECIMAL" property="fare" />
+        <result column="rate" jdbcType="VARCHAR" property="rate" />
+        <result column="fare_compute" jdbcType="VARCHAR" property="fareCompute" />
+        <result column="follow_ticket_no" jdbcType="VARCHAR" property="followTicketNo" />
+        <result column="isi" jdbcType="VARCHAR" property="isi" />
+        <result column="original_issue" jdbcType="VARCHAR" property="originalIssue" />
+        <result column="original_string" jdbcType="VARCHAR" property="originalString" />
+        <result column="pay_method" jdbcType="VARCHAR" property="payMethod" />
+        <result column="passenger_type" jdbcType="VARCHAR" property="passengerType" />
+        <result column="receipt_printed" jdbcType="SMALLINT" property="receiptPrinted" />
+        <result column="signing_info" jdbcType="VARCHAR" property="signingInfo" />
+        <result column="tax" jdbcType="DECIMAL" property="tax" />
+        <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+        <result column="tour_code" jdbcType="VARCHAR" property="tourCode" />
+        <result column="unaccompanied_child_age" jdbcType="INTEGER" property="unaccompaniedChildAge" />
+        <result column="airline_code" jdbcType="VARCHAR" property="airlineCode" />
+        <result column="baggage_weight" jdbcType="INTEGER" property="baggageWeight" />
+        <result column="baggage_piece" jdbcType="VARCHAR" property="baggagePiece" />
+        <result column="board_no" jdbcType="VARCHAR" property="boardNo" />
+        <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo" />
+        <result column="dep_scheduled_date" jdbcType="TIMESTAMP" property="depScheduledDate" />
+        <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+        <result column="pnr_no" jdbcType="VARCHAR" property="pnrNo" />
+        <result column="ticket_state" jdbcType="VARCHAR" property="ticketState" />
+        <result column="leg_state" jdbcType="VARCHAR" property="legState" />
+        <result column="leg_type" jdbcType="VARCHAR" property="legType" />
+        <result column="e_ticket_type" jdbcType="VARCHAR" property="eTicketType" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <sql id="insertName">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passengerTicketId != null">passenger_ticket_id,</if>
+            <if test="passengerId != null">passenger_id,</if>
+            <if test="ticketNo != null">ticket_no,</if>
+            <if test="depAirportCode != null">dep_airport_code,</if>
+            <if test="arrAirportCode != null">arr_airport_code,</if>
+            <if test="currencyType != null">currency_type,</if>
+            <if test="exchangeInfo != null">exchange_info,</if>
+            <if test="fare != null">fare,</if>
+            <if test="rate != null">rate,</if>
+            <if test="fareCompute != null">fare_compute,</if>
+            <if test="followTicketNo != null">follow_ticket_no,</if>
+            <if test="isi != null">isi,</if>
+            <if test="originalIssue != null">original_issue,</if>
+            <if test="originalString != null">original_string,</if>
+            <if test="payMethod != null">pay_method,</if>
+            <if test="passengerType != null">passenger_type,</if>
+            <if test="receiptPrinted != null">receipt_printed,</if>
+            <if test="signingInfo != null">signing_info,</if>
+            <if test="tax != null">tax,</if>
+            <if test="totalAmount != null">total_amount,</if>
+            <if test="tourCode != null">tour_code,</if>
+            <if test="unaccompaniedChildAge != null">unaccompanied_child_age,</if>
+            <if test="airlineCode != null">airline_code,</if>
+            <if test="baggageWeight != null">baggage_weight,</if>
+            <if test="baggagePiece != null">baggage_piece,</if>
+            <if test="boardNo != null">board_no,</if>
+            <if test="cabinNo != null">cabin_no,</if>
+            <if test="depScheduledDate != null">dep_scheduled_date,</if>
+            <if test="flightNo != null">flight_no,</if>
+            <if test="pnrNo != null">pnr_no,</if>
+            <if test="ticketState != null">ticket_state,</if>
+            <if test="legState != null">leg_state,</if>
+            <if test="legType != null">leg_type,</if>
+            <if test="eTicketType != null">e_ticket_type,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+    </sql>
+
+    <sql id="insertValue">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passengerTicketId != null">#{passengerTicketId,jdbcType=BIGINT},</if>
+            <if test="passengerId != null">#{passengerId,jdbcType=BIGINT},</if>
+            <if test="ticketNo != null">#{ticketNo,jdbcType=VARCHAR},</if>
+            <if test="depAirportCode != null">#{depAirportCode,jdbcType=VARCHAR},</if>
+            <if test="arrAirportCode != null">#{arrAirportCode,jdbcType=VARCHAR},</if>
+            <if test="currencyType != null">#{currencyType,jdbcType=VARCHAR},</if>
+            <if test="exchangeInfo != null">#{exchangeInfo,jdbcType=VARCHAR},</if>
+            <if test="fare != null">#{fare,jdbcType=DECIMAL},</if>
+            <if test="rate != null">#{rate,jdbcType=VARCHAR},</if>
+            <if test="fareCompute != null">#{fareCompute,jdbcType=VARCHAR},</if>
+            <if test="followTicketNo != null">#{followTicketNo,jdbcType=VARCHAR},</if>
+            <if test="isi != null">#{isi,jdbcType=VARCHAR},</if>
+            <if test="originalIssue != null">#{originalIssue,jdbcType=VARCHAR},</if>
+            <if test="originalString != null">#{originalString,jdbcType=VARCHAR},</if>
+            <if test="payMethod != null">#{payMethod,jdbcType=VARCHAR},</if>
+            <if test="passengerType != null">#{passengerType,jdbcType=VARCHAR},</if>
+            <if test="receiptPrinted != null">#{receiptPrinted,jdbcType=SMALLINT},</if>
+            <if test="signingInfo != null">#{signingInfo,jdbcType=VARCHAR},</if>
+            <if test="tax != null">#{tax,jdbcType=DECIMAL},</if>
+            <if test="totalAmount != null">#{totalAmount,jdbcType=DECIMAL},</if>
+            <if test="tourCode != null">#{tourCode,jdbcType=VARCHAR},</if>
+            <if test="unaccompaniedChildAge != null">#{unaccompaniedChildAge,jdbcType=INTEGER},</if>
+            <if test="airlineCode != null">#{airlineCode,jdbcType=VARCHAR},</if>
+            <if test="baggageWeight != null">#{baggageWeight,jdbcType=INTEGER},</if>
+            <if test="baggagePiece != null">#{baggagePiece,jdbcType=VARCHAR},</if>
+            <if test="boardNo != null">#{boardNo,jdbcType=VARCHAR},</if>
+            <if test="cabinNo != null">#{cabinNo,jdbcType=VARCHAR},</if>
+            <if test="depScheduledDate != null">#{depScheduledDate,jdbcType=TIMESTAMP},</if>
+            <if test="flightNo != null">#{flightNo,jdbcType=VARCHAR},</if>
+            <if test="pnrNo != null">#{pnrNo,jdbcType=VARCHAR},</if>
+            <if test="ticketState != null">#{ticketState,jdbcType=VARCHAR},</if>
+            <if test="legState != null">#{legState,jdbcType=VARCHAR},</if>
+            <if test="legType != null">#{legType,jdbcType=VARCHAR},</if>
+            <if test="eTicketType != null">#{eTicketType,jdbcType=VARCHAR},</if>
+            <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="com.zhiweicloud.guest.po.PassengerTicketPo">
+      INSERT INTO o_passenger_ticket
+        <include refid="insertName"/>
+      VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <insert id="insertPassengerTicketPojo" parameterType="com.zhiweicloud.guest.pojo.PassengerTicketPojo">
+        INSERT INTO o_passenger_ticket
+        <include refid="insertName"/>
+        VALUES
+        <include refid="insertValue"/>
+    </insert>
+
+    <select id="selectPassengerTicketPojo" parameterType="java.lang.String" resultMap="passengerTicketPojoMap">
+      SELECT o.*,b.passenger_name,b.infant_birthDay
+      FROM o_passenger_ticket o
+      LEFT JOIN base_passenger b
+      ON o.passenger_id = b.passenger_id
+      WHERE o.ticket_no = #{ticketNo,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.model.FlightCenterStatus;
-import com.zhiweicloud.guest.common.util.SignUtils;
+import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.mapper.CustomerPoMapper;
 import com.zhiweicloud.guest.mapper.FlightCenterApiPoMapper;
 import com.zhiweicloud.guest.po.CustomerPo;
@@ -18,9 +18,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.net.URLDecoder;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -63,6 +66,13 @@ public class FlightCenterApiAspect {
         JSONObject object = (JSONObject) joinPoint.getArgs()[0];
 
         String sysCode = object.getString("sysCode");  // 系统码
+
+        if(sysCode == null){
+            flightCenterResult.setMessage(FlightCenterStatus.NONE_SYS_CODE.display());
+            flightCenterResult.setState(FlightCenterStatus.NONE_SYS_CODE.value());
+            flightCenterResult.setData(null);
+            return JSON.toJSONString(flightCenterResult);
+        }
 
         // 根据系统码获得 私钥 公钥
         CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
@@ -144,6 +154,13 @@ public class FlightCenterApiAspect {
 
         String sysCode = object.getString("sysCode");  // 系统码
 
+        if(sysCode == null){
+            flightCenterResult.setMessage(FlightCenterStatus.NONE_SYS_CODE.display());
+            flightCenterResult.setState(FlightCenterStatus.NONE_SYS_CODE.value());
+            flightCenterResult.setData(null);
+            return JSON.toJSONString(flightCenterResult);
+        }
+
         // 根据系统码获得 私钥 公钥
         CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
         Object proceed = null;
@@ -213,10 +230,34 @@ public class FlightCenterApiAspect {
         return proceed;
     }
 
-//    @Pointcut("execution(* com.zhiweicloud.guest.controller.FlightCenterController.flightInfo(..))")
-//    public void pointcutFlightInfo(){
-//
-//    }
+    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.queryFlightInfo(..)) || execution(* com.zhiweicloud.guest.service.FlightService.queryDynamicFlightInfo(..)) || " +
+        "execution(* com.zhiweicloud.guest.service.FlightService.customFlight(..))")
+    public void pointcutVaildDepDate(){
+
+    }
+
+    @Around(value = "pointcutVaildDepDate()")
+    public Object aroundFlightInfo(ProceedingJoinPoint joinPoint){
+//        String name = joinPoint.getSignature().getName();
+        FlightCenterResult result = new FlightCenterResult();
+        JSONObject object = (JSONObject) joinPoint.getArgs()[0];
+        Date depDate = object.getDate("depDate");
+        Object proceed = null;
+        try {
+            if (depDate.before(DateUtils.getDate("yyyy-MM-dd"))) {
+                result.setState(FlightCenterStatus.FLIGHT_DATE_INVALID.value());
+                result.setMessage(FlightCenterStatus.FLIGHT_DATE_INVALID.display());
+                result.setData(null);
+                return JSON.toJSONString(result);
+            }else {
+                proceed = joinPoint.proceed();
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        return proceed;
+    }
+
 //
 //    @Pointcut("execution(* com.zhiweicloud.guest.controller.FlightCenterController.customFlight(..))")
 //    public void pointcutCustomFlight(){

@@ -33,7 +33,7 @@ public class CustomerPo {
     /**
      * 定制URL
      */
-    private String custom_url;
+    private String customUrl;
 
     /**
      * 客户类型 0：内部客户 1：外部客户
@@ -98,12 +98,12 @@ public class CustomerPo {
         this.customerName = customerName == null ? null : customerName.trim();
     }
 
-    public String getCustom_url() {
-        return custom_url;
+    public String getCustomUrl() {
+        return customUrl;
     }
 
-    public void setCustom_url(String custom_url) {
-        this.custom_url = custom_url;
+    public void setCustomUrl(String customUrl) {
+        this.customUrl = customUrl;
     }
 
     public Short getType() {

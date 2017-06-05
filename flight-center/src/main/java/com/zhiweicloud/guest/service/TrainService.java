@@ -58,7 +58,9 @@ public class TrainService {
             String name = request.getString("name");
             String trainDate = request.getString("trainDate");
 
-            log.info("【参数   name:" +name + " trainDate:"+ trainDate +"】");
+            if (log.isInfoEnabled()) {
+                log.info("【参数   name:" +name + " trainDate:"+ trainDate +"】");
+            }
 
             Map<String, String> params = new HashMap<>();
             params.put("name", name);
@@ -68,26 +70,36 @@ public class TrainService {
 
             if (trainPojo == null) {
 
-                log.info("【需要从聚合数据获取数据解析】");
+                if (log.isInfoEnabled()) {
+                    log.info("【需要从聚合数据获取数据解析】");
+                }
 
                 String success = juheService.queryTrainInfoByName(name);
 
-                log.info("【聚合数据:】" + success);
+                if (log.isInfoEnabled()) {
+                    log.info("【聚合数据:】" + success);
+                }
 
                 // begin to parse source data
                 JSONObject object = JSON.parseObject(success);
                 JSONObject result = object.getJSONObject("result");
-                TrainPo trainPo = result.getJSONObject("train_info").toJavaObject(TrainPo.class);
-                trainPo.setTrainDate(simpleDateFormat.parse(trainDate));
 
-                // make sure the train is not exist
-                TrainPo query = trainPoMapper.select(trainPo);
-                if (query == null) {
-                    trainPoMapper.insert(trainPo);
+                if(result == null){
+                    re.setMessage(FlightCenterStatus.NON_TRAIN.display());
+                    re.setState(FlightCenterStatus.NON_TRAIN.value());
+                    re.setData(null);
+                }else {
+                    TrainPo trainPo = result.getJSONObject("train_info").toJavaObject(TrainPo.class);
+                    trainPo.setTrainDate(simpleDateFormat.parse(trainDate));
 
-                    List<StationPo> stations = JSONArray.parseArray(result.getString("station_list"), StationPo.class);
+                    // make sure the train is not exist
+                    TrainPo query = trainPoMapper.select(trainPo);
+                    if (query == null) {
+                        trainPoMapper.insert(trainPo);
 
-                    // filter by condition
+                        List<StationPo> stations = JSONArray.parseArray(result.getString("station_list"), StationPo.class);
+
+                        // filter by condition
 //                    int startStation = 0;
 //                    for (StationPo station : stations) {
 //                        if (start.equals(station.getStationName())) {
@@ -102,10 +114,11 @@ public class TrainService {
 //                        .filter(x -> x.getStationOrdinal() > compare)
 //                        .collect(Collectors.toList());
 
-                    stationPoMapper.insertBatch(stations,trainPo.getTrainId());
-                    trainPojo = new TrainPojo();
-                    BeanUtils.copyProperties(trainPo,trainPojo);
-                    trainPojo.setStationPos(stations);
+                        stationPoMapper.insertBatch(stations,trainPo.getTrainId());
+                        trainPojo = new TrainPojo();
+                        BeanUtils.copyProperties(trainPo,trainPojo);
+                        trainPojo.setStationPos(stations);
+                    }
                 }
             }
             re.setMessage(FlightCenterStatus.SUCCESS.display());

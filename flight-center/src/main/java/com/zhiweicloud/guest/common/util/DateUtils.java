@@ -28,6 +28,11 @@ public class DateUtils {
         return parse;
     }
 
+    public static String dateToString(Date date) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DEFAULT_FORMAT);
+        return simpleDateFormat.format(date);
+    }
+
     public static String dateToString(Date date,String format) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         return simpleDateFormat.format(date);
@@ -41,6 +46,10 @@ public class DateUtils {
     public static String getString(String format) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         return simpleDateFormat.format(new Date());
+    }
+
+    public static Date completeToHSM(String time) throws ParseException {
+        return stringToDate(dateToString(stringToDate(time, "yyyy-MM-dd HH:mm"),"yyyy-MM-dd HH:mm"),"yyyy-MM-dd HH:mm");
     }
 
 }

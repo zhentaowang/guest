@@ -3,7 +3,6 @@ Copyright 2016-2017 author IronC.
 */
 package com.zhiweicloud.guest.mapper;
 
-import com.zhiweicloud.guest.model.Flight;
 import com.zhiweicloud.guest.po.FlightCenterApiPo;
 import org.apache.ibatis.annotations.Param;
 

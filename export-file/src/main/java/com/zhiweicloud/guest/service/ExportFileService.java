@@ -3,6 +3,7 @@ package com.zhiweicloud.guest.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
@@ -11,7 +12,6 @@ import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.utils.ExcelUtils;
 import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.generator.*;
-import com.zhiweicloud.guest.generator.SingleSheetGenerator;
 import com.zhiweicloud.guest.generator.train.CountBillGenerator;
 import com.zhiweicloud.guest.generator.train.DetailBillGenerator;
 import com.zhiweicloud.guest.generator.train.RetailBillGenerator;
@@ -19,6 +19,8 @@ import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.model.TrainPojo;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,8 @@ import java.util.List;
  */
 @Service
 public class ExportFileService {
+
+    private static final Log log = LogFactory.getLog(ExportFileService.class);
 
     private static MyService.Iface checkClient = SpringBeanUtil.getBean("checkClient");
 
@@ -177,7 +181,7 @@ public class ExportFileService {
      * @param trainPojo type 1:统计账单;2:明细账单;3:零售客户统计账单
      * @param response
      */
-    public void exportExcelForTrain(TrainPojo trainPojo,HttpServletResponse response){
+    public void exportExcelForTrain(TrainPojo trainPojo,HttpServletResponse response,Long userId){
         if (trainPojo.getType() <0 || trainPojo.getType() == null){
             return;
         }
@@ -187,37 +191,47 @@ public class ExportFileService {
 
         SingleSheetGenerator generator = null;
 
-        JSONObject result;
+        JSONObject result = new JSONObject();
 
         switch (trainPojo.getType()){
             case 1:
-                result  = getDate(trainPojo.getClientName(),trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime());
+                result  = getDate(trainPojo.getClientName(),trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),userId);
                 generator = new CountBillGenerator(result.getJSONObject("data"),response);
                 fileName = "统计账单_" + System.currentTimeMillis() + ".xls";
                 sheetName = "统计账单";
                 break;
             case 2:
-                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
+                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType(),userId);
                 generator = new DetailBillGenerator(result.getJSONObject("data"),response);
                 fileName = "明细账单" + System.currentTimeMillis() + ".xls";
                 sheetName = "明细账单";
                 break;
             case 3:
-                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType());
+                result  = getDate(trainPojo.getTrainName(),trainPojo.getProductName(),trainPojo.getStartTime(),trainPojo.getEndTime(),trainPojo.getType(),userId);
                 generator = new RetailBillGenerator(result.getJSONObject("data"),response);
                 fileName = "零售客户统计账单" + System.currentTimeMillis() + ".xls";
                 sheetName = "零售客户统计账单";
                 break;
         }
+
+        if(result.getJSONObject("data") == null){
+            return;
+        }
+
+        if(result.getJSONObject("data").getJSONArray("rows") == null || result.getJSONObject("data").getJSONArray("rows").size() == 0){
+            return;
+        }
+
         generator.setFileName(fileName);
         generator.setSheetName(sheetName);
         generator.create();
     }
 
-    private JSONObject getDate(String clientName,String trainName,String productName,String startTime,String endTime){
+    private JSONObject getDate(String clientName,String trainName,String productName,String startTime,String endTime,Long userId){
         JSONObject result = null;
         JSONObject params = new JSONObject();
-        params.put("operation", "getCountBill");
+        params.put("user_id", userId);
+        params.put("operation", "reportCountBill");
         params.put("clientName", clientName);
         params.put("trainName",trainName);
         params.put("productName",productName);
@@ -225,28 +239,35 @@ public class ExportFileService {
         params.put("endTime",endTime);
         Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+            if (log.isInfoEnabled()) {
+                log.info(new String(re.getResponseJSON()));
+            }
+            result  = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
         }
         return result;
     }
 
-    private JSONObject getDate(String trainName,String productName,String startTime,String endTime,Integer type){
+    private JSONObject getDate(String trainName,String productName,String startTime,String endTime,Integer type,Long userId){
         JSONObject result = null;
         JSONObject params = new JSONObject();
+        params.put("user_id", userId);
         params.put("trainName",trainName);
         params.put("productName",productName);
         params.put("startTime",startTime);
         params.put("endTime",endTime);
         if (type == 2){
-            params.put("operation", "getDetailBill");
+            params.put("operation", "reportDetailBill");
 
         }
         if (type == 3){
-            params.put("operation", "getRetailBill");
+            params.put("operation", "reportRetailBill");
         }
         Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+            if (log.isInfoEnabled()) {
+                log.info(new String(re.getResponseJSON()));
+            }
+            result  = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
         }
         return result;
     }

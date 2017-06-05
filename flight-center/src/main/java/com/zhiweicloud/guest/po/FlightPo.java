@@ -187,6 +187,7 @@ public class FlightPo {
      * 出发日期
      * 不能为空
      */
+    @JSONField(format = "yyyy-MM-dd")
     private Date depDate;
 
     /**
@@ -217,16 +218,19 @@ public class FlightPo {
     /**
      * 计划起飞时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date depScheduledDate;
 
     /**
      * 预计起飞时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date depEstimatedDate;
 
     /**
      * 实际起飞时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date depActualDate;
 
     /**
@@ -243,6 +247,7 @@ public class FlightPo {
      * 到达日期
      * 不能为空
      */
+    @JSONField(format = "yyyy-MM-dd")
     private Date arrDate;
 
     /**
@@ -273,31 +278,42 @@ public class FlightPo {
     /**
      * 计划到达时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date arrScheduledDate;
 
     /**
      * 预计到达时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date arrEstimatedDate;
 
     /**
      * 实际到达时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date arrActualDate;
+
+    /**
+     * 是否定制 0：不定制 1：定制
+     */
+    private Short isCustom;
 
     /**
      * 是否删除：默认为0，0：不删除，1：删除
      */
+    @JSONField(serialize = false)
     private Short isDeleted;
 
     /**
      * 创建时间
      */
+    @JSONField(serialize = false)
     private Date createTime;
 
     /**
      * 修改时间
      */
+    @JSONField(serialize = false)
     private Date updateTime;
 
     public Long getFlightId() {
@@ -706,6 +722,14 @@ public class FlightPo {
 
     public void setArrActualDate(Date arrActualDate) {
         this.arrActualDate = arrActualDate;
+    }
+
+    public Short getIsCustom() {
+        return isCustom;
+    }
+
+    public void setIsCustom(Short isCustom) {
+        this.isCustom = isCustom;
     }
 
     public Short getIsDeleted() {

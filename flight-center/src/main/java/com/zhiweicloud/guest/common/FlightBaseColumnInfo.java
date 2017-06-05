@@ -76,12 +76,11 @@ public enum FlightBaseColumnInfo {
     LEG_TYPE("legType","航段类型"),
     LEG_STATE("legState","航段状态"),
     FOLLOW_TICKET_NO("followTicketNo","后续票号"),
-    ISI("ISI","ISI信息"),
+    ISI("isi","ISI信息"),
     ORIGINAL_ISSUE("originalIssue","原始信息（OI信息）"),
     ORIGINAL_STRING("originalString","原始字符信息"),
     RECEIPT_PRINTED("receiptPrinted","是否已打印T4(发票)联"),
-    INFANT_BIRTHDAY("infantBirthDay","婴儿的生日（年月）")
-    ;
+    INFANT_BIRTHDAY("infantBirthDay","婴儿的生日（年月）");
 
     private String key;
 
