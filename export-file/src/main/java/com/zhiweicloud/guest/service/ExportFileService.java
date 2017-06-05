@@ -1,7 +1,9 @@
 package com.zhiweicloud.guest.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
@@ -240,10 +242,7 @@ public class ExportFileService {
             if (log.isInfoEnabled()) {
                 log.info(new String(re.getResponseJSON()));
             }
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
-        }
-        if (log.isInfoEnabled()) {
-            log.info("【 结果: " + result.toString() +" ");
+            result  = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
         }
         return result;
     }
@@ -268,10 +267,7 @@ public class ExportFileService {
             if (log.isInfoEnabled()) {
                 log.info(new String(re.getResponseJSON()));
             }
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
-        }
-        if (log.isInfoEnabled()) {
-            log.info("【 结果: " + result.toString() +" ");
+            result  = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
         }
         return result;
     }
