@@ -70,8 +70,6 @@ public class BusinessService implements IBusinessService {
     @Autowired
     SpringBeanUtil springBeanUtil;
 
-    private MyService.Iface orderClient = springBeanUtil.getBean("orderClient");
-
     @Autowired
     public BusinessService(ServMapper servMapper,ProductServiceTypeMapper productServiceTypeMapper,ServDefaultMapper servDefaultMapper,ServiceTypeAllocationMapper serviceTypeAllocationMapper) {
         this.servMapper = servMapper;
@@ -415,6 +413,7 @@ public class BusinessService implements IBusinessService {
                 paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
                 JSONObject data=new JSONObject();
+                MyService.Iface orderClient = springBeanUtil.getBean("orderClient");
                 Response response = ClientUtil.clientSendData(orderClient, "businessService", paramMap);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
