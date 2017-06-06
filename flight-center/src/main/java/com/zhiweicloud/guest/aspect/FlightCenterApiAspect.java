@@ -11,6 +11,7 @@ import com.zhiweicloud.guest.po.CustomerPo;
 import com.zhiweicloud.guest.po.FlightCenterApiPo;
 import com.zhiweicloud.guest.signature.RSACoder;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,11 +19,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.net.URLDecoder;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
@@ -45,259 +44,171 @@ public class FlightCenterApiAspect {
     @Autowired
     private CustomerPoMapper customerPoMapper;
 
-    @Pointcut("execution(* com.zhiweicloud.guest.service.TrainService.*(..))")
-    public void pointcutTrainService(){
+    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.*(..))|| execution(* com.zhiweicloud.guest.service.TrainService.*(..))")
+    public void pointcutTrafficService(){
 
     }
 
-    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.*(..))")
-    public void pointcutFlightService(){
+    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.customFlight(..))")
+    public void pointcutCustomFlight(){
 
     }
 
-    @Around(value = "pointcutTrainService()")
-    public Object aroundTrainService(ProceedingJoinPoint joinPoint){
+    @Around(value = "pointcutTrafficService()")
+    public Object aroundTrafficService(ProceedingJoinPoint joinPoint) {
         FlightCenterResult flightCenterResult = new FlightCenterResult();
-
-        String name = joinPoint.getSignature().getName();
-        log.debug("【中心接口 切面拦截 方法名:" + name + "】");
-
-        // get params
-        JSONObject object = (JSONObject) joinPoint.getArgs()[0];
-
-        String sysCode = object.getString("sysCode");  // 系统码
-
-        if(sysCode == null){
-            flightCenterResult.setMessage(FlightCenterStatus.NONE_SYS_CODE.display());
-            flightCenterResult.setState(FlightCenterStatus.NONE_SYS_CODE.value());
-            flightCenterResult.setData(null);
-            return JSON.toJSONString(flightCenterResult);
-        }
-
-        // 根据系统码获得 私钥 公钥
-        CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
-        Object proceed = null;
         FlightCenterApiPo flightCenterApiPo = new FlightCenterApiPo();
+        String name = joinPoint.getSignature().getName();
+        Object proceed;
         try {
-            String sign = URLDecoder.decode(object.getString("sign"),"UTF-8"); // 签名
-            sign = sign.replace(" ", "+");
-
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 航班中心接口: " + name + " 被调用 ************ 】");
+            }
+            // get params
+            JSONObject object = (JSONObject) joinPoint.getArgs()[0];
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 请求航班中心接口参数: " + object.toString() + " ************ 】");
+            }
+            String sysCode = object.getString("sysCode");  // 系统码
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 客户码: " + sysCode + " ************ 】");
+            }
+            if (StringUtils.isBlank(sysCode)) {
+                flightCenterResult.setMessage(FlightCenterStatus.NONE_SYS_CODE.display());
+                flightCenterResult.setState(FlightCenterStatus.NONE_SYS_CODE.value());
+                flightCenterResult.setData(null);
+                return JSON.toJSONString(flightCenterResult);
+            }
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 获取客户信息 ************ 】");
+            }
+            CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
             if (customerPo == null) {
                 flightCenterResult.setMessage(FlightCenterStatus.NONE_CUSTOMER.display());
                 flightCenterResult.setState(FlightCenterStatus.NONE_CUSTOMER.value());
                 flightCenterResult.setData(null);
                 return JSON.toJSONString(flightCenterResult);
             }
-
-            if(customerPo.getType() != 0){
-                Map<String, Object> params = new HashedMap();
-
-                // 参数需要确认
-                for (Map.Entry<String, Object> entry : object.entrySet()) {
-                    if (!"sign".equals(entry.getKey()) && !"operation".equals(entry.getKey()) && !"access_token".equals(entry.getKey())) {
-                        params.put(entry.getKey(), entry.getValue());
-                    }
-                }
-
-                if (sign == null || "".equals(sign)){
-                    flightCenterResult.setMessage(FlightCenterStatus.SIGN_INVALID.display());
-                    flightCenterResult.setState(FlightCenterStatus.SIGN_INVALID.value());
-                    flightCenterResult.setData(null);
-                    return JSON.toJSONString(flightCenterResult);
-                }else {
-                    boolean verify = RSACoder.verify(params, customerPo.getPublicKey(), sign);
-
-                    if (!verify){
-                        flightCenterResult.setMessage(FlightCenterStatus.NOT_AUTH.display());
-                        flightCenterResult.setState(FlightCenterStatus.NOT_AUTH.value());
-                        flightCenterResult.setData(null);
-                        return JSON.toJSONString(flightCenterResult);
-                    }
-                }
-
-                if (customerPo.getTotal() <= 0) {
-                    flightCenterResult.setMessage(FlightCenterStatus.NONE_TIME_ENOUGH.display());
-                    flightCenterResult.setState(FlightCenterStatus.NONE_TIME_ENOUGH.value());
-                    flightCenterResult.setData(null);
-                    return JSON.toJSONString(flightCenterResult);
-                }
-                // reduce total
-                customerPo.setTotal(customerPo.getTotal() - 1);
-                customerPoMapper.updateTotal(customerPo);
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 查询的客户对象: " + customerPo.toString() + " ************ 】");
             }
-
+            // 客户存在，不管请求参数如何，都进行请求的记录
             flightCenterApiPo.setApiName(name);
             flightCenterApiPo.setCustomerId(customerPo.getCustomerId());
-
-            proceed = joinPoint.proceed();
-            JSONObject jsonObject = JSON.parseObject(proceed.toString());
-            flightCenterApiPo.setInvokeState(jsonObject.getString("state"));
-            flightCenterApiPo.setInvokeResult(jsonObject.getString("message"));
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            flightCenterApiPo.setInvokeState("-1");
-            flightCenterApiPo.setInvokeResult(throwable.getCause().getMessage());
-        }
-        flightCenterApiPoMapper.insert(flightCenterApiPo);
-        return proceed;
-    }
-
-    @Around(value = "pointcutFlightService()")
-    public Object aroundFlightService(ProceedingJoinPoint joinPoint){
-        FlightCenterResult flightCenterResult = new FlightCenterResult();
-
-        String name = joinPoint.getSignature().getName();
-        log.debug("【中心接口 切面拦截 方法名:" + name + "】");
-
-        // get params
-        JSONObject object = (JSONObject) joinPoint.getArgs()[0];
-
-        String sysCode = object.getString("sysCode");  // 系统码
-
-        if(sysCode == null){
-            flightCenterResult.setMessage(FlightCenterStatus.NONE_SYS_CODE.display());
-            flightCenterResult.setState(FlightCenterStatus.NONE_SYS_CODE.value());
-            flightCenterResult.setData(null);
-            return JSON.toJSONString(flightCenterResult);
-        }
-
-        // 根据系统码获得 私钥 公钥
-        CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
-        Object proceed = null;
-        FlightCenterApiPo flightCenterApiPo = new FlightCenterApiPo();
-        try {
-            if (customerPo == null) {
-                flightCenterResult.setMessage(FlightCenterStatus.NONE_CUSTOMER.display());
-                flightCenterResult.setState(FlightCenterStatus.NONE_CUSTOMER.value());
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 进行航班日期校验 ************ 】");
+            }
+            String depDate = object.getString("depDate");
+            if (StringUtils.isBlank(depDate)) {
+                flightCenterResult.setState(FlightCenterStatus.NONE_FLIGHT_DATE.value());
+                flightCenterResult.setMessage(FlightCenterStatus.NONE_FLIGHT_DATE.display());
                 flightCenterResult.setData(null);
+                flightCenterApiPo.setInvokeState(String.valueOf(FlightCenterStatus.NONE_FLIGHT_DATE.value()));
+                flightCenterApiPo.setInvokeResult(FlightCenterStatus.NONE_FLIGHT_DATE.display());
+                flightCenterApiPoMapper.insert(flightCenterApiPo);
                 return JSON.toJSONString(flightCenterResult);
             }
-
-            if(customerPo.getType() != 0){
+            if (!DateUtils.verifyDate(depDate, "yyyy-MM-dd")) {
+                flightCenterResult.setState(FlightCenterStatus.ILLEGAL_DATE.value());
+                flightCenterResult.setMessage(FlightCenterStatus.ILLEGAL_DATE.display());
+                flightCenterResult.setData(null);
+                flightCenterApiPo.setInvokeState(String.valueOf(FlightCenterStatus.ILLEGAL_DATE.value()));
+                flightCenterApiPo.setInvokeResult(FlightCenterStatus.ILLEGAL_DATE.display());
+                flightCenterApiPoMapper.insert(flightCenterApiPo);
+                return JSON.toJSONString(flightCenterResult);
+            }
+            if (DateUtils.stringToDate(depDate, "yyyy-MM-dd").before(DateUtils.getDate("yyyy-MM-dd"))) {
+                flightCenterResult.setState(FlightCenterStatus.FLIGHT_DATE_INVALID.value());
+                flightCenterResult.setMessage(FlightCenterStatus.FLIGHT_DATE_INVALID.display());
+                flightCenterResult.setData(null);
+                flightCenterApiPo.setInvokeState(String.valueOf(FlightCenterStatus.FLIGHT_DATE_INVALID.value()));
+                flightCenterApiPo.setInvokeResult(FlightCenterStatus.FLIGHT_DATE_INVALID.display());
+                flightCenterApiPoMapper.insert(flightCenterApiPo);
+                return JSON.toJSONString(flightCenterResult);
+            }
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 日期校验通过 ************ 】");
+            }
+            if (customerPo.getType() != 0) {
                 Map<String, Object> params = new HashedMap();
-
-                // 参数需要确认
+                // 剔除不需要的参数
                 for (Map.Entry<String, Object> entry : object.entrySet()) {
                     if (!"sign".equals(entry.getKey()) && !"operation".equals(entry.getKey()) && !"access_token".equals(entry.getKey())) {
                         params.put(entry.getKey(), entry.getValue());
                     }
                 }
-
-                String sign = URLDecoder.decode(object.getString("sign"),"UTF-8"); // 签名
-                sign = sign.replace(" ", "+");
-
-                if (sign == null || "".equals(sign)){
+                String sign = object.getString("sign");
+                if (log.isInfoEnabled()) {
+                    log.info("【 ************ 客户原签名: " + sign + " ************ 】");
+                }
+                if (sign == null || "".equals(sign)) {
                     flightCenterResult.setMessage(FlightCenterStatus.SIGN_INVALID.display());
                     flightCenterResult.setState(FlightCenterStatus.SIGN_INVALID.value());
                     flightCenterResult.setData(null);
+                    flightCenterApiPo.setInvokeState(String.valueOf(FlightCenterStatus.SIGN_INVALID.value()));
+                    flightCenterApiPo.setInvokeResult(FlightCenterStatus.SIGN_INVALID.display());
+                    flightCenterApiPoMapper.insert(flightCenterApiPo);
                     return JSON.toJSONString(flightCenterResult);
-                }else {
+                } else {
+                    sign = URLDecoder.decode(object.getString("sign"), "UTF-8"); // 签名
+                    sign = sign.replace(" ", "+"); // 从go过来的代码已经丢失+
+                    if (log.isInfoEnabled()) {
+                        log.info("【 ************ URL解码后的签名: " + sign + " ************ 】");
+                    }
                     boolean verify = RSACoder.verify(params, customerPo.getPublicKey(), sign);
-
-                    if (!verify){
+                    if (log.isInfoEnabled()) {
+                        log.info("【 ************ 签名校验结果: " + verify + " ************ 】");
+                    }
+                    if (!verify) {
                         flightCenterResult.setMessage(FlightCenterStatus.NOT_AUTH.display());
                         flightCenterResult.setState(FlightCenterStatus.NOT_AUTH.value());
                         flightCenterResult.setData(null);
+                        flightCenterApiPo.setInvokeState(String.valueOf(FlightCenterStatus.NOT_AUTH.value()));
+                        flightCenterApiPo.setInvokeResult(FlightCenterStatus.NOT_AUTH.display());
+                        flightCenterApiPoMapper.insert(flightCenterApiPo);
                         return JSON.toJSONString(flightCenterResult);
                     }
                 }
-
-                if (customerPo.getTotal() <= 0) {
+                if (!verifyTotal(customerPo.getTotal())) {
                     flightCenterResult.setMessage(FlightCenterStatus.NONE_TIME_ENOUGH.display());
                     flightCenterResult.setState(FlightCenterStatus.NONE_TIME_ENOUGH.value());
                     flightCenterResult.setData(null);
+                    flightCenterApiPo.setInvokeState(String.valueOf(FlightCenterStatus.NONE_TIME_ENOUGH.value()));
+                    flightCenterApiPo.setInvokeResult(FlightCenterStatus.NONE_TIME_ENOUGH.display());
+                    flightCenterApiPoMapper.insert(flightCenterApiPo);
                     return JSON.toJSONString(flightCenterResult);
                 }
-
                 // reduce total
                 customerPo.setTotal(customerPo.getTotal() - 1);
                 customerPoMapper.updateTotal(customerPo);
             }
-
-            flightCenterApiPo.setApiName(name);
-            flightCenterApiPo.setCustomerId(customerPo.getCustomerId());
-
             proceed = joinPoint.proceed();
             JSONObject jsonObject = JSON.parseObject(proceed.toString());
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 航班中心接口执行的结果: " + jsonObject + " ************ 】");
+            }
             flightCenterApiPo.setInvokeState(jsonObject.getString("state"));
             flightCenterApiPo.setInvokeResult(jsonObject.getString("message"));
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+            flightCenterResult.setState((FlightCenterStatus.ERROR.value()));
+            flightCenterResult.setMessage(FlightCenterStatus.ERROR.display());
+            flightCenterResult.setData(null);
             flightCenterApiPo.setInvokeState("-1");
             flightCenterApiPo.setInvokeResult(throwable.getCause().getMessage());
+            flightCenterApiPoMapper.insert(flightCenterApiPo);
+            return JSON.toJSONString(flightCenterResult);
         }
         flightCenterApiPoMapper.insert(flightCenterApiPo);
         return proceed;
     }
 
-    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.queryFlightInfo(..)) || execution(* com.zhiweicloud.guest.service.FlightService.queryDynamicFlightInfo(..)) || " +
-        "execution(* com.zhiweicloud.guest.service.FlightService.customFlight(..))")
-    public void pointcutVaildDepDate(){
-
-    }
-
-    @Around(value = "pointcutVaildDepDate()")
-    public Object aroundFlightInfo(ProceedingJoinPoint joinPoint){
-//        String name = joinPoint.getSignature().getName();
-        FlightCenterResult result = new FlightCenterResult();
-        JSONObject object = (JSONObject) joinPoint.getArgs()[0];
-        Date depDate = object.getDate("depDate");
-        Object proceed = null;
-        try {
-            if (depDate.before(DateUtils.getDate("yyyy-MM-dd"))) {
-                result.setState(FlightCenterStatus.FLIGHT_DATE_INVALID.value());
-                result.setMessage(FlightCenterStatus.FLIGHT_DATE_INVALID.display());
-                result.setData(null);
-                return JSON.toJSONString(result);
-            }else {
-                proceed = joinPoint.proceed();
-            }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+    private boolean verifyTotal(Long total){
+        if (total <= 0) {
+            return false;
+        }else {
+            return true;
         }
-        return proceed;
     }
-
-//
-//    @Pointcut("execution(* com.zhiweicloud.guest.controller.FlightCenterController.customFlight(..))")
-//    public void pointcutCustomFlight(){
-//
-//    }
-//
-//    @Pointcut("execution(* com.zhiweicloud.guest.controller.FlightCenterController.tickPassengerInfo(..))")
-//    public void pointcutTickPassengerInfo(){
-//
-//    }
-//
-
-//
-//    @Around(value = "pointcutFlightInfo()")
-//    public Object aroundFlightInfo(ProceedingJoinPoint joinPoint){
-//        String name = joinPoint.getSignature().getName();
-//        System.out.println(joinPoint.getSignature().getName());
-//        JSONObject object = (JSONObject) joinPoint.getArgs()[0];
-//        FlightCenterApiPo flightCenterApiLog = new FlightCenterApiPo();
-//        flightCenterApiLog.setApiName(name);
-//        String airportCode = object.getString("client_id");
-//        Long userId = object.getLong("user_id");
-//        String sysCode = object.getString("sysCode");// 系统码
-//        Object proceed = null;
-//        try {
-//            flightCenterApiLog.setCustomerId(apiCustomerMapper.selectIdBySysCode(sysCode));
-//            proceed = joinPoint.proceed();
-//            JSONObject jsonObject = JSON.parseObject(proceed.toString());
-//            List<Flight> flightList = JSONArray.parseArray(jsonObject.getString("data"), Flight.class);
-//            flightCenterApiLog.setInvokeState(jsonObject.getString("state"));
-//            flightCenterApiLog.setInvokeResult(flightList.get(0).getFlightNo());
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
-//            flightCenterApiLog.setInvokeState("-1");
-//            flightCenterApiLog.setInvokeResult("error");
-//        }
-//        flightCenterApiLogMapper.insert(flightCenterApiLog);
-//        return proceed;
-//    }
-
-
 
 }

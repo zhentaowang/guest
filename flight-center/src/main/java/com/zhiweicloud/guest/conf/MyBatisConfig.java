@@ -47,17 +47,17 @@ public class MyBatisConfig {
         return druidDataSource;
     }
 
-//    @Profile("test")
-//    @Bean(name = "dataSource",initMethod = "init",destroyMethod = "close")
-//    public DruidDataSource dataSourceTest(Environment environment) throws Exception{
-//        DruidDataSource druidDataSource = new DruidDataSource();
-//        druidDataSource.setName("testDataSource");
-//        druidDataSource.setUsername(environment.getProperty("test.datasource.username"));
-//        druidDataSource.setPassword(environment.getProperty("test.datasource.password"));
-//        druidDataSource.setUrl(environment.getProperty("test.datasource.url"));
-//        druidSettings(druidDataSource);
-//        return druidDataSource;
-//    }
+    @Profile("local")
+    @Bean(name = "dataSource",initMethod = "init",destroyMethod = "close")
+    public DruidDataSource dataSourceTest(Environment environment) throws Exception{
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setName("localDataSource");
+        druidDataSource.setUsername(environment.getProperty("local.spring.datasource.username"));
+        druidDataSource.setPassword(environment.getProperty("local.spring.datasource.password"));
+        druidDataSource.setUrl(environment.getProperty("local.spring.datasource.url"));
+        druidSettings(druidDataSource);
+        return druidDataSource;
+    }
 
     @Bean(name = "transactionManager")
     public DataSourceTransactionManager dataSourceTransactionManager(DruidDataSource dataSource){

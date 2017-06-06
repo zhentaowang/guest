@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.po.CustomFlightPo;
 import com.zhiweicloud.guest.pojo.CustomFlightPojo;
+import com.zhiweicloud.guest.pojo.CustomFlightPojo2;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface CustomFlightPoMapper {
     List<CustomFlightPo> selectsByFlightId(@Param("flightId") Long flightId);
 
     List<CustomFlightPojo> selectsCustomFlightPojo(List<Long> flightIds);
+
+    List<CustomFlightPojo2> selectsCustomFlightPojo2(List<Long> flightIds);
 
 }

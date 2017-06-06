@@ -216,21 +216,21 @@ public class FlightPo {
     private String depTerminal;
 
     /**
-     * 计划起飞时间（yyyy-MM-dd HH-mm-ss格式）
+     * 计划起飞时间（yyyy-MM-dd HH:mm:ss格式）
      */
-    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date depScheduledDate;
 
     /**
      * 预计起飞时间（yyyy-MM-dd HH-mm-ss格式）
      */
-    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date depEstimatedDate;
 
     /**
      * 实际起飞时间（yyyy-MM-dd HH-mm-ss格式）
      */
-    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date depActualDate;
 
     /**
@@ -278,19 +278,19 @@ public class FlightPo {
     /**
      * 计划到达时间（yyyy-MM-dd HH-mm-ss格式）
      */
-    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date arrScheduledDate;
 
     /**
      * 预计到达时间（yyyy-MM-dd HH-mm-ss格式）
      */
-    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date arrEstimatedDate;
 
     /**
      * 实际到达时间（yyyy-MM-dd HH-mm-ss格式）
      */
-    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date arrActualDate;
 
     /**

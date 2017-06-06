@@ -7,11 +7,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.jvnet.hk2.annotations.Service;
 
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * IBE航班信息获取工具类
@@ -38,7 +38,9 @@ public class IbeUtils {
      * @throws Exception
      */
     public static String customFlight(String flightNo, String flightDate) throws Exception {
-        log.info("【方法名：定制航班（customFlight） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + "】");
+        if (log.isInfoEnabled()) {
+            log.info("【 ************ IBE 方法名：定制航班（customFlight） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + " ************ 】");
+        }
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("Hashcode", IBE_HASHCODE));
         nameValuePairs.add(new BasicNameValuePair("flightNo", flightNo));
@@ -73,14 +75,16 @@ public class IbeUtils {
 //    }
 
     public static RootResult queryFlightNo(String flightNo) throws Exception {
-        log.info("【方法名：根据航班号查询航班信息（queryFlightNo） 参数名：航班号_" + flightNo + "】");
+        if (log.isInfoEnabled()) {
+            log.info("【 ************ IBE 方法名：根据航班号查询航班信息（queryFlightNo） 参数名：航班号_" + flightNo + " ************ 】");
+        }
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
         nameValuePairs.add(new BasicNameValuePair("FlightNo", flightNo));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
         String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByFlightNO", nameValuePairs);
-        log.info("【请求的结果：\n" + result + "】");
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), RootResult.class);
     }
@@ -113,7 +117,7 @@ public class IbeUtils {
 //    }
 
     public static RootResult queryFlightNoByDate(String flightNo, String flightDate) throws Exception {
-        log.info("【方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + "】");
+        log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + " ************ 】");
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
         nameValuePairs.add(new BasicNameValuePair("FlightNo", flightNo));
@@ -121,7 +125,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
         String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryFlightNobydate", nameValuePairs);
-        log.info("【请求的结果：\n" + result + "】");
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), RootResult.class);
     }
@@ -157,7 +161,7 @@ public class IbeUtils {
 //    }
 
     public static IbeDetrTktResult queryPassengerByTickNo(String tickNo) throws Exception {
-        log.info("【方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：客票号" + tickNo  + "】");
+        log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：客票号_" + tickNo  + " ************ 】");
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("sHashcode", IBE_HASHCODE));
         nameValuePairs.add(new BasicNameValuePair("TicketNo", tickNo));
@@ -167,7 +171,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("IDCAR", ""));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
         String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/detrservice.asmx/DETR", nameValuePairs);
-        log.info("【请求的结果：\n" + result + "】");
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeDetrTktResult.class);
     }

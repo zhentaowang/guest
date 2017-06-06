@@ -5,16 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.model.FlightCenterStatus;
 import com.zhiweicloud.guest.common.util.DateUtils;
-import com.zhiweicloud.guest.common.util.HttpClientUtils;
 import com.zhiweicloud.guest.mapper.*;
 import com.zhiweicloud.guest.po.CustomFlightPo;
 import com.zhiweicloud.guest.po.CustomerPo;
 import com.zhiweicloud.guest.po.FlightPo;
 import com.zhiweicloud.guest.po.PassengerPo;
-import com.zhiweicloud.guest.pojo.CustomFlightPojo;
 import com.zhiweicloud.guest.pojo.PassengerTicketPojo;
 import com.zhiweicloud.guest.source.ibe.service.IbeService;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,11 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Transient;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * FlightService.java
@@ -67,31 +61,38 @@ public class FlightService {
     public String queryFlightInfo(JSONObject request) {
         try {
             // get args
-            String flightNo = request.getString("flightNo");
-            Date depDate = request.getDate("depDate");// 出发日期 即航班号
+            String flightNo = request.getString("flightNo").toUpperCase();
+            String depDate = request.getString("depDate");// 出发日期 即航班号
             String depAirportCode = request.getString("depAirportCode");
             String arrAirportCode = request.getString("arrAirportCode");
 
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ queryFlightInfo方法接收到的参数   flightNo: " + flightNo + " depDate: " + depDate + " depAirportCode: " + depAirportCode + " arrAirportCode: " + arrAirportCode + " ************ 】");
+            }
+
+            String s = verifyFlightNo(flightNo);
+
+            if (!"OK".equals(s)) {
+                return s;
+            }
+
             FlightPo flightPo = new FlightPo();
             flightPo.setFlightNo(flightNo);
-            flightPo.setDepDate(depDate);
-
+            flightPo.setDepDate(DateUtils.stringToDate(depDate, "yyyy-MM-dd"));
             if (StringUtils.isBlank(depAirportCode) && StringUtils.isBlank(arrAirportCode)) {
                 FlightCenterResult<List<FlightPo>> re = new FlightCenterResult<>();
-
-                if (log.isInfoEnabled()) {
-                    log.info("【参数   flightNo:" + flightNo + " depDate:" + depDate + "】");
-                }
-                // query local
+                // 从本地查询
                 List<FlightPo> result = flightPoMapper.selectByDateAndNo(flightPo);
+                // 本地不存在
                 if (result == null || result.size() == 0) {
-                    re = getFlightPosByIbeSource(depDate, flightNo);
+                    re = getFlightPosByIbeSource(DateUtils.stringToDate(depDate, "yyyy-MM-dd"), flightNo);
+                    // 查询到结果 插入
                     if (re.getData() != null) {
                         for (FlightPo po : re.getData()) {
                             flightPoMapper.insert(po);
                         }
                     }
-                }else {
+                } else {
                     re.setMessage(FlightCenterStatus.SUCCESS.display());
                     re.setState(FlightCenterStatus.SUCCESS.value());
                     re.setData(result);
@@ -99,17 +100,13 @@ public class FlightService {
                 return JSON.toJSONString(re);
             } else {
                 FlightCenterResult<FlightPo> re = new FlightCenterResult<>();
-
-                if (log.isInfoEnabled()) {
-                    log.info("【参数   flightNo:" + flightNo + "; depDate:" + depDate + "; depAirportCode:" + depAirportCode + "; arrAirportCode" + arrAirportCode + " 】");
-                }
-                // add args
+                // 添加目的地/出发地 三字码
                 flightPo.setDepAirportCode(depAirportCode);
                 flightPo.setArrAirportCode(arrAirportCode);
-                // query local
+                // 从本地查询
                 FlightPo result = flightPoMapper.select(flightPo);
                 if (result == null) {
-                    re = getFlightPoByIbeSource(depDate, flightNo, depAirportCode, arrAirportCode);
+                    re = getFlightPoByIbeSource(DateUtils.stringToDate(depDate, "yyyy-MM-dd"), flightNo, depAirportCode, arrAirportCode);
                 } else {
                     re.setMessage(FlightCenterStatus.SUCCESS.display());
                     re.setState(FlightCenterStatus.SUCCESS.value());
@@ -139,28 +136,34 @@ public class FlightService {
         try {
             // get args
             String flightNo = request.getString("flightNo");
-            Date depDate = request.getDate("depDate");
+            String depDate = request.getString("depDate");
             String depAirportCode = request.getString("depAirportCode");
             String arrAirportCode = request.getString("arrAirportCode");
 
             if (log.isInfoEnabled()) {
-                log.info("【参数   flightNo:" + flightNo + "; depDate:" + depDate + "; depAirportCode:" + depAirportCode + "; arrAirportCode" + arrAirportCode + " 】");
+                log.info("【参数   flightNo: " + flightNo + " depDate: " + depDate + " depAirportCode: " + depAirportCode + " arrAirportCode: " + arrAirportCode + " 】");
+            }
+
+            String s = verifyArgs(flightNo, depAirportCode, arrAirportCode);
+
+            if (!"OK".equals(s)) {
+                return s;
             }
 
             FlightPo flightPo = new FlightPo();
             flightPo.setFlightNo(flightNo);
-            flightPo.setDepDate(depDate);
+            flightPo.setDepDate(DateUtils.stringToDate(depDate, "yyyy-MM-dd"));
             flightPo.setDepAirportCode(depAirportCode);
             flightPo.setArrAirportCode(arrAirportCode);
-            // query local
+            // 先从本地查询
             FlightPo localFlight = flightPoMapper.select(flightPo);
-            // has custom
+            // 已定制 直接返回
             if (localFlight != null && localFlight.getIsCustom() == 1) {
                 re.setMessage(FlightCenterStatus.SUCCESS.display());
                 re.setState(FlightCenterStatus.SUCCESS.value());
                 re.setData(localFlight);
             } else {
-                re = getFlightPoByIbeSource(depDate, flightNo, depAirportCode, arrAirportCode);
+                re = getFlightPoByIbeSource(DateUtils.stringToDate(depDate, "yyyy-MM-dd"), flightNo, depAirportCode, arrAirportCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,40 +184,50 @@ public class FlightService {
         FlightCenterResult<FlightPo> re = new FlightCenterResult();
         // get args
         String flightNo = request.getString("flightNo");
-        Date depDate = request.getDate("depDate");// 出发日期 即航班号
+        String depDate = request.getString("depDate");// 出发日期 即航班号
         String depAirportCode = request.getString("depAirportCode");
         String arrAirportCode = request.getString("arrAirportCode");
-        // sysCode has valid isn't null in aop
-        String sysCode = request.getString("sysCode");
-        CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
 
         if (log.isInfoEnabled()) {
-            log.info("【参数   flightNo:" + flightNo +"; depDate:"+ depDate + "; depAirportCode:" + depAirportCode + "; arrAirportCode" + arrAirportCode  +" 】");
+            log.info("【 参数   flightNo: " + flightNo + " depDate: " + depDate + " depAirportCode: " + depAirportCode + " arrAirportCode: " + arrAirportCode + " 】");
         }
+
+        String s = verifyArgs(flightNo, depAirportCode, arrAirportCode);
+
+        if (!"OK".equals(s)) {
+            return s;
+        }
+
+        String sysCode = request.getString("sysCode");
+        CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
 
         try {
             FlightPo flightPo = new FlightPo();
             flightPo.setFlightNo(flightNo);
-            flightPo.setDepDate(depDate);
+            flightPo.setDepDate(DateUtils.stringToDate(depDate,"yyyy-MM-dd"));
             flightPo.setDepAirportCode(depAirportCode);
             flightPo.setArrAirportCode(arrAirportCode);
 
             FlightPo localFlight = flightPoMapper.select(flightPo);
-            if(localFlight !=null){
+
+            if (localFlight != null) {
+                // 本地存在 未定制 -- 定制
                 if (localFlight.getIsCustom() != 1) {
-                    ibeService.executeCustomFlight(flightNo,depDate);
+//                    ibeService.executeCustomFlight(flightNo, DateUtils.stringToDate(depDate,"yyyy-MM-dd"));
                     flightPoMapper.updateIsCustom(flightPo);
                 }
+                // 插入定制信息
                 CustomFlightPo customFlightPo = new CustomFlightPo();
                 customFlightPo.setCustomUrl(customerPo.getCustomUrl());
                 customFlightPo.setCustomerId(customerPo.getCustomerId());
                 customFlightPo.setFlightId(localFlight.getFlightId());
                 customFlightPoMapper.insert(customFlightPo);
+
                 re.setState(FlightCenterStatus.SUCCESS.value());
                 re.setMessage(FlightCenterStatus.SUCCESS.display());
                 re.setData(null);
-            }else {
-                re = getFlightPoCustomByIbeSource(customerPo,depDate, flightNo, depAirportCode, arrAirportCode);
+            } else {
+                re = getFlightPoCustomByIbeSource(customerPo, DateUtils.stringToDate(depDate,"yyyy-MM-dd"), flightNo, depAirportCode, arrAirportCode);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -223,43 +236,6 @@ public class FlightService {
             re.setData(null);
         }
         return JSON.toJSONString(re);
-    }
-
-    /**
-     * 航班推送
-     * 用来触发航班信息的更新
-     * @param request 参数
-     */
-    public void flightPush(JSONObject request){
-        String notify = request.getString("notify");
-        try {
-
-            List<Long> flightIds = parseNotify(notify);
-
-            List<CustomFlightPojo> customFlightPojos = customFlightPoMapper.selectsCustomFlightPojo(flightIds);
-            // do push
-            FlightPo flightPo;
-            for (CustomFlightPojo customFlightPojo : customFlightPojos) {
-                flightPo = customFlightPojo.getFlightPo(); // 更新的航班信息
-                for (String s : customFlightPojo.getCustomUrls()) {
-                    Map<String, String> params = new HashedMap();
-                    params.put("data", JSON.toJSONString(flightPo));
-                    boolean isSuccess = false;
-                    while (!isSuccess){
-                        String result = HttpClientUtils.HttpPostForWebService(s, params);
-                        if (log.isInfoEnabled()) {
-                            log.info("【推送地址：" + s + " 返回的结果：" + result + "+ 】");
-                        }
-                        JSONObject object = JSON.parseObject(result);
-                        if(object.getInteger("state") == 1){
-                            isSuccess = true;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -323,30 +299,100 @@ public class FlightService {
         FlightCenterResult<FlightPo> result = new FlightCenterResult<>();
         boolean isExist = false;
         for (FlightPo flightPo : re.getData()) {
+            // 存在航班信息
             if (depAirportCode.equals(flightPo.getDepAirportCode()) && arrAirportCode.equals(flightPo.getArrAirportCode())) {
                 isExist = true;
                 flightPo.setIsCustom((short)1);
+                flightPoMapper.insert(flightPo);
                 CustomFlightPo customFlightPo = new CustomFlightPo();
                 customFlightPo.setCustomUrl(customerPo.getCustomUrl());
                 customFlightPo.setCustomerId(customerPo.getCustomerId());
                 customFlightPo.setFlightId(flightPo.getFlightId());
                 customFlightPoMapper.insert(customFlightPo);
+//                ibeService.executeCustomFlight(flightNo, depDate);
                 result.setState(FlightCenterStatus.SUCCESS.value());
                 result.setMessage(FlightCenterStatus.SUCCESS.display());
                 result.setData(flightPo);
+            }else {
+                flightPoMapper.insert(flightPo);
             }
             if (!isExist) {
                 result.setState(FlightCenterStatus.NONE_FLIGHT.value());
                 result.setMessage(FlightCenterStatus.NONE_FLIGHT.display());
                 result.setData(null);
             }
-            flightPoMapper.insert(flightPo);
         }
         return result;
     }
 
     private FlightCenterResult<FlightPo> getFlightPoByIbeSource(Date depDate, String flightNo,String depAirportCode,String arrAirportCode) throws Exception {
         return getFlightPoByIbeSource(depDate, flightNo, depAirportCode, arrAirportCode, false);
+    }
+
+    private String verifyArgs(String flightNo,String depAirportCode,String arrAirportCode){
+        String result;
+
+        result = verifyFlightNo(flightNo);
+
+        result = result.equals("OK") ? "OK" : result;
+
+        if(!"OK".equals(result)){
+            return result;
+        }
+
+        result = verifyDepAirportCode(depAirportCode);
+
+        result = result.equals("OK") ? "OK" : result;
+
+        if(!"OK".equals(result)){
+            return result;
+        }
+
+        result = verifyArrAirportCode(arrAirportCode);
+
+        result = result.equals("OK") ? "OK" : result;
+
+        if(!"OK".equals(result)){
+            return result;
+        }
+
+        return result;
+    }
+
+    private String verifyFlightNo(String flightNo) {
+        FlightCenterResult re = new FlightCenterResult();
+        if (StringUtils.isBlank(flightNo)) {
+            re.setMessage(FlightCenterStatus.NONE_FLIGHT_NO.display());
+            re.setState(FlightCenterStatus.NONE_FLIGHT_NO.value());
+            re.setData(null);
+            return JSON.toJSONString(re);
+        } else {
+            return "OK";
+        }
+    }
+
+    private String verifyDepAirportCode(String depAirportCode) {
+        FlightCenterResult re = new FlightCenterResult();
+        if (StringUtils.isBlank(depAirportCode)) {
+            re.setMessage(FlightCenterStatus.NONE_DEP_AIRPORT_CODE.display());
+            re.setState(FlightCenterStatus.NONE_DEP_AIRPORT_CODE.value());
+            re.setData(null);
+            return JSON.toJSONString(re);
+        } else {
+            return "OK";
+        }
+    }
+
+    private String verifyArrAirportCode(String arrAirportCode) {
+        FlightCenterResult re = new FlightCenterResult();
+        if (StringUtils.isBlank(arrAirportCode)) {
+            re.setMessage(FlightCenterStatus.NONE_ARR_AIRPORT_CODE.display());
+            re.setState(FlightCenterStatus.NONE_ARR_AIRPORT_CODE.value());
+            re.setData(null);
+            return JSON.toJSONString(re);
+        } else {
+            return "OK";
+        }
     }
 
     /**
@@ -390,61 +436,6 @@ public class FlightService {
             re.setData(null);
         }
         return JSON.toJSONString(re);
-    }
-
-    /**
-     * 解析参数notify
-     * @param notify
-     * @return
-     * @throws ParseException
-     */
-    private List<Long> parseNotify(String notify) throws ParseException {
-        List<Long> result = new ArrayList<>();
-        String[] splitFlights = notify.split("\\^");
-        for (String s : splitFlights) {
-            if (s.contains("\n")) {
-                String[] splitFlight = s.split("\\n");
-                for (String s1 : splitFlight) {
-                    result.add(parseDetail(s1));
-                }
-            }
-            result.add(parseDetail(s));
-        }
-        return result;
-    }
-
-    /**
-     * 解析具体的信息
-     * @param flightStr
-     * @return
-     * @throws ParseException
-     */
-    private Long parseDetail(String flightStr) throws ParseException {
-        String[] split = StringUtils.split(flightStr,"\\t");
-        FlightPo flightPo = new FlightPo();
-        flightPo.setDepAirportCode(split[3]);
-        flightPo.setArrAirportCode(split[4]);
-        flightPo.setFlightNo(split[1].toUpperCase());
-        flightPo.setDepDate(DateUtils.stringToDate(split[7], "yyyy-MM-dd"));
-        flightPo.setArrDate(DateUtils.stringToDate(split[8], "yyyy-MM-dd"));
-        flightPo.setDepActualDate(DateUtils.completeToHSM(split[9]));
-        flightPo.setArrActualDate(DateUtils.completeToHSM(split[10]));
-        flightPo.setFlightState(split[11]);
-        flightPo.setIsCustom((short)1);
-        flightPoMapper.update(flightPo);
-        return flightPo.getFlightId();
-    }
-
-    public static void main(String[] args) throws ParseException {
-        String notify = "PEKSHA\\tCA1111\\t92\\tPEK\\tSHA\\tT1\\tT2\\t2013-11-20 10:00\\t2013-11-20 12:00\\t2013-11-20 10:01\\t2013-11-20 12:00\\t起飞^" +
-            "PEKSHA\\tMU1111\\t92\\tPEK\\tSHA\\tT1\\tT2\\t2013-11-20 10:00\\t2013-11-20 12:00\\t2013-11-20 10:01\\t2013-11-20 12:00\\t起飞\\n" +
-            "PEKSHA\\tMU1111\\t92\\tPEK\\tSHA\\tT1\\tT2\\t2013-11-20 10:00\\t2013-11-20 12:00\\t2013-11-20 10:01\\t2013-11-20 12:00\\t起飞";
-        System.out.println(notify);
-        System.out.println(notify.contains("^"));
-        String[] split = notify.split("\\^");
-        String s = "2013-11-20 12:00";
-        DateUtils.completeToHSM(s);
-
     }
 
 }

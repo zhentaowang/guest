@@ -36,6 +36,8 @@ public enum  FlightCenterStatus {
     NONE_CUSTOMER(320,"此客户不存在，请先购买"),
     NONE_TIME_ENOUGH(330,"次数不足，请续费购买"),
 
+    ILLEGAL_DATE(380,"非法的日期"),
+
     SIGN_INVALID(339,"签名无效"),
     NOT_AUTH(340,"签名未通过"),
     FLIGHT_DATE_INVALID(351,"只能查询今日或未来的航班"),

@@ -12,12 +12,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@PropertySource({"classpath:application.properties"})
+@PropertySource({"classpath:application.properties","classpath:redis.properties"})
 @ComponentScan("com.zhiweicloud.guest")
 public class SpringConfiguration {
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
 }
 

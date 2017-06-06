@@ -212,4 +212,80 @@
         )
     </select>
 
+    <resultMap id="customFlightMap2" type="com.zhiweicloud.guest.pojo.CustomFlightPojo2">
+        <id column="custom_url" jdbcType="BIGINT" property="customUrl" />
+        <collection property="flightPos" ofType="com.zhiweicloud.guest.po.FlightPo">
+            <id column="flight_id" jdbcType="BIGINT" property="flightId" />
+            <result column="fd_id" jdbcType="INTEGER" property="fdId" />
+            <result column="airline_code" jdbcType="VARCHAR" property="airlineCode" />
+            <result column="airline_en_name" jdbcType="VARCHAR" property="airlineEnName" />
+            <result column="airline_name" jdbcType="VARCHAR" property="airlineName" />
+            <result column="transfer_airport" jdbcType="VARCHAR" property="transferAirport" />
+            <result column="transfer_airport_code_en_name" jdbcType="VARCHAR" property="transferAirportCodeEnName" />
+            <result column="transfer_airport_code" jdbcType="VARCHAR" property="transferAirportCode" />
+            <result column="board_gate" jdbcType="VARCHAR" property="boardGate" />
+            <result column="board_time" jdbcType="TIMESTAMP" property="boardTime" />
+            <result column="board_state" jdbcType="VARCHAR" property="boardState" />
+            <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+            <result column="flight_type" jdbcType="VARCHAR" property="flightType" />
+            <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+            <result column="flight_state_code" jdbcType="VARCHAR" property="flightStateCode" />
+            <result column="flight_state" jdbcType="VARCHAR" property="flightState" />
+            <result column="flight_position" jdbcType="VARCHAR" property="flightPosition" />
+            <result column="board_in_out" jdbcType="SMALLINT" property="boardInOut" />
+            <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+            <result column="is_near_or_far" jdbcType="SMALLINT" property="isNearOrFar" />
+            <result column="check_in_counter" jdbcType="VARCHAR" property="checkInCounter" />
+            <result column="carousel" jdbcType="VARCHAR" property="carousel" />
+            <result column="stop_flag" jdbcType="SMALLINT" property="stopFlag" />
+            <result column="share_flag" jdbcType="SMALLINT" property="shareFlag" />
+            <result column="share_flight_no" jdbcType="VARCHAR" property="shareFlightNo" />
+            <result column="fill_flight_no" jdbcType="VARCHAR" property="fillFlightNo" />
+            <result column="alternate_info" jdbcType="VARCHAR" property="alternateInfo" />
+            <result column="fcategory" jdbcType="VARCHAR" property="fcategory" />
+            <result column="board_gate_time" jdbcType="VARCHAR" property="boardGateTime" />
+            <result column="dep_en_name" jdbcType="VARCHAR" property="depEnName" />
+            <result column="dep_city" jdbcType="VARCHAR" property="depCity" />
+            <result column="dep_date" jdbcType="DATE" property="depDate" />
+            <result column="dep_airport" jdbcType="VARCHAR" property="depAirport" />
+            <result column="dep_airport_code" jdbcType="VARCHAR" property="depAirportCode" />
+            <result column="dep_airport_name" jdbcType="VARCHAR" property="depAirportName" />
+            <result column="dep_time_zone" jdbcType="VARCHAR" property="depTimeZone" />
+            <result column="dep_terminal" jdbcType="VARCHAR" property="depTerminal" />
+            <result column="dep_scheduled_date" jdbcType="TIMESTAMP" property="depScheduledDate" />
+            <result column="dep_estimated_date" jdbcType="TIMESTAMP" property="depEstimatedDate" />
+            <result column="dep_actual_date" jdbcType="TIMESTAMP" property="depActualDate" />
+            <result column="arr_en_name" jdbcType="VARCHAR" property="arrEnName" />
+            <result column="arr_city" jdbcType="VARCHAR" property="arrCity" />
+            <result column="arr_date" jdbcType="DATE" property="arrDate" />
+            <result column="arr_airport" jdbcType="VARCHAR" property="arrAirport" />
+            <result column="arr_airport_code" jdbcType="VARCHAR" property="arrAirportCode" />
+            <result column="arr_airport_name" jdbcType="VARCHAR" property="arrAirportName" />
+            <result column="arr_time_zone" jdbcType="VARCHAR" property="arrTimeZone" />
+            <result column="arr_terminal" jdbcType="VARCHAR" property="arrTerminal" />
+            <result column="arr_scheduled_date" jdbcType="TIMESTAMP" property="arrScheduledDate" />
+            <result column="arr_estimated_date" jdbcType="TIMESTAMP" property="arrEstimatedDate" />
+            <result column="arr_actual_date" jdbcType="TIMESTAMP" property="arrActualDate" />
+        </collection>
+    </resultMap>
+
+    <select id="selectsCustomFlightPojo2" parameterType="java.util.List" resultMap="customFlightMap2">
+        SELECT
+        f.custom_url,
+        bf.*
+        FROM
+        f_custom_flight f
+        LEFT JOIN
+        base_flight bf
+        ON
+        f.flight_id = bf.flight_id
+        WHERE
+        f.flight_id IN
+        (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        )
+    </select>
+
 </mapper>

@@ -74,6 +74,12 @@ public class IbeService {
                 flight.setDepDate(flightDate);
                 BeanUtils.copyProperties(flight, flightStatus);
                 flights.add(flight);
+                Date depScheduledDate = flight.getDepScheduledDate();
+                Date arrScheduledDate = flight.getArrScheduledDate();
+                if (depScheduledDate.after(arrScheduledDate)) {
+                    flight.setArrScheduledDate(DateUtils.addDay(arrScheduledDate, 1));
+                    flight.setArrEstimatedDate(DateUtils.addDay(flight.getArrEstimatedDate(),1));
+                }
             }
         }
         return flights;

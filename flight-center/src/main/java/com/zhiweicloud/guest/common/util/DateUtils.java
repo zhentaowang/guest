@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -50,6 +51,28 @@ public class DateUtils {
 
     public static Date completeToHSM(String time) throws ParseException {
         return stringToDate(dateToString(stringToDate(time, "yyyy-MM-dd HH:mm"),"yyyy-MM-dd HH:mm"),"yyyy-MM-dd HH:mm");
+    }
+
+    public static boolean verifyDate(String time,String format){
+        boolean isSuccess = true;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        try {
+            simpleDateFormat.setLenient(false);
+            simpleDateFormat.parse(time);
+        } catch (ParseException e) {
+            isSuccess = false;
+        }
+        return isSuccess;
+    }
+
+    public static Date addDay(Date date,int day){
+        if (date == null) {
+            return date;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE,day);
+        return c.getTime();
     }
 
 }

@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.wyun.thrift.server.business.IBusinessService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +24,10 @@ public class BusinessService implements IBusinessService {
     private TrainService trainService;
 
     @Autowired
-    private TestService testService;
+    private FlightService flightService;
 
     @Autowired
-    private FlightService flightService;
+    private FlightPushService flightPushService;
 
     @Override
     public JSONObject handle(JSONObject request) {
@@ -54,13 +53,16 @@ public class BusinessService implements IBusinessService {
                 success = flightService.queryPassengerByTickNo(request);
                 break;
             case "flightPush":
-                flightService.flightPush(request);
+                flightPushService.flightPush(request);
                 break;
             case "customFlight":
                 flightService.customFlight(request);
                 break;
-            case "test":
-                success = testService.testMethod(request);
+            case "customer1":
+                flightPushService.testCustom1(request);
+                break;
+            case "customer2":
+                flightPushService.testCustom2(request);
                 break;
             default:
                 break;
