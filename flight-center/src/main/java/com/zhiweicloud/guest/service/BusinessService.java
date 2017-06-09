@@ -27,6 +27,9 @@ public class BusinessService implements IBusinessService {
     private FlightService flightService;
 
     @Autowired
+    private DetrService detrService;
+
+    @Autowired
     private FlightPushService flightPushService;
 
     @Override
@@ -50,19 +53,19 @@ public class BusinessService implements IBusinessService {
                 success = trainService.queryTrainByCondition(request);
                 break;
             case "queryPassengerByTickNo":
-                success = flightService.queryPassengerByTickNo(request);
+                success = detrService.queryPassengerByTickNo(request);
                 break;
             case "flightPush":
                 flightPushService.flightPush(request);
                 break;
             case "customFlight":
-                flightService.customFlight(request);
+                success = flightService.customFlight(request);
                 break;
             case "customer1":
-                flightPushService.testCustom1(request);
+                success = flightPushService.testCustom1(request);
                 break;
             case "customer2":
-                flightPushService.testCustom2(request);
+                success = flightPushService.testCustom2(request);
                 break;
             default:
                 break;

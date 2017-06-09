@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.signature;
 
 import com.zhiweicloud.guest.exception.*;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.BadPaddingException;
@@ -16,8 +17,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * RSACoder.java
@@ -286,10 +286,19 @@ public abstract class RSACoder {
         return verify(signContent, publicKey, sign);
     }
 
-    private static String getSignContent(Map<String,Object> params){
+    private static String getSignContent(Map<String, Object> params) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            sb.append(entry.getKey()).append("&").append(entry.getValue());
+        List list = new ArrayList<>(params.entrySet());
+        Collections.sort(list);
+
+        int index = 0;
+        for (int i = 0; i < list.size(); i++) {
+            String key = (String) list.get(i);
+            String value = (String) params.get(key);
+            if (StringUtils.isNoneBlank(key) && StringUtils.isNoneBlank(value)) {
+                sb.append(index == 0 ? "" : "&").append(key).append("=").append(value);
+                index++;
+            }
         }
         return sb.toString();
     }

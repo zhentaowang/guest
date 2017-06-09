@@ -50,7 +50,13 @@ public class DateUtils {
     }
 
     public static Date completeToHSM(String time) throws ParseException {
-        return stringToDate(dateToString(stringToDate(time, "yyyy-MM-dd HH:mm"),"yyyy-MM-dd HH:mm"),"yyyy-MM-dd HH:mm");
+        if (time.length() == "yyyy-MM-dd".length()) {
+            return stringToDate(dateToString(stringToDate(time, "yyyy-MM-dd"), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss");
+        } else if (time.length() == "yyyy-MM-dd HH:mm".length()) {
+            return stringToDate(dateToString(stringToDate(time, "yyyy-MM-dd HH:mm"), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss");
+        } else {
+            return stringToDate(time, "yyyy-MM-dd HH:mm:ss");
+        }
     }
 
     public static boolean verifyDate(String time,String format){

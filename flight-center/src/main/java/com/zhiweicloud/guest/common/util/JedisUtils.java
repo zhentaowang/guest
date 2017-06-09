@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.common.util;
 
 import com.zhiweicloud.guest.conf.RedisConfig;
+import jersey.repackaged.com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,7 +24,7 @@ public class JedisUtils {
 
     private static final Log log = LogFactory.getLog(JedisUtils.class);
 
-    private static final String KEY_PREFIX = "flight_center";
+    public static final String KEY_PREFIX = "flight_center";
 
     private static JedisPool jedisPool = null;
 
@@ -253,6 +254,102 @@ public class JedisUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            returnResource(jedis);
+        }
+        return result;
+    }
+
+    /**
+     * 设置List缓存
+     *
+     * @param key          键
+     * @param value        值
+     * @param cacheSeconds 超时时间，0为不超时
+     * @return
+     */
+    public static long setObjectList(String key, List<Object> value, int cacheSeconds) {
+        long result = 0;
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            if (jedis.exists(getBytesKey(KEY_PREFIX + key))) {
+                jedis.del(KEY_PREFIX + key);
+            }
+            List<byte[]> list = Lists.newArrayList();
+            for (Object o : value) {
+                list.add(toBytes(o));
+            }
+            result = jedis.rpush(getBytesKey(KEY_PREFIX + key), (byte[][]) list.toArray());
+            if (cacheSeconds != 0) {
+                jedis.expire(KEY_PREFIX + key, cacheSeconds);
+            }
+        } catch (Exception e) {
+
+        } finally {
+            returnResource(jedis);
+        }
+        return result;
+    }
+
+    /**
+     * 获取List缓存
+     *
+     * @param key 键
+     * @return 值
+     */
+    public static List<Object> getObjectList(String key) {
+        List<Object> value = null;
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            if (jedis.exists(getBytesKey(KEY_PREFIX + key))) {
+                List<byte[]> list = jedis.lrange(getBytesKey(KEY_PREFIX + key), 0, -1);
+                value = Lists.newArrayList();
+                for (byte[] bs : list) {
+                    value.add(toObject(bs));
+                }
+            }
+        } catch (Exception e) {
+
+        } finally {
+            returnResource(jedis);
+        }
+        return value;
+    }
+
+    /**
+     * 缓存是否存在
+     *
+     * @param key 键
+     * @return
+     */
+    public static boolean exists(String key) {
+        boolean result = false;
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            result = jedis.exists(KEY_PREFIX + key);
+        } catch (Exception e) {
+        } finally {
+            returnResource(jedis);
+        }
+        return result;
+    }
+
+    /**
+     * 缓存是否存在
+     *
+     * @param key 键
+     * @return
+     */
+    public static boolean existsObject(String key) {
+        boolean result = false;
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            result = jedis.exists(getBytesKey(KEY_PREFIX + key));
+        } catch (Exception e) {
         } finally {
             returnResource(jedis);
         }

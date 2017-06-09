@@ -296,6 +296,7 @@ public class FlightPo {
     /**
      * 是否定制 0：不定制 1：定制
      */
+    @JSONField(serialize = false)
     private Short isCustom;
 
     /**

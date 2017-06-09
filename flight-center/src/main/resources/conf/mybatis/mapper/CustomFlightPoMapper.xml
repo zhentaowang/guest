@@ -11,7 +11,7 @@
     <sql id="baseColumn">
       customer_id,
       custom_url,
-      flight_id,
+      flight_id
     </sql>
 
     <sql id="insertName">
@@ -44,6 +44,7 @@
       FROM
         f_custom_flight
       WHERE
+        is_deleted = 0 AND
         flight_id = #{flightId,jdbcType=BIGINT}
     </select>
 
@@ -213,7 +214,8 @@
     </select>
 
     <resultMap id="customFlightMap2" type="com.zhiweicloud.guest.pojo.CustomFlightPojo2">
-        <id column="custom_url" jdbcType="BIGINT" property="customUrl" />
+        <result column="custom_url" jdbcType="VARCHAR" property="customUrl" />
+        <result column="customer_id" jdbcType="BIGINT" property="customerId" />
         <collection property="flightPos" ofType="com.zhiweicloud.guest.po.FlightPo">
             <id column="flight_id" jdbcType="BIGINT" property="flightId" />
             <result column="fd_id" jdbcType="INTEGER" property="fdId" />
@@ -271,6 +273,7 @@
 
     <select id="selectsCustomFlightPojo2" parameterType="java.util.List" resultMap="customFlightMap2">
         SELECT
+        f.customer_id,
         f.custom_url,
         bf.*
         FROM
@@ -286,6 +289,17 @@
             #{item,jdbcType=BIGINT}
         </foreach>
         )
+    </select>
+
+    <select id="selectByCustomerIdAndFlightId" resultMap="baseResultMap">
+        SELECT
+          <include refid="baseColumn"/>
+        FROM
+          f_custom_flight
+        WHERE
+          is_deleted = 0 AND
+          customer_id = #{customerId,jdbcType=BIGINT} AND
+          flight_id = #{flightId,jdbcType=BIGINT}
     </select>
 
 </mapper>
