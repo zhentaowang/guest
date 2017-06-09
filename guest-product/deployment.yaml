@@ -2,6 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: guest-product
+  namespace: airportcloud
 spec:
   replicas: 1
   template:
@@ -16,7 +17,7 @@ spec:
           volumeMounts:
           - mountPath: "/java"
             name: code
-            subPath: guest/guest-product
+            subPath: airportcloud/guest-product
           - mountPath: "/etc/localtime"
             name: tz-config
           ports:
@@ -24,7 +25,7 @@ spec:
       volumes:
         - name: code
           persistentVolumeClaim:
-            claimName: code-claims
+            claimName: pvc-airportcloud
         - name: tz-config
           hostPath:
             path: /etc/localtime
@@ -33,6 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: guest-product
+  namespace: airportcloud
 spec:
   type: ClusterIP
   ports:

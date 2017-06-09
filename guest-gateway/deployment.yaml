@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: guest-gateway
-  namespace: default
+  namespace: airportcloud
 spec:
   replicas: 1
   template:
@@ -17,19 +17,19 @@ spec:
           volumeMounts:
           - mountPath: "/go/src"
             name: code
-            subPath: guest/guest-gateway
+            subPath: guest-gateway
           ports:
             - containerPort: 8888
       volumes:
         - name: code
           persistentVolumeClaim:
-            claimName: code-claims
+            claimName: pvc-airportcloud
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: guest-gateway
-  namespace: default
+  namespace: airportcloud
 spec:
   type: LoadBalancer
   ports:
