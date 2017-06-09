@@ -32,6 +32,12 @@ public class BusinessService implements IBusinessService {
     @Autowired
     private FlightPushService flightPushService;
 
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private SourceService sourceService;
+
     @Override
     public JSONObject handle(JSONObject request) {
         String success = null;
@@ -66,6 +72,15 @@ public class BusinessService implements IBusinessService {
                 break;
             case "customer2":
                 success = flightPushService.testCustom2(request);
+                break;
+            case "queryCustomerDropDownList":
+                success = customerService.queryCustomerDropDownList(request);
+                break;
+            case "queryCustomerDetail":
+                success = customerService.queryCustomerDetail(request);
+                break;
+            case "querySourceDropDownList":
+                success = sourceService.querySourceDropDownList(request);
                 break;
             default:
                 break;

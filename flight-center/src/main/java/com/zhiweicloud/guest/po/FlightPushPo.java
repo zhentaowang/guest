@@ -3,6 +3,7 @@ Copyright 2016-2017 author IronC.
 */
 package com.zhiweicloud.guest.po;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Date;
  * @author IronC
  * @version 1.0  2017-06-07
  */
-public class FlightPushPo {
+public class FlightPushPo implements Serializable {
 
     /**
     * 表名

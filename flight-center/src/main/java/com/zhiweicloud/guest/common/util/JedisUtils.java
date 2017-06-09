@@ -1,6 +1,5 @@
 package com.zhiweicloud.guest.common.util;
 
-import com.zhiweicloud.guest.conf.RedisConfig;
 import jersey.repackaged.com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -10,8 +9,10 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * JedisUtils.java
@@ -29,6 +30,11 @@ public class JedisUtils {
     private static JedisPool jedisPool = null;
 
     /**
+     * 属性文件加载对象
+     */
+    private static Properties properties = PropertyUtils.load("redis.properties");
+
+    /**
      * redis过期时间,以秒为单位
      */
     public final static int EXPIRE_HOUR = 60 * 60;          //一小时
@@ -37,18 +43,22 @@ public class JedisUtils {
 
     private static void init(){
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(RedisConfig.getMaxActive());
-        config.setMaxIdle(RedisConfig.getMaxIdle());
-        config.setMaxWaitMillis(RedisConfig.getMaxWait());
-        config.setTestOnBorrow(RedisConfig.isTestOnBorrow());
+        config.setMaxTotal(PropertyUtils.getInt(properties, "redis.maxActive"));
+        config.setMaxIdle(PropertyUtils.getInt(properties, "redis.maxIdle"));
+        config.setMaxWaitMillis(PropertyUtils.getLong(properties, "redis.maxWait"));
+        config.setTestOnBorrow(PropertyUtils.getBoolean(properties, "redis.testOnBorrow"));
         try {
-            jedisPool = new JedisPool(config, RedisConfig.getHostLocal(), RedisConfig.getPortLocal());
+            if (log.isInfoEnabled()) {
+                log.info(PropertyUtils.getString(properties,"redis.host.local"));
+                log.info(PropertyUtils.getInt(properties,"redis.port.local"));
+            }
+            jedisPool = new JedisPool(config, PropertyUtils.getString(properties,"redis.host.local"), PropertyUtils.getInt(properties,"redis.port.local"));
         } catch (Exception e) {
             if (log.isErrorEnabled()) {
                 log.error("First create JedisPool error : "+e);
             }
             try{
-                jedisPool = new JedisPool(config, RedisConfig.getHostTest(), RedisConfig.getPortTest());
+                jedisPool = new JedisPool(config, PropertyUtils.getString(properties,"redis.host.test"), PropertyUtils.getInt(properties,"redis.port.test"));
             }catch(Exception e2){
                 if (log.isErrorEnabled()) {
                     log.error("Second create JedisPool error : "+e2);
@@ -67,7 +77,7 @@ public class JedisUtils {
      * 获取Jedis实例
      * @return
      */
-    public synchronized static Jedis getJedis(){
+    public static Jedis getJedis(){
         Jedis redis = null;
         try {
             if (jedisPool != null) {
@@ -270,9 +280,7 @@ public class JedisUtils {
      */
     public static long setObjectList(String key, List<Object> value, int cacheSeconds) {
         long result = 0;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()) {
             if (jedis.exists(getBytesKey(KEY_PREFIX + key))) {
                 jedis.del(KEY_PREFIX + key);
             }
@@ -285,9 +293,7 @@ public class JedisUtils {
                 jedis.expire(KEY_PREFIX + key, cacheSeconds);
             }
         } catch (Exception e) {
-
-        } finally {
-            returnResource(jedis);
+            e.printStackTrace();
         }
         return result;
     }
@@ -326,13 +332,10 @@ public class JedisUtils {
      */
     public static boolean exists(String key) {
         boolean result = false;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             result = jedis.exists(KEY_PREFIX + key);
         } catch (Exception e) {
-        } finally {
-            returnResource(jedis);
+
         }
         return result;
     }
@@ -345,13 +348,10 @@ public class JedisUtils {
      */
     public static boolean existsObject(String key) {
         boolean result = false;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             result = jedis.exists(getBytesKey(KEY_PREFIX + key));
         } catch (Exception e) {
-        } finally {
-            returnResource(jedis);
+
         }
         return result;
     }
@@ -362,7 +362,7 @@ public class JedisUtils {
      * @param object
      * @return
      */
-    public static byte[] getBytesKey(Object object) {
+    public static byte[] getBytesKey(Object object) throws IOException {
         if (object instanceof String) {
             byte[] result = null;
             try {
@@ -371,7 +371,7 @@ public class JedisUtils {
             }
             return result;
         } else {
-            return ObjectUtils.serialize(object);
+            return SerializeUtils.serialize(object);
         }
     }
 
@@ -381,8 +381,8 @@ public class JedisUtils {
      * @param object
      * @return
      */
-    public static byte[] toBytes(Object object) {
-        return ObjectUtils.serialize(object);
+    public static byte[] toBytes(Object object) throws IOException {
+        return SerializeUtils.serialize(object);
     }
 
 
@@ -392,8 +392,8 @@ public class JedisUtils {
      * @param bytes
      * @return
      */
-    public static Object toObject(byte[] bytes) {
-        return ObjectUtils.unserialize(bytes);
+    public static Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
+        return SerializeUtils.unserialize(bytes);
     }
 
 }

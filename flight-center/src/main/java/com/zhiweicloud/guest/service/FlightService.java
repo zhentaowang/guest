@@ -83,7 +83,7 @@ public class FlightService {
                 boolean isExist = JedisUtils.existsObject(JedisUtils.KEY_PREFIX + flightNo + depDate);
 
                 if (isExist) {
-                    List<Object> objectList = JedisUtils.getObjectList(JedisUtils.KEY_PREFIX + flightNo + depDate);
+                    List<Object> objectList = (List<Object>) JedisUtils.getObject(JedisUtils.KEY_PREFIX + flightNo + depDate);
                 } else {
                     // 从本地查询
                     List<FlightPo> result = flightPoMapper.selectByDateAndNo(flightPo);
@@ -107,7 +107,7 @@ public class FlightService {
                             v.add(po);
                         }
                     }
-                    JedisUtils.setObjectList(JedisUtils.KEY_PREFIX + flightNo + depDate, v, 600);
+                    JedisUtils.setObject(JedisUtils.KEY_PREFIX + flightNo + depDate, v, 600);
                 }
             } else {
                 depAirportCode = depAirportCode.trim().toUpperCase();

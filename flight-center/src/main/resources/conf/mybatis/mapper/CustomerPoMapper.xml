@@ -114,4 +114,52 @@
         WHERE sys_code = #{sysCode,jdbcType=VARCHAR} AND is_deleted = 0
     </select>
 
+    <select id="selectCustomerDropDownList" resultType="map">
+      SELECT
+        customer_id key,
+        customer_name value
+      FROM
+        base_customer
+      WHERE is_deleted = 0
+    </select>
+
+    <resultMap id="customerDetailMap" type="com.zhiweicloud.guest.pojo.CustomerDetailPojo">
+        <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="custom_url" jdbcType="VARCHAR" property="customUrl" />
+        <result column="total" jdbcType="VARCHAR" property="total" />
+        <result column="sys_code" jdbcType="VARCHAR" property="sysCode" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <collection property="requestTimes" resultMap="apiMap">
+        </collection>
+    </resultMap>
+
+    <resultMap id="apiMap" type="map">
+        <result column="api_name" jdbcType="VARCHAR" property="key" />
+        <result column="api_count" jdbcType="INTEGER" property="value" />
+    </resultMap>
+
+    <select id="selectCustomerDetail" parameterType="java.lang.Long" resultMap="customerDetailMap">
+        SELECT
+            fca.*,
+            bc.customer_name,
+            bc.create_time,
+            bc.custom_url
+        FROM
+            (
+                SELECT
+                    customer_id,
+                    api_name,
+                    COUNT(api_name) api_count
+                FROM
+                    operator_flight_center_api
+                WHERE
+                    customer_id = #{customerId,jdbcType=BIGINT}
+                GROUP BY
+                    api_name
+            ) fca
+        LEFT JOIN base_customer bc
+        ON fca.customer_id = bc.customer_id
+    </select>
+
 </mapper>
