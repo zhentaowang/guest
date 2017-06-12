@@ -62,7 +62,7 @@ public interface FlightCenterApiPoMapper {
      * @param apiQueryPojo
      * @return
      */
-    int countByCondition(ApiQueryPojo apiQueryPojo);
+    int countByCondition(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo);
 
     /**
      * 根据条件分页查询

@@ -89,7 +89,7 @@
     <resultMap id="selectsMap" type="com.zhiweicloud.guest.pojo.FlightCenterApiPojo">
         <id column="flight_center_api_id" jdbcType="BIGINT" property="flightCenterApiId" />
         <result column="api_name" jdbcType="VARCHAR" property="apiName" />
-        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="customer_id" jdbcType="BIGINT" property="customerId" />
         <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
         <result column="invoke_state" jdbcType="VARCHAR" property="invokeState" />
         <result column="invoke_result" jdbcType="VARCHAR" property="invokeResult" />

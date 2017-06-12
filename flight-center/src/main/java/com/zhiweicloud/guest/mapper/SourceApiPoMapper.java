@@ -24,7 +24,7 @@ public interface SourceApiPoMapper {
 
     List<SourceApiPo> selects(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo);
 
-    int countByCondition(ApiQueryPojo apiQueryPojo);
+    int countByCondition(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo);
 
     List<SourceApiPo> selectsByConditionForPage(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo, @Param("page") int page,@Param("len") int len);
 
