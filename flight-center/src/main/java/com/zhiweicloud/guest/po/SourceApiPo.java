@@ -3,6 +3,8 @@ Copyright 2016-2017 author IronC.
 */
 package com.zhiweicloud.guest.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 
 /**
@@ -56,6 +58,7 @@ public class SourceApiPo {
     /**
      * 创建时间
      */
+    @JSONField(format = "yyyy-MM-dd")
     private Date createTime;
 
     /**

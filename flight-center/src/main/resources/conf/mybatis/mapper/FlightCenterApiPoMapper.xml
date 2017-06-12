@@ -70,10 +70,12 @@
 
     <sql id="selectWhere">
       <where>
-          <if test="flightCenterApiPo.apiName != null">api_name = #{flightCenterApiPo.apiName,jdbcType=VARCHAR},</if>
-          <if test="flightCenterApiPo.customerId != null">customer_id = #{flightCenterApiPo.customerId,jdbcType=VARCHAR},</if>
-          <if test="flightCenterApiPo.invokeState != null">invoke_state = #{flightCenterApiPo.invokeState,jdbcType=VARCHAR},</if>
-          <if test="flightCenterApiPo.invokeResult != null">invoke_result = #{flightCenterApiPo.invokeResult,jdbcType=VARCHAR},</if>
+          <if test="apiName != null">api_name = #{apiName,jdbcType=VARCHAR},</if>
+          <if test="customerId != null">customer_id = #{customerId,jdbcType=VARCHAR},</if>
+          <if test="invokeState != null">invoke_state = #{invokeState,jdbcType=VARCHAR},</if>
+          <if test="invokeResult != null">invoke_result = #{invokeResult,jdbcType=VARCHAR},</if>
+          <if test="startDate != null">create_time &gt; #{startDate,jdbcType=TIMESTAMP},</if>
+          <if test="endDate != null">create_time &lt; {endDate,jdbcType=TIMESTAMP},</if>
       </where>
     </sql>
 
@@ -84,19 +86,70 @@
         WHERE flight_center_api_id = #{flightCenterApiId,jdbcType=BIGINT} AND is_deleted =0
     </select>
 
-    <select id="selects" parameterType="com.zhiweicloud.guest.po.FlightCenterApiPo" resultMap="BaseResultMap">
+    <resultMap id="selectsMap" type="com.zhiweicloud.guest.pojo.FlightCenterApiPojo">
+        <id column="flight_center_api_id" jdbcType="BIGINT" property="flightCenterApiId" />
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="invoke_state" jdbcType="VARCHAR" property="invokeState" />
+        <result column="invoke_result" jdbcType="VARCHAR" property="invokeResult" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <sql id="selectsWhere">
+        <where>
+            <if test="apiQueryPojo.customerId != null">AND ofca.customer_id = #{apiQueryPojo.customerId,jdbcType=BIGINT}</if>
+            <if test="apiQueryPojo.customerName != null">AND bc.customer_name = #{apiQueryPojo.customerName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.sourceName != null">AND ofca.source_name = #{apiQueryPojo.sourceName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.apiName != null">AND ofca.api_name = #{apiQueryPojo.apiName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeState != null">AND ofca.invoke_state = #{apiQueryPojo.invokeState,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeResult != null">AND ofca.invoke_result = #{apiQueryPojo.invokeResult,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.startDate != null">AND ofca.create_time &gt; #{apiQueryPojo.startDate,jdbcType=TIMESTAMP}</if>
+            <if test="apiQueryPojo.endDate != null">AND ofca.create_time &lt; #{apiQueryPojo.endDate,jdbcType=TIMESTAMP}</if>
+        </where>
+    </sql>
+
+    <select id="selects" parameterType="com.zhiweicloud.guest.pojo.ApiQueryPojo" resultMap="selectsMap">
         SELECT
-        <include refid="selectName"/>
-        FROM operator_flight_center_api
-        <include refid="selectWhere"/>
+            ofca.flight_center_api_id,
+            ofca.api_name,
+            ofca.customer_id,
+            ofca.create_time,
+            ofca.invoke_state,
+            ofca.invoke_result,
+            bc.customer_name
+        FROM
+            operator_flight_center_api ofca
+        LEFT JOIN
+            base_customer bc
+        ON bc.customer_id = ofca.customer_id
+        <include refid="selectsWhere"/>
     </select>
 
-    <select id="selectForPage" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="countByCondition" parameterType="com.zhiweicloud.guest.pojo.ApiQueryPojo" resultType="int">
+      SELECT
+          COUNT(flight_center_api_id)
+      FROM
+	      operator_flight_center_api
+      <include refid="selectsWhere"/>
+    </select>
+
+    <select id="selectsByConditionForPage" resultMap="selectsMap">
         SELECT
-        <include refid="selectName"/>
-        FROM operator_flight_center_api
-        <include refid="selectWhere"/>
-        LIMIT #{start}, #{len}
+            ofca.flight_center_api_id,
+            ofca.api_name,
+            ofca.customer_id,
+            ofca.create_time,
+            ofca.invoke_state,
+            ofca.invoke_result,
+            bc.customer_name
+        FROM
+            operator_flight_center_api ofca
+        LEFT JOIN
+            base_customer bc
+        ON bc.customer_id = ofca.customer_id
+        <include refid="selectsWhere"/>
+        LIMIT #{page}, #{len}
     </select>
 
 </mapper>

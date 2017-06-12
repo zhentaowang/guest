@@ -8,6 +8,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * BusinessService.java
  * Copyright(C) 2017 杭州风数信息技术有限公司
@@ -81,6 +84,21 @@ public class BusinessService implements IBusinessService {
                 break;
             case "querySourceDropDownList":
                 success = sourceService.querySourceDropDownList(request);
+                break;
+            case "querySourceApiByNameAndDate":
+                success = sourceService.querySourceApiByNameAndDate(request);
+                break;
+            case "queryFlightCenterApis":
+                success = sourceService.queryFlightCenterApis(request);
+                break;
+            case "querySourceApis":
+                success = sourceService.querySourceApis(request);
+                break;
+            case "countForFlightCenterApi":
+                success = sourceService.countForFlightCenterApi(request);
+                break;
+            case "countForSourceApi":
+                success = sourceService.countForSourceApi(request);
                 break;
             default:
                 break;

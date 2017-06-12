@@ -111,7 +111,7 @@
           source_name
     </select>
 
-    <select id="selectSourceApiByNameAndDate" resultType="com.zhiweicloud.guest.po.SourceApiPo">
+    <select id="selectSourceApiByNameAndDate" parameterType="map" resultType="com.zhiweicloud.guest.po.SourceApiPo">
         SELECT
           <include refid="Base_Column_List"/>
         FROM
@@ -121,15 +121,69 @@
         <if test="params.sourceName != null and ''.equals(params.sourceName)">
             AND source_name = #{params.sourceName,jdbcType=VARCHAR}
         </if>
-        <if test="params.sourceName != null and ''.equals(params.sourceName)">
-            AND source_name = #{params.sourceName,jdbcType=VARCHAR}
+        <if test="params.startDate != null and ''.equals(params.startDate)">
+            AND create_time &gt;= #{params.startDate}
         </if>
-        <if test="params.sourceName != null and ''.equals(params.sourceName)">
-            AND source_name = #{params.sourceName,jdbcType=VARCHAR}
+        <if test="params.endDate != null and ''.equals(params.endDate)">
+            AND create_time &lt;= #{params.sourceName}
         </if>
-        <if test="params.sourceName != null and ''.equals(params.sourceName)">
-            AND source_name = #{params.sourceName,jdbcType=VARCHAR}
-        </if>
+    </select>
+
+    <resultMap id="selectsMap" type="com.zhiweicloud.guest.po.SourceApiPo">
+        <id column="source_api_id" jdbcType="BIGINT" property="sourceApiId" />
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName" />
+        <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="invoke_state" jdbcType="VARCHAR" property="invokeState" />
+        <result column="invoke_result" jdbcType="VARCHAR" property="invokeResult" />
+    </resultMap>
+
+    <sql id="selectsWhere">
+        <where>
+            <if test="apiQueryPojo.customerId != null">AND customer_id = #{apiQueryPojo.customerId,jdbcType=BIGINT}</if>
+            <if test="apiQueryPojo.customerName != null">AND customer_name = #{apiQueryPojo.customerName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.sourceName != null">AND source_name = #{apiQueryPojo.sourceName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.apiName != null">AND api_name = #{apiQueryPojo.apiName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeState != null">AND invoke_state = #{apiQueryPojo.invokeState,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeResult != null">AND invoke_result = #{apiQueryPojo.invokeResult,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.startDate != null">AND create_time &gt; #{apiQueryPojo.startDate,jdbcType=TIMESTAMP}</if>
+            <if test="apiQueryPojo.endDate != null">AND create_time &lt; #{apiQueryPojo.endDate,jdbcType=TIMESTAMP}</if>
+        </where>
+    </sql>
+
+    <select id="selects" parameterType="com.zhiweicloud.guest.pojo.ApiQueryPojo" resultMap="selectsMap">
+        SELECT
+            source_api_id,
+            source_name,
+            api_name,
+            create_time,
+            invoke_state,
+            invoke_result
+        FROM
+            operator_source_api
+        <include refid="selectsWhere"/>
+    </select>
+    
+    <select id="countByCondition" parameterType="com.zhiweicloud.guest.pojo.ApiQueryPojo" resultType="int">
+        SELECT
+            COUNT(source_api_id)
+        FROM
+            operator_source_api
+        <include refid="selectsWhere"/>
+    </select>
+
+    <select id="selectsByConditionForPage" resultMap="selectsMap">
+        SELECT
+            source_api_id,
+            source_name,
+            api_name,
+            create_time,
+            invoke_state,
+            invoke_result
+        FROM
+            operator_source_api
+        <include refid="selectsWhere"/>
+        LIMIT #{page}, #{len}
     </select>
 
 </mapper>

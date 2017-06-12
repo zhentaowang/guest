@@ -217,6 +217,7 @@
     SELECT
     oi.order_status,
     oi.protocol_type,
+    oi.protocol_id,
     oi.flight_id,
     oi.customer_name,
     oi.sit_no,
@@ -243,6 +244,9 @@
     </if>
     <if test="param.queryFlightDateEnd != null and !''.equals(param.queryFlightDateEnd)">
       and f.flight_date &lt;= #{param.queryFlightDateEnd}
+    </if>
+    <if test="param.queryProtocolId != null and !''.equals(param.queryProtocolId)">
+      AND o2.protocol_id = #{param.queryProtocolId}
     </if>
     <if test="param.queryCustomerName != null and !''.equals(param.queryCustomerName)">
       AND o2.customer_name LIKE concat('%',#{param.queryCustomerName},'%')
