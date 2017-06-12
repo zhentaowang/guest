@@ -4,29 +4,23 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.PushRunnable;
 import com.zhiweicloud.guest.common.util.DateUtils;
-import com.zhiweicloud.guest.common.util.HttpClientUpdateUtils;
-import com.zhiweicloud.guest.common.util.HttpClientUtils;
 import com.zhiweicloud.guest.mapper.CustomFlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPoMapper;
+import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
 import com.zhiweicloud.guest.po.FlightPo;
-import com.zhiweicloud.guest.pojo.CustomFlightPojo;
 import com.zhiweicloud.guest.pojo.CustomFlightPojo2;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Transient;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
+import java.util.*;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * FlightPushService.java
@@ -41,12 +35,15 @@ public class FlightPushService {
     private static final Log log = LogFactory.getLog(FlightPushService.class);
 
     @Autowired
+    private FlightPushPoMapper flightPushPoMapper;
+
+    @Autowired
     private CustomFlightPoMapper customFlightPoMapper;
 
     @Autowired
     private FlightPoMapper flightPoMapper;
 
-    private ExecutorService executor = Executors.newFixedThreadPool(10);
+    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(20);
 
     /**
      * 航班推送
@@ -55,53 +52,25 @@ public class FlightPushService {
      */
     @Transient
     public void flightPush(JSONObject request) {
+        // 这个名字配置在go
         String notify = request.getString("notify");
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数 notify: " + notify + " 】");
         }
+        if (StringUtils.isBlank(notify)) {
+            return;
+        }
         try {
             // parse
-            List<Long> flightIds = parseNotify(notify);
+            Set<Long> flightIds = parseNotify(notify);
 //            List<CustomFlightPojo> customFlightPojos = customFlightPoMapper.selectsCustomFlightPojo(flightIds);
-            List<CustomFlightPojo2> customFlightPojos2 = customFlightPoMapper.selectsCustomFlightPojo2(flightIds);
-
+            List<CustomFlightPojo2> customFlightPojos2 = customFlightPoMapper.selectsCustomFlightPojo2(new ArrayList<>(flightIds));
             for (CustomFlightPojo2 customFlightPojo2 : customFlightPojos2) {
                 String customUrl = customFlightPojo2.getCustomUrl();
                 Map<String, String> params = new HashedMap();
                 params.put("data", JSON.toJSONString(customFlightPojo2.getFlightPos()));
-                executor.execute(new PushRunnable(customUrl,params));
+                executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
             }
-
-            // do push
-//            FlightPo flightPo;
-//            for (CustomFlightPojo customFlightPojo : customFlightPojos) {
-//                flightPo = customFlightPojo.getFlightPo(); // 更新的航班信息
-//
-//                for (String s : customFlightPojo.getCustomUrls()) {
-//                    Map<String, String> params = new HashedMap();
-//                    params.put("data", JSON.toJSONString(flightPo));
-//                    executor.execute(new PushRunnable());
-//                    boolean isSuccess = false;
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            try {
-//                                String result = HttpClientUtils.HttpPostForWebService(s, params);
-//                                if (log.isInfoEnabled()) {
-//                                    log.info("【 推送地址：" + s + " 返回的结果：" + result + "+ 】");
-//                                }
-//                                JSONObject object = JSON.parseObject(result);
-//                                if (object.getInteger("state") == 1) {
-////                                    isSuccess = true;
-//                                }
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                        }
-//                    });
-//                }
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,8 +82,8 @@ public class FlightPushService {
      * @return
      * @throws ParseException
      */
-    private List<Long> parseNotify(String notify) throws ParseException {
-        List<Long> result = new ArrayList<>();
+    private Set<Long> parseNotify(String notify) throws ParseException {
+        Set<Long> result = new HashSet<>();
         String[] splitFlights = notify.split("\\^");
         for (String s : splitFlights) {
             if (s.contains("\n")) {
@@ -122,8 +91,9 @@ public class FlightPushService {
                 for (String s1 : splitFlight) {
                     result.add(parseDetail(s1));
                 }
+            }else {
+                result.add(parseDetail(s));
             }
-            result.add(parseDetail(s));
         }
         return result;
     }
@@ -135,19 +105,25 @@ public class FlightPushService {
      * @throws ParseException
      */
     private Long parseDetail(String flightStr) throws ParseException {
-        String[] split = StringUtils.split(flightStr,"\\t");
+        String[] split = StringUtils.split(flightStr, "\t");
         FlightPo flightPo = new FlightPo();
-        flightPo.setDepAirportCode(split[3]);
+        flightPo.setDepAirport(split[3]);
         flightPo.setArrAirportCode(split[4]);
+        flightPo.setDepAirportCode(split[0].substring(0, 3));
+        flightPo.setArrAirportCode(split[0].substring(3));
         flightPo.setFlightNo(split[1].toUpperCase());
         flightPo.setDepDate(DateUtils.stringToDate(split[7], "yyyy-MM-dd"));
         flightPo.setArrDate(DateUtils.stringToDate(split[8], "yyyy-MM-dd"));
         flightPo.setDepActualDate(DateUtils.completeToHSM(split[9]));
         flightPo.setArrActualDate(DateUtils.completeToHSM(split[10]));
         flightPo.setFlightState(split[11]);
-        flightPo.setIsCustom((short)1);
-        flightPoMapper.updateByCondition(flightPo);
-        return flightPo.getFlightId();
+        FlightPo localFlight = flightPoMapper.select(flightPo);
+        if (localFlight == null) {
+            return null;
+        } else {
+            flightPoMapper.updateByCondition(flightPo);
+            return localFlight.getFlightId();
+        }
     }
 
     public String testCustom1(JSONObject request) {
@@ -164,6 +140,11 @@ public class FlightPushService {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
         return "{\"state\":2}";
+    }
+
+    public static void main(String[] args) {
+        String s = "PEKCAN\tCZ3162\t94.9\t北京首都\t广州白云\tT2\tT2\t2015-07-17 14:30:00\t2015-07-17 17:45:00\t0001-01-01\t0001-01-01\t计划";
+        String[] split = s.split("\t");
     }
 
 }

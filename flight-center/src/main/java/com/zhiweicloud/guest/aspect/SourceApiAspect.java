@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * SourceApiAspect.java
+ * 第三方接口调用切面
  * Copyright(C) 2017 杭州风数信息技术有限公司
  * 
  * 2017/5/26 16:09 
@@ -51,7 +52,7 @@ public class SourceApiAspect {
     public Object aroundJuheService(ProceedingJoinPoint joinPoint){
         // 方法名
         String name = joinPoint.getSignature().getName();
-        log.debug("【source export method name: " + name + "】");
+        log.debug("【 ************ 第三方接口： " + name + " 被调用 ************ 】");
 //        JSONObject object = (JSONObject) joinPoint.getArgs()[0];
 
         SourceApiPo sourceApiPo = new SourceApiPo();
@@ -87,7 +88,7 @@ public class SourceApiAspect {
         // get the point method name, not the really name
         String name = joinPoint.getSignature().getName();
         if (log.isDebugEnabled()) {
-            log.debug("【source export method name: " + name + "】");
+            log.debug("【 ************ 第三方接口： " + name + " 被调用 ************ 】");
         }
         SourceApiPo sourceApiPo = new SourceApiPo();
         sourceApiPo.setSourceName("Ibe"); // source name for mark

@@ -318,11 +318,11 @@
         SET
           is_custom = 1
         WHERE 1 =1
-          <if test="flightId != null and !''.equals(flightId)">AND flight_id = #{flightId,jdbcType=BIGINT},</if>
-          <if test="flightNo != null and !''.equals(flightNo)">AND flight_no = #{flightNo,jdbcType=VARCHAR},</if>
-          <if test="depDate != null and !''.equals(depDate)">AND dep_date = #{depDate,jdbcType=DATE},</if>
-          <if test="depAirportCode != null and !''.equals(depAirportCode)">AND dep_airport_code = #{depAirportCode,jdbcType=VARCHAR},</if>
-          <if test="arrAirportCode != null and !''.equals(arrAirportCode)">AND arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR},</if>
+          <if test="flightId != null and !''.equals(flightId)">AND flight_id = #{flightId,jdbcType=BIGINT}</if>
+          <if test="flightNo != null and !''.equals(flightNo)">AND flight_no = #{flightNo,jdbcType=VARCHAR}</if>
+          <if test="depDate != null and !''.equals(depDate)">AND dep_date = #{depDate,jdbcType=DATE}</if>
+          <if test="depAirportCode != null and !''.equals(depAirportCode)">AND dep_airport_code = #{depAirportCode,jdbcType=VARCHAR}</if>
+          <if test="arrAirportCode != null and !''.equals(arrAirportCode)">AND arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR}</if>
     </update>
 
     <update id="updateByCondition" useGeneratedKeys="true" keyProperty="flightId" parameterType="com.zhiweicloud.guest.po.FlightPo">

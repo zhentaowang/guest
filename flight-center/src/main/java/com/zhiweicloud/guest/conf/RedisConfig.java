@@ -8,130 +8,130 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * Created by tc on 2017/6/5.
  */
-@Configuration
-@Import({SpringConfiguration.class})
-@EnableTransactionManagement
+//@Configuration
+//@Import({SpringConfiguration.class})
+//@EnableTransactionManagement
 public class RedisConfig {
 
     @Value("${redis.keyPrefix}")
-    private static String keyPrefix;
+    private String keyPrefix;
 
     @Value("${redis.host.local}")
-    private static String hostLocal;
+    private String hostLocal;
 
     @Value("${redis.port.local}")
-    private static int portLocal;
+    private int portLocal;
 
     @Value("${redis.password.local}")
-    private static String passwordLocal;
+    private String passwordLocal;
 
     @Value("${redis.host.test}")
-    private static String hostTest;
+    private String hostTest;
 
     @Value("${redis.port.test}")
-    private static int portTest;
+    private int portTest;
 
     @Value("${redis.password.test}")
-    private static String passwordTest;
+    private String passwordTest;
 
     @Value("${redis.maxIdle}")
-    private static int maxIdle;
+    private int maxIdle;
 
     @Value("${redis.maxActive}")
-    private static int maxActive;
+    private int maxActive;
 
     @Value("${redis.maxWait}")
-    private static long maxWait;
+    private long maxWait;
 
     @Value("${redis.testOnBorrow}")
-    private static boolean testOnBorrow;
+    private boolean testOnBorrow;
 
-    public static String getKeyPrefix() {
+    public String getKeyPrefix() {
         return keyPrefix;
     }
 
-    public static void setKeyPrefix(String keyPrefix) {
-        RedisConfig.keyPrefix = keyPrefix;
+    public void setKeyPrefix(String keyPrefix) {
+        this.keyPrefix = keyPrefix;
     }
 
-    public static String getHostLocal() {
+    public String getHostLocal() {
         return hostLocal;
     }
 
-    public static void setHostLocal(String hostLocal) {
-        RedisConfig.hostLocal = hostLocal;
+    public void setHostLocal(String hostLocal) {
+        this.hostLocal = hostLocal;
     }
 
-    public static int getPortLocal() {
+    public int getPortLocal() {
         return portLocal;
     }
 
-    public static void setPortLocal(int portLocal) {
-        RedisConfig.portLocal = portLocal;
+    public void setPortLocal(int portLocal) {
+        this.portLocal = portLocal;
     }
 
-    public static String getPasswordLocal() {
+    public String getPasswordLocal() {
         return passwordLocal;
     }
 
-    public static void setPasswordLocal(String passwordLocal) {
-        RedisConfig.passwordLocal = passwordLocal;
+    public void setPasswordLocal(String passwordLocal) {
+        this.passwordLocal = passwordLocal;
     }
 
-    public static String getHostTest() {
+    public String getHostTest() {
         return hostTest;
     }
 
-    public static void setHostTest(String hostTest) {
-        RedisConfig.hostTest = hostTest;
+    public void setHostTest(String hostTest) {
+        this.hostTest = hostTest;
     }
 
-    public static int getPortTest() {
+    public int getPortTest() {
         return portTest;
     }
 
-    public static void setPortTest(int portTest) {
-        RedisConfig.portTest = portTest;
+    public void setPortTest(int portTest) {
+        this.portTest = portTest;
     }
 
-    public static String getPasswordTest() {
+    public String getPasswordTest() {
         return passwordTest;
     }
 
-    public static void setPasswordTest(String passwordTest) {
-        RedisConfig.passwordTest = passwordTest;
+    public void setPasswordTest(String passwordTest) {
+        this.passwordTest = passwordTest;
     }
 
-    public static int getMaxIdle() {
+    public int getMaxIdle() {
         return maxIdle;
     }
 
-    public static void setMaxIdle(int maxIdle) {
-        RedisConfig.maxIdle = maxIdle;
+    public void setMaxIdle(int maxIdle) {
+        this.maxIdle = maxIdle;
     }
 
-    public static int getMaxActive() {
+    public int getMaxActive() {
         return maxActive;
     }
 
-    public static void setMaxActive(int maxActive) {
-        RedisConfig.maxActive = maxActive;
+    public void setMaxActive(int maxActive) {
+        this.maxActive = maxActive;
     }
 
-    public static long getMaxWait() {
+    public long getMaxWait() {
         return maxWait;
     }
 
-    public static void setMaxWait(long maxWait) {
-        RedisConfig.maxWait = maxWait;
+    public void setMaxWait(long maxWait) {
+        this.maxWait = maxWait;
     }
 
-    public static boolean isTestOnBorrow() {
+    public boolean isTestOnBorrow() {
         return testOnBorrow;
     }
 
-    public static void setTestOnBorrow(boolean testOnBorrow) {
-        RedisConfig.testOnBorrow = testOnBorrow;
+    public void setTestOnBorrow(boolean testOnBorrow) {
+        this.testOnBorrow = testOnBorrow;
     }
 
 }

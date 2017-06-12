@@ -2,6 +2,7 @@ package com.zhiweicloud.guest.source.ibe.util;
 
 import com.zhiweicloud.guest.common.util.HttpClientUtils;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
+import com.zhiweicloud.guest.source.ibe.model.IbeQueryByDepAndArr;
 import com.zhiweicloud.guest.source.ibe.model.RootResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,25 +56,6 @@ public class IbeUtils {
      * @return
      * @throws Exception
      */
-//    public static FlightCenterResult queryFlightNo(String flightNo) throws Exception {
-//        log.info("【方法名：根据航班号查询航班信息（queryFlightNo） 参数名：航班号_" + flightNo + "】");
-//        List<NameValuePair> nameValuePairs = new ArrayList<>();
-//        nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
-//        nameValuePairs.add(new BasicNameValuePair("FlightNo", flightNo));
-//        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
-//
-//        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByFlightNO", nameValuePairs);
-//        log.info("【请求的结果：\n" + result + "】");
-//        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
-//        RootResult rootResult = JAXB.unmarshal(new StringReader(result), RootResult.class);
-//
-//        FlightCenterResult<Flight> resultSet = new FlightCenterResult();
-//        resultSet.setState(rootResult.getErrorRes().getErrCode());
-//        resultSet.setMessage(rootResult.getErrorRes().getErrContent());
-//        resultSet.setT(parse(rootResult.getFlightStatuses(), DateUtils.getDate("yyyy-MM-dd")));
-//        return resultSet;
-//    }
-
     public static RootResult queryFlightNo(String flightNo) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("【 ************ IBE 方法名：根据航班号查询航班信息（queryFlightNo） 参数名：航班号_" + flightNo + " ************ 】");
@@ -96,26 +78,6 @@ public class IbeUtils {
      * @return FlightCenterResult Object
      * @throws Exception
      */
-//    public static FlightCenterResult queryFlightNoByDate(String flightNo, String flightDate) throws Exception {
-//        log.info("【方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + "】");
-//        List<NameValuePair> nameValuePairs = new ArrayList<>();
-//        nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
-//        nameValuePairs.add(new BasicNameValuePair("FlightNo", flightNo));
-//        nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
-//        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
-//
-//        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryFlightNobydate", nameValuePairs);
-//        log.info("【请求的结果：\n" + result + "】");
-//        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
-//        RootResult rootResult = JAXB.unmarshal(new StringReader(result), RootResult.class);
-//
-//        FlightCenterResult<Flight> resultSet = new FlightCenterResult();
-//        resultSet.setState(rootResult.getErrorRes().getErrCode());
-//        resultSet.setMessage(rootResult.getErrorRes().getErrContent());
-//        resultSet.setT(parse(rootResult.getFlightStatuses(), DateUtils.stringToDate(flightDate,"yyyy-MM-dd")));
-//        return resultSet;
-//    }
-
     public static RootResult queryFlightNoByDate(String flightNo, String flightDate) throws Exception {
         log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + " ************ 】");
         List<NameValuePair> nameValuePairs = new ArrayList<>();
@@ -131,37 +93,34 @@ public class IbeUtils {
     }
 
     /**
+     * 查询航班历史信息（不包含当日）
+     * @param flightNo
+     * @param flightDate
+     * @return
+     * @throws Exception
+     */
+    public static RootResult queryHistoryByFlightNoAndDepDate(String flightNo, String flightDate) throws Exception {
+        log.info("【 ************ IBE 方法名：查询航班历史信息（queryHistoryByFlightNoAndDepDate） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + " ************ 】");
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
+        nameValuePairs.add(new BasicNameValuePair("FlightNo", flightNo));
+        nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
+        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
+
+        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QuerybyhisFlightNO", nameValuePairs);
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
+        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        return JAXB.unmarshal(new StringReader(result), RootResult.class);
+    }
+
+    /**
      * 根据客票号查询旅客信息
      * @param tickNo
      * @return
      * @throws Exception
      */
-//    public static FlightCenterResult queryPassengerByTickNo(String tickNo) throws Exception {
-//        log.info("【方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：客票号" + tickNo  + "】");
-//        List<NameValuePair> nameValuePairs = new ArrayList<>();
-//        nameValuePairs.add(new BasicNameValuePair("sHashcode", IBE_HASHCODE));
-//        nameValuePairs.add(new BasicNameValuePair("TicketNo", tickNo));
-//        nameValuePairs.add(new BasicNameValuePair("Name", ""));
-//        nameValuePairs.add(new BasicNameValuePair("BPNR", ""));
-//        nameValuePairs.add(new BasicNameValuePair("CPNR", ""));
-//        nameValuePairs.add(new BasicNameValuePair("IDCAR", ""));
-//        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
-//        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/detrservice.asmx/DETR", nameValuePairs);
-//        log.info("【请求的结果：\n" + result + "】");
-//        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
-//        IbeDetrTktResult ibeDetrTktResult = JAXB.unmarshal(new StringReader(result), IbeDetrTktResult.class);
-//
-//        FlightCenterResult resultSet = new FlightCenterResult();
-//        resultSet.setState(ibeDetrTktResult.getErrorRes().getErrCode());
-//        resultSet.setMessage(ibeDetrTktResult.getErrorRes().getErrContent());
-//        List list = new ArrayList();
-//        list.add(ibeDetrTktResult.getTktGroup().getIbeDetrTkt());
-//        resultSet.setT(list);
-//        return resultSet;
-//    }
-
     public static IbeDetrTktResult queryPassengerByTickNo(String tickNo) throws Exception {
-        log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：客票号_" + tickNo  + " ************ 】");
+        log.info("【 ************ IBE 方法名：根据客票号查询旅客信息（queryPassengerByTickNo） 参数名：客票号_" + tickNo  + " ************ 】");
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("sHashcode", IBE_HASHCODE));
         nameValuePairs.add(new BasicNameValuePair("TicketNo", tickNo));
@@ -174,6 +133,46 @@ public class IbeUtils {
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeDetrTktResult.class);
+    }
+
+    /**
+     * 根据出发机场/目的机场三字码查询航班信息
+     * @param depAirportCode
+     * @param arrAirportCode
+     * @return
+     * @throws Exception
+     */
+    public static IbeQueryByDepAndArr queryByDepAndArr(String depAirportCode, String arrAirportCode) throws Exception {
+        log.info("【 ************ IBE 方法名：根据出发机场/目的机场三字码查询航班信息（queryByDepAndArr） 参数名：出发地三字码_" + depAirportCode + "；目的地三字码_" + arrAirportCode + " ************ 】");
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
+        nameValuePairs.add(new BasicNameValuePair("orgCity", depAirportCode));
+        nameValuePairs.add(new BasicNameValuePair("dstCity", arrAirportCode));
+        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
+
+        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByDepAndArr", nameValuePairs);
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
+        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        return JAXB.unmarshal(new StringReader(result), IbeQueryByDepAndArr.class);
+    }
+
+    /**
+     * 根据机场三字码查询机场状态
+     * @param airportCode
+     * @return
+     * @throws Exception
+     */
+    public static IbeQueryByDepAndArr queryAirportStatus(String airportCode) throws Exception {
+        log.info("【 ************ IBE 方法名：根据机场三字码查询机场状态（queryAirportStatus） 参数名：机场三字码_" + airportCode + " ************ 】");
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("hashCode", IBE_HASHCODE));
+        nameValuePairs.add(new BasicNameValuePair("airportCode", airportCode));
+        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
+
+        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/queryAirportStatus", nameValuePairs);
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
+        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        return JAXB.unmarshal(new StringReader(result), IbeQueryByDepAndArr.class);
     }
 
 }

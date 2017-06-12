@@ -24,4 +24,6 @@ public interface CustomFlightPoMapper {
 
     List<CustomFlightPojo2> selectsCustomFlightPojo2(List<Long> flightIds);
 
+    CustomFlightPo selectByCustomerIdAndFlightId(@Param("customerId") Long customerId,@Param("flightId") Long flightId);
+
 }

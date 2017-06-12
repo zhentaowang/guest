@@ -1,6 +1,6 @@
 package com.zhiweicloud.guest.common.util;
 
-import com.zhiweicloud.guest.conf.RedisConfig;
+import jersey.repackaged.com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,8 +9,10 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * JedisUtils.java
@@ -23,9 +25,14 @@ public class JedisUtils {
 
     private static final Log log = LogFactory.getLog(JedisUtils.class);
 
-    private static final String KEY_PREFIX = "flight_center";
+    public static final String KEY_PREFIX = "flight_center";
 
     private static JedisPool jedisPool = null;
+
+    /**
+     * 属性文件加载对象
+     */
+    private static Properties properties = PropertyUtils.load("redis.properties");
 
     /**
      * redis过期时间,以秒为单位
@@ -36,18 +43,22 @@ public class JedisUtils {
 
     private static void init(){
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(RedisConfig.getMaxActive());
-        config.setMaxIdle(RedisConfig.getMaxIdle());
-        config.setMaxWaitMillis(RedisConfig.getMaxWait());
-        config.setTestOnBorrow(RedisConfig.isTestOnBorrow());
+        config.setMaxTotal(PropertyUtils.getInt(properties, "redis.maxActive"));
+        config.setMaxIdle(PropertyUtils.getInt(properties, "redis.maxIdle"));
+        config.setMaxWaitMillis(PropertyUtils.getLong(properties, "redis.maxWait"));
+        config.setTestOnBorrow(PropertyUtils.getBoolean(properties, "redis.testOnBorrow"));
         try {
-            jedisPool = new JedisPool(config, RedisConfig.getHostLocal(), RedisConfig.getPortLocal());
+            if (log.isInfoEnabled()) {
+                log.info(PropertyUtils.getString(properties,"redis.host.local"));
+                log.info(PropertyUtils.getInt(properties,"redis.port.local"));
+            }
+            jedisPool = new JedisPool(config, PropertyUtils.getString(properties,"redis.host.local"), PropertyUtils.getInt(properties,"redis.port.local"));
         } catch (Exception e) {
             if (log.isErrorEnabled()) {
                 log.error("First create JedisPool error : "+e);
             }
             try{
-                jedisPool = new JedisPool(config, RedisConfig.getHostTest(), RedisConfig.getPortTest());
+                jedisPool = new JedisPool(config, PropertyUtils.getString(properties,"redis.host.test"), PropertyUtils.getInt(properties,"redis.port.test"));
             }catch(Exception e2){
                 if (log.isErrorEnabled()) {
                     log.error("Second create JedisPool error : "+e2);
@@ -66,7 +77,7 @@ public class JedisUtils {
      * 获取Jedis实例
      * @return
      */
-    public synchronized static Jedis getJedis(){
+    public static Jedis getJedis(){
         Jedis redis = null;
         try {
             if (jedisPool != null) {
@@ -260,12 +271,98 @@ public class JedisUtils {
     }
 
     /**
+     * 设置List缓存
+     *
+     * @param key          键
+     * @param value        值
+     * @param cacheSeconds 超时时间，0为不超时
+     * @return
+     */
+    public static long setObjectList(String key, List<Object> value, int cacheSeconds) {
+        long result = 0;
+        try (Jedis jedis = getJedis()) {
+            if (jedis.exists(getBytesKey(KEY_PREFIX + key))) {
+                jedis.del(KEY_PREFIX + key);
+            }
+            List<byte[]> list = Lists.newArrayList();
+            for (Object o : value) {
+                list.add(toBytes(o));
+            }
+            result = jedis.rpush(getBytesKey(KEY_PREFIX + key), (byte[][]) list.toArray());
+            if (cacheSeconds != 0) {
+                jedis.expire(KEY_PREFIX + key, cacheSeconds);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 获取List缓存
+     *
+     * @param key 键
+     * @return 值
+     */
+    public static List<Object> getObjectList(String key) {
+        List<Object> value = null;
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            if (jedis.exists(getBytesKey(KEY_PREFIX + key))) {
+                List<byte[]> list = jedis.lrange(getBytesKey(KEY_PREFIX + key), 0, -1);
+                value = Lists.newArrayList();
+                for (byte[] bs : list) {
+                    value.add(toObject(bs));
+                }
+            }
+        } catch (Exception e) {
+
+        } finally {
+            returnResource(jedis);
+        }
+        return value;
+    }
+
+    /**
+     * 缓存是否存在
+     *
+     * @param key 键
+     * @return
+     */
+    public static boolean exists(String key) {
+        boolean result = false;
+        try (Jedis jedis = getJedis()){
+            result = jedis.exists(KEY_PREFIX + key);
+        } catch (Exception e) {
+
+        }
+        return result;
+    }
+
+    /**
+     * 缓存是否存在
+     *
+     * @param key 键
+     * @return
+     */
+    public static boolean existsObject(String key) {
+        boolean result = false;
+        try (Jedis jedis = getJedis()){
+            result = jedis.exists(getBytesKey(KEY_PREFIX + key));
+        } catch (Exception e) {
+
+        }
+        return result;
+    }
+
+    /**
      * 获取byte[]类型Key
      *
      * @param object
      * @return
      */
-    public static byte[] getBytesKey(Object object) {
+    public static byte[] getBytesKey(Object object) throws IOException {
         if (object instanceof String) {
             byte[] result = null;
             try {
@@ -274,7 +371,7 @@ public class JedisUtils {
             }
             return result;
         } else {
-            return ObjectUtils.serialize(object);
+            return SerializeUtils.serialize(object);
         }
     }
 
@@ -284,8 +381,8 @@ public class JedisUtils {
      * @param object
      * @return
      */
-    public static byte[] toBytes(Object object) {
-        return ObjectUtils.serialize(object);
+    public static byte[] toBytes(Object object) throws IOException {
+        return SerializeUtils.serialize(object);
     }
 
 
@@ -295,8 +392,8 @@ public class JedisUtils {
      * @param bytes
      * @return
      */
-    public static Object toObject(byte[] bytes) {
-        return ObjectUtils.unserialize(bytes);
+    public static Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
+        return SerializeUtils.unserialize(bytes);
     }
 
 }

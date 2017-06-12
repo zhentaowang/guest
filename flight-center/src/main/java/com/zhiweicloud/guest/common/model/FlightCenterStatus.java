@@ -38,6 +38,9 @@ public enum  FlightCenterStatus {
 
     ILLEGAL_DATE(380,"非法的日期"),
 
+    UNABLE_CUSTOM(385,"不能定制已到达航班"),
+    REPEAT_CUSTOM(388,"重复定制"),
+
     SIGN_INVALID(339,"签名无效"),
     NOT_AUTH(340,"签名未通过"),
     FLIGHT_DATE_INVALID(351,"只能查询今日或未来的航班"),

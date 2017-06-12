@@ -9,9 +9,19 @@ import java.util.List;
  */
 public class CustomFlightPojo2 {
 
+    private Long customerId;
+
     private String customUrl;
 
     private List<FlightPo> flightPos;
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
 
     public String getCustomUrl() {
         return customUrl;

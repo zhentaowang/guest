@@ -5,6 +5,7 @@ package com.zhiweicloud.guest.po;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Date;
  * @author IronC
  * @version 1.0  2017-05-31
  */
-public class FlightPo {
+public class FlightPo implements Serializable {
 
     /**
     * 表名
@@ -296,6 +297,7 @@ public class FlightPo {
     /**
      * 是否定制 0：不定制 1：定制
      */
+    @JSONField(serialize = false)
     private Short isCustom;
 
     /**

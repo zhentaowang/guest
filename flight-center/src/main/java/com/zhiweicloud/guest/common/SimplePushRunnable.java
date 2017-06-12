@@ -10,22 +10,23 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * PushRunnable.java
+ * SimplePushRunnable.java
  * Copyright(C) 2017 杭州风数信息技术有限公司
  * 
- * 2017/6/8 10:09 
+ * 2017/6/8 9:12 
  * @author tiecheng
  */
-public class PushRunnable implements Runnable {
+public class SimplePushRunnable implements Runnable {
 
-    private static final Log log = LogFactory.getLog(PushRunnable.class);
-
-    private String url;
+    private static final Log log = LogFactory.getLog(SimplePushRunnable.class);
 
     private Long customerId;
+
+    private String url;
 
     private Map<String, String> params;
 
@@ -33,14 +34,12 @@ public class PushRunnable implements Runnable {
 
     private FlightPushPoMapper flightPushPoMapper;
 
-    private int count = 1;
-
-    public PushRunnable(String url, Map<String, String> params) {
+    public SimplePushRunnable(String url, Map<String, String> params) {
         this.url = url;
         this.params = params;
     }
 
-    public PushRunnable(String url, Map<String, String> params, ScheduledExecutorService executor, FlightPushPoMapper flightPushPoMapper, Long customerId) {
+    public SimplePushRunnable(String url, Map<String, String> params, ScheduledExecutorService executor,FlightPushPoMapper flightPushPoMapper,Long customerId) {
         this.url = url;
         this.params = params;
         this.executor = executor;
@@ -54,12 +53,10 @@ public class PushRunnable implements Runnable {
             log.info("【 ************ 发送http请求: url_" + url + " ************ 】");
             log.info("【 ************ " + Thread.currentThread().getName() + " 线程被调用 ************ 】");
         }
-        boolean isSuccess = false;
         try {
-            String result = HttpClientDemo.HttpPostForWebService(url, params,"json");
-            this.count ++;
+            String result = HttpClientDemo.HttpPostForWebService(url, params, "json");
             if (log.isInfoEnabled()) {
-                log.info("【 ************ http请求的结果："+ result +" ************ 】");
+                log.info("【 ************ " + result + " ************ 】");
             }
             // 都需要记录
             FlightPushPo flightPushPo = new FlightPushPo();
@@ -68,21 +65,11 @@ public class PushRunnable implements Runnable {
                 flightPushPo.setInvokeResult(result);
             }
             flightPushPoMapper.insert(flightPushPo);
-            if (StringUtils.isNoneBlank(result) && JSON.parseObject(result).getInteger("state") == 1) {
-                isSuccess = true;
-                return;
-            }
-            if(this.count >= 120){
-                isSuccess = true;
-                return;
+            if (result == null || JSON.parseObject(result).getInteger("state") != 1) {
+                ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(this, 60, 60, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            // TODO 异常的时候 应该也是定时任务
-        }finally {
-            if (!isSuccess) {
-                executor.schedule(this, 5, TimeUnit.MINUTES);
-            }
+            executor.scheduleAtFixedRate(this, 60, 60, TimeUnit.SECONDS);
         }
     }
 

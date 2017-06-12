@@ -27,7 +27,16 @@ public class BusinessService implements IBusinessService {
     private FlightService flightService;
 
     @Autowired
+    private DetrService detrService;
+
+    @Autowired
     private FlightPushService flightPushService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private SourceService sourceService;
 
     @Override
     public JSONObject handle(JSONObject request) {
@@ -50,19 +59,28 @@ public class BusinessService implements IBusinessService {
                 success = trainService.queryTrainByCondition(request);
                 break;
             case "queryPassengerByTickNo":
-                success = flightService.queryPassengerByTickNo(request);
+                success = detrService.queryPassengerByTickNo(request);
                 break;
             case "flightPush":
                 flightPushService.flightPush(request);
                 break;
             case "customFlight":
-                flightService.customFlight(request);
+                success = flightService.customFlight(request);
                 break;
             case "customer1":
-                flightPushService.testCustom1(request);
+                success = flightPushService.testCustom1(request);
                 break;
             case "customer2":
-                flightPushService.testCustom2(request);
+                success = flightPushService.testCustom2(request);
+                break;
+            case "queryCustomerDropDownList":
+                success = customerService.queryCustomerDropDownList(request);
+                break;
+            case "queryCustomerDetail":
+                success = customerService.queryCustomerDetail(request);
+                break;
+            case "querySourceDropDownList":
+                success = sourceService.querySourceDropDownList(request);
                 break;
             default:
                 break;
