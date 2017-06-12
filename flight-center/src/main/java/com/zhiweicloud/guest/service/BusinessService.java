@@ -97,6 +97,12 @@ public class BusinessService implements IBusinessService {
             case "countForSourceApi":
                 success = sourceService.countForSourceApi(request);
                 break;
+            case "queryFlightCenterApisPage":
+                success = sourceService.queryFlightCenterApisPage(request);
+                break;
+            case "querySourceApisPage":
+                success = sourceService.querySourceApisPage(request);
+                break;
             default:
                 break;
         }
