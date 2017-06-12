@@ -17,11 +17,13 @@ public class BusinessService implements IBusinessService {
     @Autowired
     private RoleController roleController;
 
+    private InitNewAirport initNewAirport;
 
     @Autowired
-    public BusinessService(MenuController menuController, RoleController roleController) {
+    public BusinessService(MenuController menuController, RoleController roleController,InitNewAirport initNewAirport) {
         this.menuController = menuController;
         this.roleController = roleController;
+        this.initNewAirport = initNewAirport;
     }
 
     @Override
@@ -63,6 +65,9 @@ public class BusinessService implements IBusinessService {
                 break;
             case "view":
                 success = roleController.view(request);
+                break;
+            case "addNewAirport":
+                success = initNewAirport.addNewAirport(request);
                 break;
             default:
                 break;
