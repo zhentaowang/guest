@@ -131,7 +131,16 @@
           COUNT(flight_center_api_id)
       FROM
 	      operator_flight_center_api
-      <include refid="selectsWhere"/>
+        <where>
+            <if test="apiQueryPojo.customerId != null">AND customer_id = #{apiQueryPojo.customerId,jdbcType=BIGINT}</if>
+            <if test="apiQueryPojo.customerName != null">AND customer_name = #{apiQueryPojo.customerName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.sourceName != null">AND source_name = #{apiQueryPojo.sourceName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.apiName != null">AND api_name = #{apiQueryPojo.apiName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeState != null">AND invoke_state = #{apiQueryPojo.invokeState,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeResult != null">AND invoke_result = #{apiQueryPojo.invokeResult,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.startDate != null">AND create_time &gt; #{apiQueryPojo.startDate,jdbcType=TIMESTAMP}</if>
+            <if test="apiQueryPojo.endDate != null">AND create_time &lt; #{apiQueryPojo.endDate,jdbcType=TIMESTAMP}</if>
+        </where>
     </select>
 
     <select id="selectsByConditionForPage" resultMap="selectsMap">

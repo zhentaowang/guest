@@ -8,9 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 /**
  * BusinessService.java
  * Copyright(C) 2017 杭州风数信息技术有限公司
@@ -39,7 +36,7 @@ public class BusinessService implements IBusinessService {
     private CustomerService customerService;
 
     @Autowired
-    private SourceService sourceService;
+    private ApiService sourceService;
 
     @Override
     public JSONObject handle(JSONObject request) {
