@@ -12,7 +12,8 @@ import com.zhiweicloud.guest.common.util.ApplicationContextUtils;
 public class LocalMain {
 
     public static void main(String[] args) throws InterruptedException {
-        ApplicationContextUtils.createContext("local");
+        String[] strings = {"local", "thriftLocal"};
+        ApplicationContextUtils.createContext(strings);
     }
 
 }

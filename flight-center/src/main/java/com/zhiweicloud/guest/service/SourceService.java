@@ -9,6 +9,8 @@ import com.zhiweicloud.guest.mapper.SourceApiPoMapper;
 import com.zhiweicloud.guest.po.SourceApiPo;
 import com.zhiweicloud.guest.pojo.ApiQueryPojo;
 import com.zhiweicloud.guest.pojo.FlightCenterApiPojo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ import java.util.*;
 @Service
 public class SourceService {
 
+    private static final Log log = LogFactory.getLog(SourceService.class);
+
     @Autowired
     private SourceApiPoMapper sourceApiPoMapper;
 
@@ -37,6 +41,8 @@ public class SourceService {
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {
+            e.printStackTrace();
+            result.setData(null);
             result.setState(FlightCenterStatus.ERROR.value());
             result.setMessage(FlightCenterStatus.ERROR.display());
         }
@@ -59,6 +65,8 @@ public class SourceService {
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {
+            e.printStackTrace();
+            result.setData(null);
             result.setState(FlightCenterStatus.ERROR.value());
             result.setMessage(FlightCenterStatus.ERROR.display());
         }
@@ -78,6 +86,7 @@ public class SourceService {
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {
+            e.printStackTrace();
             result.setData(null);
             result.setState(FlightCenterStatus.ERROR.value());
             result.setMessage(FlightCenterStatus.ERROR.display());
@@ -114,6 +123,8 @@ public class SourceService {
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {
+            e.printStackTrace();
+            result.setData(null);
             result.setState(FlightCenterStatus.ERROR.value());
             result.setMessage(FlightCenterStatus.ERROR.display());
         }
@@ -133,6 +144,8 @@ public class SourceService {
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {
+            e.printStackTrace();
+            result.setData(null);
             result.setState(FlightCenterStatus.ERROR.value());
             result.setMessage(FlightCenterStatus.ERROR.display());
         }
@@ -169,6 +182,8 @@ public class SourceService {
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {
+            e.printStackTrace();
+            result.setData(null);
             result.setState(FlightCenterStatus.ERROR.value());
             result.setMessage(FlightCenterStatus.ERROR.display());
         }

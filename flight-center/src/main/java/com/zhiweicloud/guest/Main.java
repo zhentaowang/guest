@@ -5,7 +5,8 @@ import com.zhiweicloud.guest.common.util.ApplicationContextUtils;
 public class Main {
 
     public static void main( String[] args ) throws InterruptedException {
-        ApplicationContextUtils.createContext("production");
+        String[] strings = {"production", "thriftProduction"};
+        ApplicationContextUtils.createContext(strings);
     }
 
 }
