@@ -3,12 +3,13 @@ package com.zhiweicloud.guest.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wyun.thrift.server.business.IBusinessService;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.HttpClientUtil;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,7 +22,8 @@ import java.sql.SQLException;
 /**
  * Created by THINK on 2017-06-09.
  */
-public class InitNewAirport extends HttpServlet {
+@Component
+public class InitNewAirport{
     // JDBC 驱动名及数据库 URL
     static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static String DB_URL = "";
@@ -30,7 +32,7 @@ public class InitNewAirport extends HttpServlet {
     static String db_name = "";
     static String db_password = "";
 
-    @Override
+    /*@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         DB_URL = (String)req.getParameter("db_url");
         db_name = (String)req.getParameter("db_name");
@@ -60,7 +62,7 @@ public class InitNewAirport extends HttpServlet {
         out.println("<h1>" + res + "</h1>");
         out.println("</body>");
         out.println("</html>");
-    }
+    }*/
 
     /**
      * 初始化新机场
