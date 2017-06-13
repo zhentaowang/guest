@@ -78,7 +78,6 @@ public class PushRunnable implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO 异常的时候 应该也是定时任务
         }finally {
             if (!isSuccess) {
                 executor.schedule(this, 5, TimeUnit.MINUTES);

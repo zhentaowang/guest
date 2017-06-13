@@ -106,6 +106,9 @@ public class BusinessService implements IBusinessService {
             case "queryPageSourceApis":
                 success = sourceService.querySourceApisPage(request);
                 break;
+            case "queryPageFlightPushs":
+                success = flightPushService.queryFlightPushsPage(request);
+                break;
             default:
                 break;
         }

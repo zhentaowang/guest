@@ -32,4 +32,53 @@
         <include refid="insertValue"/>
     </insert>
 
+    <resultMap id="selectsMap" type="com.zhiweicloud.guest.pojo.FlightPushPojo">
+        <id column="flight_push_id" jdbcType="BIGINT" property="flightPushId" />
+        <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="invoke_result" jdbcType="VARCHAR" property="invokeResult" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <sql id="selectsWhere">
+        <where>
+            <if test="apiQueryPojo.customerId != null">AND ffp.customer_id = #{apiQueryPojo.customerId,jdbcType=BIGINT}</if>
+            <if test="apiQueryPojo.customerName != null">AND bc.customer_name = #{apiQueryPojo.customerName,jdbcType=VARCHAR}</if>
+            <if test="apiQueryPojo.invokeResult != null">AND ffp.invoke_result LIKE CONCAT('%',#{apiQueryPojo.invokeResult,jdbcType=VARCHAR},'%')</if>
+            <if test="apiQueryPojo.startDate != null">AND ffp.create_time &gt; #{apiQueryPojo.startDate,jdbcType=TIMESTAMP}</if>
+            <if test="apiQueryPojo.endDate != null">AND ffp.create_time &lt; #{apiQueryPojo.endDate,jdbcType=TIMESTAMP}</if>
+        </where>
+    </sql>
+
+    <select id="countByCondition" parameterType="com.zhiweicloud.guest.pojo.ApiQueryPojo" resultType="int">
+        SELECT
+          COUNT(flight_push_id)
+        FROM
+          f_flight_push
+        <where>
+            <if test="apiQueryPojo.customerId != null">AND customer_id = #{apiQueryPojo.customerId,jdbcType=BIGINT}</if>
+            <if test="apiQueryPojo.invokeResult != null">AND invoke_result LIKE CONCAT('%',#{apiQueryPojo.invokeResult,jdbcType=VARCHAR},'%')</if>
+            <if test="apiQueryPojo.startDate != null">AND create_time &gt; #{apiQueryPojo.startDate,jdbcType=TIMESTAMP}</if>
+            <if test="apiQueryPojo.endDate != null">AND create_time &lt; #{apiQueryPojo.endDate,jdbcType=TIMESTAMP}</if>
+        </where>
+    </select>
+
+    <select id="selectsByConditionForPage" resultMap="selectsMap">
+        SELECT
+          ffp.flight_push_id,
+          ffp.customer_id,
+          ffp.create_time,
+          ffp.invoke_result,
+          bc.customer_name,
+          bc.custom_url
+        FROM
+          f_flight_push ffp
+        LEFT JOIN
+          base_customer bc
+        ON
+          bc.customer_id = ffp.customer_id
+        <include refid="selectsWhere"/>
+        LIMIT #{page}, #{len}
+    </select>
+
 </mapper>
