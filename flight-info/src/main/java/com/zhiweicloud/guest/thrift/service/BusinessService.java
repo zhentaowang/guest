@@ -32,12 +32,8 @@ public class BusinessService implements IBusinessService {
     private ScheduleEventUtils scheduleEventUtil;
 
     @Override
-    public JSONObject handle(JSONObject request) {
+    public JSONObject handle(String operation,JSONObject request) {
         String success = null;
-        String operation = null; //operation表示从参数中获取的操作类型"operation"
-        if (request.get(Dictionary.REQUEST_METHOD_NAME) != null) {
-            operation = request.getString(Dictionary.REQUEST_METHOD_NAME);
-        }
         if (log.isDebugEnabled()) {
             log.debug("request method name: " + operation);
         }

@@ -9,17 +9,5 @@
             http://www.springframework.org/schema/context/spring-context-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:component-scan base-package="com.zhiweicloud.guest.conf" />
-
-    <!-- 开启切面代理 -->
-    <aop:aspectj-autoproxy/>
-
     <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
-    <bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl">
-    </bean>
-    <bean id="server" class="com.wyun.thrift.server.server.Server">
-        <!-- setServer_port -->
-        <property name="serverPort" value="8080"></property>
-        <property name="processorName" value="airPortServiceImpl"></property>
-    </bean>
-
 </beans>

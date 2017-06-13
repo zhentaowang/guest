@@ -9,10 +9,10 @@
 
     <context:component-scan base-package="com.zhiweicloud.guest.conf" />
     <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
-    <bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl"/>
+    <!--<bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl"/>
     <bean id="server" class="com.wyun.thrift.server.server.Server">
-        <!-- setServer_port -->
+        &lt;!&ndash; setServer_port &ndash;&gt;
         <property name="serverPort" value="8080"></property>
         <property name="processorName" value="airPortServiceImpl"></property>
-    </bean>
+    </bean>-->
 </beans>

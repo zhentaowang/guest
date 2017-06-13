@@ -79,12 +79,8 @@ public class BusinessService implements IBusinessService {
         this.checkDynamicColumn = checkDynamicColumn;
     }
 
-    public JSONObject handle(JSONObject request) {
+    public JSONObject handle(String operation,JSONObject request) {
         String success = null;
-        String operation = null; //operation表示从参数中获取的操作类型"operation"
-        if (request.get("operation") != null) {
-            operation = request.getString("operation");
-        }
 
         switch (operation) {
             case "list":
