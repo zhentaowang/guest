@@ -1,19 +1,40 @@
 package com.zhiweicloud.guest.pojo;
 
-import java.util.Map;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.Date;
 
 /**
- * Created by tc on 2017/6/7.
+ * Created by tc on 2017/6/13.
  */
 public class FlightPushPojo {
 
+    private Long flightPushId;
+
+    private String customerName;
+
     private Long customerId;
 
-    private String url;
+    private String invokeResult;
 
-    private Map<String, String> params;
+    @JSONField(format = "yyyy-MM-dd")
+    private Date createTime;
 
-    private boolean pushResult;
+    public Long getFlightPushId() {
+        return flightPushId;
+    }
+
+    public void setFlightPushId(Long flightPushId) {
+        this.flightPushId = flightPushId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     public Long getCustomerId() {
         return customerId;
@@ -23,28 +44,20 @@ public class FlightPushPojo {
         this.customerId = customerId;
     }
 
-    public String getUrl() {
-        return url;
+    public String getInvokeResult() {
+        return invokeResult;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setInvokeResult(String invokeResult) {
+        this.invokeResult = invokeResult;
     }
 
-    public Map<String, String> getParams() {
-        return params;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
-
-    public boolean isPushResult() {
-        return pushResult;
-    }
-
-    public void setPushResult(boolean pushResult) {
-        this.pushResult = pushResult;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
 }

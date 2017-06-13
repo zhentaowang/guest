@@ -36,7 +36,7 @@ public class BusinessService implements IBusinessService {
     private CustomerService customerService;
 
     @Autowired
-    private SourceService sourceService;
+    private ApiService sourceService;
 
     @Override
     public JSONObject handle(JSONObject request) {
@@ -46,9 +46,10 @@ public class BusinessService implements IBusinessService {
             operation = request.getString("operation");
         }
         if (log.isDebugEnabled()) {
-            log.debug("request method name: " + operation);
+            log.debug("【 ************ request method params: " + request.toJSONString() +" ************ 】");
         }
         switch (operation) {
+            // for outer net
             case "queryFlightInfo":
                 success = flightService.queryFlightInfo(request);
                 break;
@@ -67,12 +68,14 @@ public class BusinessService implements IBusinessService {
             case "customFlight":
                 success = flightService.customFlight(request);
                 break;
+            // for test
             case "customer1":
                 success = flightPushService.testCustom1(request);
                 break;
             case "customer2":
                 success = flightPushService.testCustom2(request);
                 break;
+            // for inner net
             case "queryCustomerDropDownList":
                 success = customerService.queryCustomerDropDownList(request);
                 break;
@@ -81,6 +84,30 @@ public class BusinessService implements IBusinessService {
                 break;
             case "querySourceDropDownList":
                 success = sourceService.querySourceDropDownList(request);
+                break;
+            case "querySourceApiByNameAndDate": // 未使用
+                success = sourceService.querySourceApiByNameAndDate(request);
+                break;
+            case "queryFlightCenterApis":
+                success = sourceService.queryFlightCenterApis(request);
+                break;
+            case "querySourceApis":
+                success = sourceService.querySourceApis(request);
+                break;
+            case "countForFlightCenterApi":
+                success = sourceService.countForFlightCenterApi(request);
+                break;
+            case "countForSourceApi":
+                success = sourceService.countForSourceApi(request);
+                break;
+            case "queryPageFlightCenterApis":
+                success = sourceService.queryFlightCenterApisPage(request);
+                break;
+            case "queryPageSourceApis":
+                success = sourceService.querySourceApisPage(request);
+                break;
+            case "queryPageFlightPushs":
+                success = flightPushService.queryFlightPushsPage(request);
                 break;
             default:
                 break;

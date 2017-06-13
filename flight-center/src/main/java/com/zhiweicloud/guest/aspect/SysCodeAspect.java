@@ -39,15 +39,15 @@ public class SysCodeAspect{
         String name = joinPoint.getSignature().getName();
 
         if (log.isInfoEnabled()) {
-            log.info("【 ************ 进入了切面： "+ this.getClass().getSimpleName() +" ************ 】");
-            log.info("【 ************ 开始校验 - 系统码 ************ 】");
+            log.info("【 ************ aspect name： "+ this.getClass().getSimpleName() +" ************ 】");
+            log.info("【 ************ begin verify - sysCode ************ 】");
         }
 
         JSONObject object = (JSONObject) joinPoint.getArgs()[0];
         String sysCode = object.getString("sysCode");  // 系统码
 
         if (log.isInfoEnabled()) {
-            log.info("【 ************ 参数 - 系统码："+ sysCode +" ************ 】");
+            log.info("【 ************ params - sysCode："+ sysCode +" ************ 】");
         }
 
         boolean isSuccess = false;
@@ -62,8 +62,8 @@ public class SysCodeAspect{
             }
 
             if (log.isInfoEnabled()) {
-                log.info("【 ************ 结束校验 - 系统码 ************ 】");
-                log.info("【 ************ 校验结果：" + isSuccess + " ************ 】");
+                log.info("【 ************ end verify - sysCode ************ 】");
+                log.info("【 ************ verify result：" + isSuccess + " ************ 】");
             }
 
             if(isSuccess){

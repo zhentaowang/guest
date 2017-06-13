@@ -8,7 +8,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class ApplicationContextUtils {
 
-    public static void createContext(String profileName) throws InterruptedException {
+    public static void createContext(String[] profileName) throws InterruptedException {
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.getEnvironment().setActiveProfiles(profileName);
         context.setValidating(false);
@@ -18,6 +18,10 @@ public class ApplicationContextUtils {
             System.out.println(Dictionary.START_MESSAGE);
             Thread.sleep(1000000);
         }
+    }
+
+    public static void createContext(String profileName) throws InterruptedException {
+        createContext(new String[]{profileName});
     }
 
 }

@@ -42,8 +42,11 @@ public class CustomerService {
         FlightCenterResult<CustomerDetailPojo> result = new FlightCenterResult<>();
         try {
             Long customerId = request.getLong("customerId");
-            customerId = (customerId == null ? 0L : customerId);
-            result.setData(customerPoMapper.selectCustomerDetail(customerId));
+            if(customerId != null){
+                result.setData(customerPoMapper.selectCustomerDetail(customerId));
+            }else {
+                result.setData(null);
+            }
             result.setState(FlightCenterStatus.SUCCESS.value());
             result.setMessage(FlightCenterStatus.SUCCESS.display());
         } catch (Exception e) {

@@ -3,28 +3,32 @@ package com.zhiweicloud.guest.common;
 import java.util.List;
 
 /**
- * Created by tc on 2017/5/15.
+ * Pagination.java
+ * Copyright(C) 2017 杭州风数信息技术有限公司
+ * 
+ * 2017/6/13 10:59
+ * @author tiecheng
  */
 public class Pagination<T> {
 
-    Page page;
+    int total;
 
-    List<T> t;
+    List<T> rows;
 
-    public Page getPage() {
-        return page;
+    public int getTotal() {
+        return total;
     }
 
-    public void setPage(Page page) {
-        this.page = page;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
-    public List<T> getT() {
-        return t;
+    public List<T> getRows() {
+        return rows;
     }
 
-    public void setT(List<T> t) {
-        this.t = t;
+    public void setRows(List<T> rows) {
+        this.rows = rows;
     }
 
 }

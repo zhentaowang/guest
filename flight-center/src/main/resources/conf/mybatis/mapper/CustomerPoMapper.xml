@@ -116,8 +116,8 @@
 
     <select id="selectCustomerDropDownList" resultType="map">
       SELECT
-        customer_id key,
-        customer_name value
+        customer_id AS id,
+        customer_name AS value
       FROM
         base_customer
       WHERE is_deleted = 0

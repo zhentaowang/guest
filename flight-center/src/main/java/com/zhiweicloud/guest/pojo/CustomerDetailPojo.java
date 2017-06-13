@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ public class CustomerDetailPojo {
 
     private String sysCode;
 
+    @JSONField(format = "yyyy-MM-dd")
     private Date createTime;
 
     private Map<String,Integer> requestTimes;

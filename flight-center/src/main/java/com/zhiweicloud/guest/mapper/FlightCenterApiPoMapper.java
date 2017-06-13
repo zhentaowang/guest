@@ -4,9 +4,12 @@ Copyright 2016-2017 author IronC.
 package com.zhiweicloud.guest.mapper;
 
 import com.zhiweicloud.guest.po.FlightCenterApiPo;
+import com.zhiweicloud.guest.pojo.ApiQueryPojo;
+import com.zhiweicloud.guest.pojo.FlightCenterApiPojo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FlightCenterApiPoMapper {
 
@@ -48,15 +51,24 @@ public interface FlightCenterApiPoMapper {
     /**
      * selects by condition
      *
-     * @param flightCenterApiPo
+     * @param apiQueryPojo
      */
-    List<FlightCenterApiPo> selects(@Param("flightCenterApiPo") FlightCenterApiPo flightCenterApiPo);
+//    List<FlightCenterApiPo> selects(FlightCenterApiPojo flightCenterApiPojo);
+
+    List<FlightCenterApiPojo> selects(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo);
 
     /**
-     * selects by condition
-     *
-     * @param flightCenterApiPo
+     * 根据条件分页查询数量
+     * @param apiQueryPojo
+     * @return
      */
-    List<FlightCenterApiPo> selectForPage(@Param("flightCenterApiPo") FlightCenterApiPo flightCenterApiPo,@Param("start")int start, @Param("len")int len);
+    int countByCondition(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo);
+
+    /**
+     * 根据条件分页查询
+     * @param apiQueryPojo
+     * @return
+     */
+    List<FlightCenterApiPojo> selectsByConditionForPage(@Param("apiQueryPojo") ApiQueryPojo apiQueryPojo,@Param("page") int page,@Param("len") int len);
 
 }

@@ -2,13 +2,19 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zhiweicloud.guest.common.Pagination;
 import com.zhiweicloud.guest.common.PushRunnable;
+import com.zhiweicloud.guest.common.model.FlightCenterResult;
+import com.zhiweicloud.guest.common.model.FlightCenterStatus;
 import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.mapper.CustomFlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
 import com.zhiweicloud.guest.po.FlightPo;
+import com.zhiweicloud.guest.pojo.ApiQueryPojo;
 import com.zhiweicloud.guest.pojo.CustomFlightPojo2;
+import com.zhiweicloud.guest.pojo.FlightCenterApiPojo;
+import com.zhiweicloud.guest.pojo.FlightPushPojo;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -43,6 +49,9 @@ public class FlightPushService {
     @Autowired
     private FlightPoMapper flightPoMapper;
 
+    /**
+     * 创建一个线程池
+     */
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(20);
 
     /**
@@ -72,8 +81,44 @@ public class FlightPushService {
                 executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
+    }
+
+
+    /**
+     * 航班推送列表分页查询
+     * @param request
+     * @return
+     */
+    public String queryFlightPushsPage(JSONObject request) {
+        FlightCenterResult result = new FlightCenterResult<>();
+        Pagination pagination = new Pagination<>();
+        try {
+            ApiQueryPojo apiQueryPojo = JSON.parseObject(request.toJSONString(), ApiQueryPojo.class);
+            List<FlightPushPojo> flightPushPojos;
+            Integer page = request.getInteger("page"); // 页码
+            Integer len = request.getInteger("len"); // 分页长度
+            if (page == null || page <= 0) {
+                page = 1;
+            }
+            if (len == null || len <= 0) {
+                len = 10;
+            }
+            flightPushPojos = flightPushPoMapper.selectsByConditionForPage(apiQueryPojo, page - 1, len);
+            int count = flightPushPoMapper.countByCondition(apiQueryPojo);
+            pagination.setTotal(count);
+            pagination.setRows(flightPushPojos);
+            result.setData(pagination);
+            result.setState(FlightCenterStatus.SUCCESS.value());
+            result.setMessage(FlightCenterStatus.SUCCESS.display());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            result.setData(null);
+            result.setState(FlightCenterStatus.ERROR.value());
+            result.setMessage(FlightCenterStatus.ERROR.display());
+        }
+        return JSON.toJSONString(result);
     }
 
     /**
@@ -131,7 +176,7 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
-        return "{\"state\":1}";
+        return "{\"state\":1,\"message\":\"成功\"}";
     }
 
     public String testCustom2(JSONObject request) {
@@ -139,12 +184,7 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
-        return "{\"state\":2}";
-    }
-
-    public static void main(String[] args) {
-        String s = "PEKCAN\tCZ3162\t94.9\t北京首都\t广州白云\tT2\tT2\t2015-07-17 14:30:00\t2015-07-17 17:45:00\t0001-01-01\t0001-01-01\t计划";
-        String[] split = s.split("\t");
+        return "{\"state\":2,\"message\":\"失败\"}";
     }
 
 }

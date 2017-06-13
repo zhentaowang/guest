@@ -79,36 +79,44 @@ public class FlightService {
             flightPo.setFlightNo(flightNo);
             flightPo.setDepDate(DateUtils.stringToDate(depDate,"yyyy-MM-dd"));
 
+//            boolean isExist = JedisUtils.existsObject(JedisUtils.KEY_PREFIX + flightNo + depDate);
+//            if (isExist) {
+//                List<Object> objectList = (List<Object>) JedisUtils.getObject(JedisUtils.KEY_PREFIX + flightNo + depDate);
+//
+//                List<FlightPo> result = new ArrayList<>();
+//                for (Object o : objectList) {
+//                    result.add((FlightPo) o);
+//                }
+//                re.setMessage(FlightCenterStatus.SUCCESS.display());
+//                re.setState(FlightCenterStatus.SUCCESS.value());
+//                re.setData(result);
+//            }else {
+//
+//            }
             if (StringUtils.isBlank(depAirportCode) && StringUtils.isBlank(arrAirportCode)) {
-                boolean isExist = JedisUtils.existsObject(JedisUtils.KEY_PREFIX + flightNo + depDate);
+                // 从本地查询
+                List<FlightPo> result = flightPoMapper.selectByDateAndNo(flightPo);
 
-                if (isExist) {
-                    List<Object> objectList = (List<Object>) JedisUtils.getObject(JedisUtils.KEY_PREFIX + flightNo + depDate);
-                } else {
-                    // 从本地查询
-                    List<FlightPo> result = flightPoMapper.selectByDateAndNo(flightPo);
-
-                    List<Object> v = new ArrayList<>();
-                    // 本地不存在
-                    if (result == null || result.size() == 0) {
-                        re = getFlightPosByIbeSource(DateUtils.stringToDate(depDate, "yyyy-MM-dd"), flightNo);
-                        // 查询到结果 插入航班中心
-                        if (re.getData() != null) {
-                            for (FlightPo po : re.getData()) {
-                                flightPoMapper.insert(po);
-                                v.add(po);
-                            }
-                        }
-                    } else {
-                        re.setMessage(FlightCenterStatus.SUCCESS.display());
-                        re.setState(FlightCenterStatus.SUCCESS.value());
-                        re.setData(result);
-                        for (FlightPo po : result) {
-                            v.add(po);
+//                List<Object> v = new ArrayList<>();
+                // 本地不存在
+                if (result == null || result.size() == 0) {
+                    re = getFlightPosByIbeSource(DateUtils.stringToDate(depDate, "yyyy-MM-dd"), flightNo);
+                    // 查询到结果 插入航班中心
+                    if (re.getData() != null) {
+                        for (FlightPo po : re.getData()) {
+                            flightPoMapper.insert(po);
+//                            v.add(po);
                         }
                     }
-                    JedisUtils.setObject(JedisUtils.KEY_PREFIX + flightNo + depDate, v, 600);
+                } else {
+                    re.setMessage(FlightCenterStatus.SUCCESS.display());
+                    re.setState(FlightCenterStatus.SUCCESS.value());
+                    re.setData(result);
+//                    for (FlightPo po : result) {
+//                        v.add(po);
+//                    }
                 }
+//                JedisUtils.setObject(JedisUtils.KEY_PREFIX + flightNo + depDate, v, 8 * JedisUtils.EXPIRE_HOUR);
             } else {
                 depAirportCode = depAirportCode.trim().toUpperCase();
                 arrAirportCode = arrAirportCode.trim().toUpperCase();
