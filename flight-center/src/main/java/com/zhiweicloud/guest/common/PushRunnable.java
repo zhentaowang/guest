@@ -26,7 +26,7 @@ public class PushRunnable implements Runnable {
 
     private static final Log log = LogFactory.getLog(PushRunnable.class);
 
-    private WebHook webHook = DingDingUtils.createWebHook("https://oapi.dingtalk.com/robot/send?access_token=0a3d9186cd2e2eed6c17deaa2d87abc0b99f3b686d059d9ad12fae9df77563c0");
+    private WebHook webHook = DingDingUtils.createWebHook("https://oapi.dingtalk.com/robot/send?access_token=cd7a8daa10868b623ffb871402cc43392a485660276e89adb33ae252d0d0003b");
 
     private String url;
 
@@ -78,7 +78,7 @@ public class PushRunnable implements Runnable {
                 isSuccess = true;
                 return;
             }
-            if(this.count >= 120){
+            if(this.count >= 96){
                 isSuccess = true;
                 return;
             }
