@@ -1,7 +1,10 @@
 package com.zhiweicloud.guest.common;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.zhiweicloud.guest.common.util.DingDingUtils;
 import com.zhiweicloud.guest.common.util.HttpClientDemo;
+import com.zhiweicloud.guest.common.util.WebHook;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
 import com.zhiweicloud.guest.po.FlightPushPo;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class PushRunnable implements Runnable {
 
     private static final Log log = LogFactory.getLog(PushRunnable.class);
+
+    private WebHook webHook = DingDingUtils.createWebHook("https://oapi.dingtalk.com/robot/send?access_token=0a3d9186cd2e2eed6c17deaa2d87abc0b99f3b686d059d9ad12fae9df77563c0");
 
     private String url;
 
@@ -55,8 +60,9 @@ public class PushRunnable implements Runnable {
             log.info("【 ************ " + Thread.currentThread().getName() + " 线程被调用 ************ 】");
         }
         boolean isSuccess = false;
+        String result = null;
         try {
-            String result = HttpClientDemo.HttpPostForWebService(url, params,"json");
+            result = HttpClientDemo.HttpPostForWebService(url, params,"json");
             this.count ++;
             if (log.isInfoEnabled()) {
                 log.info("【 ************ http请求的结果："+ result +" ************ 】");
@@ -64,11 +70,11 @@ public class PushRunnable implements Runnable {
             // 都需要记录
             FlightPushPo flightPushPo = new FlightPushPo();
             flightPushPo.setCustomerId(this.customerId);
-            if (StringUtils.isBlank(result)) {
+            if (StringUtils.isNoneBlank(result)) {
                 flightPushPo.setInvokeResult(result);
             }
             flightPushPoMapper.insert(flightPushPo);
-            if (StringUtils.isNoneBlank(result) && JSON.parseObject(result).getInteger("state") == 1) {
+            if (StringUtils.isNoneBlank(result) && JSON.parseObject(result).getInteger("state") == 200) {
                 isSuccess = true;
                 return;
             }
@@ -80,6 +86,12 @@ public class PushRunnable implements Runnable {
             e.printStackTrace();
         }finally {
             if (!isSuccess) {
+                JSONObject object = new JSONObject();
+                object.put("请求的URL", url);
+                object.put("返回的结果", result);
+                webHook.setContent(object.toJSONString());
+                webHook.setAtMobiles(new String[]{"18768171164"});
+                DingDingUtils.send(webHook);
                 executor.schedule(this, 5, TimeUnit.MINUTES);
             }
         }

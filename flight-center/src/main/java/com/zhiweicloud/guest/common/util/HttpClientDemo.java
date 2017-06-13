@@ -16,6 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,24 @@ public class HttpClientDemo {
         }else {
             post.setEntity(new UrlEncodedFormEntity(getNameValuePairs(params), Consts.UTF_8));
         }
+        return getWebServiceResult(post);
+    }
+
+    public static String HttpPostForWebService(String url,String context) throws Exception {
+        HttpPost post = new HttpPost(url);
+        StringEntity entity = new StringEntity(context, "UTF-8");
+        entity.setContentEncoding("UTF-8");
+        entity.setContentType("application/json");
+        post.setEntity(entity);
+        return getWebServiceResult(post);
+    }
+
+    public static String HttpPostForWebService(URI uri, String context) throws Exception {
+        HttpPost post = new HttpPost(uri);
+        StringEntity entity = new StringEntity(context, "UTF-8");
+        entity.setContentEncoding("UTF-8");
+        entity.setContentType("application/json");
+        post.setEntity(entity);
         return getWebServiceResult(post);
     }
 
