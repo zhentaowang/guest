@@ -14,13 +14,13 @@
     <aop:aspectj-autoproxy/>
 
     <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
-    <bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl">
+    <!--<bean id="airPortServiceImpl" class="com.wyun.thrift.server.processor.WyunServiceImpl">
     </bean>
 
     <beans profile="thriftLocal">
         <bean id="server" class="com.wyun.thrift.server.server.Server">
-            <!-- setServer_port -->
-            <!--<property name="serverPort" value="8080"></property>-->
+            &lt;!&ndash; setServer_port &ndash;&gt;
+            &lt;!&ndash;<property name="serverPort" value="8080"></property>&ndash;&gt;
             <property name="serverPort" value="8901"></property>
             <property name="processorName" value="airPortServiceImpl"></property>
         </bean>
@@ -28,11 +28,11 @@
 
     <beans profile="thriftProduction">
         <bean id="server" class="com.wyun.thrift.server.server.Server">
-            <!-- setServer_port -->
+            &lt;!&ndash; setServer_port &ndash;&gt;
             <property name="serverPort" value="8080"></property>
-            <!--<property name="serverPort" value="8901"></property>-->
+            &lt;!&ndash;<property name="serverPort" value="8901"></property>&ndash;&gt;
             <property name="processorName" value="airPortServiceImpl"></property>
         </bean>
-    </beans>
+    </beans>-->
 
 </beans>
