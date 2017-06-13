@@ -43,6 +43,9 @@ public class FlightPushService {
     @Autowired
     private FlightPoMapper flightPoMapper;
 
+    /**
+     * 创建一个线程池
+     */
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(20);
 
     /**
@@ -72,7 +75,7 @@ public class FlightPushService {
                 executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -131,7 +134,7 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
-        return "{\"state\":1}";
+        return "{\"state\":1;\"message\":\"成功\"}";
     }
 
     public String testCustom2(JSONObject request) {
@@ -139,12 +142,7 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
-        return "{\"state\":2}";
-    }
-
-    public static void main(String[] args) {
-        String s = "PEKCAN\tCZ3162\t94.9\t北京首都\t广州白云\tT2\tT2\t2015-07-17 14:30:00\t2015-07-17 17:45:00\t0001-01-01\t0001-01-01\t计划";
-        String[] split = s.split("\t");
+        return "{\"state\":2;\"message\":\"失败\"}";
     }
 
 }

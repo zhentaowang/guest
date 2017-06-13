@@ -31,8 +31,8 @@ public class DepDateAspect{
     @Around(value = "com.zhiweicloud.guest.aspect.pointCut.PointCutFlightService.pointcutTrafficService()")
     public Object aroundDepDate(ProceedingJoinPoint joinPoint) {
         if (log.isInfoEnabled()) {
-            log.info("【 ************ 进入了切面："+ this.getClass().getSimpleName() +" ************ 】");
-            log.info("【 ************ 开始校验 - 日期参数 ************ 】");
+            log.info("【 ************ aspect name："+ this.getClass().getSimpleName() +" ************ 】");
+            log.info("【 ************ begin verify - depDate ************ 】");
         }
 
         FlightCenterResult flightCenterResult = new FlightCenterResult();
@@ -40,7 +40,7 @@ public class DepDateAspect{
         String depDate = object.getString("depDate");
 
         if (log.isInfoEnabled()) {
-            log.info("【 ************ 参数 - 日期："+ depDate +" ************ 】");
+            log.info("【 ************ params - depDate："+ depDate +" ************ 】");
         }
 
         boolean isSuccess = false;
@@ -67,8 +67,8 @@ public class DepDateAspect{
             }
 
             if (log.isInfoEnabled()) {
-                log.info("【 ************ 结束校验 - 日期参数 ************ 】");
-                log.info("【 ************ 校验结果：" + isSuccess + " ************ 】");
+                log.info("【 ************ end verify - depDate ************ 】");
+                log.info("【 ************ verify result：" + isSuccess + " ************ 】");
             }
 
             if (isSuccess) {

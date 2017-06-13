@@ -114,31 +114,23 @@ public class JedisUtils {
      */
     public static String set(String key, String value, int cacheSeconds) {
         String result = null;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             result = jedis.set(KEY_PREFIX + key, value);
             if (cacheSeconds >= 0) {
                 jedis.expire(KEY_PREFIX + key, cacheSeconds);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            returnResource(jedis);
         }
         return result;
     }
 
     public static String set(String key, String value) {
         String result = null;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             result = jedis.set(KEY_PREFIX + key, value);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            returnResource(jedis);
         }
         return result;
     }
@@ -151,17 +143,13 @@ public class JedisUtils {
      */
     public static String get(String key) {
         String value = null;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             if (jedis.exists(KEY_PREFIX + key)) {
                 value = jedis.get(KEY_PREFIX + key);
                 value = StringUtils.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            returnResource(jedis);
         }
         return value;
     }
@@ -176,17 +164,13 @@ public class JedisUtils {
      */
     public static String setObject(String key, Object value, int cacheSeconds) {
         String result = null;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             result = jedis.set(getBytesKey(KEY_PREFIX + key), toBytes(value));
             if (cacheSeconds >= 0) {
                 jedis.expire(KEY_PREFIX + key, cacheSeconds);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            returnResource(jedis);
         }
         return result;
     }
@@ -199,16 +183,12 @@ public class JedisUtils {
      */
     public static Object getObject(String key) {
         Object value = null;
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
+        try (Jedis jedis = getJedis()){
             if (jedis.exists(getBytesKey(KEY_PREFIX + key))) {
                 value = toObject(jedis.get(getBytesKey(KEY_PREFIX + key)));
             }
         } catch (Exception e) {
-
-        } finally {
-            returnResource(jedis);
+            e.printStackTrace();
         }
         return value;
     }

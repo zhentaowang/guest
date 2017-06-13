@@ -46,9 +46,10 @@ public class BusinessService implements IBusinessService {
             operation = request.getString("operation");
         }
         if (log.isDebugEnabled()) {
-            log.debug("request method name: " + operation);
+            log.debug("【 ************ request method params: " + request.toJSONString() +" ************ 】");
         }
         switch (operation) {
+            // for outer net
             case "queryFlightInfo":
                 success = flightService.queryFlightInfo(request);
                 break;
@@ -67,12 +68,14 @@ public class BusinessService implements IBusinessService {
             case "customFlight":
                 success = flightService.customFlight(request);
                 break;
+            // for test
             case "customer1":
                 success = flightPushService.testCustom1(request);
                 break;
             case "customer2":
                 success = flightPushService.testCustom2(request);
                 break;
+            // for inner net
             case "queryCustomerDropDownList":
                 success = customerService.queryCustomerDropDownList(request);
                 break;
@@ -97,10 +100,10 @@ public class BusinessService implements IBusinessService {
             case "countForSourceApi":
                 success = sourceService.countForSourceApi(request);
                 break;
-            case "queryFlightCenterApisPage":
+            case "queryPageFlightCenterApis":
                 success = sourceService.queryFlightCenterApisPage(request);
                 break;
-            case "querySourceApisPage":
+            case "queryPageSourceApis":
                 success = sourceService.querySourceApisPage(request);
                 break;
             default:

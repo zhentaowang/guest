@@ -26,7 +26,7 @@ public class JuheUtils {
 
     public static String queryTrainInfoByStation(String start,String end,String date) throws Exception {
         if (log.isDebugEnabled()) {
-            log.debug("【  ************ JUHE 方法名：根据出发/到达车站和日期查找火车信息（queryTrainInfoByStation） 参数名：start_" + start + " end_" + end + " date_ " + date + " ************ 】");
+            log.debug("【  ************ JUHE Method Name：根据出发/到达车站和日期查找火车信息（queryTrainInfoByStation） 参数名：start_" + start + " end_" + end + " date_ " + date + " ************ 】");
         }
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("key", JUHE_KEY));
@@ -39,7 +39,7 @@ public class JuheUtils {
 
     public static String queryTrainInfoByName(String name) throws Exception {
         if (log.isInfoEnabled()) {
-            log.info("【 ************ JUHE 方法名：根据班次名查找火车信息（queryTrainInfoByName 参数名：name_" + name + " ************ 】");
+            log.info("【 ************ JUHE Method Name：根据班次名查找火车信息（queryTrainInfoByName 参数名：name_" + name + " ************ 】");
         }
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("key", JUHE_KEY));

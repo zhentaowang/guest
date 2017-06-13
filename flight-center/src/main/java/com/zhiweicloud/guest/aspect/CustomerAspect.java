@@ -48,8 +48,8 @@ public class CustomerAspect{
     @Around(value = "com.zhiweicloud.guest.aspect.pointCut.PointCutFlightService.pointcutCommon()")
     public Object aroundCustomer(ProceedingJoinPoint joinPoint) {
         if (log.isInfoEnabled()) {
-            log.info("【 ************ 进入了切面："+ this.getClass().getSimpleName() +" ************ 】");
-            log.info("【 ************ 开始校验 - 客户 ************ 】");
+            log.info("【 ************ aspect name："+ this.getClass().getSimpleName() +" ************ 】");
+            log.info("【 ************ begin verify - customer ************ 】");
         }
 
         FlightCenterResult flightCenterResult = new FlightCenterResult();
@@ -58,7 +58,7 @@ public class CustomerAspect{
         CustomerPo customerPo = customerPoMapper.selectBySysCode(object.getString("sysCode"));
 
         if (log.isInfoEnabled()) {
-            log.info("【 ************ 客户："+ customerPo.toString() +" ************ 】");
+            log.info("【 ************ customer："+ customerPo.toString() +" ************ 】");
         }
 
         boolean isSuccess = false;
@@ -73,7 +73,7 @@ public class CustomerAspect{
             }else {
                 if (customerPo.getType() != 0) {
                     Map<String, Object> params = new HashedMap();
-                    // 剔除不需要的参数
+                    // filter params TODO when you read this you may need to add some field for business
                     for (Map.Entry<String, Object> entry : object.entrySet()) {
                         if (!"sign".equals(entry.getKey()) && !"operation".equals(entry.getKey()) && !"access_token".equals(entry.getKey())) {
                             params.put(entry.getKey(), entry.getValue());
@@ -83,8 +83,8 @@ public class CustomerAspect{
                     String sign = object.getString("sign");
 
                     if (log.isInfoEnabled()) {
-                        log.info("【 ************ 参数 - 签名："+ sign +" ************ 】");
-                        log.info("【 ************ 开始校验 - 签名参数 ************ 】");
+                        log.info("【 ************ params - sign："+ sign +" ************ 】");
+                        log.info("【 ************ begin verify - sign ************ 】");
                     }
 
                     if (StringUtils.isBlank(sign)) {
@@ -111,7 +111,7 @@ public class CustomerAspect{
                     }
 
                     if (log.isInfoEnabled()) {
-                        log.info("【 ************ 结束校验 - 签名参数 ************ 】");
+                        log.info("【 ************ end verify - sign ************ 】");
                     }
 
                 }else {
@@ -119,8 +119,8 @@ public class CustomerAspect{
                 }
 
                 if (log.isInfoEnabled()) {
-                    log.info("【 ************ 结束校验 - 客户 ************ 】");
-                    log.info("【 ************ 校验结果：" + isSuccess + " ************ 】");
+                    log.info("【 ************ end verify - customer ************ 】");
+                    log.info("【 ************ verify result：" + isSuccess + " ************ 】");
                 }
 
             }
