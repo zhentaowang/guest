@@ -12,9 +12,17 @@ import com.zhiweicloud.guest.common.util.ApplicationContextUtils;
 public class LocalMain {
 
     public static void main(String[] args) throws InterruptedException {
-        String[] strings = {"local", "thriftLocal"};
-//        ApplicationContextUtils.createContext("local");
-        ApplicationContextUtils.createContext(strings);
+        System.out.println(System.getenv("LOCAL_ENV"));
+//        for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
+//            System.out.println(entry.getKey() + "   " + entry.getValue());
+//            System.out.println();
+//        }
+//
+//        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+//            System.out.println(entry.getKey() + "   " + entry.getValue());
+//            System.out.println();
+//        }
+        ApplicationContextUtils.createContext("local",8901);
     }
 
 }
