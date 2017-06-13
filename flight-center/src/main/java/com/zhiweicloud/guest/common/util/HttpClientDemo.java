@@ -84,15 +84,16 @@ public class HttpClientDemo {
 
     private static String getWebServiceResult(HttpRequestBase httpRequestBase) {
         String result = "";
-        try(CloseableHttpResponse response = httpClient.execute(httpRequestBase); InputStream inputStream = response.getEntity().getContent()) {
-            ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+        try (CloseableHttpResponse response = httpClient.execute(httpRequestBase);
+             InputStream inputStream = response.getEntity().getContent();
+             ByteArrayOutputStream outSteam = new ByteArrayOutputStream()) {
             byte[] bytes = new byte[2048];
             int len;
-            while ((len = inputStream.read(bytes))!=-1){
+            while ((len = inputStream.read(bytes)) != -1) {
                 outSteam.write(bytes, 0, len);
             }
             result = outSteam.toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
