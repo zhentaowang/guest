@@ -134,7 +134,7 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
-        return "{\"state\":1;\"message\":\"成功\"}";
+        return "{\"state\":1,\"message\":\"成功\"}";
     }
 
     public String testCustom2(JSONObject request) {
@@ -142,7 +142,7 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 推送过来的参数: data_" + data + " 】");
         }
-        return "{\"state\":2;\"message\":\"失败\"}";
+        return "{\"state\":2,\"message\":\"失败\"}";
     }
 
 }
