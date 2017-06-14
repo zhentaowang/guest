@@ -4,10 +4,7 @@ import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.po.FlightPo;
 import com.zhiweicloud.guest.pojo.PassengerTicketPojo;
-import com.zhiweicloud.guest.source.ibe.model.FlightStatus;
-import com.zhiweicloud.guest.source.ibe.model.IbeDetrTkt;
-import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
-import com.zhiweicloud.guest.source.ibe.model.RootResult;
+import com.zhiweicloud.guest.source.ibe.model.*;
 import com.zhiweicloud.guest.source.ibe.util.IbeUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -54,8 +51,13 @@ public class IbeService {
         return result;
     }
 
-    public void executeCustomFlight(String flightNo, Date depDate) throws Exception {
-        IbeUtils.customFlight(flightNo, DateUtils.dateToString(depDate,"yyyy-MM-dd"));
+    public FlightCenterResult executeCustomFlight(String flightNo, Date depDate) throws Exception {
+        IbeMessage ibeMessage = IbeUtils.customFlight(flightNo, DateUtils.dateToString(depDate, "yyyy-MM-dd"));
+        FlightCenterResult<PassengerTicketPojo> result = new FlightCenterResult();
+        result.setState(Integer.valueOf(ibeMessage.getErrorRes().getErrCode()));
+        result.setMessage(ibeMessage.getErrorRes().getErrContent());
+        result.setData(null);
+        return result;
     }
 
     /**

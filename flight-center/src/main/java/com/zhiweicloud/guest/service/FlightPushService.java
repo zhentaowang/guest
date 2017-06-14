@@ -7,6 +7,9 @@ import com.zhiweicloud.guest.common.PushRunnable;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.model.FlightCenterStatus;
 import com.zhiweicloud.guest.common.util.DateUtils;
+import com.zhiweicloud.guest.common.util.DingDingUtils;
+import com.zhiweicloud.guest.common.util.WebHook;
+import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 import com.zhiweicloud.guest.mapper.CustomFlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
@@ -59,7 +62,6 @@ public class FlightPushService {
      * 用来触发航班信息的更新
      * @param request 参数
      */
-    @Transient
     public void flightPush(JSONObject request) {
         // 这个名字配置在go
         String notify = request.getString("notify");

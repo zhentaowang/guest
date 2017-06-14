@@ -31,6 +31,9 @@ public enum FlightBaseColumnInfo {
     CHECK_IN_COUNTER("checkInCounter","值机柜台"),
     CAROUSEL("carousel","行李盘"),
     STOP_FLAG("stopFlag","是否经停"),
+    SHARE_FLAG("shareFlag","是否共享"),
+    SHARE_FLIGHT_NO("shareFlightNo","共享航班号"),
+    FILL_FLIGHT_NO("fillFlightNo","补班 航班号 (取消 的航班才有此字段)"),
 
     TRANSFER_AIRPORT("TransferAirport","中转机场"),
     TRANSFER_AIRPORT_EN_NAME("TransferAirportCodeEnName","中转机场英文名"),
@@ -47,7 +50,6 @@ public enum FlightBaseColumnInfo {
     ARR_SCHEDULED_DATE("arrScheduledDate","计划到达时间"),
     ARR_ESTIMATED_DATE("arrEstimatedDate","预计到达时间"),
     ARR_ACTUAL_DATE("arrActualDate","实际到达时间"),
-
 
     AIRLINE_CODE("airlineCode","航空公司编号"),
     AIRLINE_EN_NAME("airlineEnName","航空公司英语名"),

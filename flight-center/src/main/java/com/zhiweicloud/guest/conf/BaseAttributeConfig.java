@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration()
 @Import({SpringConfiguration.class})
-public class ThirdPartyConfig {
+public class BaseAttributeConfig {
 
     public static String customFlightUrl;
 
@@ -20,6 +20,11 @@ public class ThirdPartyConfig {
     public static String juheKey;
 
     public static String juheHost;
+
+    /**
+     * 蒙奇·D·风数
+     */
+    public static String webhookTokenMonteDFengshu;
 
     public String getCustomFlightUrl() {
         return customFlightUrl;
@@ -54,7 +59,7 @@ public class ThirdPartyConfig {
 
     @Value("${juhe.key}")
     public void setJuheKey(String juheKey) {
-        ThirdPartyConfig.juheKey = juheKey;
+        BaseAttributeConfig.juheKey = juheKey;
     }
 
     public String getJuheHost() {
@@ -63,6 +68,16 @@ public class ThirdPartyConfig {
 
     @Value("${juhe.host}")
     public void setJuheHost(String juheHost) {
-        ThirdPartyConfig.juheHost = juheHost;
+        BaseAttributeConfig.juheHost = juheHost;
     }
+
+    public String getWebhookTokenMonteDFengshu() {
+        return webhookTokenMonteDFengshu;
+    }
+
+    @Value("${webhook.token.monte.d.fengshu}")
+    public void setWebhookTokenMonteDFengshu(String webhookTokenMonteDFengshu) {
+        BaseAttributeConfig.webhookTokenMonteDFengshu = webhookTokenMonteDFengshu;
+    }
+
 }

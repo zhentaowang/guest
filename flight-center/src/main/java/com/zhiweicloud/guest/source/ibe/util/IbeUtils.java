@@ -1,8 +1,9 @@
 package com.zhiweicloud.guest.source.ibe.util;
 
 import com.zhiweicloud.guest.common.util.HttpClientUtils;
-import com.zhiweicloud.guest.conf.ThirdPartyConfig;
+import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
+import com.zhiweicloud.guest.source.ibe.model.IbeMessage;
 import com.zhiweicloud.guest.source.ibe.model.IbeQueryByDepAndArr;
 import com.zhiweicloud.guest.source.ibe.model.RootResult;
 import org.apache.commons.logging.Log;
@@ -26,11 +27,11 @@ public class IbeUtils {
 
     private static final Log log = LogFactory.getLog(IbeUtils.class);
 
-    private static final String IBE_HASHCODE = ThirdPartyConfig.ibeHashCode;
+    private static final String IBE_HASHCODE = BaseAttributeConfig.ibeHashCode;
 
-    private static final String IBE_HOST = ThirdPartyConfig.ibeHost;
+    private static final String IBE_HOST = BaseAttributeConfig.ibeHost;
 
-    private static final String FLIGHT_INFO_UPDATE_FLIGHT = ThirdPartyConfig.customFlightUrl;
+    private static final String FLIGHT_INFO_UPDATE_FLIGHT = BaseAttributeConfig.customFlightUrl;
 
     /**
      * 定制航班
@@ -39,7 +40,7 @@ public class IbeUtils {
      * @return
      * @throws Exception
      */
-    public static String customFlight(String flightNo, String flightDate) throws Exception {
+    public static IbeMessage customFlight(String flightNo, String flightDate) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("【 ************ IBE 方法名：定制航班（customFlight） 参数名：航班号_" + flightNo + "；航班日期_" + flightDate + " ************ 】");
         }
@@ -48,7 +49,10 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("flightNo", flightNo));
         nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
         nameValuePairs.add(new BasicNameValuePair("postURL", FLIGHT_INFO_UPDATE_FLIGHT));
-        return HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx?op=FlightPush", nameValuePairs);
+        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx?op=FlightPush", nameValuePairs);result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
+        result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        return JAXB.unmarshal(new StringReader(result), IbeMessage.class);
     }
 
     /**

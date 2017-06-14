@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.util.DingDingUtils;
 import com.zhiweicloud.guest.common.util.HttpClientDemo;
 import com.zhiweicloud.guest.common.util.WebHook;
+import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
 import com.zhiweicloud.guest.po.FlightPushPo;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +27,7 @@ public class PushRunnable implements Runnable {
 
     private static final Log log = LogFactory.getLog(PushRunnable.class);
 
-    private WebHook webHook = DingDingUtils.createWebHook("https://oapi.dingtalk.com/robot/send?access_token=cd7a8daa10868b623ffb871402cc43392a485660276e89adb33ae252d0d0003b");
+    private WebHook webHook = DingDingUtils.createWebHook(BaseAttributeConfig.webhookTokenMonteDFengshu);
 
     private String url;
 
