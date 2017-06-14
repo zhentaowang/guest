@@ -91,8 +91,12 @@ public class FlightPushService {
                 log.error(e.getMessage());
             }
         }
-        if(re.contains("sign")){
-            
+        if(re.contains("Notify") && re.contains("sign")){
+            // 这个名字配置在go
+            String notify = request.getString("Notify");
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 推送过来的参数 Notify: " + notify + " ************ 】");
+            }
         }
     }
 
