@@ -15,12 +15,12 @@ public class ApplicationContextUtils {
     public static void createContext(String[] profileName,int port) throws InterruptedException {
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.setValidating(false);
-        context.getEnvironment().setActiveProfiles("production");
+        context.getEnvironment().setActiveProfiles(profileName);
         context.load("classpath:spring.xml","classpath:mybatis.xml");
         context.refresh();
         Server server=new Server(port);
         BusinessServiceMap businessServiceMap = new BusinessServiceMap();
-        businessServiceMap.registerService("fundService", SpringBeanUtil.getBean("fundService"));
+        businessServiceMap.registerService("businessService", SpringBeanUtil.getBean("businessService"));
         WyunServiceImpl wyunServiceImpl = new WyunServiceImpl(businessServiceMap);
         server.setWyunServiceImpl(wyunServiceImpl);
         server.startServer();

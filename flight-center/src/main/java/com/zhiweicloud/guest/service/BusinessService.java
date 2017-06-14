@@ -42,6 +42,9 @@ public class BusinessService implements IBusinessService {
     public JSONObject handle(String operation,JSONObject request) {
         String success = null;
         if (log.isDebugEnabled()) {
+            log.debug("【 ************ request method name: " + operation +" ************ 】");
+        }
+        if (log.isDebugEnabled()) {
             log.debug("【 ************ request method params: " + request.toJSONString() +" ************ 】");
         }
         switch (operation) {
