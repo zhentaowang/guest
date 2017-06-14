@@ -63,27 +63,36 @@ public class FlightPushService {
      * @param request 参数
      */
     public void flightPush(JSONObject request) {
-        // 这个名字配置在go
-        String notify = request.getString("notify");
+        String re = request.toJSONString();
         if (log.isInfoEnabled()) {
-            log.info("【 推送过来的参数 notify: " + notify + " 】");
+            log.info("【 ************ request: " + re + " ************ 】");
         }
-        if (StringUtils.isBlank(notify)) {
-            return;
-        }
-        try {
-            // parse
-            Set<Long> flightIds = parseNotify(notify);
-//            List<CustomFlightPojo> customFlightPojos = customFlightPoMapper.selectsCustomFlightPojo(flightIds);
-            List<CustomFlightPojo2> customFlightPojos2 = customFlightPoMapper.selectsCustomFlightPojo2(new ArrayList<>(flightIds));
-            for (CustomFlightPojo2 customFlightPojo2 : customFlightPojos2) {
-                String customUrl = customFlightPojo2.getCustomUrl();
-                Map<String, String> params = new HashedMap();
-                params.put("data", JSON.toJSONString(customFlightPojo2.getFlightPos()));
-                executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
+        if (re.contains("Notify")) {
+            // 这个名字配置在go
+            String notify = request.getString("Notify");
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ 推送过来的参数 Notify: " + notify + " ************ 】");
             }
-        } catch (Exception e) {
-            log.error(e.getMessage());
+            if (StringUtils.isBlank(notify)) {
+                return;
+            }
+            try {
+                // parse
+                Set<Long> flightIds = parseNotify(notify);
+//            List<CustomFlightPojo> customFlightPojos = customFlightPoMapper.selectsCustomFlightPojo(flightIds);
+                List<CustomFlightPojo2> customFlightPojos2 = customFlightPoMapper.selectsCustomFlightPojo2(new ArrayList<>(flightIds));
+                for (CustomFlightPojo2 customFlightPojo2 : customFlightPojos2) {
+                    String customUrl = customFlightPojo2.getCustomUrl();
+                    Map<String, String> params = new HashedMap();
+                    params.put("data", JSON.toJSONString(customFlightPojo2.getFlightPos()));
+                    executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+        if(re.contains("sign")){
+            
         }
     }
 
