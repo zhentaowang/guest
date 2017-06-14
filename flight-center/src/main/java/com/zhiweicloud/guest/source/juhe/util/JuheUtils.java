@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.source.juhe.util;
 
 import com.zhiweicloud.guest.common.util.HttpClientUtils;
+import com.zhiweicloud.guest.conf.ThirdPartyConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
@@ -20,9 +21,9 @@ public class JuheUtils {
 
     private static final Log log = LogFactory.getLog(JuheUtils.class);
 
-    private static final String JUHE_KEY = "27872a4475ef203c724b8b69ee31bb60";
+    private static final String JUHE_KEY = ThirdPartyConfig.juheKey;
 
-    private static final String JUHE_HOST = "apis.juhe.cn";
+    private static final String JUHE_HOST = ThirdPartyConfig.juheHost;
 
     public static String queryTrainInfoByStation(String start,String end,String date) throws Exception {
         if (log.isDebugEnabled()) {

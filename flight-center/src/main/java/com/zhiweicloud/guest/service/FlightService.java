@@ -298,7 +298,7 @@ public class FlightService {
                 // 本地存在 未定制 -- 定制
                 if (localFlight.getIsCustom() != 1) {
                     flightPoMapper.updateIsCustom(flightPo);
-//                    ibeService.executeCustomFlight(flightNo, DateUtils.stringToDate(depDate,"yyyy-MM-dd"));
+                    ibeService.executeCustomFlight(flightNo, DateUtils.stringToDate(depDate,"yyyy-MM-dd"));
                     for (FlightPo flight : flightPos) {
                         flightPoMapper.updateIsCustom(flight);
                     }
@@ -403,7 +403,7 @@ public class FlightService {
                 customFlightPo.setCustomerId(customerPo.getCustomerId());
                 customFlightPo.setFlightId(flightPo.getFlightId());
                 customFlightPoMapper.insert(customFlightPo);
-//                ibeService.executeCustomFlight(flightNo, depDate);
+                ibeService.executeCustomFlight(flightNo, depDate);
                 result.setState(FlightCenterStatus.SUCCESS.value());
                 result.setMessage(FlightCenterStatus.SUCCESS.display());
                 result.setData(flightPo);

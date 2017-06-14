@@ -1,6 +1,7 @@
 package com.zhiweicloud.guest.source.ibe.util;
 
 import com.zhiweicloud.guest.common.util.HttpClientUtils;
+import com.zhiweicloud.guest.conf.ThirdPartyConfig;
 import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
 import com.zhiweicloud.guest.source.ibe.model.IbeQueryByDepAndArr;
 import com.zhiweicloud.guest.source.ibe.model.RootResult;
@@ -25,11 +26,11 @@ public class IbeUtils {
 
     private static final Log log = LogFactory.getLog(IbeUtils.class);
 
-    private static final String IBE_HASHCODE = "a9f885e73e97489ba764b832b7a734e5";
+    private static final String IBE_HASHCODE = ThirdPartyConfig.ibeHashCode;
 
-    private static final String IBE_HOST = "ws.ibeservice.com";
+    private static final String IBE_HOST = ThirdPartyConfig.ibeHost;
 
-    private static final String FLIGHT_INFO_UPDATE_FLIGHT = "http://localhost:8081/flight-info/updateFlight";
+    private static final String FLIGHT_INFO_UPDATE_FLIGHT = ThirdPartyConfig.customFlightUrl;
 
     /**
      * 定制航班

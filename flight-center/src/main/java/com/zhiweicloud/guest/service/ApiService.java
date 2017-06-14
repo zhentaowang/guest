@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.Pagination;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.model.FlightCenterStatus;
+import com.zhiweicloud.guest.conf.ThirdPartyConfig;
 import com.zhiweicloud.guest.mapper.FlightCenterApiPoMapper;
 import com.zhiweicloud.guest.mapper.SourceApiPoMapper;
 import com.zhiweicloud.guest.po.SourceApiPo;
