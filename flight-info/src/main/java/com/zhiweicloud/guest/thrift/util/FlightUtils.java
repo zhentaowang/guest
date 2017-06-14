@@ -177,17 +177,37 @@ public class FlightUtils {
      * @return
      */
     public String updateFlight(JSONObject request) {
+        String re = request.toJSONString();
+        if (log.isInfoEnabled()) {
+            log.info("【 ************ request: " + re + " ************ 】");
+        }
+        String notify = request.getString("Notify");
+        if (log.isInfoEnabled()) {
+            log.info("【 ************ 推送过来的参数 Notify: " + notify + " ************ 】");
+        }
         Map<String, Object> result = new HashMap<>();
         try {
             String airportCode = request.getString("client_id");
             Long userId = request.getLong("user_id");
-            String data = request.getString("data");
-            String sign = request.getString("sign");
+
+            if (notify == null || notify.length() <= 0) {
+                result.put("state", 1);
+                result.put("info", "gateway接受到的notify为空");
+                return JSON.toJSONString(result);
+            }
+
+            String sign = notify.substring(notify.indexOf("=", 5) + 1);
+            String data = notify.substring(notify.indexOf("{"), notify.indexOf("}") + 1);
             sign = URLDecoder.decode(sign, "UTF-8");
-            FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
-            log.info("sign: " + sign + "data: " + data);
-            String signPrivate = DragonSignature.rsaSign("data=" + data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
-            if (sign.equals(signPrivate)) {
+            String signRsa = DragonSignature.rsaSign("data=" + data, Dictionary.PRIVATE_KEY, Dictionary.ENCODING_UTF_8);
+
+            sign = URLDecoder.decode(sign, "UTF-8");
+            if (log.isInfoEnabled()) {
+                log.info("【 ************ sign: " + sign + " ************ 】");
+                log.info("【 ************ data: " + data + " ************ 】");
+            }
+            if (sign.equals(signRsa)) {
+                FlightMatch flightMatch = JSONObject.toJavaObject(JSON.parseObject(data), FlightMatch.class);
                 String flightState = "";
                 switch (flightMatch.getFlightState()) {
                     case "计划":

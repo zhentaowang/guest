@@ -2,22 +2,22 @@ package com.zhiweicloud.guest.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.dragon.sign.DragonSignature;
+import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.Pagination;
 import com.zhiweicloud.guest.common.PushRunnable;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.model.FlightCenterStatus;
 import com.zhiweicloud.guest.common.util.DateUtils;
-import com.zhiweicloud.guest.common.util.DingDingUtils;
-import com.zhiweicloud.guest.common.util.WebHook;
-import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 import com.zhiweicloud.guest.mapper.CustomFlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPoMapper;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
 import com.zhiweicloud.guest.po.FlightPo;
 import com.zhiweicloud.guest.pojo.ApiQueryPojo;
 import com.zhiweicloud.guest.pojo.CustomFlightPojo2;
-import com.zhiweicloud.guest.pojo.FlightCenterApiPojo;
+import com.zhiweicloud.guest.pojo.FlightDragonPojo;
 import com.zhiweicloud.guest.pojo.FlightPushPojo;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Transient;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -67,38 +67,30 @@ public class FlightPushService {
         if (log.isInfoEnabled()) {
             log.info("【 ************ request: " + re + " ************ 】");
         }
-        if (re.contains("Notify")) {
-            // 这个名字配置在go
-            String notify = request.getString("Notify");
-            if (log.isInfoEnabled()) {
-                log.info("【 ************ 推送过来的参数 Notify: " + notify + " ************ 】");
-            }
+        String notify = request.getString("Notify");
+        if (log.isInfoEnabled()) {
+            log.info("【 ************ 推送过来的参数 Notify: " + notify + " ************ 】");
+        }
+        try {
+            // TODO 暂时不兼容别的推送 后续有接口文档了再添加
             if (StringUtils.isBlank(notify)) {
                 return;
             }
-            try {
-                // parse
-                Set<Long> flightIds = parseNotify(notify);
+            // parse
+            Set<Long> flightIds = parseNotify(notify);
 //            List<CustomFlightPojo> customFlightPojos = customFlightPoMapper.selectsCustomFlightPojo(flightIds);
-                List<CustomFlightPojo2> customFlightPojos2 = customFlightPoMapper.selectsCustomFlightPojo2(new ArrayList<>(flightIds));
-                for (CustomFlightPojo2 customFlightPojo2 : customFlightPojos2) {
-                    String customUrl = customFlightPojo2.getCustomUrl();
-                    Map<String, String> params = new HashedMap();
-                    params.put("data", JSON.toJSONString(customFlightPojo2.getFlightPos()));
-                    executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage());
+            List<CustomFlightPojo2> customFlightPojos2 = customFlightPoMapper.selectsCustomFlightPojo2(new ArrayList<>(flightIds));
+            for (CustomFlightPojo2 customFlightPojo2 : customFlightPojos2) {
+                String customUrl = customFlightPojo2.getCustomUrl();
+                Map<String, String> params = new HashedMap();
+                params.put("data", JSON.toJSONString(customFlightPojo2.getFlightPos()));
+                executor.execute(new PushRunnable(customUrl, params, executor, flightPushPoMapper, customFlightPojo2.getCustomerId()));
             }
-        }
-        if(re.contains("Notify") && re.contains("sign")){
-            // 这个名字配置在go
-            String notify = request.getString("Notify");
-            if (log.isInfoEnabled()) {
-                log.info("【 ************ 推送过来的参数 Notify: " + notify + " ************ 】");
-            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
+
 
 
     /**
