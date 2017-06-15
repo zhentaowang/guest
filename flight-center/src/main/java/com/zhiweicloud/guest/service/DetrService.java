@@ -59,14 +59,14 @@ public class DetrService {
             if (passengerTicketPojo == null) {
                 re = ibeService.queryPassengerByTickNo(tickNo);
                 PassengerTicketPojo data = re.getData();
-                PassengerPo lPassengerPo = passengerPoMapper.selectByName(data.getPassengerName());
-                if (lPassengerPo == null) {
-                    PassengerPo passengerPo = new PassengerPo();
+                PassengerPo passengerPo = passengerPoMapper.selectByName(data.getPassengerName());
+                if (passengerPo == null) {
+                    passengerPo = new PassengerPo();
                     passengerPo.setPassengerName(data.getPassengerName());
                     passengerPo.setInfantBirthday(data.getInfantBirthday());
                     passengerPoMapper.insert(passengerPo);
                 }
-                data.setPassengerId(lPassengerPo.getPassengerId());
+                data.setPassengerId(passengerPo.getPassengerId());
                 passengerTicketPoMapper.insertPassengerTicketPojo(data);
             }else {
                 re.setState(FlightCenterStatus.SUCCESS.value());

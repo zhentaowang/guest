@@ -39,7 +39,7 @@ public class FlightPo implements Serializable {
     private String airlineCode;
 
     /**
-     * 航空公司英语名
+     * 航空公司英文名
      */
     private String airlineEnName;
 
