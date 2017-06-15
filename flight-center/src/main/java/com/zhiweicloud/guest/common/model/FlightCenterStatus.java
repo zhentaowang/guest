@@ -22,6 +22,8 @@ public enum  FlightCenterStatus {
 
     NON_TRAIN(202,"查询不到高铁信息记录"),
 
+    REPEAT_PUSH(302,"重复推送"),
+
     FLIGHT_CENTER_ERROR(303,"航班中心异常"),
 
     // 缺少参数

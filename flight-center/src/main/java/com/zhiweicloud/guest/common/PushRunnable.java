@@ -74,8 +74,11 @@ public class PushRunnable implements Runnable {
             if (StringUtils.isNoneBlank(result)) {
                 flightPushPo.setInvokeResult(result);
             }
+            Integer state = JSON.parseObject(result).getInteger("state");
             flightPushPoMapper.insert(flightPushPo);
-            if (StringUtils.isNoneBlank(result) && JSON.parseObject(result).getInteger("state") == 200) {
+            if (StringUtils.isNoneBlank(result) &&
+                state == 200 &&
+                state == 302) {
                 isSuccess = true;
                 return;
             }
