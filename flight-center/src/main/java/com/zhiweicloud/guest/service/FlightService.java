@@ -238,7 +238,7 @@ public class FlightService {
             }
 
             // 当日航班 无三字码 本地不存在
-            if (isTodayFlight && !isAirportCode && result == null) {
+            if (isTodayFlight && !isAirportCode && (result == null || result.size() == 0)) {
                 for (FlightPo po : re.getData()) {
                     flightPoMapper.insert(po);
                 }
@@ -248,7 +248,7 @@ public class FlightService {
             }
 
             // 当日航班 无三字码 本地存在
-            if (isTodayFlight && !isAirportCode && result != null) {
+            if (isTodayFlight && !isAirportCode && result != null && result.size() != 0) {
                 for (FlightPo po : re.getData()) {
                     flightPoMapper.updateByCondition(po);
                 }
@@ -258,6 +258,7 @@ public class FlightService {
                 re.setData(result);
             }
 
+            // 未来航班 有三字码 本地不存在
             if (!isTodayFlight && isAirportCode && flightLocal == null) {
                 re = ibeService.queryFlightNoByDate(flightNo, depDate);
                 if (re.getData() == null) {
@@ -283,6 +284,7 @@ public class FlightService {
                 }
             }
 
+            // 未来航班 有三字码 本地存在
             if (!isTodayFlight && isAirportCode && flightLocal != null) {
                 result = new ArrayList<>();
                 result.add(flightLocal);
@@ -291,7 +293,8 @@ public class FlightService {
                 re.setData(result);
             }
 
-            if (!isTodayFlight && !isAirportCode && result == null) {
+            // 未来航班 无三字码 本地不存在
+            if (!isTodayFlight && !isAirportCode &&( result == null || result.size()==0)){
                 re = ibeService.queryFlightNoByDate(flightNo, depDate);
                 if (re.getData() == null) {
                     re.setState(FlightCenterStatus.NONE_FLIGHT.value());
@@ -307,7 +310,8 @@ public class FlightService {
                 }
             }
 
-            if (!isTodayFlight && !isAirportCode && result != null) {
+            // 未来航班 无三字码 本地存在
+            if (!isTodayFlight && !isAirportCode && result != null && result.size() != 0) {
                 re.setMessage(FlightCenterStatus.SUCCESS.display());
                 re.setState(FlightCenterStatus.SUCCESS.value());
                 re.setData(result);
@@ -514,7 +518,7 @@ public class FlightService {
                 }
             } else {
                 result = flightPoMapper.selectByDateAndNo(flightPo);
-                if (result == null) { // 本地无数据
+                if (result == null || result.size() ==0) { // 本地无数据
                     re = getFlightPosByIbeSource(DateUtils.stringToDate(depDate, "yyyy-MM-dd"), flightNo);
                     if (re.getData() != null) {
                         for (FlightPo po : re.getData()) {
@@ -683,7 +687,7 @@ public class FlightService {
      * @param arrAirportCode
      * @return
      */
-      private FlightCenterResult<FlightPo> getFlightPoByIbeSource(Date depDate, String flightNo,String depAirportCode,String arrAirportCode,boolean isCustom) throws Exception {
+    private FlightCenterResult<FlightPo> getFlightPoByIbeSource(Date depDate, String flightNo,String depAirportCode,String arrAirportCode,boolean isCustom) throws Exception {
         FlightCenterResult<List<FlightPo>> re = getFlightPosByIbeSource(depDate, flightNo);
         FlightCenterResult<FlightPo> result = new FlightCenterResult<>();
         boolean isExist = false;
