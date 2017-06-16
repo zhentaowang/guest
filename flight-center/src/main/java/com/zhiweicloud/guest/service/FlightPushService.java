@@ -131,14 +131,17 @@ public class FlightPushService {
      */
     private Set<Long> parseNotify(String notify) throws ParseException {
         Set<Long> result = new HashSet<>();
-        String[] splitFlights = notify.split("\\^");
+        String[] splitFlights = notify.split("^");
         for (String s : splitFlights) {
+            if (log.isInfoEnabled()) {
+                log.info("切割 推送过来的航班信息：" + s);
+            }
             if (s.contains("\n")) {
                 String[] splitFlight = s.split("\\n");
                 for (String s1 : splitFlight) {
                     result.add(parseDetail(s1));
                 }
-            }else {
+            } else {
                 result.add(parseDetail(s));
             }
         }

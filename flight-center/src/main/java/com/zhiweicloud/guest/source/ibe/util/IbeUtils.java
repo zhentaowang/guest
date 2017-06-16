@@ -49,7 +49,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("flightNo", flightNo));
         nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
         nameValuePairs.add(new BasicNameValuePair("postURL", FLIGHT_INFO_UPDATE_FLIGHT));
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx?op=FlightPush", nameValuePairs);result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        String result = HttpClientUtils.HttpPostForWebService("http", IBE_HOST, "/FYFTQuery.asmx/FlightPush", nameValuePairs);result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeMessage.class);

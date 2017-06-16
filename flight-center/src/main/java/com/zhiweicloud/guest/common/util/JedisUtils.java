@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest.common.util;
 
+import com.zhiweicloud.guest.conf.RedisConfig;
 import jersey.repackaged.com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,7 +33,7 @@ public class JedisUtils {
     /**
      * 属性文件加载对象
      */
-    private static Properties properties = PropertyUtils.load("redis.properties");
+//    private static Properties properties = PropertyUtils.load("redis.properties");
 
     /**
      * redis过期时间,以秒为单位
@@ -43,22 +44,22 @@ public class JedisUtils {
 
     private static void init(){
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(PropertyUtils.getInt(properties, "redis.maxActive"));
-        config.setMaxIdle(PropertyUtils.getInt(properties, "redis.maxIdle"));
-        config.setMaxWaitMillis(PropertyUtils.getLong(properties, "redis.maxWait"));
-        config.setTestOnBorrow(PropertyUtils.getBoolean(properties, "redis.testOnBorrow"));
+        config.setMaxTotal(RedisConfig.maxActive);
+        config.setMaxIdle(RedisConfig.maxIdle);
+        config.setMaxWaitMillis(RedisConfig.maxWait);
+        config.setTestOnBorrow(RedisConfig.testOnBorrow);
         try {
             if (log.isInfoEnabled()) {
-                log.info(PropertyUtils.getString(properties,"redis.host.local"));
-                log.info(PropertyUtils.getInt(properties,"redis.port.local"));
+                log.info(RedisConfig.hostLocal);
+                log.info(RedisConfig.portLocal);
             }
-            jedisPool = new JedisPool(config, PropertyUtils.getString(properties,"redis.host.local"), PropertyUtils.getInt(properties,"redis.port.local"));
+            jedisPool = new JedisPool(config, RedisConfig.hostLocal, RedisConfig.portLocal);
         } catch (Exception e) {
             if (log.isErrorEnabled()) {
                 log.error("First create JedisPool error : "+e);
             }
             try{
-                jedisPool = new JedisPool(config, PropertyUtils.getString(properties,"redis.host.test"), PropertyUtils.getInt(properties,"redis.port.test"));
+                jedisPool = new JedisPool(config, RedisConfig.hostTest, RedisConfig.portTest);
             }catch(Exception e2){
                 if (log.isErrorEnabled()) {
                     log.error("Second create JedisPool error : "+e2);

@@ -8,48 +8,37 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * Created by tc on 2017/6/5.
  */
-//@Configuration
-//@Import({SpringConfiguration.class})
-//@EnableTransactionManagement
+@Configuration()
+@Import({SpringConfiguration.class})
 public class RedisConfig {
 
-    @Value("${redis.keyPrefix}")
-    private String keyPrefix;
+    public static String keyPrefix;
 
-    @Value("${redis.host.local}")
-    private String hostLocal;
+    public static String hostLocal;
 
-    @Value("${redis.port.local}")
-    private int portLocal;
+    public static int portLocal;
 
-    @Value("${redis.password.local}")
-    private String passwordLocal;
+    public static String passwordLocal;
 
-    @Value("${redis.host.test}")
-    private String hostTest;
+    public static String hostTest;
 
-    @Value("${redis.port.test}")
-    private int portTest;
+    public static int portTest;
 
-    @Value("${redis.password.test}")
-    private String passwordTest;
+    public static String passwordTest;
 
-    @Value("${redis.maxIdle}")
-    private int maxIdle;
+    public static int maxIdle;
 
-    @Value("${redis.maxActive}")
-    private int maxActive;
+    public static int maxActive;
 
-    @Value("${redis.maxWait}")
-    private long maxWait;
+    public static long maxWait;
 
-    @Value("${redis.testOnBorrow}")
-    private boolean testOnBorrow;
+    public static boolean testOnBorrow;
 
     public String getKeyPrefix() {
         return keyPrefix;
     }
 
+    @Value("${redis.keyPrefix}")
     public void setKeyPrefix(String keyPrefix) {
         this.keyPrefix = keyPrefix;
     }
@@ -58,6 +47,7 @@ public class RedisConfig {
         return hostLocal;
     }
 
+    @Value("${redis.host.local}")
     public void setHostLocal(String hostLocal) {
         this.hostLocal = hostLocal;
     }
@@ -66,6 +56,7 @@ public class RedisConfig {
         return portLocal;
     }
 
+    @Value("${redis.port.local}")
     public void setPortLocal(int portLocal) {
         this.portLocal = portLocal;
     }
@@ -74,6 +65,7 @@ public class RedisConfig {
         return passwordLocal;
     }
 
+    @Value("${redis.password.local}")
     public void setPasswordLocal(String passwordLocal) {
         this.passwordLocal = passwordLocal;
     }
@@ -82,6 +74,7 @@ public class RedisConfig {
         return hostTest;
     }
 
+    @Value("${redis.host.test}")
     public void setHostTest(String hostTest) {
         this.hostTest = hostTest;
     }
@@ -90,6 +83,7 @@ public class RedisConfig {
         return portTest;
     }
 
+    @Value("${redis.port.test}")
     public void setPortTest(int portTest) {
         this.portTest = portTest;
     }
@@ -98,6 +92,7 @@ public class RedisConfig {
         return passwordTest;
     }
 
+    @Value("${redis.password.test}")
     public void setPasswordTest(String passwordTest) {
         this.passwordTest = passwordTest;
     }
@@ -106,6 +101,7 @@ public class RedisConfig {
         return maxIdle;
     }
 
+    @Value("${redis.maxIdle}")
     public void setMaxIdle(int maxIdle) {
         this.maxIdle = maxIdle;
     }
@@ -114,6 +110,7 @@ public class RedisConfig {
         return maxActive;
     }
 
+    @Value("${redis.maxActive}")
     public void setMaxActive(int maxActive) {
         this.maxActive = maxActive;
     }
@@ -122,6 +119,7 @@ public class RedisConfig {
         return maxWait;
     }
 
+    @Value("${redis.maxWait}")
     public void setMaxWait(long maxWait) {
         this.maxWait = maxWait;
     }
@@ -130,6 +128,7 @@ public class RedisConfig {
         return testOnBorrow;
     }
 
+    @Value("${redis.testOnBorrow}")
     public void setTestOnBorrow(boolean testOnBorrow) {
         this.testOnBorrow = testOnBorrow;
     }
