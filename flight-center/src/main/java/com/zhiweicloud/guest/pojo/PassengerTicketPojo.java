@@ -1,5 +1,6 @@
 package com.zhiweicloud.guest.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.zhiweicloud.guest.po.PassengerTicketPo;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ public class PassengerTicketPojo extends PassengerTicketPo {
     /**
      * 婴儿的生日（年月）
      */
+    @JSONField(format = "yyyy-MM-dd")
     private Date infantBirthday;
 
     /**

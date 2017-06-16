@@ -24,6 +24,7 @@ public class PassengerPo {
      * 主键自增id
      * 不能为空
      */
+    @JSONField(serialize = false)
     private Long passengerId;
 
     /**

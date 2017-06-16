@@ -12,7 +12,7 @@
         <result column="start_time" jdbcType="VARCHAR" property="startTime" />
         <result column="end_time" jdbcType="VARCHAR" property="endTime" />
         <result column="mileage" jdbcType="VARCHAR" property="mileage" />
-        <collection property="stationPos" ofType="com.zhiweicloud.guest.po.StationPo">
+        <collection property="stations" ofType="com.zhiweicloud.guest.pojo.StationPojo">
             <id column="station_id" jdbcType="BIGINT" property="stationId" />
             <result column="train_id" jdbcType="VARCHAR" property="trainId" />
             <result column="ticket_entrance" jdbcType="VARCHAR" property="ticketEntrance" />

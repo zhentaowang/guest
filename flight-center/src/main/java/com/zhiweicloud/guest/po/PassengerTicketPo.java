@@ -3,6 +3,8 @@ Copyright 2016-2017 author IronC.
 */
 package com.zhiweicloud.guest.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -159,6 +161,7 @@ public class PassengerTicketPo {
     /**
      * 计划起飞时间（yyyy-MM-dd HH-mm-ss格式）
      */
+    @JSONField(format = "yyyy-MM-dd HH-mm-ss")
     private Date depScheduledDate;
 
     /**

@@ -301,6 +301,7 @@
             <if test="arrScheduledDate != null">arr_scheduled_date = #{arrScheduledDate,jdbcType=TIMESTAMP},</if>
             <if test="arrEstimatedDate != null">arr_estimated_date = #{arrEstimatedDate,jdbcType=TIMESTAMP},</if>
             <if test="arrActualDate != null">arr_actual_date = #{arrActualDate,jdbcType=TIMESTAMP},</if>
+            update_time = now()
         </set>
     </sql>
 

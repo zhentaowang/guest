@@ -33,6 +33,8 @@ public enum  FlightCenterStatus {
     NONE_DEP_AIRPORT_CODE(312,"缺少参数depAirportCode"),
     NONE_ARR_AIRPORT_CODE(313,"缺少参数arrAirportCode"),
 
+    NONE_RESULT(315,"无查询结果"),
+
     NONE_FLIGHT(318,"没有此航班"),
 
     NONE_CUSTOMER(320,"此客户不存在，请先购买"),
@@ -46,6 +48,8 @@ public enum  FlightCenterStatus {
     SIGN_INVALID(339,"签名无效"),
     NOT_AUTH(340,"签名未通过"),
     FLIGHT_DATE_INVALID(351,"只能查询今日或未来的航班"),
+
+    TRAIN_DATE_INVALID(352,"只能查询今日或未来的火车"),
 
     // 2XX成功
     SUCCESS(200, "操作成功"),

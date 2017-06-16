@@ -5,6 +5,10 @@
     <resultMap id="passengerTicketPojoMap" type="com.zhiweicloud.guest.pojo.PassengerTicketPojo">
         <id column="passenger_ticket_id" jdbcType="BIGINT" property="passengerTicketId" />
         <result column="passenger_id" jdbcType="BIGINT" property="passengerId" />
+        <result column="passenger_name" jdbcType="VARCHAR" property="passengerName" />
+        <result column="infant_birthday" jdbcType="DATE" property="infantBirthday"></result>
+        <result column="is_card" jdbcType="VARCHAR" property="idCard"></result>
+        <result column="sex" jdbcType="SMALLINT" property="sex"></result>
         <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo" />
         <result column="dep_airport_code" jdbcType="VARCHAR" property="depAirportCode" />
         <result column="arr_airport_code" jdbcType="VARCHAR" property="arrAirportCode" />

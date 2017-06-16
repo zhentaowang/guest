@@ -10,6 +10,7 @@ import com.zhiweicloud.guest.mapper.TrainPoMapper;
 import com.zhiweicloud.guest.mapper.TrainPojoMapper;
 import com.zhiweicloud.guest.po.StationPo;
 import com.zhiweicloud.guest.po.TrainPo;
+import com.zhiweicloud.guest.pojo.StationPojo;
 import com.zhiweicloud.guest.pojo.TrainPojo;
 import com.zhiweicloud.guest.source.juhe.service.JuheService;
 import org.apache.commons.logging.Log;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +73,7 @@ public class TrainService {
             if (trainPojo == null) {
 
                 if (log.isInfoEnabled()) {
-                    log.info("【需要从聚合数据获取数据解析】");
+                    log.info("【 需要从聚合数据获取数据解析 】");
                 }
 
                 String success = juheService.queryTrainInfoByName(name);
@@ -96,28 +98,21 @@ public class TrainService {
                     TrainPo query = trainPoMapper.select(trainPo);
                     if (query == null) {
                         trainPoMapper.insert(trainPo);
-
                         List<StationPo> stations = JSONArray.parseArray(result.getString("station_list"), StationPo.class);
-
-                        // filter by condition
-//                    int startStation = 0;
-//                    for (StationPo station : stations) {
-//                        if (start.equals(station.getStationName())) {
-//                            startStation = station.getStationOrdinal();
-//                            break;
-//                        }
-//                    }
-//
-//                    final int compare = startStation;
-//
-//                    List<StationPo> result1 = stations.stream()
-//                        .filter(x -> x.getStationOrdinal() > compare)
-//                        .collect(Collectors.toList());
-
                         stationPoMapper.insertBatch(stations,trainPo.getTrainId());
-                        trainPojo = new TrainPojo();
-                        BeanUtils.copyProperties(trainPo,trainPojo);
-                        trainPojo.setStationPos(stations);
+                        List<StationPojo> stationPojos = new ArrayList<>(stations.size());
+                        // 插入以后再从数据库拿出来 返回给使用者
+                        trainPojo = trainPojoMapper.queryTrainByCondition(params);
+                        // 处理后返回 某些字段为"-"，不美观
+//                        trainPojo = new TrainPojo();
+//                        BeanUtils.copyProperties(trainPo,trainPojo);
+//                        StationPojo stationPojo;
+//                        for (StationPo station : stations) {
+//                            stationPojo = new StationPojo();
+//                            BeanUtils.copyProperties(station, stationPojo);
+//                            stationPojos.add(stationPojo);
+//                        }
+//                        trainPojo.setStations(stationPojos);
                     }
                 }
             }
@@ -130,7 +125,7 @@ public class TrainService {
             re.setState(FlightCenterStatus.ERROR.value());
             re.setData(null);
         }
-        return JSON.toJSONString(re);
+        return JSON.toJSONString(re,false);
     }
 
 }

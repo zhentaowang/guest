@@ -16,8 +16,12 @@ public class PointCutFlightService {
 
     }
 
-    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.*(..))|| execution(* com.zhiweicloud.guest.service.TrainService.*(..))")
-    public void pointcutTrafficService() {
+    @Pointcut("execution(* com.zhiweicloud.guest.service.FlightService.*(..))")
+    public void pointcutFlightService() {
+    }
+
+    @Pointcut("execution(* com.zhiweicloud.guest.service.TrainService.*(..))")
+    public void pointcutTrainService() {
     }
     
 }

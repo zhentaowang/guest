@@ -193,11 +193,26 @@
             #{item.stationNo,jdbcType=VARCHAR},
             #{item.waitingRoom,jdbcType=VARCHAR},
             #{item.stationOrdinal,jdbcType=INTEGER},
-            #{item.stationName,jdbcType=VARCHAR},
-            #{item.arrivedTime,jdbcType=VARCHAR},
-            #{item.leaveTime,jdbcType=VARCHAR},
-            #{item.stay,jdbcType=VARCHAR},
-            #{item.mileage,jdbcType=VARCHAR},
+            <choose>
+                <when test="item.stationName != null and '-'.toString() == item.stationName.trim()">'',</when>
+                <otherwise>#{item.stationName,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.arrivedTime != null and '-'.toString() == item.arrivedTime.trim()">'',</when>
+                <otherwise>#{item.arrivedTime,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.leaveTime != null and '-'.toString() == item.leaveTime.trim()">'',</when>
+                <otherwise>#{item.leaveTime,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.stay != null and '-'.toString() == item.stay.trim()">'',</when>
+                <otherwise>#{item.stay,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.mileage != null and '-'.toString() == item.mileage.trim()">'',</when>
+                <otherwise>#{item.mileage,jdbcType=VARCHAR},</otherwise>
+            </choose>
             <choose>
                 <when test="item.firstClass != null and '-'.toString() == item.firstClass.trim()">'',</when>
                 <otherwise>#{item.firstClass,jdbcType=VARCHAR},</otherwise>
@@ -230,10 +245,23 @@
                 <when test="item.standingRoom != null and '-'.toString() == item.standingRoom.trim()">'',</when>
                 <otherwise>#{item.standingRoom,jdbcType=VARCHAR},</otherwise>
             </choose>
-            #{item.wuzuo,jdbcType=VARCHAR},
-            #{item.swz,jdbcType=VARCHAR},
-            #{item.tdz,jdbcType=VARCHAR},
-            #{item.gjrw,jdbcType=VARCHAR})
+            <choose>
+                <when test="item.wuzuo != null and '-'.toString() == item.wuzuo.trim()">'',</when>
+                <otherwise>#{item.wuzuo,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.swz != null and '-'.toString() == item.swz.trim()">'',</when>
+                <otherwise>#{item.swz,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.tdz != null and '-'.toString() == item.tdz.trim()">'',</when>
+                <otherwise>#{item.tdz,jdbcType=VARCHAR},</otherwise>
+            </choose>
+            <choose>
+                <when test="item.gjrw != null and '-'.toString() == item.gjrw.trim()">''</when>
+                <otherwise>#{item.gjrw,jdbcType=VARCHAR}</otherwise>
+            </choose>
+            )
         </foreach>
     </insert>
 
