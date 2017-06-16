@@ -27,6 +27,8 @@ public interface FlightPoMapper {
 
     FlightPo select(FlightPo flightPo);
 
+    List<FlightPo> selects(FlightPo flightPo);
+
     List<FlightPo> selectByDateAndNo(FlightPo flightPo);
 
 }

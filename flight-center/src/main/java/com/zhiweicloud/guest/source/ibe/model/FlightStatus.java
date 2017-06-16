@@ -91,7 +91,7 @@ public class FlightStatus implements Serializable{
         return depCity;
     }
 
-    public void setDepCity(String flightDep) {
+    public void setDepCity(String depCity) {
         this.depCity = depCity;
     }
 
@@ -103,7 +103,7 @@ public class FlightStatus implements Serializable{
         return arrCity;
     }
 
-    public void setArrCity(String flightArr) {
+    public void setArrCity(String arrCity) {
         this.arrCity = arrCity;
     }
 

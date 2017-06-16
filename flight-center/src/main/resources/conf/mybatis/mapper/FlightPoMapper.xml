@@ -349,9 +349,22 @@
         FROM
           base_flight
         WHERE
+        is_deleted = 0 AND
+        dep_airport_code = #{depAirportCode,jdbcType=VARCHAR} AND
+        arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR} AND
+        dep_date = #{depDate,jdbcType=DATE} AND
+        flight_no = #{flightNo,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selects" parameterType="com.zhiweicloud.guest.po.FlightPo" resultMap="BaseResultMap">
+        SELECT
+          <include refid="baseColumn" />
+        FROM
+          base_flight
+        WHERE
           is_deleted = 0 AND
-          dep_airport_code = #{depAirportCode,jdbcType=VARCHAR} AND
-          arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR} AND
+          <if test="depAirportCode != null">dep_airport_code = #{depAirportCode,jdbcType=VARCHAR} AND </if>
+          <if test="arrAirportCode != null">arr_airport_code = #{arrAirportCode,jdbcType=VARCHAR} AND</if>
           dep_date = #{depDate,jdbcType=DATE} AND
           flight_no = #{flightNo,jdbcType=VARCHAR}
     </select>
