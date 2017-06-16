@@ -94,7 +94,9 @@
 
     <update id="updateTotal" parameterType="com.zhiweicloud.guest.po.CustomerPo">
         UPDATE base_customer
-        SET total = #{total,jdbcType=BIGINT}
+        SET
+          total = #{total,jdbcType=BIGINT},
+          update_time = now()
         WHERE customer_id = #{customerId,jdbcType=BIGINT} AND is_deleted = 0
     </update>
 
