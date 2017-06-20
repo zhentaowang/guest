@@ -67,6 +67,12 @@ public class BusinessService implements IBusinessService {
             case "customFlight":
                 success = flightService.customFlight(request);
                 break;
+            case "queryAirport":
+                success = flightService.queryAirport(request);
+                break;
+            case "queryHotAirport":
+                success = flightService.queryHotAirport(request);
+                break;
             // for test
             case "customer1":
                 success = flightPushService.testCustom1(request);

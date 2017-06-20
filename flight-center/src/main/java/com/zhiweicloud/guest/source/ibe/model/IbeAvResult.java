@@ -7,18 +7,18 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * IbeQueryByDepAndArr.java
+ * IbeAvResult.java
  * Copyright(C) 2017 杭州风数信息技术有限公司
- *
- * 2017/6/8 17:45
+ * 
+ * 2017/6/19 15:58
  * @author tiecheng
  */
-@XmlRootElement(name = "IBE_QueryByDepAndArr",namespace = "http://ws.ibeservice.com/")
-public class IbeQueryByDepAndArr implements Serializable{
+@XmlRootElement(name = "IBE_AVResult",namespace = "http://ws.ibeservice.com/")
+public class IbeAvResult implements Serializable{
 
     private ErrorRes errorRes;
 
-    private List<FlightStatus> flightStatuses;
+    private List<IbeFlightGroup> ibeFlightGroups;
 
     @XmlElement(name = "ErrorRes")
     public ErrorRes getErrorRes() {
@@ -29,14 +29,14 @@ public class IbeQueryByDepAndArr implements Serializable{
         this.errorRes = errorRes;
     }
 
-    @XmlElementWrapper(name = "StatusResult")
-    @XmlElement(name = "FlightStatus")
-    public List<FlightStatus> getFlightStatuses() {
-        return flightStatuses;
+    @XmlElementWrapper(name = "AVResult")
+    @XmlElement(name = "IBE_FlightGroup")
+    public List<IbeFlightGroup> getIbeFlightGroups() {
+        return ibeFlightGroups;
     }
 
-    public void setFlightStatuses(List<FlightStatus> flightStatuses) {
-        this.flightStatuses = flightStatuses;
+    public void setIbeFlightGroups(List<IbeFlightGroup> ibeFlightGroups) {
+        this.ibeFlightGroups = ibeFlightGroups;
     }
 
 }

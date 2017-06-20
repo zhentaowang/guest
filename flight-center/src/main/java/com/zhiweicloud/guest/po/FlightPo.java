@@ -87,7 +87,6 @@ public class FlightPo implements Serializable {
 
     /**
      * 机型
-     * 不能为空
      */
     private String flightType;
 

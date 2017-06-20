@@ -2,13 +2,14 @@ package com.zhiweicloud.guest.source.ibe.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  * DETR结果类
  * Created by tc on 2017/5/18.
  */
 @XmlRootElement(name = "IBE_DETETKTResult",namespace = "http://ws.ibeservice.com/")
-public class IbeDetrTktResult {
+public class IbeDetrTktResult implements Serializable{
 
     private TktGroup tktGroup;
 

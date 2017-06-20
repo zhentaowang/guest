@@ -71,13 +71,33 @@ public class DateUtils {
         return isSuccess;
     }
 
-    public static Date addDay(Date date,int day){
+    public static Date addDay(Date date, int day) {
         if (date == null) {
             return date;
         }
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        c.add(Calendar.DATE,day);
+        c.add(Calendar.DATE, day);
+        return c.getTime();
+    }
+
+    public static Date addHour(Date date, int hour) {
+        if (date == null || hour <= 0) {
+            return date;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.HOUR, hour);
+        return c.getTime();
+    }
+
+    public static Date addMinute(Date date, int minute) {
+        if (date == null || minute <= 0) {
+            return date;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.MINUTE, minute);
         return c.getTime();
     }
 

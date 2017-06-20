@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest.source.ibe.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.util.DateUtils;
 import com.zhiweicloud.guest.po.FlightPo;
@@ -60,6 +62,27 @@ public class IbeService {
         return result;
     }
 
+    public FlightCenterResult queryFlightCodeAndDate(String depAirportCode, String arrAirportCode, Date depDate) throws Exception {
+        JSONObject object = IbeUtils.queryFlightByDepCodeAndArrCodeAndDate(depAirportCode, arrAirportCode,DateUtils.dateToString(depDate, "yyyy-MM-dd"));
+        FlightCenterResult<List<FlightPo>> result = new FlightCenterResult();
+        JSONArray errorRes = object.getJSONArray("ErrorRes");
+        JSONArray jsonArray = object.getJSONArray("AVResult").getJSONObject(0).getJSONArray("IBE_FlightGroup");
+        JSONObject jsonObject = errorRes.getJSONObject(0);
+        result.setState(jsonObject.getIntValue("Err_code"));
+        result.setMessage(jsonObject.getString("Err_content"));
+        result.setData(parse(jsonArray));
+        return result;
+    }
+
+    public FlightCenterResult queryFlightCode(String depAirportCode, String arrAirportCode) throws Exception {
+        IbeQueryByDepAndArr ibeQueryByDepAndArr = IbeUtils.queryByDepAndArr(depAirportCode, arrAirportCode);
+        FlightCenterResult<List<FlightPo>> result = new FlightCenterResult();
+        result.setState(Integer.valueOf(ibeQueryByDepAndArr.getErrorRes().getErrCode()));
+        result.setMessage(ibeQueryByDepAndArr.getErrorRes().getErrContent());
+        result.setData(parse(ibeQueryByDepAndArr.getFlightStatuses(),DateUtils.getDate("yyyy-MM-dd")));
+        return result;
+    }
+
     /**
      * 把查询对象解析成航班数据库对象
      * @param flightStatuses
@@ -85,6 +108,61 @@ public class IbeService {
             }
         }
         return flights;
+    }
+
+    private List<FlightPo> parse(List<IbeFlightGroup> ibeFlightGroups) {
+        List<FlightPo> flightPos = new ArrayList<>();
+        for (IbeFlightGroup ibeFlightGroup : ibeFlightGroups) {
+            flightPos.add(parseIbeFlight(ibeFlightGroup.getIbeFlights().getIbeFlight()));
+        }
+        return flightPos;
+    }
+
+    private List<FlightPo> parse(JSONArray jsonArray) {
+        List<FlightPo> flightPos = new ArrayList<>();
+        int size = jsonArray.size();
+        JSONObject data;
+        FlightPo flightPo;
+        for (int i = 0; i < size; i++) {
+            data = jsonArray.getJSONObject(i).getJSONArray("IBE_Flights").getJSONObject(0).getJSONArray("IBE_Flight").getJSONObject(0);
+            flightPo = new FlightPo();
+            flightPo.setDepAirportCode(data.getString("orgCity"));
+            flightPo.setArrAirportCode(data.getString("dstcity"));
+            flightPo.setFlightNo(data.getString("FlightNO"));
+            flightPo.setDepDate(data.getDate("depDate"));
+            flightPo.setArrDate(data.getDate("arrDate"));
+            flightPo.setDepScheduledDate(addDateAndTime(data.getDate("depDate"),data.getString("depTime")));
+            flightPo.setArrScheduledDate(addDateAndTime(data.getDate("arrDate"),data.getString("arrtime")));
+            flightPo.setFlightType(data.getString("planeStyle"));
+            flightPo.setStopFlag((data.getInteger("stopNumber") == 0 ? (short) 0 : (short) 1));
+            flightPo.setDepTerminal(data.getString("OrgAirportTerminal"));
+            flightPo.setArrTerminal(data.getString("DstAirportTerminal"));
+            flightPos.add(flightPo);
+        }
+        return flightPos;
+    }
+
+    private FlightPo parseIbeFlight(IbeFlight ibeFlight) {
+        FlightPo flightPo = new FlightPo();
+        flightPo.setFlightNo(ibeFlight.getFlightNo());
+        flightPo.setDepDate(ibeFlight.getDepDate());
+        flightPo.setDepAirportCode(ibeFlight.getDepAirportCode());
+        flightPo.setArrAirportCode(ibeFlight.getArrAirportCode());
+        flightPo.setDepScheduledDate(addDateAndTime(ibeFlight.getDepDate(), ibeFlight.getDepTime()));
+        flightPo.setDepScheduledDate(addDateAndTime(ibeFlight.getArrDate(), ibeFlight.getArrTime()));
+        flightPo.setFlightType(ibeFlight.getFlightType());
+        flightPo.setStopFlag((ibeFlight.getStopNumber() == 0 ? (short) 0 : (short) 1));
+        flightPo.setDepTerminal(ibeFlight.getDepTerminal());
+        flightPo.setArrTerminal(ibeFlight.getArrTerminal());
+        return flightPo;
+    }
+
+    private Date addDateAndTime(Date date, String time) {
+        String hourVal = time.substring(0, 2);
+        String minuteVal = time.substring(2);
+        date = DateUtils.addHour(date, hourVal == null? 0 : Integer.valueOf(hourVal));
+        date = DateUtils.addMinute(date, minuteVal == null? 0 : Integer.valueOf(minuteVal));
+        return date;
     }
 
     private PassengerTicketPojo parse(IbeDetrTkt ibeDetrTkt) throws InvocationTargetException, IllegalAccessException {

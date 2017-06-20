@@ -2,13 +2,14 @@ package com.zhiweicloud.guest.source.ibe.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by tc on 2017/6/1.
  */
 @XmlRootElement(name = "IBE_DETR_TKT_Segment")
-public class IbeDetrTktSegment {
+public class IbeDetrTktSegment implements Serializable{
 
     /**
      * 航空公司编号

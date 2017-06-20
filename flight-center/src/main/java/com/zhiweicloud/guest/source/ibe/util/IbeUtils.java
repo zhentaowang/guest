@@ -1,11 +1,10 @@
 package com.zhiweicloud.guest.source.ibe.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.util.HttpClientUtils;
+import com.zhiweicloud.guest.common.util.XmlUtils;
 import com.zhiweicloud.guest.conf.BaseAttributeConfig;
-import com.zhiweicloud.guest.source.ibe.model.IbeDetrTktResult;
-import com.zhiweicloud.guest.source.ibe.model.IbeMessage;
-import com.zhiweicloud.guest.source.ibe.model.IbeQueryByDepAndArr;
-import com.zhiweicloud.guest.source.ibe.model.RootResult;
+import com.zhiweicloud.guest.source.ibe.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
@@ -77,7 +76,7 @@ public class IbeUtils {
     }
 
     /**
-     * 根据航班号和日期查询
+     * 根据航班号和日期查询航班信息
      * @param flightNo
      * @param flightDate
      * @return FlightCenterResult Object
@@ -95,6 +94,31 @@ public class IbeUtils {
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), RootResult.class);
+    }
+
+    /**
+     * 根据航段和日期查询航班信息
+     * @param depAirportCode
+     * @param arrAirportCode
+     * @param flightDate
+     * @return FlightCenterResult Object
+     * @throws Exception
+     */
+    public static JSONObject queryFlightByDepCodeAndArrCodeAndDate(String depAirportCode, String arrAirportCode, String flightDate) throws Exception {
+        log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班出发地三字码_" + depAirportCode + "；航班出发地三字码_" + arrAirportCode + "；航班日期_" + flightDate + " ************ 】");
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("sHashCode", IBE_HASHCODE));
+        nameValuePairs.add(new BasicNameValuePair("orgCity", depAirportCode));
+        nameValuePairs.add(new BasicNameValuePair("dstCity", arrAirportCode));
+        nameValuePairs.add(new BasicNameValuePair("airline", "ALL"));
+        nameValuePairs.add(new BasicNameValuePair("FlightDate", flightDate));
+        nameValuePairs.add(new BasicNameValuePair("direct", "false"));
+        nameValuePairs.add(new BasicNameValuePair("eticket", "false"));
+        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
+
+        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
+        return XmlUtils.documentToJSONObject(result);
     }
 
     /**
@@ -178,6 +202,81 @@ public class IbeUtils {
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeQueryByDepAndArr.class);
+    }
+
+    public static void main(String[] args) {
+        String s = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<IBE_AVResult xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.ibeservice.com/\">\n" +
+            "  <ErrorRes>\n" +
+            "    <Err_code>200</Err_code>\n" +
+            "    <Err_content />\n" +
+            "  </ErrorRes>\n" +
+            "  <AVResult>\n" +
+            "    <IBE_FlightGroup>\n" +
+            "      <IBE_Flights>\n" +
+            "        <IBE_Flight>\n" +
+            "          <FlightNO>HU7262</FlightNO>\n" +
+            "          <orgCity>HGH</orgCity>\n" +
+            "          <dstcity>CAN</dstcity>\n" +
+            "          <depDate>2017-06-21T00:00:00</depDate>\n" +
+            "          <depTime>0720</depTime>\n" +
+            "          <depTimeModify />\n" +
+            "          <arrDate>2017-06-21T00:00:00</arrDate>\n" +
+            "          <arrtime>0930</arrtime>\n" +
+            "          <arrTimeModify />\n" +
+            "          <asr>true</asr>\n" +
+            "          <isEtkt>true</isEtkt>\n" +
+            "          <link>DS</link>\n" +
+            "          <meal>true</meal>\n" +
+            "          <planeStyle>738</planeStyle>\n" +
+            "          <stopNumber>0</stopNumber>\n" +
+            "          <isCodeShare>false</isCodeShare>\n" +
+            "          <carrier />\n" +
+            "          <isTriptype>B</isTriptype>\n" +
+            "          <OrgAirportTerminal>T3</OrgAirportTerminal>\n" +
+            "          <DstAirportTerminal> </DstAirportTerminal>\n" +
+            "          <FlightTime>2:10</FlightTime>\n" +
+            "          <PunctualityRate>62</PunctualityRate>\n" +
+            "          <PriceFare>0</PriceFare>\n" +
+            "          <costFare>0</costFare>\n" +
+            "        </IBE_Flight>\n" +
+            "      </IBE_Flights>\n" +
+            "    </IBE_FlightGroup>\n" +
+            "    <IBE_FlightGroup>\n" +
+            "      <IBE_Flights>\n" +
+            "        <IBE_Flight>\n" +
+            "          <FlightNO>JD5270</FlightNO>\n" +
+            "          <orgCity>HGH</orgCity>\n" +
+            "          <dstcity>CAN</dstcity>\n" +
+            "          <depDate>2017-06-21T00:00:00</depDate>\n" +
+            "          <depTime>1835</depTime>\n" +
+            "          <depTimeModify />\n" +
+            "          <arrDate>2017-06-21T00:00:00</arrDate>\n" +
+            "          <arrtime>2040</arrtime>\n" +
+            "          <arrTimeModify />\n" +
+            "          <asr>false</asr>\n" +
+            "          <isEtkt>true</isEtkt>\n" +
+            "          <link>DS</link>\n" +
+            "          <meal>true</meal>\n" +
+            "          <planeStyle>33B</planeStyle>\n" +
+            "          <stopNumber>0</stopNumber>\n" +
+            "          <isCodeShare>false</isCodeShare>\n" +
+            "          <carrier />\n" +
+            "          <isTriptype>S</isTriptype>\n" +
+            "          <OrgAirportTerminal>T3</OrgAirportTerminal>\n" +
+            "          <DstAirportTerminal>T1</DstAirportTerminal>\n" +
+            "          <FlightTime>2:05</FlightTime>\n" +
+            "          <PunctualityRate>95</PunctualityRate>\n" +
+            "          <PriceFare>0</PriceFare>\n" +
+            "          <costFare>0</costFare>\n" +
+            "        </IBE_Flight>\n" +
+            "      </IBE_Flights>\n" +
+            "    </IBE_FlightGroup>\n" +
+            "  </AVResult>\n" +
+            "  <Source />\n" +
+            "</IBE_AVResult>";
+        s = s.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        IbeAvResult ibeAvResult = JAXB.unmarshal(s, IbeAvResult.class);
     }
 
 }
