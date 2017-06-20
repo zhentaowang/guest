@@ -72,4 +72,8 @@ public final class Dictionary {
      */
     public static final String ENCODING_ISO8859_1 = "ISO-8859-1";
 
+    public static final int testPort = 8901;
+
+    public static final int proPort = 8080;
+
 }

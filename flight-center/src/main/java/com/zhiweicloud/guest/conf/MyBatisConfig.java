@@ -47,7 +47,7 @@ public class MyBatisConfig {
         return druidDataSource;
     }
 
-    @Profile("local")
+    @Profile("test")
     @Bean(name = "dataSource",initMethod = "init",destroyMethod = "close")
     public DruidDataSource dataSourceTest(Environment environment) throws Exception{
         DruidDataSource druidDataSource = new DruidDataSource();

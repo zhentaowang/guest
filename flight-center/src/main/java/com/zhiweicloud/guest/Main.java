@@ -1,6 +1,8 @@
 package com.zhiweicloud.guest;
 
+import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.util.ApplicationContextUtils;
+import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 
 /**
  * Main.java
@@ -12,7 +14,12 @@ import com.zhiweicloud.guest.common.util.ApplicationContextUtils;
 public class Main {
 
     public static void main( String[] args ) throws InterruptedException {
-        ApplicationContextUtils.createContext("production");
+        String env = System.getenv("LOCAL_ENV");
+        if ("test".equals(env)) {
+            ApplicationContextUtils.createContext(env, Dictionary.testPort);
+        }else {
+            ApplicationContextUtils.createContext("production");
+        }
     }
 
 }
