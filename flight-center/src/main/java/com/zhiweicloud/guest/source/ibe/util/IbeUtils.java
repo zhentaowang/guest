@@ -11,6 +11,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +107,7 @@ public class IbeUtils {
      * @return FlightCenterResult Object
      * @throws Exception
      */
-    public static JSONObject queryFlightByDepCodeAndArrCodeAndDate(String depAirportCode, String arrAirportCode, String flightDate) throws Exception {
+    public static JSONObject queryFlightByDepCodeAndArrCodeAndDate2(String depAirportCode, String arrAirportCode, String flightDate) throws Exception {
         log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班出发地三字码_" + depAirportCode + "；航班出发地三字码_" + arrAirportCode + "；航班日期_" + flightDate + " ************ 】");
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("sHashCode", IBE_HASHCODE));
@@ -119,6 +122,23 @@ public class IbeUtils {
         String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         return XmlUtils.documentToJSONObject(result);
+    }
+
+    public static IbeAvResult queryFlightByDepCodeAndArrCodeAndDate(String depAirportCode, String arrAirportCode, String flightDate) throws Exception {
+        log.info("【 ************ IBE 方法名：根据航班号/日期查询航班信息（queryFlightNoByDate） 参数名：航班出发地三字码_" + depAirportCode + "；航班出发地三字码_" + arrAirportCode + "；航班日期_" + flightDate + " ************ 】");
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("sHashCode", IBE_HASHCODE));
+        nameValuePairs.add(new BasicNameValuePair("orgCity", depAirportCode));
+        nameValuePairs.add(new BasicNameValuePair("dstCity", arrAirportCode));
+        nameValuePairs.add(new BasicNameValuePair("airline", "ALL"));
+        nameValuePairs.add(new BasicNameValuePair("FlightDate", flightDate));
+        nameValuePairs.add(new BasicNameValuePair("direct", "false"));
+        nameValuePairs.add(new BasicNameValuePair("eticket", "false"));
+        nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
+
+        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
+        log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
+        return JAXB.unmarshal(new StringReader(result.replace(" xmlns=\"http://www.ibeservice.com/\"","")), IbeAvResult.class);
     }
 
     /**
@@ -204,9 +224,9 @@ public class IbeUtils {
         return JAXB.unmarshal(new StringReader(result), IbeQueryByDepAndArr.class);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JAXBException {
         String s = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-            "<IBE_AVResult xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.ibeservice.com/\">\n" +
+            "<IBE_AVResult xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  xmlns=\"http://www.ibeservice.com/\">\n" +
             "  <ErrorRes>\n" +
             "    <Err_code>200</Err_code>\n" +
             "    <Err_content />\n" +
@@ -275,8 +295,10 @@ public class IbeUtils {
             "  </AVResult>\n" +
             "  <Source />\n" +
             "</IBE_AVResult>";
-        s = s.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
-        IbeAvResult ibeAvResult = JAXB.unmarshal(s, IbeAvResult.class);
+//        JAXBContext jaxbContext      = JAXBContext.newInstance(IbeAvResult.class);
+//        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+//        IbeAvResult ibeAvResult = (IbeAvResult) jaxbUnmarshaller.unmarshal(new StringReader(s));
+        IbeAvResult ibeAvResult = JAXB.unmarshal(new StringReader(s.replace(" xmlns=\"http://www.ibeservice.com/\"","")), IbeAvResult.class);
     }
 
 }

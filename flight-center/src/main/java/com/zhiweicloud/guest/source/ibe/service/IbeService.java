@@ -63,14 +63,19 @@ public class IbeService {
     }
 
     public FlightCenterResult queryFlightCodeAndDate(String depAirportCode, String arrAirportCode, Date depDate) throws Exception {
-        JSONObject object = IbeUtils.queryFlightByDepCodeAndArrCodeAndDate(depAirportCode, arrAirportCode,DateUtils.dateToString(depDate, "yyyy-MM-dd"));
+//        JSONObject object = IbeUtils.queryFlightByDepCodeAndArrCodeAndDate(depAirportCode, arrAirportCode,DateUtils.dateToString(depDate, "yyyy-MM-dd"));
+//        FlightCenterResult<List<FlightPo>> result = new FlightCenterResult();
+//        JSONArray errorRes = object.getJSONArray("ErrorRes");
+//        JSONArray jsonArray = object.getJSONArray("AVResult").getJSONObject(0).getJSONArray("IBE_FlightGroup");
+//        JSONObject jsonObject = errorRes.getJSONObject(0);
+//        result.setState(jsonObject.getIntValue("Err_code"));
+//        result.setMessage(jsonObject.getString("Err_content"));
+//        result.setData(parse(jsonArray));
         FlightCenterResult<List<FlightPo>> result = new FlightCenterResult();
-        JSONArray errorRes = object.getJSONArray("ErrorRes");
-        JSONArray jsonArray = object.getJSONArray("AVResult").getJSONObject(0).getJSONArray("IBE_FlightGroup");
-        JSONObject jsonObject = errorRes.getJSONObject(0);
-        result.setState(jsonObject.getIntValue("Err_code"));
-        result.setMessage(jsonObject.getString("Err_content"));
-        result.setData(parse(jsonArray));
+        IbeAvResult ibeAvResult = IbeUtils.queryFlightByDepCodeAndArrCodeAndDate(depAirportCode, arrAirportCode, DateUtils.dateToString(depDate, "yyyy-MM-dd"));
+        result.setState(Integer.valueOf(ibeAvResult.getErrorRes().getErrCode()));
+        result.setMessage(ibeAvResult.getErrorRes().getErrContent());
+        result.setData(parseIbe(ibeAvResult.getIbeFlightGroups(),depDate));
         return result;
     }
 
@@ -110,10 +115,13 @@ public class IbeService {
         return flights;
     }
 
-    private List<FlightPo> parse(List<IbeFlightGroup> ibeFlightGroups) {
+    private List<FlightPo> parseIbe(List<IbeFlightGroup> ibeFlightGroups, Date flightDate) {
         List<FlightPo> flightPos = new ArrayList<>();
+        FlightPo flightPo;
         for (IbeFlightGroup ibeFlightGroup : ibeFlightGroups) {
-            flightPos.add(parseIbeFlight(ibeFlightGroup.getIbeFlights().getIbeFlight()));
+            flightPo = parseIbeFlight(ibeFlightGroup.getIbeFlights().getIbeFlight());
+            flightPo.setDepDate(flightDate);
+            flightPos.add(flightPo);
         }
         return flightPos;
     }
@@ -146,10 +154,11 @@ public class IbeService {
         FlightPo flightPo = new FlightPo();
         flightPo.setFlightNo(ibeFlight.getFlightNo());
         flightPo.setDepDate(ibeFlight.getDepDate());
+        flightPo.setArrDate(ibeFlight.getArrDate());
         flightPo.setDepAirportCode(ibeFlight.getDepAirportCode());
         flightPo.setArrAirportCode(ibeFlight.getArrAirportCode());
         flightPo.setDepScheduledDate(addDateAndTime(ibeFlight.getDepDate(), ibeFlight.getDepTime()));
-        flightPo.setDepScheduledDate(addDateAndTime(ibeFlight.getArrDate(), ibeFlight.getArrTime()));
+        flightPo.setArrScheduledDate(addDateAndTime(ibeFlight.getArrDate(), ibeFlight.getArrTime()));
         flightPo.setFlightType(ibeFlight.getFlightType());
         flightPo.setStopFlag((ibeFlight.getStopNumber() == 0 ? (short) 0 : (short) 1));
         flightPo.setDepTerminal(ibeFlight.getDepTerminal());

@@ -651,88 +651,6 @@ public class FlightService {
         return re;
     }
 
-    @Transient
-//    public String queryDynamicFlightInfo(JSONObject request) {
-//        FlightCenterResult<List<FlightPo>> re = new FlightCenterResult<>();
-//        boolean isCustom = false;
-//        List<FlightPo> result = null;
-//        try {
-//            String flightNo = request.getString("flightNo");
-//            String depDate = request.getString("depDate");
-//            String depAirportCode = request.getString("depAirportCode");
-//            String arrAirportCode = request.getString("arrAirportCode");
-//
-//            if (log.isInfoEnabled()) {
-//                log.info("【参数   flightNo: " + flightNo + " depDate: " + depDate + " depAirportCode: " + depAirportCode + " arrAirportCode: " + arrAirportCode + " 】");
-//            }
-//
-//            String s = verifyFlightNo(flightNo);
-//
-//            if (!"OK".equals(s)) {
-//                return s;
-//            }
-//
-//            flightNo = flightNo.trim().toUpperCase();
-//            FlightPo flightPo = new FlightPo();
-//            flightPo.setFlightNo(flightNo);
-//            flightPo.setDepDate(DateUtils.stringToDate(depDate, "yyyy-MM-dd"));
-//
-//            // 先根据是否带三字码 得到查询的条件
-//            if (StringUtils.isNoneBlank(depAirportCode) && StringUtils.isNoneBlank(arrAirportCode)) {
-//                depAirportCode = depAirportCode.trim().toUpperCase();
-//                arrAirportCode = arrAirportCode.trim().toUpperCase();
-//                flightPo.setDepAirportCode(depAirportCode);
-//                flightPo.setArrAirportCode(arrAirportCode);
-//            }
-//
-//            result = flightPoMapper.selects(flightPo);
-//
-//            if (result != null && result.size() != 0) {
-//                for (FlightPo po : result) {
-//                    if (po.getIsCustom() == 1) {
-//                        isCustom = true;
-//                        break;
-//                    }
-//                }
-//                if (isCustom) {
-//                    re.setMessage(FlightCenterStatus.SUCCESS.display());
-//                    re.setState(FlightCenterStatus.SUCCESS.value());
-//                    re.setData(result);
-//                } else {
-//                    re = ibeService.queryFlightNo(flightNo);
-//                    if (!verifyFlightCenterResult(re, true)) {
-//                        re.setState(FlightCenterStatus.NONE_FLIGHT.value());
-//                        re.setMessage(FlightCenterStatus.NONE_FLIGHT.display());
-//                        re.setData(null);
-//                        return JSON.toJSONString(re);
-//                    }
-//                    result = flightPoMapper.selects(flightPo);
-//                    re.setMessage(FlightCenterStatus.SUCCESS.display());
-//                    re.setState(FlightCenterStatus.SUCCESS.value());
-//                    re.setData(result);
-//                }
-//            } else {
-//                re = ibeService.queryFlightNo(flightNo);
-//                if (!verifyFlightCenterResult(re, false)) {
-//                    re.setState(FlightCenterStatus.NONE_FLIGHT.value());
-//                    re.setMessage(FlightCenterStatus.NONE_FLIGHT.display());
-//                    re.setData(null);
-//                    return JSON.toJSONString(re);
-//                }
-//                result = flightPoMapper.selects(flightPo);
-//                re.setMessage(FlightCenterStatus.SUCCESS.display());
-//                re.setState(FlightCenterStatus.SUCCESS.value());
-//                re.setData(result);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            re.setMessage(FlightCenterStatus.ERROR.display());
-//            re.setState(FlightCenterStatus.ERROR.value());
-//            re.setData(null);
-//        }
-//        return JSON.toJSONString(re);
-//    }
-
     /**
      * 校验从第三方数据源查询数据的结果
      * @param re 航班中心的结果集
@@ -745,8 +663,10 @@ public class FlightService {
         } else {
             if (verifyLocal) {
                 for (FlightPo po : re.getData()) {
+
                     if (flightPoMapper.select(po) == null) {
                         flightPoMapper.insert(po);
+//                        flightPoMapper.insert(perfectParams(po));
                     } else {
                         flightPoMapper.updateByCondition(po);
                     }
@@ -754,10 +674,56 @@ public class FlightService {
             } else {
                 for (FlightPo po : re.getData()) {
                     flightPoMapper.insert(po);
+//                    flightPoMapper.insert(perfectParams(po));
                 }
             }
             return true;
         }
+    }
+
+    private FlightPo perfectParams(FlightPo flightPo){
+        JSONObject airline = queryAirline(flightPo.getFlightNo());
+        JSONObject depAirport = queryAirport(flightPo.getDepAirportCode());
+        JSONObject arrAirport = queryAirport(flightPo.getArrAirportCode());
+        flightPo.setAirlineCode(airline.getString("icao"));
+        flightPo.setAirlineName(airline.getString("airlineName"));
+        flightPo.setDepAirport(depAirport.getString("shortTitle"));
+        flightPo.setDepAirportName(depAirport.getString("name"));
+        flightPo.setArrAirport(arrAirport.getString("shortTitle"));
+        flightPo.setArrAirportName(arrAirport.getString("name"));
+        return flightPo;
+    }
+
+    private JSONObject queryAirline(String flightNo) {
+        JSONObject object = null;
+        try {
+            JSONObject params = new JSONObject();
+            params.put("operation", "queryAirlineByIata");
+            params.put("iata", flightNo.substring(0, 2));
+            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", params);
+            if (re != null && re.getResponeCode().getValue() == 200) {
+                object = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+    private JSONObject queryAirport(String airportCode) {
+        JSONObject object = null;
+        try {
+            JSONObject params = new JSONObject();
+            params.put("operation", "queryAirportByAirportCode");
+            params.put("airportCode", airportCode);
+            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", params);
+            if (re != null && re.getResponeCode().getValue() == 200) {
+                object = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return object;
     }
 
     /**

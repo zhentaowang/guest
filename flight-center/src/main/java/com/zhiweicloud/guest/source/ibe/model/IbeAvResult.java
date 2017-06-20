@@ -13,7 +13,7 @@ import java.util.List;
  * 2017/6/19 15:58
  * @author tiecheng
  */
-@XmlRootElement(name = "IBE_AVResult",namespace = "http://ws.ibeservice.com/")
+@XmlRootElement(name = "IBE_AVResult")
 public class IbeAvResult implements Serializable{
 
     private ErrorRes errorRes;

@@ -2,7 +2,6 @@ package com.zhiweicloud.guest;
 
 import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.common.util.ApplicationContextUtils;
-import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 
 /**
  * Main.java

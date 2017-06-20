@@ -18,7 +18,7 @@ public class IbeFlightGroup implements Serializable{
 
     private IbeFlights ibeFlights;
 
-    @XmlElement(name = "IBE_Flights" )
+    @XmlElement(name = "IBE_Flights")
     public IbeFlights getIbeFlights() {
         return ibeFlights;
     }
@@ -26,5 +26,17 @@ public class IbeFlightGroup implements Serializable{
     public void setIbeFlights(IbeFlights ibeFlights) {
         this.ibeFlights = ibeFlights;
     }
+
+    //    private List<IbeFlight> ibeFlights;
+//
+//    @XmlElementWrapper(name = "IBE_Flights")
+//    @XmlElement(name = "IBE_Flight" )
+//    public List<IbeFlight> getIbeFlights() {
+//        return ibeFlights;
+//    }
+//
+//    public void setIbeFlights(List<IbeFlight> ibeFlights) {
+//        this.ibeFlights = ibeFlights;
+//    }
 
 }
