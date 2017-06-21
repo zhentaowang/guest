@@ -86,8 +86,6 @@ public class FlightPushService {
         }
     }
 
-
-
     /**
      * 航班推送列表分页查询
      * @param request

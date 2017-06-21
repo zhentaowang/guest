@@ -1,7 +1,5 @@
 package com.zhiweicloud.guest.signature;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.BadPaddingException;
@@ -286,7 +284,7 @@ public abstract class RSACoder {
 
     private static String getSignContent(Map<String, Object> params) {
         StringBuilder sb = new StringBuilder();
-        List list = new ArrayList<>(params.entrySet());
+        List list = new ArrayList<>(params.keySet());
         Collections.sort(list);
 
         int index = 0;
@@ -464,7 +462,7 @@ public abstract class RSACoder {
         // 私钥
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
         // 封装密钥
-        Map<String, Object> keyMap = new HashedMap(2);
+        Map<String, Object> keyMap = new HashMap<>(2);
         keyMap.put(PUBLIC_KEY, publicKey);
         keyMap.put(PRIVATE_KEY, privateKey);
         return keyMap;
@@ -478,16 +476,15 @@ public abstract class RSACoder {
     public static void initKeyFile(String filePath){
         Map<String, Object> map = initKey();
         RSAPublicKey publicKey = (RSAPublicKey) map.get(PUBLIC_KEY);
-        RSAPrivateKey privateKey = (RSAPrivateKey) map.get(PUBLIC_KEY);
+        RSAPrivateKey privateKey = (RSAPrivateKey) map.get(PRIVATE_KEY);
         // 得到公钥字符串
         String publicKeyString = Base64.encode(publicKey.getEncoded());
         // 得到私钥字符串
         String privateKeyString = Base64.encode(privateKey.getEncoded());
-        try(
-            FileWriter pubfw = new FileWriter(filePath + "/publicKey.keystore");
-            FileWriter prifw = new FileWriter(filePath + "/privateKey.keystore");
-            BufferedWriter pubbw = new BufferedWriter(pubfw);
-            BufferedWriter pribw = new BufferedWriter(prifw)) {
+        try (FileWriter pubfw = new FileWriter(filePath + "/publicKey.keystore");
+             FileWriter prifw = new FileWriter(filePath + "/privateKey.keystore");
+             BufferedWriter pubbw = new BufferedWriter(pubfw);
+             BufferedWriter pribw = new BufferedWriter(prifw)) {
             // 将密钥对写入到文件
             pubbw.write(publicKeyString);
             pribw.write(privateKeyString);

@@ -218,6 +218,9 @@ public class FlightService {
                     customFlightPo.setFlightId(localFlight.getFlightId());
                     customFlightPoMapper.insert(customFlightPo);
                 }
+                if(localCustomFlight !=null && localCustomFlight.getIsDeleted()==1){
+                    customFlightPoMapper.resumeCustom(customerPo.getCustomerId(), localFlight.getFlightId());
+                }
                 re.setState(FlightCenterStatus.SUCCESS.value());
                 re.setMessage(FlightCenterStatus.SUCCESS.display());
                 re.setData(null);
@@ -235,7 +238,7 @@ public class FlightService {
 
     /**
      * 取消航班定制
-     * 机场云需要用到 后续开发 觉得没什么卵用
+     * 航段 + 日期 + 航班号
      *
      * @param request
      * @return
@@ -260,7 +263,22 @@ public class FlightService {
 
             String sysCode = request.getString("sysCode");
             CustomerPo customerPo = customerPoMapper.selectBySysCode(sysCode);
-
+            FlightPo flightPo = new FlightPo();
+            flightPo.setFlightNo(flightNo);
+            flightPo.setDepDate(DateUtils.stringToDate(depDate,"yyyy-MM-dd"));
+            flightPo.setDepAirportCode(depAirportCode);
+            flightPo.setArrAirportCode(arrAirportCode);
+            List<FlightPo> flightPos = flightPoMapper.selects(flightPo);
+            if(flightPos == null || flightPos.size() >1){  // 没有找到指定的航班
+                re.setState(FlightCenterStatus.NONE_FLIGHT.value());
+                re.setMessage(FlightCenterStatus.NONE_FLIGHT.display());
+                re.setData(null);
+            }else {
+                customFlightPoMapper.deleteByIdBogus(customerPo.getCustomerId(),flightPos.get(0).getFlightId());
+                re.setState(FlightCenterStatus.SUCCESS.value());
+                re.setMessage(FlightCenterStatus.SUCCESS.display());
+                re.setData(null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             re.setState(FlightCenterStatus.ERROR.value());

@@ -26,4 +26,8 @@ public interface CustomFlightPoMapper {
 
     CustomFlightPo selectByCustomerIdAndFlightId(@Param("customerId") Long customerId,@Param("flightId") Long flightId);
 
+    boolean deleteByIdBogus(@Param("customerId") Long customerId,@Param("flightId") Long flightId);
+
+    boolean resumeCustom(@Param("customerId") Long customerId, @Param("flightId") Long flightId);
+
 }

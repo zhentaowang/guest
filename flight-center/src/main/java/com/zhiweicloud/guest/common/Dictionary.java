@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest.common;
 
+import com.zhiweicloud.guest.signature.RSACoder;
+
 import java.util.HashMap;
 import java.util.Map;
 

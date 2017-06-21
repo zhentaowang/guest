@@ -272,23 +272,28 @@
     </resultMap>
 
     <select id="selectsCustomFlightPojo2" parameterType="java.util.List" resultMap="customFlightMap2">
-        SELECT
-        f.customer_id,
-        f.custom_url,
-        bf.*
-        FROM
-        f_custom_flight f
-        LEFT JOIN
-        base_flight bf
-        ON
-        f.flight_id = bf.flight_id
+        SELECT * FROM
+          (
+          SELECT
+            f.customer_id,
+            f.custom_url,
+            bf.*
+          FROM
+            f_custom_flight f
+          LEFT JOIN
+            base_flight bf
+          ON
+            f.flight_id = bf.flight_id
+          WHERE
+            f.flight_id IN
+           (
+            <foreach collection="list" item="item" index="index" separator=",">
+                #{item,jdbcType=BIGINT}
+            </foreach>
+            )
+          ) ff
         WHERE
-        f.flight_id IN
-        (
-        <foreach collection="list" item="item" index="index" separator=",">
-            #{item,jdbcType=BIGINT}
-        </foreach>
-        )
+          ff.is_deleted = 0
     </select>
 
     <select id="selectByCustomerIdAndFlightId" resultMap="baseResultMap">
@@ -301,5 +306,25 @@
           customer_id = #{customerId,jdbcType=BIGINT} AND
           flight_id = #{flightId,jdbcType=BIGINT}
     </select>
+
+    <update id="deleteByIdBogus">
+        UPDATE
+          f_custom_flight
+        SET
+          is_deleted = 1
+        WHERE
+          customer_id = #{customerId,jdbcType=BIGINT} AND
+          flight_id = #{flightId,jdbcType=BIGINT}
+    </update>
+
+    <update id="resumeCustom">
+        UPDATE
+          f_custom_flight
+        SET
+          is_deleted = 0
+        WHERE
+          customer_id = #{customerId,jdbcType=BIGINT} AND
+          flight_id = #{flightId,jdbcType=BIGINT}
+    </update>
 
 </mapper>
