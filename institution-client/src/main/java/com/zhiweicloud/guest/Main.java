@@ -10,8 +10,6 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-
-
         GenericXmlApplicationContext context = new GenericXmlApplicationContext();
         context.setValidating(false);
         context.getEnvironment().setActiveProfiles("production");
@@ -24,4 +22,5 @@ public class Main {
             Thread.sleep(1000000);
         }
     }
+
 }
