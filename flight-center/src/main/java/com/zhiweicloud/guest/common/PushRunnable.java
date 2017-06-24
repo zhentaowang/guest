@@ -3,7 +3,7 @@ package com.zhiweicloud.guest.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.common.util.DingDingUtils;
-import com.zhiweicloud.guest.common.util.HttpClientDemo;
+import com.zhiweicloud.guest.common.util.HttpClientUtils;
 import com.zhiweicloud.guest.common.util.WebHook;
 import com.zhiweicloud.guest.conf.BaseAttributeConfig;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
@@ -63,7 +63,7 @@ public class PushRunnable implements Runnable {
         boolean isSuccess = false;
         String result = null;
         try {
-            result = HttpClientDemo.HttpPostForWebService(url, params,"json");
+            result = HttpClientUtils.httpPostForWebService(url, params,"json");
             this.count ++;
             if (log.isInfoEnabled()) {
                 log.info("【 ************ http请求的结果："+ result +" ************ 】");

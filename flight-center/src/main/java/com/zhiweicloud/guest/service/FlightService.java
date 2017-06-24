@@ -6,18 +6,17 @@ import com.alibaba.fastjson.parser.Feature;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
-import com.wyun.utils.ByteBufferUtil;
 import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.model.FlightCenterResult;
 import com.zhiweicloud.guest.common.model.FlightCenterStatus;
 import com.zhiweicloud.guest.common.util.DateUtils;
-import com.zhiweicloud.guest.common.util.JedisUtils;
-import com.zhiweicloud.guest.mapper.*;
+import com.zhiweicloud.guest.exception.FlightCenterException;
+import com.zhiweicloud.guest.mapper.CustomFlightPoMapper;
+import com.zhiweicloud.guest.mapper.CustomerPoMapper;
+import com.zhiweicloud.guest.mapper.FlightPoMapper;
 import com.zhiweicloud.guest.po.CustomFlightPo;
 import com.zhiweicloud.guest.po.CustomerPo;
 import com.zhiweicloud.guest.po.FlightPo;
-import com.zhiweicloud.guest.po.PassengerPo;
-import com.zhiweicloud.guest.pojo.PassengerTicketPojo;
 import com.zhiweicloud.guest.source.ibe.service.IbeService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -25,10 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.management.AttributeList;
 import javax.persistence.Transient;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -57,9 +54,7 @@ public class FlightService {
     @Autowired
     private IbeService ibeService;
 
-//    private static MyService.Iface baseInfoClient = SpringBeanUtil.getBean("baseInfoClient");
-
-    private static MyService.Iface baseInfoClient;
+    private static MyService.Iface baseInfoClient = SpringBeanUtil.getBean("baseInfoClient");
 
     /**
      * 查询航班信息 -- 时刻表
@@ -287,65 +282,6 @@ public class FlightService {
         }
         return JSON.toJSONString(re);
     }
-
-    /**
-     * 获取机场列表
-     *
-     * @param request
-     * @return
-     */
-    public String queryAirport(JSONObject request) {
-        FlightCenterResult result = new FlightCenterResult();
-        Integer around = request.getInteger("around");
-        JSONObject object = null;
-        try {
-            JSONObject params = new JSONObject();
-            params.put("operation", "queryAirport");
-            params.put("region", around);
-            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", params);
-            if (re != null && re.getResponeCode().getValue() == 200) {
-                object = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
-            }
-            result.setState(FlightCenterStatus.ERROR.value());
-            result.setMessage(FlightCenterStatus.ERROR.display());
-            result.setData(object);
-        } catch (Exception e) {
-            result.setState(FlightCenterStatus.ERROR.value());
-            result.setMessage(FlightCenterStatus.ERROR.display());
-            result.setData(null);
-        }
-        return JSON.toJSONString(result);
-    }
-
-    /**
-     * 查询热度机场
-     *
-     * @param request
-     * @return
-     */
-    public String queryHotAirport(JSONObject request) {
-        FlightCenterResult result = new FlightCenterResult();
-        Integer around = request.getInteger("around");
-        JSONObject object = null;
-        try {
-            JSONObject params = new JSONObject();
-            params.put("operation", "queryHotAirport");
-            params.put("region", around);
-            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", params);
-            if (re != null && re.getResponeCode().getValue() == 200) {
-                object = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
-            }
-            result.setState(FlightCenterStatus.ERROR.value());
-            result.setMessage(FlightCenterStatus.ERROR.display());
-            result.setData(object);
-        } catch (Exception e) {
-            result.setState(FlightCenterStatus.ERROR.value());
-            result.setMessage(FlightCenterStatus.ERROR.display());
-            result.setData(null);
-        }
-        return JSON.toJSONString(result);
-    }
-
     /**
      * 航班号 + 航班日期 -- 时刻表
      *
@@ -675,71 +611,85 @@ public class FlightService {
      * @param verifyLocal 校验本地是否存在
      * @return true 第三方返回航班信息 false 第三方不返回航班信息
      */
-    private boolean verifyFlightCenterResult(FlightCenterResult<List<FlightPo>> re, boolean verifyLocal) {
-        if (re.getData() == null) {
-            return false;
-        } else {
-            if (verifyLocal) {
-                for (FlightPo po : re.getData()) {
+    private boolean verifyFlightCenterResult(FlightCenterResult<List<FlightPo>> re, boolean verifyLocal) throws FlightCenterException {
+        try {
+            if (re.getData() == null) {
+                return false;
+            } else {
+                if (verifyLocal) {
+                    for (FlightPo po : re.getData()) {
 
-                    if (flightPoMapper.select(po) == null) {
-                        flightPoMapper.insert(po);
-//                        flightPoMapper.insert(perfectParams(po));
-                    } else {
-                        flightPoMapper.updateByCondition(po);
+                        if (flightPoMapper.select(po) == null) {
+//                        flightPoMapper.insert(po);
+                            flightPoMapper.insert(perfectParams(po));
+                        } else {
+                            flightPoMapper.updateByCondition(po);
+                        }
+                    }
+                } else {
+                    for (FlightPo po : re.getData()) {
+//                    flightPoMapper.insert(po);
+                        flightPoMapper.insert(perfectParams(po));
                     }
                 }
-            } else {
-                for (FlightPo po : re.getData()) {
-                    flightPoMapper.insert(po);
-//                    flightPoMapper.insert(perfectParams(po));
-                }
             }
-            return true;
+        } catch (FlightCenterException e) {
+            throw e;
         }
+        return true;
     }
 
-    private FlightPo perfectParams(FlightPo flightPo){
-        JSONObject airline = queryAirline(flightPo.getFlightNo());
-        JSONObject depAirport = queryAirport(flightPo.getDepAirportCode());
-        JSONObject arrAirport = queryAirport(flightPo.getArrAirportCode());
-        flightPo.setAirlineCode(airline.getString("icao"));
-        flightPo.setAirlineName(airline.getString("airlineName"));
-        flightPo.setDepAirport(depAirport.getString("shortTitle"));
-        flightPo.setDepAirportName(depAirport.getString("name"));
-        flightPo.setArrAirport(arrAirport.getString("shortTitle"));
-        flightPo.setArrAirportName(arrAirport.getString("name"));
+    private FlightPo perfectParams(FlightPo flightPo) throws FlightCenterException{
+        try{
+            JSONObject airline = queryAirline(flightPo.getFlightNo());
+            JSONObject depAirport = queryAirport(flightPo.getDepAirportCode());
+            JSONObject arrAirport = queryAirport(flightPo.getArrAirportCode());
+            if (airline != null) {
+                flightPo.setAirlineCode(airline.getString("ICAO"));
+                flightPo.setAirlineName(airline.getString("airlineName"));
+            }
+            if(depAirport !=null){
+                flightPo.setDepAirport(depAirport.getString("shortTitle"));
+                flightPo.setDepAirportName(depAirport.getString("name"));
+            }
+            if(arrAirport !=null){
+                flightPo.setArrAirport(arrAirport.getString("shortTitle"));
+                flightPo.setArrAirportName(arrAirport.getString("name"));
+            }
+        }catch (FlightCenterException e){
+            throw e;
+        }
         return flightPo;
     }
 
-    private JSONObject queryAirline(String flightNo) {
+    private JSONObject queryAirline(String flightNo) throws FlightCenterException{
         JSONObject object = null;
         try {
             JSONObject params = new JSONObject();
-            params.put("operation", "queryAirlineByIata");
             params.put("iata", flightNo.substring(0, 2));
-            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", params);
+            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", "queryAirlineByIata",params);
             if (re != null && re.getResponeCode().getValue() == 200) {
                 object = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new FlightCenterException("服务间调用异常");
         }
         return object;
     }
 
-    private JSONObject queryAirport(String airportCode) {
+    private JSONObject queryAirport(String airportCode) throws FlightCenterException{
         JSONObject object = null;
         try {
             JSONObject params = new JSONObject();
-            params.put("operation", "queryAirportByAirportCode");
             params.put("airportCode", airportCode);
-            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService", params);
+            Response re = ClientUtil.clientSendData(baseInfoClient, "businessService","queryAirportByAirportCode", params);
             if (re != null && re.getResponeCode().getValue() == 200) {
                 object = JSON.parseObject(new String(re.getResponseJSON()), Feature.OrderedField);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new FlightCenterException("服务间调用异常");
         }
         return object;
     }

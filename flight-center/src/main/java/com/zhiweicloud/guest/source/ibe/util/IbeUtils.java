@@ -11,9 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("flightNo", flightNo));
         nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
         nameValuePairs.add(new BasicNameValuePair("postURL", FLIGHT_INFO_UPDATE_FLIGHT));
-        String result = HttpClientUtils.HttpPostForWebService("http", IBE_HOST, "/FYFTQuery.asmx/FlightPush", nameValuePairs);result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
+        String result = HttpClientUtils.httpPostForWebService("http", IBE_HOST, "/FYFTQuery.asmx/FlightPush", nameValuePairs);result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeMessage.class);
@@ -72,7 +70,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("FlightNo", flightNo));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByFlightNO", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByFlightNO", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), RootResult.class);
@@ -93,7 +91,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryFlightNobydate", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryFlightNobydate", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), RootResult.class);
@@ -119,7 +117,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("eticket", "false"));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         return XmlUtils.documentToJSONObject(result);
     }
@@ -136,7 +134,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("eticket", "false"));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/vibe.asmx/AV", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         return JAXB.unmarshal(new StringReader(result.replace(" xmlns=\"http://www.ibeservice.com/\"","")), IbeAvResult.class);
     }
@@ -156,7 +154,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("flightdate", flightDate));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QuerybyhisFlightNO", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QuerybyhisFlightNO", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), RootResult.class);
@@ -178,7 +176,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("CPNR", ""));
         nameValuePairs.add(new BasicNameValuePair("IDCAR", ""));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/detrservice.asmx/DETR", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/detrservice.asmx/DETR", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeDetrTktResult.class);
@@ -199,7 +197,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("dstCity", arrAirportCode));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByDepAndArr", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/QueryByDepAndArr", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeQueryByDepAndArr.class);
@@ -218,7 +216,7 @@ public class IbeUtils {
         nameValuePairs.add(new BasicNameValuePair("airportCode", airportCode));
         nameValuePairs.add(new BasicNameValuePair("outstyle", "0"));
 
-        String result = HttpClientUtils.HttpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/queryAirportStatus", nameValuePairs);
+        String result = HttpClientUtils.httpGetForWebService("http", IBE_HOST, "/FYFTQuery.asmx/queryAirportStatus", nameValuePairs);
         log.info("【 ************ 请求的结果：\n" + result + "\n ************ 】");
         result = result.replace("xmlns=\"http://ws.ibeservice.com/\"", "");
         return JAXB.unmarshal(new StringReader(result), IbeQueryByDepAndArr.class);

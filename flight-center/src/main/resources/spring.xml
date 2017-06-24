@@ -8,11 +8,22 @@
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-4.2.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
+
     <context:component-scan base-package="com.zhiweicloud.guest" />
 
     <!-- 开启切面代理 -->
     <aop:aspectj-autoproxy/>
 
-    <bean id="SpringBeanUtil" class="com.wyun.utils.SpringBeanUtil"/>
+    <bean id="baseInfoClient" class="com.wyun.thrift.client.Factory.ServiceClientProxyFactory" destroy-method="close">
+        <property name="maxActive" value="20" />
+        <property name="idleTime" value="1800000" />
+        <property name="serverName" value="MyService" />
+        <property name="serverPackage" value="com.wyun.thrift.server." />
+        <property name="service" value="127.0.0.1" />
+        <property name="port" value="9090" />
+        <!--<property name="service" value="hsr-order.hsr" />-->
+        <!--<property name="port" value="80" />-->
+    </bean>
 
 </beans>

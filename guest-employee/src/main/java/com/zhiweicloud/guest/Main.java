@@ -17,12 +17,8 @@ public class Main {
         context.getEnvironment().setActiveProfiles("production");
         context.load("classpath:spring.xml","classpath:mybatis.xml");
         context.refresh();
-        Server server=new Server(8080);
-        BusinessServiceMap businessServiceMap = new BusinessServiceMap();
-        businessServiceMap.registerService("fundService", SpringBeanUtil.getBean("fundService"));
-        WyunServiceImpl wyunServiceImpl = new WyunServiceImpl(businessServiceMap);
-        server.setWyunServiceImpl(wyunServiceImpl);
-        server.startServer();
+        Server server = new Server(8080);
+        server.startSingleServer(SpringBeanUtil.getBean("businessService"),"businessService");
         while (true) {
             System.out.println("start");
             Thread.sleep(1000000);

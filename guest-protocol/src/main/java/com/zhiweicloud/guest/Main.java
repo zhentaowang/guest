@@ -1,12 +1,8 @@
 package com.zhiweicloud.guest;
-import com.wyun.thrift.server.business.BusinessServiceMap;
-import com.wyun.thrift.server.processor.WyunServiceImpl;
+
 import com.wyun.thrift.server.server.Server;
 import com.wyun.utils.SpringBeanUtil;
 import org.springframework.context.support.GenericXmlApplicationContext;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by luojing@wyunbank.com on 02/05/2017.
@@ -20,11 +16,7 @@ public class Main {
         context.load( "classpath:spring.xml", "classpath:mybatis.xml","classpath:spring-client.xml");
         context.refresh();
         Server server=new Server(8080);
-        BusinessServiceMap businessServiceMap = new BusinessServiceMap();
-        businessServiceMap.registerService("fundService", SpringBeanUtil.getBean("fundService"));
-        WyunServiceImpl wyunServiceImpl = new WyunServiceImpl(businessServiceMap);
-        server.setWyunServiceImpl(wyunServiceImpl);
-        server.startServer();
+        server.startSingleServer(SpringBeanUtil.getBean("businessService"),"businessService");
         while (true) {
             System.out.println("start");
             Thread.sleep(1000000);

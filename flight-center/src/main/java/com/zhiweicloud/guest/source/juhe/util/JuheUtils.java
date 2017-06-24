@@ -35,7 +35,7 @@ public class JuheUtils {
         nameValuePairs.add(new BasicNameValuePair("end", end));
         nameValuePairs.add(new BasicNameValuePair("date", date));
         nameValuePairs.add(new BasicNameValuePair("dtype", ""));
-        return HttpClientUtils.HttpGetForWebService("http", JUHE_HOST, "/train/s2swithprice", nameValuePairs);
+        return HttpClientUtils.httpGetForWebService("http", JUHE_HOST, "/train/s2swithprice", nameValuePairs);
     }
 
     public static String queryTrainInfoByName(String name) throws Exception {
@@ -46,7 +46,7 @@ public class JuheUtils {
         nameValuePairs.add(new BasicNameValuePair("key", JUHE_KEY));
         nameValuePairs.add(new BasicNameValuePair("name", name));
         nameValuePairs.add(new BasicNameValuePair("dtype", ""));
-        return HttpClientUtils.HttpGetForWebService("http", JUHE_HOST, "/train/s", nameValuePairs);
+        return HttpClientUtils.httpGetForWebService("http", JUHE_HOST, "/train/s", nameValuePairs);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.zhiweicloud.guest.common;
 
 import com.alibaba.fastjson.JSON;
-import com.zhiweicloud.guest.common.util.HttpClientDemo;
+import com.zhiweicloud.guest.common.util.HttpClientUtils;
 import com.zhiweicloud.guest.mapper.FlightPushPoMapper;
 import com.zhiweicloud.guest.po.FlightPushPo;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +54,7 @@ public class SimplePushRunnable implements Runnable {
             log.info("【 ************ " + Thread.currentThread().getName() + " 线程被调用 ************ 】");
         }
         try {
-            String result = HttpClientDemo.HttpPostForWebService(url, params, "json");
+            String result = HttpClientUtils.httpPostForWebService(url, params, "json");
             if (log.isInfoEnabled()) {
                 log.info("【 ************ " + result + " ************ 】");
             }

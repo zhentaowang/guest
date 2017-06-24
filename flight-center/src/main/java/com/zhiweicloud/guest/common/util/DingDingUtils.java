@@ -22,7 +22,7 @@ public class DingDingUtils {
             String textMsg = getMsg(webHook);
             System.out.println(textMsg);
 
-            String result = HttpClientDemo.HttpPostForWebService(uri, textMsg);
+            String result = HttpClientUtils.httpPostForWebService(uri, textMsg);
             System.out.println(result);
 
         }  catch (Exception e) {

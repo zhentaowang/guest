@@ -1,5 +1,7 @@
 package com.zhiweicloud.guest;
 
+import com.wyun.thrift.server.server.Server;
+import com.wyun.utils.SpringBeanUtil;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 /**
@@ -12,6 +14,8 @@ public class Main {
         context.setValidating(false);
         context.load( "classpath:spring.xml", "classpath:mybatis.xml");
         context.refresh();
+        Server server = new Server(8080);
+        server.startSingleServer(SpringBeanUtil.getBean("businessService"),"businessService");
         while (true) {
             System.out.println("start");
             Thread.sleep(1000000);

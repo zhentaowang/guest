@@ -38,6 +38,9 @@ public class BusinessService implements IBusinessService {
     @Autowired
     private ApiService sourceService;
 
+    @Autowired
+    private AppService appService;
+
     @Override
     public JSONObject handle(String operation,JSONObject request) {
         String success = null;
@@ -48,7 +51,7 @@ public class BusinessService implements IBusinessService {
             log.debug("【 ************ request method params: " + request.toJSONString() +" ************ 】");
         }
         switch (operation) {
-            // for outer net
+            // for manager
             case "queryFlightInfo":
                 success = flightService.queryFlightInfo(request);
                 break;
@@ -67,14 +70,18 @@ public class BusinessService implements IBusinessService {
             case "customFlight":
                 success = flightService.customFlight(request);
                 break;
-            case "queryAirport":
-                success = flightService.queryAirport(request);
-                break;
-            case "queryHotAirport":
-                success = flightService.queryHotAirport(request);
-                break;
             case "cancelCustomFlight":
                 success = flightService.cancelCustomFlight(request);
+                break;
+            // for app
+            case "queryAirport":
+                success = appService.queryAirport(request);
+                break;
+            case "queryHotAirport":
+                success = appService.queryHotAirport(request);
+                break;
+            case "addHotNum":
+                success = appService.addHotNum(request);
                 break;
             // for test
             case "customer1":

@@ -34,7 +34,7 @@
     <swagger.version>1.5.9</swagger.version>
     <httpcore.version>4.5.2</httpcore.version>
     <libthrift.version>0.9.3</libthrift.version>
-    <thrift.server.version>3.1-RELEASE</thrift.server.version>
+    <thrift.server.version>3.2-RELEASE</thrift.server.version>
     <thrift.client.version>1.1-RELEASE</thrift.client.version>
     <thrift.util.version>2.0-RELEASE</thrift.util.version>
     <commons-pool.version>1.6</commons-pool.version>
