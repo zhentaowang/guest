@@ -14,7 +14,7 @@ public class Main {
 
     public static void main( String[] args ) throws InterruptedException {
         String env = System.getenv("LOCAL_ENV");
-        if ("test".equals(env)) {
+        if ("dev".equals(env)) {
             ApplicationContextUtils.createContext(env, Dictionary.testPort);
         }else {
             ApplicationContextUtils.createContext("production");
