@@ -202,7 +202,7 @@ public class OrderInfoController {
         jsonObjectParam.put("user_id", userId);
         jsonObjectParam.put("client_id", airportCode);
         jsonObjectParam.put("employeeId", userId);
-        jsonObjectParam.put("operation", "getRoleByUserId");
+        //jsonObjectParam.put("operation", "getRoleByUserId");
 
 
         try {
@@ -262,7 +262,7 @@ public class OrderInfoController {
 
                     //查询当前用户角色
                     JSONObject userRoleObject = new JSONObject();
-                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", "getRoleByUserId",jsonObjectParam);
                     if (response != null && response.getResponeCode().getValue() == 200) {
                         userRoleObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                     }

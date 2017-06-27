@@ -232,12 +232,12 @@ public class BusinessService implements IBusinessService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user_id", userId);
             jsonObject.put("client_id", airportCode);
-            jsonObject.put("operation", "protocolList");
+            //jsonObject.put("operation", "protocolList");
 
             for (Long id : ids) {
                 jsonObject.put("institutionClientId", id);
                 JSONObject protocolList = new JSONObject();
-                Response response = ClientUtil.clientSendData(protocolClient, "businessService", jsonObject);
+                Response response = ClientUtil.clientSendData(protocolClient, "businessService", "protocolList",jsonObject);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     protocolList = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }

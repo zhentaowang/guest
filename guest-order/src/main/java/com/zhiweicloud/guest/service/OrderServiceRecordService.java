@@ -37,11 +37,11 @@ public class OrderServiceRecordService {
         params.put("user-id", record.getCreateUser());
         params.put("client-id", record.getAirportCode());
         params.put("employeeId", record.getCreateUser());
-        params.put("operation", "view");
+       // params.put("operation", "view");
 
 
 
-        Response response = ClientUtil.clientSendData(employeeClient, "businessService", params);
+        Response response = ClientUtil.clientSendData(employeeClient, "businessService", "view",params);
         if (response != null && response.getResponeCode().getValue() == 200) {
             JSONObject updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
             if (updateUserObject != null) {

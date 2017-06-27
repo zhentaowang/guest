@@ -131,10 +131,10 @@ public class BusinessService implements IBusinessService {
                 jsonObject.put("user_id", request.getLong("user_id"));
                 jsonObject.put("client_id", request.getString("client_id"));
                 jsonObject.put("protocolTypeId", checkList.get(i).get("protocolType"));
-                jsonObject.put("operation", "getProtocolTypeDropdownList");
+                //jsonObject.put("operation", "getProtocolTypeDropdownList");
 
                 JSONObject protocolObject = new JSONObject();
-                Response response = ClientUtil.clientSendData(protocolClient, "businessService", jsonObject);
+                Response response = ClientUtil.clientSendData(protocolClient, "businessService", "getProtocolTypeDropdownList",jsonObject);
 
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     protocolObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
