@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: flight-center
-  namespace: airportcloud
+  namespace: flight
 spec:
   replicas: 1
   template:
@@ -25,7 +25,7 @@ spec:
       volumes:
         - name: code
           persistentVolumeClaim:
-            claimName: pvc-airportcloud
+            claimName: pv-flight
         - name: tz-config
           hostPath:
             path: /etc/localtime
@@ -34,7 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: flight-center
-  namespace: airportcloud
+  namespace: flight
 spec:
   type: ClusterIP
   ports:
