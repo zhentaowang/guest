@@ -231,13 +231,13 @@ public class ExportFileService {
         JSONObject result = null;
         JSONObject params = new JSONObject();
         params.put("user_id", userId);
-        params.put("operation", "reportCountBill");
+        //params.put("operation", "reportCountBill");
         params.put("clientName", clientName);
         params.put("trainName",trainName);
         params.put("productName",productName);
         params.put("startTime",startTime);
         params.put("endTime",endTime);
-        Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
+        Response re = ClientUtil.clientSendData(trainClient, "businessService","reportCountBill", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             if (log.isInfoEnabled()) {
                 log.info(new String(re.getResponseJSON()));
@@ -255,14 +255,18 @@ public class ExportFileService {
         params.put("productName",productName);
         params.put("startTime",startTime);
         params.put("endTime",endTime);
-        if (type == 2){
-            params.put("operation", "reportDetailBill");
 
+        Response re = null;
+
+        if (type == 2){
+            //params.put("operation", "reportDetailBill");
+            re = ClientUtil.clientSendData(trainClient, "businessService","reportDetailBill", params);
         }
         if (type == 3){
-            params.put("operation", "reportRetailBill");
+            //params.put("operation", "reportRetailBill");
+            re = ClientUtil.clientSendData(trainClient, "businessService","reportRetailBill", params);
         }
-        Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
+        //Response re = ClientUtil.clientSendData(trainClient, "businessService", params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             if (log.isInfoEnabled()) {
                 log.info(new String(re.getResponseJSON()));
@@ -276,7 +280,7 @@ public class ExportFileService {
         JSONObject params = new JSONObject();
         params.put("client_id", airportCode);
         params.put("user_id", userId);
-        params.put("operation", "customer-checklist");
+        //params.put("operation", "customer-checklist");
         params.put("queryCustomerId", orderCheckDetail.getQueryCustomerId());
         params.put("queryProtocolType",orderCheckDetail.getQueryProtocolType());
         params.put("queryProtocolId",orderCheckDetail.getQueryProtocolId());
@@ -284,7 +288,7 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(checkClient, "businessService", params);
+        Response re = ClientUtil.clientSendData(checkClient, "businessService", "customer-checklist",params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
         }
@@ -297,7 +301,7 @@ public class ExportFileService {
         JSONObject params = new JSONObject();
         params.put("client_id", airportCode);
         params.put("user_id", userId);
-        params.put("operation", "getSpecialDateList");
+        //params.put("operation", "getSpecialDateList");
         params.put("queryFlightDateBegin", checkQueryParam.getQueryFlightDateBegin());
         params.put("queryFlightDateEnd",checkQueryParam.getQueryFlightDateEnd());
         params.put("queryCustomerName",checkQueryParam.getQueryCustomerName());
@@ -305,7 +309,7 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(checkClient, "businessService", params);
+        Response re = ClientUtil.clientSendData(checkClient, "businessService", "getSpecialDateList",params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
         }
@@ -317,7 +321,7 @@ public class ExportFileService {
         JSONObject params = new JSONObject();
         params.put("client_id", airportCode);
         params.put("user_id", userId);
-        params.put("operation", "getLoungeDateList");
+        //params.put("operation", "getLoungeDateList");
         params.put("queryFlightDateBegin", checkQueryParam.getQueryFlightDateBegin());
         params.put("queryFlightDateEnd",checkQueryParam.getQueryFlightDateEnd());
         params.put("queryCustomerName",checkQueryParam.getQueryCustomerName());
@@ -326,7 +330,7 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(checkClient, "businessService", params);
+        Response re = ClientUtil.clientSendData(checkClient, "businessService", "getLoungeDateList",params);
         if (re !=null && re.getResponeCode().getValue() == 200) {
             result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
         }

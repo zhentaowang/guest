@@ -411,10 +411,10 @@ public class BusinessService implements IBusinessService {
                 paramMap.put("servId", serv.getServId());
                 paramMap.put("client_id", request.getString("client_id"));
                 paramMap.put("user_id", request.getLong("user_id"));
-                paramMap.put("operation", "getServerNumByServlId");
+                //paramMap.put("operation", "getServerNumByServlId");
                 //根据servId,服务厅的id 从order_service 统计服务人数
                 JSONObject data=new JSONObject();
-                Response response = ClientUtil.clientSendData(orderClient, "businessService", paramMap);
+                Response response = ClientUtil.clientSendData(orderClient, "businessService","getServerNumByServlId", paramMap);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }

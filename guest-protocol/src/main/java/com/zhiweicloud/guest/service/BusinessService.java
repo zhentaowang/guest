@@ -545,9 +545,9 @@ public class BusinessService implements IBusinessService {
             for (int i = 0; i < ids.size(); i++) {
                 //调用order应用，根据协议id 判断有无被引用
                 paramMap.put("protocolId", ids.get(i));
-                paramMap.put("operation", "getOrderCountByProtocolId");
+               // paramMap.put("operation", "getOrderCountByProtocolId");
                 JSONObject data = new JSONObject();
-                Response response = ClientUtil.clientSendData(orderClient, "businessService", paramMap);
+                Response response = ClientUtil.clientSendData(orderClient, "businessService","getOrderCountByProtocolId", paramMap);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }
@@ -1071,9 +1071,9 @@ public class BusinessService implements IBusinessService {
                 if (list.get(i).get("clientId") != null) {
                     paramMap.put("institutionClientId", list.get(i).get("clientId"));
                     paramMap.put("client_id", request.getString("client_id"));
-                    paramMap.put("operation", "view");
+                    //paramMap.put("operation", "view");
                     JSONObject data=new JSONObject();
-                    Response response = ClientUtil.clientSendData(institutionClient, "businessService", paramMap);
+                    Response response = ClientUtil.clientSendData(institutionClient, "businessService", "view",paramMap);
                     if (response != null && response.getResponeCode().getValue() == 200) {
                         data = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                     }

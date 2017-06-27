@@ -68,10 +68,10 @@ public class OrderInfoService {
                 if(orderInfo.getOrderStatus() != null && orderInfo.getOrderStatus().equals("已使用")){//预约订单 转为 服务订单，需要保持 服务订单的更新时间，更新人
                     orderInfo.setServerUpdateTime(new Date());
                     orderInfo.setServerUpdateUserId(userId);
-                    jsonObjectParam.put("operation", "view");
+                    //jsonObjectParam.put("operation", "view");
 
                     JSONObject updateUserObject = new JSONObject();
-                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", "view",jsonObjectParam);
                     if (response != null && response.getResponeCode().getValue() == 200) {
                         updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                     }
@@ -85,7 +85,7 @@ public class OrderInfoService {
                     orderInfo.setUpdateUser(userId);
 
                     JSONObject updateUserObject = new JSONObject();
-                    Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                    Response response = ClientUtil.clientSendData(employeeClient, "businessService","view", jsonObjectParam);
                     if (response != null && response.getResponeCode().getValue() == 200) {
                         updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                     }
@@ -98,9 +98,9 @@ public class OrderInfoService {
             } else {//服务订单
                 orderInfo.setServerUpdateTime(new Date());
                 orderInfo.setServerUpdateUserId(userId);
-                jsonObjectParam.put("operation", "view");
+                //jsonObjectParam.put("operation", "view");
                 JSONObject updateUserObject = new JSONObject();
-                Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                Response response = ClientUtil.clientSendData(employeeClient, "businessService", "view",jsonObjectParam);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     updateUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }
@@ -164,9 +164,9 @@ public class OrderInfoService {
                 orderInfo.setCreateTime(new Date());
                 orderInfo.setCreateUser(userId);
 //                JSONObject createUserObject = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-employee/guest-employee/view", headerMap, paramMap));
-                jsonObjectParam.put("operation", "view");
+                //jsonObjectParam.put("operation", "view");
                 JSONObject createUserObject = new JSONObject();
-                Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                Response response = ClientUtil.clientSendData(employeeClient, "businessService", "view",jsonObjectParam);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }
@@ -178,9 +178,9 @@ public class OrderInfoService {
                 orderInfo.setServerCreateTime(new Date());
                 orderInfo.setServerCreateUserId(userId);
                 orderInfo.setServerUpdateUserId(userId);
-                jsonObjectParam.put("operation", "view");
+                //jsonObjectParam.put("operation", "view");
                 JSONObject createUserObject = new JSONObject();
-                Response response = ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+                Response response = ClientUtil.clientSendData(employeeClient, "businessService", "view",jsonObjectParam);
                 if (response != null && response.getResponeCode().getValue() == 200) {
                     createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                 }
@@ -199,8 +199,8 @@ public class OrderInfoService {
     private void executeFlightOperate(Long flightId, OrderInfo orderInfo, Flight flight, JSONObject jsonObjectParam) throws UnsupportedEncodingException, URISyntaxException {
         flight.setFlightId(flightId);
         jsonObjectParam.put("flight", JSON.toJSONString(flight));
-        jsonObjectParam.put("operation", "updateFlightInfo");
-        ClientUtil.clientSendData(employeeClient, "businessService", jsonObjectParam);
+        //jsonObjectParam.put("operation", "updateFlightInfo");
+        ClientUtil.clientSendData(employeeClient, "businessService", "updateFlightInfo",jsonObjectParam);
         jsonObjectParam.remove("flight");
         Boolean isCustom = flightMapper.selectIsCustomById(flightId);
         if (!isCustom){
@@ -289,9 +289,9 @@ public class OrderInfoService {
 
                 if (jsonObject.get("serviceDetailId") != null && jsonObject.get("serviceId") != null) {
 //                    JSONObject jsonObject1 = JSON.parseObject(HttpClientUtil.httpGetRequest("http://guest-protocol/guest-protocol/get-service-box-by-type-and-protocol-product-id", headerMap, paramMap));
-                    params.put("operation", "get-service-box-by-type-and-protocol-product-id");
+                    //params.put("operation", "get-service-box-by-type-and-protocol-product-id");
                     JSONObject jsonObject1 = new JSONObject();
-                    Response response = ClientUtil.clientSendData(protocolClient, "businessService", params);
+                    Response response = ClientUtil.clientSendData(protocolClient, "businessService", "get-service-box-by-type-and-protocol-product-id",params);
                     if (response != null && response.getResponeCode().getValue() == 200) {
                         jsonObject1 = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
                     }
@@ -433,9 +433,9 @@ public class OrderInfoService {
         params.put("user_id", userId);
         params.put("client_id", airportCode);
         params.put("employeeId", userId);
-        params.put("operation", "view");
+        //params.put("operation", "view");
         JSONObject createUserObject = new JSONObject();
-        Response response = ClientUtil.clientSendData(employeeClient, "businessService", params);
+        Response response = ClientUtil.clientSendData(employeeClient, "businessService","view", params);
         if (response != null && response.getResponeCode().getValue() == 200) {
             createUserObject = ByteBufferUtil.convertByteBufferToJSON(response.getResponseJSON());
         }
