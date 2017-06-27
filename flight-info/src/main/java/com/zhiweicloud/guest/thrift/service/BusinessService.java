@@ -34,7 +34,9 @@ public class BusinessService implements IBusinessService {
     @Override
     public JSONObject handle(String operation,JSONObject request) {
         String success = null;
+        System.out.println("check json --------:" + JSON.toJSONString(request));
         if (log.isDebugEnabled()) {
+            log.debug("request operator : " + JSON.toJSONString(request));
             log.debug("request method name: " + operation);
         }
         switch (operation) {
