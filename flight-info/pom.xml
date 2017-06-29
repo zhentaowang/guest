@@ -202,7 +202,7 @@
     <dependency>
       <groupId>com.wyun.thrift</groupId>
       <artifactId>client</artifactId>
-      <version>1.0-RELEASE</version>
+      <version>${thrift.client.version}</version>
     </dependency>
 
     <dependency>

@@ -20,10 +20,10 @@
         <property name="idleTime" value="1800000" />
         <property name="serverName" value="MyService" />
         <property name="serverPackage" value="com.wyun.thrift.server." />
-        <property name="service" value="127.0.0.1" />
-        <property name="port" value="9090" />
-        <!--<property name="service" value="hsr-order.hsr" />-->
-        <!--<property name="port" value="80" />-->
+        <!--<property name="service" value="127.0.0.1" />-->
+        <!--<property name="port" value="9090" />-->
+        <property name="service" value="base-info" />
+        <property name="port" value="80" />
     </bean>
 
 </beans>

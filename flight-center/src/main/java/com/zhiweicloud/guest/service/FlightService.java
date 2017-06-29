@@ -645,16 +645,18 @@ public class FlightService {
             JSONObject depAirport = queryAirport(flightPo.getDepAirportCode());
             JSONObject arrAirport = queryAirport(flightPo.getArrAirportCode());
             if (airline != null) {
-                flightPo.setAirlineCode(airline.getString("ICAO"));
-                flightPo.setAirlineName(airline.getString("airlineName"));
+                flightPo.setAirlineCode(airline.getJSONObject("data").getString("IATA"));
+                flightPo.setAirlineName(airline.getJSONObject("data").getString("airlineName"));
             }
             if(depAirport !=null){
-                flightPo.setDepAirport(depAirport.getString("shortTitle"));
-                flightPo.setDepAirportName(depAirport.getString("name"));
+                flightPo.setDepAirport(depAirport.getJSONObject("data").getString("shortTitle"));
+                flightPo.setDepAirportName(depAirport.getJSONObject("data").getString("name"));
+                flightPo.setDepCity(depAirport.getJSONObject("data").getString("city"));
             }
             if(arrAirport !=null){
-                flightPo.setArrAirport(arrAirport.getString("shortTitle"));
-                flightPo.setArrAirportName(arrAirport.getString("name"));
+                flightPo.setArrAirport(arrAirport.getJSONObject("data").getString("shortTitle"));
+                flightPo.setArrAirportName(arrAirport.getJSONObject("data").getString("name"));
+                flightPo.setArrCity(arrAirport.getJSONObject("data").getString("city"));
             }
         }catch (FlightCenterException e){
             throw e;
