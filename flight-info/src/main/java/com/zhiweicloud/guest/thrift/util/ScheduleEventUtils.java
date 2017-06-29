@@ -199,7 +199,7 @@ public class ScheduleEventUtils {
         Integer page = request.getInteger("page");
         page = page == null ? 1 : page;
         Integer rows = request.getInteger("rows");
-        rows = rows == null ? 10 : page;
+        rows = rows == null ? 10 : rows;
         Map<String,Object> param = new HashMap<>();
         param.put("airportCode",airportCode);
         int count = scheduleEventMapper.getListCount(param);

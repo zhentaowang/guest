@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import com.wyun.thrift.server.business.IBusinessService;
-import com.zhiweicloud.guest.common.Dictionary;
 import com.zhiweicloud.guest.thrift.util.FlightUtils;
 import com.zhiweicloud.guest.thrift.util.ScheduleEventUtils;
 import org.apache.commons.logging.Log;
@@ -34,6 +33,9 @@ public class BusinessService implements IBusinessService {
     @Override
     public JSONObject handle(String operation,JSONObject request) {
         String success = null;
+        if (log.isDebugEnabled()) {
+            log.debug("request name: " + JSON.toJSONString(request));
+        }
         if (log.isDebugEnabled()) {
             log.debug("request method name: " + operation);
         }
