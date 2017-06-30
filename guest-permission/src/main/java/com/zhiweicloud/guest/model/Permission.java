@@ -53,7 +53,6 @@ public class Permission extends BaseEntity {
     @ApiModelProperty(value="角色Id",name="roleId")
     private Long roleId;
 
-    @Transient
     @ApiModelProperty(value="角色Id字符串",name="roleIds")
     private String roleIds;
 

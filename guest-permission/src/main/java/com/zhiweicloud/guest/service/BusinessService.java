@@ -181,6 +181,7 @@ public class BusinessService implements IBusinessService {
     public String dataPermissionList(JSONObject request) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
+        param.put("roleId", request.getString("roleId"));
 
         int page = 1;
         if(request.containsKey("page")) {
