@@ -229,7 +229,7 @@ public class BusinessService implements IBusinessService {
                 rolePermission.setCreateTime(new Date());
                 rolePermission.setUpdateTime(new Date());
                 if (rolePermission.getRoleIds() != null) {
-                    rolePermission.setDataPermission("{\"roleId\": " + rolePermission.getRoleIds() + "}");
+                    rolePermission.setDataPermission("{\"roleId\": \"" + rolePermission.getRoleIds() + "\"}");
                 } else {
                     rolePermission.setDataPermission("{\"roleId\": \"\"}");
                 }
