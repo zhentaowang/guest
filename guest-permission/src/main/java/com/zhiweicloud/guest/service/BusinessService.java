@@ -179,6 +179,7 @@ public class BusinessService implements IBusinessService {
      * @return 分页结果
      */
     public String dataPermissionList(JSONObject request) {
+        System.out.println("500 yes or no");
         HashMap<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
 
@@ -342,6 +343,7 @@ public class BusinessService implements IBusinessService {
      * @return 权限详情
      */
     public String view(JSONObject request) {
+        System.out.println("viejw................................");
         Map<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
         param.put("permissionId", request.getLong("permissionId"));
@@ -355,11 +357,16 @@ public class BusinessService implements IBusinessService {
      */
     public String getUserPermission(JSONObject request) {
         try {
+            System.out.println("request=" + JSON.toJSONString(request));
             List<String> urls = Collections.singletonList(request.getString("url"));
+
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", request.getString("client_id"));
             param.put("userId", request.getLong("user_id"));
             param.put("urlStr", Joiner.on(",").join(urls));
+//            param.put("airportCode", "LJG");
+//            param.put("userId", 108);
+//            param.put("urlStr", "/guest-order/list");
             if(request.containsKey("queryOrderType")){
                 param.put("orderType", request.getLong("queryOrderType"));
             }
@@ -368,8 +375,8 @@ public class BusinessService implements IBusinessService {
             for(int i = 0; i < urls.size(); i++){
                 for(int j = 0; j < permissionList.size(); j++){
                     String url = permissionList.get(j).getUrl();
-                    System.out.println(url);
-                    System.out.println(urls.get(i));
+                    System.out.println("url: " + url);
+                    System.out.println("url.get(i)" + urls.get(i));
                     if(urls.get(i).equals(url)){
                         params.put(urls.get(i),"true");
                         if(param.containsKey("orderType") && permissionList.get(j).getDataPermission() != null){
@@ -393,6 +400,7 @@ public class BusinessService implements IBusinessService {
 
             return JSON.toJSONString(params);
         } catch (Exception e) {
+            e.printStackTrace();
             return JSON.toJSONString(LXResult.error());
         }
     }
