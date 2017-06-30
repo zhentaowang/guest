@@ -35,7 +35,9 @@
       <if test="permissionId != null">
         permission_id,
       </if>
+      <if test="dataPermission != null">
         data_permission,
+      </if>
       <if test="createUser != null">
         create_user,
       </if>
@@ -65,11 +67,8 @@
       <if test="permissionId != null">
         #{permissionId,jdbcType=BIGINT},
       </if>
-      <if test="roleIds == null">
-        json_set(data_permission,'$.roleId','{"roleId": ""}'),
-      </if>
-      <if test="roleIds != null">
-        json_set(data_permission,'$.roleId',#{roleIds}),
+      <if test="dataPermission != null">
+        #{dataPermission,jdbcType=VARCHAR},
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=BIGINT},

@@ -228,6 +228,11 @@ public class BusinessService implements IBusinessService {
                 rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                 rolePermission.setCreateTime(new Date());
                 rolePermission.setUpdateTime(new Date());
+                if (rolePermission.getRoleIds() != null) {
+                    rolePermission.setDataPermission("{\"roleId\": " + rolePermission.getRoleIds() + "}");
+                } else {
+                    rolePermission.setDataPermission("{\"roleId\": \"\"}");
+                }
                 rolePermissionMapper.insertBySelective(rolePermission);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
@@ -326,6 +331,7 @@ public class BusinessService implements IBusinessService {
                         rolePermission.setCreateTime(new Date());
                         rolePermission.setUpdateTime(new Date());
                         rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                        rolePermission.setDataPermission("{\"roleId\": \"\"}");
                         rolePermissionMapper.insertBySelective(rolePermission);
                     }
                 }
