@@ -220,14 +220,14 @@ public class BusinessService implements IBusinessService {
             if (rolePermission == null || rolePermission.getAirportCode() == null) {
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
-            if (rolePermission.getPermissionId() != null) {
+            if (rolePermission.getRolePermissionId() != null) {
                 rolePermissionMapper.updateByIdAndAirportCode(rolePermission);
 
             } else {
                 rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                 rolePermission.setCreateTime(new Date());
                 rolePermission.setUpdateTime(new Date());
-//            permissionMapper.insertSelective(permission);
+                rolePermissionMapper.insertBySelective(rolePermission);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
