@@ -179,7 +179,6 @@ public class BusinessService implements IBusinessService {
      * @return 分页结果
      */
     public String dataPermissionList(JSONObject request) {
-        System.out.println("500 yes or no");
         HashMap<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
 

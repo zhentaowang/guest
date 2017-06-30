@@ -46,16 +46,19 @@
     </if>
   </select>
   <select id="getDataListByConidition" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
-    SELECT permission_id, airport_code, url, name, permission_type->>"$.roleId" as role_ids
-    FROM permission
-    where airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(permission_type,'all','$.orderType')
-    order by permission_id desc
+    SELECT r.permission_id, r.airport_code, p.url, p.name, r.data_permission->>"$.roleId" as role_ids
+    FROM role_permission as r right join
+       (select permission_id, url, name from permission where json_contains_path(permission_type,'all','$.orderType') and airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p
+    on r.permission_id = p.permission_id
+    where r.airport_code = #{criteria.airportCode,jdbcType=VARCHAR} and r.is_deleted = 0 and  r.role_id= #{criteria.roleId,jdbcType=BIGINT}
+    order by r.permission_id desc
   </select>
   <select id="getDataListCount" parameterType="map" resultType="int">
-    SELECT
-    count(permission_id) as num
-    FROM permission
-    where airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0 and json_contains_path(permission_type,'all','$.orderType')
+    SELECT count(r.permission_id), r.airport_code, p.url, p.name, r.data_permission->>"$.roleId" as role_ids
+    FROM role_permission as r right join
+       (select permission_id, url, name from permission where json_contains_path(permission_type,'all','$.orderType') and airport_code = #{airportCode,jdbcType=VARCHAR} and is_deleted = 0) as p
+    on r.permission_id = p.permission_id
+    where r.airport_code = #{airportCode,jdbcType=VARCHAR} and r.is_deleted = 0 and  r.role_id= #{roleId,jdbcType=BIGINT}
   </select>
   <select id="getListByRole" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultMap="BaseResultMap">
     select r.role_permission_id, r.role_id, p.permission_id, p.name, p.airport_code, p.url from role_permission as r left join
