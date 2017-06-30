@@ -5,9 +5,10 @@
     <id column="role_permission_id" jdbcType="BIGINT" property="rolePermissionId" />
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="permission_id" jdbcType="BIGINT" property="permissionId" />
+    <result column="data_permission" jdbcType="VARCHAR" property="dataPermission" />
   </resultMap>
   <sql id="Base_Column_List">
-    role_permission_id, role_id, permission_id
+    role_permission_id, role_id, permission_id, data_permission
   </sql>
   <select id="deleteByIdAndAirportCode" parameterType="map">
     update role_permission set is_deleted = 1 where role_permission_id not in (${ids}) and airport_code = #{airportCode,jdbcType=VARCHAR} and role_id = #{roleId,jdbcType=BIGINT}
@@ -34,6 +35,7 @@
       <if test="permissionId != null">
         permission_id,
       </if>
+        data_permission,
       <if test="createUser != null">
         create_user,
       </if>
@@ -62,6 +64,12 @@
       </if>
       <if test="permissionId != null">
         #{permissionId,jdbcType=BIGINT},
+      </if>
+      <if test="roleIds == null">
+        json_set(data_permission,'$.roleId','{"roleId": ""}'),
+      </if>
+      <if test="roleIds != null">
+        json_set(data_permission,'$.roleId',#{roleIds}),
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=BIGINT},

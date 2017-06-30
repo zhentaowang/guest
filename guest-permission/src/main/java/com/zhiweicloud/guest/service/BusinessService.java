@@ -42,6 +42,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import jersey.repackaged.com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 /**
@@ -212,7 +213,7 @@ public class BusinessService implements IBusinessService {
      */
     public String save(JSONObject request) {
         try {
-            RolePermission rolePermission = null;
+            RolePermission rolePermission;
             JSONArray jsonArray = JSON.parseArray(request.getString("data"));
             rolePermission = JSON.toJavaObject(jsonArray.getJSONObject(0), RolePermission.class);
             rolePermission.setAirportCode(request.getString("client_id"));
@@ -343,11 +344,12 @@ public class BusinessService implements IBusinessService {
      * @return 权限详情
      */
     public String view(JSONObject request) {
-        System.out.println("viejw................................");
+
         Map<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
         param.put("permissionId", request.getLong("permissionId"));
         return JSON.toJSONString(permissionMapper.selectById(param));
+
     }
 
     /**
@@ -357,16 +359,12 @@ public class BusinessService implements IBusinessService {
      */
     public String getUserPermission(JSONObject request) {
         try {
-            System.out.println("request=" + JSON.toJSONString(request));
             List<String> urls = Collections.singletonList(request.getString("url"));
 
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", request.getString("client_id"));
             param.put("userId", request.getLong("user_id"));
             param.put("urlStr", Joiner.on(",").join(urls));
-//            param.put("airportCode", "LJG");
-//            param.put("userId", 108);
-//            param.put("urlStr", "/guest-order/list");
             if(request.containsKey("queryOrderType")){
                 param.put("orderType", request.getLong("queryOrderType"));
             }
@@ -375,8 +373,6 @@ public class BusinessService implements IBusinessService {
             for(int i = 0; i < urls.size(); i++){
                 for(int j = 0; j < permissionList.size(); j++){
                     String url = permissionList.get(j).getUrl();
-                    System.out.println("url: " + url);
-                    System.out.println("url.get(i)" + urls.get(i));
                     if(urls.get(i).equals(url)){
                         params.put(urls.get(i),"true");
                         if(param.containsKey("orderType") && permissionList.get(j).getDataPermission() != null){
@@ -385,7 +381,6 @@ public class BusinessService implements IBusinessService {
 //                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": |, ");
                             if(param.get("orderType").toString().equals(permissionTypeJSON.getString("orderType"))){
                                 params.put("roleId",dataPermissionJSON.getString("roleId"));
-                                System.out.printf("角色id：%s\n", params.get("roleId"));
                                 break;
                             }
                         }else {
