@@ -34,6 +34,11 @@ public class SheetContentPo {
      */
     public int total;
 
+    /**
+     * 服务人员
+     */
+    private String employeeName;
+
     public int getRow() {
         return row;
     }
@@ -64,6 +69,14 @@ public class SheetContentPo {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
     }
 
 }

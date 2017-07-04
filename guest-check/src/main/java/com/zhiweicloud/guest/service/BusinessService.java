@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sun.org.apache.bcel.internal.generic.INEG;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
@@ -72,6 +73,8 @@ public class BusinessService implements IBusinessService {
     private final CheckDynamicColumn checkDynamicColumn;
 
     private static MyService.Iface protocolClient = SpringBeanUtil.getBean("protocolClient");
+
+    private static MyService.Iface employeeClient = SpringBeanUtil.getBean("employeeClient");
 
     @Autowired
     public BusinessService(CheckMapper checkMapper, CheckDynamicColumn checkDynamicColumn) {
@@ -329,7 +332,7 @@ public class BusinessService implements IBusinessService {
         return JSON.toJSONString(result);
     }
 
-    public String getLoungeDateList(JSONObject request){
+    /*public String getLoungeDateList(JSONObject request){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         CheckQueryParam checkQueryParam = JSON.toJavaObject(request, CheckQueryParam.class);
@@ -405,7 +408,91 @@ public class BusinessService implements IBusinessService {
         result.setStatus(LZStatus.SUCCESS.value());
         result.setMsg(LZStatus.SUCCESS.display());
         return JSON.toJSONString(result);
+    }*/
+
+    // CheckQueryParam checkQueryParam, String airportCode,int protocolType,Long userId
+    public String getLoungeDateList(JSONObject request){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        CheckQueryParam checkQueryParam = JSON.toJavaObject(request, CheckQueryParam.class);
+        String airportCode = request.getString("client_id");
+        Long userId = request.getLong("user_id");
+        checkQueryParam.setAirportCode(airportCode);
+        Integer protocolType = request.getInteger("protocolType");
+
+        // 服务人员名字
+        String name = getEmployeeName(airportCode,userId);
+        List<LoungeCheckPo> loungeCheckPos = checkMapper.selectLoungeCheckList(checkQueryParam, protocolType);
+
+        List<SheetContentPo> sheetContentPos = new LinkedList<>();
+        List<RowContentPo> rowContentPos;
+        RowContentPo rowContentPo;
+        SheetContentPo sheetContentPo;
+
+        if(loungeCheckPos.size()>0){
+            for (LoungeCheckPo loungeCheckPo : loungeCheckPos) {
+                rowContentPos = new LinkedList<>();
+                sheetContentPo = new SheetContentPo();
+                sheetContentPo.setEmployeeName(name);
+                int total = 0;
+                for (OrderCheckPo orderCheckPo : loungeCheckPo.getOrderCheckPos()) {
+                    Integer serverNum = orderCheckPo.getServerNum();
+                    total += serverNum;
+                    Integer guestNum = orderCheckPo.getGuestNum();
+                    int length = orderCheckPo.getCheckPassengerPos().size();
+                    int value = serverNum - length;
+                    for (PassengerCheckPo passengerCheckPo : orderCheckPo.getCheckPassengerPos()) {
+                        rowContentPo = new RowContentPo();
+                        if (passengerCheckPo.getPassengerType() == 0) { // 主宾
+                            if(guestNum == 1){ // 最后一个主宾了,需要把随从都设置进去
+                                rowContentPo.setAlongTotal(value == 0 ? null : value);
+                            }else {
+                                if (value == 0) { // 不需要添加随从人数
+                                    rowContentPo.setAlongTotal(null);
+                                }
+                                if(value > 0){
+                                    int average = value / guestNum == 0 ? 1 : value / guestNum; // 随从人数少于贵宾人数
+                                    rowContentPo.setAlongTotal(average);
+                                    guestNum --;
+                                    value = value - average;
+                                }
+                            }
+                        }
+                        if (passengerCheckPo.getPassengerType() == 1) { // 随行
+                            rowContentPo.setAlongTotal(null);
+                        }
+                        rowContentPo.setProtocolName(loungeCheckPo.getProtocolName());
+                        rowContentPo.setFlightNo(passengerCheckPo.getFlightNo());
+                        rowContentPo.setPlanNo(passengerCheckPo.getPlanNo());
+                        rowContentPo.setSitNo(passengerCheckPo.getSitNo());
+                        rowContentPo.setPassengerType(passengerCheckPo.getPassengerType());
+                        rowContentPo.setAirpotCode(passengerCheckPo.getAirpotCode());
+                        rowContentPo.setLeg(passengerCheckPo.getLeg());
+                        rowContentPo.setCustomerName(loungeCheckPo.getCustomerName());
+                        rowContentPo.setFlightDate(loungeCheckPo.getFlightDate() == null ? "" : simpleDateFormat.format(loungeCheckPo.getFlightDate()));
+                        rowContentPo.setCabinNo(passengerCheckPo.getCabinNo());
+                        rowContentPo.setExpireTime(passengerCheckPo.getExpireTime());
+                        rowContentPo.setFlightDepcode(passengerCheckPo.getFlightDepcode());
+                        rowContentPo.setFlightArrcode(passengerCheckPo.getFlightArrcode());
+                        rowContentPo.setCardNo(passengerCheckPo.getCardNo());
+                        rowContentPo.setCardType(passengerCheckPo.getCardType());
+                        rowContentPo.setName(passengerCheckPo.getName());
+                        rowContentPo.setTicketNo(passengerCheckPo.getTicketNo());
+                        rowContentPos.add(rowContentPo);
+                    }
+                }
+                sheetContentPo.setTotal(total);
+                sheetContentPo.setRowContentPos(rowContentPos);
+                sheetContentPos.add(sheetContentPo);
+            }
+        }
+        LXResult result = new LXResult();
+        result.setData(sheetContentPos);
+        result.setStatus(LZStatus.SUCCESS.value());
+        result.setMsg(LZStatus.SUCCESS.display());
+        return JSON.toJSONString(result);
     }
+
 
     /**
      * modified on 2017/5/13 by zhengyiyin
@@ -436,8 +523,18 @@ public class BusinessService implements IBusinessService {
         } catch (Exception e) {
             return this.errorMsg(e);
         }
+    }
 
-
+    private String getEmployeeName(String airportCode,Long userId){
+        JSONObject result = new JSONObject();
+        JSONObject params = new JSONObject();
+        params.put("client_id", airportCode);
+        params.put("user_id", userId);
+        Response re = ClientUtil.clientSendData(employeeClient, "businessService", "view", params);
+        if (re !=null && re.getResponeCode().getValue() == 200) {
+            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        }
+        return result.getJSONObject("data").getString("name");
     }
 
     private String errorMsg(Exception e){

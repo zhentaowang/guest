@@ -13,6 +13,11 @@ import java.util.Date;
 public class RowContentPo {
 
     /**
+     * 协议名字
+     */
+    private String protocolName;
+
+    /**
      * 名字
      */
     private String name;
@@ -121,6 +126,14 @@ public class RowContentPo {
      * 客户类型
      */
     private Short passengerType;
+
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
 
     public String getName() {
         return name;
