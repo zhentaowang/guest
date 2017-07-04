@@ -33,10 +33,10 @@ public class FirstClassContentGenerator extends ContentGenerator {
         HSSFRow row1 = sheet.createRow(row);
         HSSFCell row1Cell1 = row1.createCell(0);
         row1Cell1.setCellStyle(cellStyle);
-        row1Cell1.setCellValue("航空公司");
+        row1Cell1.setCellValue("协议名");
         HSSFCell row1Cell2 = row1.createCell(1);
         row1Cell2.setCellStyle(cellStyle);
-        row1Cell2.setCellValue(rowContentPo.getCustomerName());
+        row1Cell2.setCellValue(rowContentPo.getProtocolName());
         HSSFCell row1Cell3 = row1.createCell(2);
         row1Cell3.setCellStyle(cellStyle);
         row1Cell3.setCellValue("航    程");

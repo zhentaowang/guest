@@ -29,6 +29,16 @@ public class LoungeCheckPo implements Serializable {
     private String customerName;
 
     /**
+     * 协议ID
+     */
+    private String protocolId;
+
+    /**
+     * 协议名字
+     */
+    private String protocolName;
+
+    /**
      * 航班下订单
      */
     private List<OrderCheckPo> orderCheckPos;
@@ -55,6 +65,22 @@ public class LoungeCheckPo implements Serializable {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public String getProtocolId() {
+        return protocolId;
+    }
+
+    public void setProtocolId(String protocolId) {
+        this.protocolId = protocolId;
+    }
+
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
     }
 
     public List<OrderCheckPo> getOrderCheckPos() {

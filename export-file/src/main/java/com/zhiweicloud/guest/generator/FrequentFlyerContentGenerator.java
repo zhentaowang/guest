@@ -26,32 +26,30 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
         super(sheetContentPos);
     }
 
-    String[] names = {"姓名","宾客类型","航班号","机号","客票号码","航程","卡类别","舱位","卡号","有效期","随行"};
+    String[] names = {"姓名","航班号","机号","客票号码","航程","卡类别","舱位","卡号","有效期","随行"};
 
 
     @Override
     public void createHeadRows(SheetContentPo sheetContentPo) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
         RowContentPo rowContentPo = sheetContentPo.getRowContentPos().get(0);
         // 第一行
-        CellRangeAddress cra1 = new CellRangeAddress(row, row, 1, 7);
+        CellRangeAddress cra1 = new CellRangeAddress(row, row, 1, 6);
         sheet.addMergedRegion(cra1);
         HSSFRow row1 = sheet.createRow(row);
         HSSFCell row1Cell1 = row1.createCell(0);
         row1Cell1.setCellStyle(cellStyle);
-        row1Cell1.setCellValue("航空公司");
+        row1Cell1.setCellValue("协议名");
         HSSFCell row1Cell2 = row1.createCell(1);
         row1Cell2.setCellStyle(cellStyle);
-        row1Cell2.setCellValue(rowContentPo.getCustomerName());
-        HSSFCell row1Cell3 = row1.createCell(8);
+        row1Cell2.setCellValue(rowContentPo.getProtocolName());
+        HSSFCell row1Cell3 = row1.createCell(7);
         row1Cell3.setCellStyle(cellStyle);
         row1Cell3.setCellValue("日期");
-        CellRangeAddress cra2 = new CellRangeAddress(row, row, 9, 10);
+        CellRangeAddress cra2 = new CellRangeAddress(row, row, 8, 9);
         sheet.addMergedRegion(cra2);
-        HSSFCell row1Cell4 = row1.createCell(9);
+        HSSFCell row1Cell4 = row1.createCell(8);
         row1Cell4.setCellStyle(cellStyle);
         row1Cell4.setCellValue(rowContentPo.getFlightDate());
         row++;
@@ -69,7 +67,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
 
     @Override
     public void createContentRows(SheetContentPo sheetContentPo) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         int row = sheetContentPo.getRow();
         HSSFSheet sheet = sheetContentPo.getSheet();
@@ -83,36 +81,33 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
             }else {
                 cell1.setCellValue(rowContentPo.getName());
             }
-            HSSFCell cell2 = rowContent.createCell(1);
-            cell2.setCellStyle(cellStyle);
-            cell2.setCellValue((rowContentPo.getPassengerType() == 0) ? "主宾" : "随从");
-            HSSFCell cell3 = rowContent.createCell(2);
+            HSSFCell cell3 = rowContent.createCell(1);
             cell3.setCellStyle(cellStyle);
             cell3.setCellValue(rowContentPo.getFlightNo());
-            HSSFCell cell4 = rowContent.createCell(3);
+            HSSFCell cell4 = rowContent.createCell(2);
             cell4.setCellStyle(cellStyle);
             if (StringUtils.isNotNone(rowContentPo.getPlanNo()) && ExcelUtils.isInteger(rowContentPo.getPlanNo())) {
                 cell4.setCellValue(Integer.valueOf(rowContentPo.getPlanNo()));
             } else {
                 cell4.setCellValue(rowContentPo.getPlanNo());
             }
-            HSSFCell cell5 = rowContent.createCell(4);
+            HSSFCell cell5 = rowContent.createCell(3);
             cell5.setCellStyle(numCellStyle);
             if (StringUtils.isNotNone(rowContentPo.getTicketNo()) && ExcelUtils.isInteger(rowContentPo.getTicketNo())) {
                 cell5.setCellValue(Double.parseDouble(rowContentPo.getTicketNo()));
             } else {
                 cell5.setCellValue(rowContentPo.getTicketNo());
             }
-            HSSFCell cell6 = rowContent.createCell(5);
+            HSSFCell cell6 = rowContent.createCell(4);
             cell6.setCellStyle(cellStyle);
             cell6.setCellValue(rowContentPo.getLeg());
-            HSSFCell cell7 = rowContent.createCell(6);
+            HSSFCell cell7 = rowContent.createCell(5);
             cell7.setCellStyle(cellStyle);
             cell7.setCellValue(rowContentPo.getCardType());
-            HSSFCell cell8 = rowContent.createCell(7);
+            HSSFCell cell8 = rowContent.createCell(6);
             cell8.setCellStyle(cellStyle);
             cell8.setCellValue(rowContentPo.getCabinNo());
-            HSSFCell cell9 = rowContent.createCell(8);
+            HSSFCell cell9 = rowContent.createCell(7);
             cell9.setCellStyle(numCellStyle);
 
             if (StringUtils.isNotNone(rowContentPo.getCardNo())&& ExcelUtils.isInteger(rowContentPo.getCardNo())) {
@@ -120,14 +115,14 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
             } else {
                 cell9.setCellValue(rowContentPo.getCardNo());
             }
-            HSSFCell cell10 = rowContent.createCell(9);
+            HSSFCell cell10 = rowContent.createCell(8);
             cell10.setCellStyle(cellStyle);
             if (rowContentPo.getExpireTime() == null) {
                 cell10.setCellValue(new String());
             }else {
                 cell10.setCellValue(simpleDateFormat.format(rowContentPo.getExpireTime()));
             }
-            HSSFCell cell11 = rowContent.createCell(10);
+            HSSFCell cell11 = rowContent.createCell(9);
             cell11.setCellStyle(numCellStyle);
             if (rowContentPo.getAlongTotal() == null) {
                 cell11.setCellValue(new String());
@@ -158,7 +153,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
         penultCell3.setCellValue("服务人员");
         HSSFCell penultCell4 = rowPenult.createCell(3);
         penultCell4.setCellStyle(cellStyle);
-        penultCell4.setCellValue(new String());
+        penultCell4.setCellValue(sheetContentPo.getEmployeeName());
         // 倒数第一行
         row++;
         HSSFRow rowLast = sheet.createRow(row);
@@ -181,7 +176,7 @@ public class FrequentFlyerContentGenerator extends ContentGenerator {
         sheet.setColumnWidth(4,"781242215781111".getBytes().length * 256);
         sheet.setColumnWidth(8,"781242215781111".getBytes().length * 256);
         sheet.setColumnWidth(5,14 * 256);
-        sheet.setColumnWidth(9,"1970-01-01 12:00:00".getBytes().length * 256);
+        sheet.setColumnWidth(9,"1970-01-01 00".getBytes().length * 256);
     }
 
 }
