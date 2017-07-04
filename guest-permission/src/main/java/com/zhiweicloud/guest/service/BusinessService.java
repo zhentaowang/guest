@@ -42,6 +42,7 @@ import com.zhiweicloud.guest.pageUtil.PageModel;
 import jersey.repackaged.com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 /**
@@ -181,6 +182,7 @@ public class BusinessService implements IBusinessService {
     public String dataPermissionList(JSONObject request) {
         HashMap<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
+        param.put("roleId", request.getString("roleId"));
 
         int page = 1;
         if(request.containsKey("page")) {
@@ -211,7 +213,7 @@ public class BusinessService implements IBusinessService {
      */
     public String save(JSONObject request) {
         try {
-            RolePermission rolePermission = null;
+            RolePermission rolePermission;
             JSONArray jsonArray = JSON.parseArray(request.getString("data"));
             rolePermission = JSON.toJavaObject(jsonArray.getJSONObject(0), RolePermission.class);
             rolePermission.setAirportCode(request.getString("client_id"));
@@ -219,14 +221,19 @@ public class BusinessService implements IBusinessService {
             if (rolePermission == null || rolePermission.getAirportCode() == null) {
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
             }
-            if (rolePermission.getPermissionId() != null) {
+            if (rolePermission.getRolePermissionId() != null) {
                 rolePermissionMapper.updateByIdAndAirportCode(rolePermission);
 
             } else {
                 rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
                 rolePermission.setCreateTime(new Date());
                 rolePermission.setUpdateTime(new Date());
-//            permissionMapper.insertSelective(permission);
+                if (rolePermission.getRoleIds() != null) {
+                    rolePermission.setDataPermission("{\"roleId\": \"" + rolePermission.getRoleIds() + "\"}");
+                } else {
+                    rolePermission.setDataPermission("{\"roleId\": \"\"}");
+                }
+                rolePermissionMapper.insertBySelective(rolePermission);
             }
             return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
         } catch (Exception e) {
@@ -324,6 +331,7 @@ public class BusinessService implements IBusinessService {
                         rolePermission.setCreateTime(new Date());
                         rolePermission.setUpdateTime(new Date());
                         rolePermission.setIsDeleted(Constant.MARK_AS_BUSS_DATA);
+                        rolePermission.setDataPermission("{\"roleId\": \"\"}");
                         rolePermissionMapper.insertBySelective(rolePermission);
                     }
                 }
@@ -342,10 +350,12 @@ public class BusinessService implements IBusinessService {
      * @return 权限详情
      */
     public String view(JSONObject request) {
+
         Map<String, Object> param = new HashMap<>();
         param.put("airportCode", request.getString("client_id"));
         param.put("permissionId", request.getLong("permissionId"));
         return JSON.toJSONString(permissionMapper.selectById(param));
+
     }
 
     /**
@@ -356,6 +366,7 @@ public class BusinessService implements IBusinessService {
     public String getUserPermission(JSONObject request) {
         try {
             List<String> urls = Collections.singletonList(request.getString("url"));
+
             HashMap<String, Object> param = new HashMap<>();
             param.put("airportCode", request.getString("client_id"));
             param.put("userId", request.getLong("user_id"));
@@ -368,8 +379,6 @@ public class BusinessService implements IBusinessService {
             for(int i = 0; i < urls.size(); i++){
                 for(int j = 0; j < permissionList.size(); j++){
                     String url = permissionList.get(j).getUrl();
-                    System.out.println(url);
-                    System.out.println(urls.get(i));
                     if(urls.get(i).equals(url)){
                         params.put(urls.get(i),"true");
                         if(param.containsKey("orderType") && permissionList.get(j).getDataPermission() != null){
@@ -378,7 +387,6 @@ public class BusinessService implements IBusinessService {
 //                        String[] dataPermission = permissionList.get(j).getDataPermission().replaceAll("\"|\\{|}", "").split(": |, ");
                             if(param.get("orderType").toString().equals(permissionTypeJSON.getString("orderType"))){
                                 params.put("roleId",dataPermissionJSON.getString("roleId"));
-                                System.out.printf("角色id：%s\n", params.get("roleId"));
                                 break;
                             }
                         }else {
@@ -393,6 +401,7 @@ public class BusinessService implements IBusinessService {
 
             return JSON.toJSONString(params);
         } catch (Exception e) {
+            e.printStackTrace();
             return JSON.toJSONString(LXResult.error());
         }
     }
