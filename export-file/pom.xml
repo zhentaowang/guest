@@ -39,7 +39,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- thrift -->
     <libthrift.version>0.9.3</libthrift.version>
-    <thrift.server.version>2.0-RELEASE</thrift.server.version>
+    <thrift.client.version>1.1-RELEASE</thrift.client.version>
+    <thrift.server.version>3.2-RELEASE</thrift.server.version>
   </properties>
 
   <dependencies>
@@ -212,7 +213,7 @@
     <dependency>
       <groupId>com.wyun.thrift</groupId>
       <artifactId>client</artifactId>
-      <version>1.1-RELEASE</version>
+      <version>${thrift.client.version}</version>
     </dependency>
 
   </dependencies>

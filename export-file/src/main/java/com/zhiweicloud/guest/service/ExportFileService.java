@@ -305,7 +305,7 @@ public class ExportFileService {
         params.put("queryFlightDateBegin", checkQueryParam.getQueryFlightDateBegin());
         params.put("queryFlightDateEnd",checkQueryParam.getQueryFlightDateEnd());
         params.put("queryCustomerName",checkQueryParam.getQueryCustomerName());
-        params.put("type",checkQueryParam.getType());
+        params.put("queryProtocolId",checkQueryParam.getQueryProtocolId());
 
         JSONObject result = null;
 
@@ -325,7 +325,7 @@ public class ExportFileService {
         params.put("queryFlightDateBegin", checkQueryParam.getQueryFlightDateBegin());
         params.put("queryFlightDateEnd",checkQueryParam.getQueryFlightDateEnd());
         params.put("queryCustomerName",checkQueryParam.getQueryCustomerName());
-        params.put("type",checkQueryParam.getType());
+        params.put("queryProtocolId",checkQueryParam.getQueryProtocolId());
         params.put("protocolType",protocolType);
 
         JSONObject result = null;
