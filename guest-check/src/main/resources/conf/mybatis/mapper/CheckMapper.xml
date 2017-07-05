@@ -177,6 +177,7 @@
       <result column="order_id" jdbcType="BIGINT" property="orderId"/>
       <result column="server_num" jdbcType="INTEGER" property="serverNum"/>
       <result column="person_num" jdbcType="INTEGER" property="guestNum"/>
+      <result column="server_name" javaType="VARCHAR" property="serverName"/>
       <collection property="checkPassengerPos" ofType="com.zhiweicloud.guest.model.PassengerCheckPo">
         <result column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="sit_no" jdbcType="VARCHAR" property="sitNo"/>
@@ -201,44 +202,45 @@
 
   <select id="selectLoungeCheckList" resultMap="excel_lounge">
     SELECT
-    f.flight_date,
-    f.plan_no,
-    f.flight_no,
-    f.flight_depcode,
-    f.flight_arrcode,
-    concat_ws(' - ',f.flight_dep,f.flight_arr) AS leg,
-    o2.*
+      f.flight_date,
+      f.plan_no,
+      f.flight_no,
+      f.flight_depcode,
+      f.flight_arrcode,
+      concat_ws(' - ',f.flight_dep,f.flight_arr) AS leg,
+      o2.*
     FROM
-    flight f
+      flight f
     INNER JOIN (
-    SELECT
-    o1.*,
-    os.service_detail ->> '$.serverNum' AS server_num,
-    (SELECT COUNT(pp.passenger_id) FROM passenger pp WHERE pp.passenger_type = 0 AND pp.order_id = o1.order_id) AS person_num
-    FROM (
-    SELECT
-    oi.order_status,
-    oi.protocol_type,
-    oi.protocol_id,
-    oi.protocol_name,
-    oi.flight_id,
-    oi.customer_name,
-    p.sit_no,
-    oi.order_id,
-    oi.airport_code,
-    p.NAME name,
-    p.ticket_no,
-    p.card_type,
-    p.card_no,
-    p.cabin_no,
-    p.expire_time,
-    p.passenger_type
-    FROM
-    order_info oi
-    LEFT JOIN passenger p ON oi.order_id = p.order_id
-    ) AS o1
-    INNER JOIN order_service os ON o1.order_id = os.order_id
-    AND os.service_detail ->> '$.serviceId' = 5
+      SELECT
+        o1.*,
+        os.service_detail ->> '$.serverNum' AS server_num,
+        (SELECT COUNT(pp.passenger_id) FROM passenger pp WHERE pp.passenger_type = 0 AND pp.order_id = o1.order_id) AS person_num
+      FROM (
+        SELECT
+          oi.order_status,
+          oi.protocol_type,
+          oi.protocol_id,
+          oi.protocol_name,
+          oi.flight_id,
+          oi.customer_name,
+          p.sit_no,
+          oi.order_id,
+          oi.airport_code,
+          p.NAME name,
+          p.ticket_no,
+          p.card_type,
+          p.card_no,
+          p.cabin_no,
+          p.expire_time,
+          p.passenger_type,
+          concat_ws(',',oi.create_user_name,oi.server_create_user_name)
+        FROM
+          order_info oi
+        LEFT JOIN passenger p ON oi.order_id = p.order_id
+      ) AS o1
+      INNER JOIN order_service os ON o1.order_id = os.order_id
+      AND os.service_detail ->> '$.serviceId' = 5
     ) o2 ON o2.flight_id = f.flight_id
     WHERE
     1 = 1

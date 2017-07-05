@@ -139,7 +139,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
         sheet.addMergedRegion(cra1);
         HSSFCell penult3 = rowPenult.createCell(3);
         penult3.setCellStyle(cellStyle);
-        penult3.setCellValue(new String());
+        penult3.setCellValue(sheetContentPo.getEmployeeName());
 
         // 最后一行
         row++;

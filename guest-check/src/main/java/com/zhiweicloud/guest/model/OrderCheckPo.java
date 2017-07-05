@@ -29,6 +29,11 @@ public class OrderCheckPo implements Serializable{
     private Integer guestNum;
 
     /**
+     * 服务人员
+     */
+    private String serverName;
+
+    /**
      * 订单下乘客
      */
     private List<PassengerCheckPo> checkPassengerPos;
@@ -63,6 +68,14 @@ public class OrderCheckPo implements Serializable{
 
     public void setGuestNum(Integer guestNum) {
         this.guestNum = guestNum;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
     }
 
     public List<PassengerCheckPo> getCheckPassengerPos() {

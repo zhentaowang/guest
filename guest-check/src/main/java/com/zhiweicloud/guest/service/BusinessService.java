@@ -74,8 +74,6 @@ public class BusinessService implements IBusinessService {
 
     private static MyService.Iface protocolClient = SpringBeanUtil.getBean("protocolClient");
 
-    private static MyService.Iface employeeClient = SpringBeanUtil.getBean("employeeClient");
-
     @Autowired
     public BusinessService(CheckMapper checkMapper, CheckDynamicColumn checkDynamicColumn) {
         this.checkMapper = checkMapper;
@@ -416,26 +414,32 @@ public class BusinessService implements IBusinessService {
 
         CheckQueryParam checkQueryParam = JSON.toJavaObject(request, CheckQueryParam.class);
         String airportCode = request.getString("client_id");
-        Long userId = request.getLong("user_id");
+//        Long userId = request.getLong("user_id");
         checkQueryParam.setAirportCode(airportCode);
         Integer protocolType = request.getInteger("protocolType");
 
         // 服务人员名字
-        String name = getEmployeeName(airportCode,userId);
         List<LoungeCheckPo> loungeCheckPos = checkMapper.selectLoungeCheckList(checkQueryParam, protocolType);
 
         List<SheetContentPo> sheetContentPos = new LinkedList<>();
         List<RowContentPo> rowContentPos;
         RowContentPo rowContentPo;
         SheetContentPo sheetContentPo;
+        Map<String, Integer> serverNameMap;
 
         if(loungeCheckPos.size()>0){
             for (LoungeCheckPo loungeCheckPo : loungeCheckPos) {
                 rowContentPos = new LinkedList<>();
                 sheetContentPo = new SheetContentPo();
-                sheetContentPo.setEmployeeName(name);
+                serverNameMap = new HashMap<>();
                 int total = 0;
                 for (OrderCheckPo orderCheckPo : loungeCheckPo.getOrderCheckPos()) {
+                    String serverName = orderCheckPo.getServerName();
+                    if(serverNameMap.get(serverName)== null){
+                        serverNameMap.put(serverName, 0);
+                    }else{
+                        serverNameMap.put(serverName, serverNameMap.get(serverName) + 1);
+                    }
                     Integer serverNum = orderCheckPo.getServerNum();
                     total += serverNum;
                     Integer guestNum = orderCheckPo.getGuestNum();
@@ -481,6 +485,12 @@ public class BusinessService implements IBusinessService {
                         rowContentPos.add(rowContentPo);
                     }
                 }
+                StringBuilder employeeName = new StringBuilder();
+                for (Map.Entry<String, Integer> entry : serverNameMap.entrySet()) {
+                    employeeName.append(entry.getKey()).append(",");
+                }
+                employeeName = employeeName.deleteCharAt(employeeName.length() - 1);
+                sheetContentPo.setEmployeeName(employeeName.toString());
                 sheetContentPo.setTotal(total);
                 sheetContentPo.setRowContentPos(rowContentPos);
                 sheetContentPos.add(sheetContentPo);
@@ -523,18 +533,6 @@ public class BusinessService implements IBusinessService {
         } catch (Exception e) {
             return this.errorMsg(e);
         }
-    }
-
-    private String getEmployeeName(String airportCode,Long userId){
-        JSONObject result = new JSONObject();
-        JSONObject params = new JSONObject();
-        params.put("client_id", airportCode);
-        params.put("user_id", userId);
-        Response re = ClientUtil.clientSendData(employeeClient, "businessService", "view", params);
-        if (re !=null && re.getResponeCode().getValue() == 200) {
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
-        }
-        return result.getJSONObject("data").getString("name");
     }
 
     private String errorMsg(Exception e){
