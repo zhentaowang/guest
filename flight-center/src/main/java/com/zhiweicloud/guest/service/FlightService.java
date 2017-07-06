@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Transient;
 import java.text.ParseException;
@@ -63,7 +64,7 @@ public class FlightService {
      * @return 航班中心结果集字符串
      * @version 2017-06-20
      */
-    @Transient
+    @Transactional
     public String queryFlightInfo(JSONObject request) {
         FlightCenterResult<List<FlightPo>> re = new FlightCenterResult<>();
         String flightNo = request.getString("flightNo");
@@ -106,7 +107,7 @@ public class FlightService {
      * @param request 参数
      * @return 航班中心结果集字符串
      */
-    @Transient
+    @Transactional
     public String queryDynamicFlightInfo(JSONObject request) {
         FlightCenterResult<List<FlightPo>> re = new FlightCenterResult<>();
         String flightNo = request.getString("flightNo");
@@ -149,7 +150,7 @@ public class FlightService {
      * @param request 参数
      * @return 航班中心结果集
      */
-    @Transient
+    @Transactional
     public String customFlight(JSONObject request) {
         FlightCenterResult<FlightPo> re = new FlightCenterResult();
         try {
