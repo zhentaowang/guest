@@ -181,7 +181,7 @@
       <result column="order_id" jdbcType="BIGINT" property="orderId"/>
       <result column="server_num" jdbcType="INTEGER" property="serverNum"/>
       <result column="person_num" jdbcType="INTEGER" property="guestNum"/>
-      <result column="server_name" javaType="VARCHAR" property="serverName"/>
+      <result column="server_name" jdbcType="VARCHAR" property="serverName"/>
       <collection property="checkPassengerPos" ofType="com.zhiweicloud.guest.model.PassengerCheckPo">
         <result column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="sit_no" jdbcType="VARCHAR" property="sitNo"/>
@@ -238,30 +238,30 @@
           p.cabin_no,
           p.expire_time,
           p.passenger_type,
-          concat_ws(',',oi.create_user_name,oi.server_create_user_name)
+          concat_ws(',',oi.create_user_name,oi.server_create_user_name) server_name
         FROM
           order_info oi
         LEFT JOIN passenger p ON oi.order_id = p.order_id
+        WHERE oi.order_status = '已使用' AND protocol_type = #{protocolType} AND oi.is_deleted = 0 AND p.is_deleted = 0
+        <if test="param.queryProtocolId != null and !''.equals(param.queryProtocolId)">
+          AND oi.protocol_id = #{param.queryProtocolId}
+        </if>
+        <if test="param.queryCustomerName != null and !''.equals(param.queryCustomerName)">
+          AND oi.customer_name LIKE concat('%',#{param.queryCustomerName},'%')
+        </if>
       ) AS o1
       INNER JOIN order_service os ON o1.order_id = os.order_id
       AND os.service_detail ->> '$.serviceId' = 5
+      AND os.is_deleted = 0
     ) o2 ON o2.flight_id = f.flight_id
     WHERE
-    1 = 1
+    f.is_deleted = 0
     <if test="param.queryFlightDateBegin != null and !''.equals(param.queryFlightDateBegin)">
       AND f.flight_date >= #{param.queryFlightDateBegin}
     </if>
     <if test="param.queryFlightDateEnd != null and !''.equals(param.queryFlightDateEnd)">
       AND f.flight_date &lt;= #{param.queryFlightDateEnd}
     </if>
-    <if test="param.queryProtocolId != null and !''.equals(param.queryProtocolId)">
-      AND o2.protocol_id = #{param.queryProtocolId}
-    </if>
-    <if test="param.queryCustomerName != null and !''.equals(param.queryCustomerName)">
-      AND o2.customer_name LIKE concat('%',#{param.queryCustomerName},'%')
-    </if>
-    AND o2.order_status = '已使用'
-    AND o2.protocol_type = #{protocolType}
     AND o2.airport_code = #{param.airportCode}
   </select>
 
