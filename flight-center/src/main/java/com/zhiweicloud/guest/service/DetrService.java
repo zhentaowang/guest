@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Transient;
 
@@ -44,7 +45,7 @@ public class DetrService {
      * @param request
      * @return
      */
-    @Transient
+    @Transactional
     public String queryPassengerByTickNo(JSONObject request){
         FlightCenterResult<PassengerTicketPojo> re = new FlightCenterResult<>();
         // get args
