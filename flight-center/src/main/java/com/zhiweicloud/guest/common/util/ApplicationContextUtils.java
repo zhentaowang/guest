@@ -4,6 +4,7 @@ import com.wyun.thrift.server.server.Server;
 import com.wyun.utils.SpringBeanUtil;
 import com.zhiweicloud.guest.common.Dictionary;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * Created by tc on 2017/6/5.

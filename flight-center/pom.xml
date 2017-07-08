@@ -45,6 +45,18 @@
 
   <dependencies>
 
+    <!-- test-config-center -->
+    <dependency>
+      <groupId>com.fs.test</groupId>
+      <artifactId>config-test</artifactId>
+      <version>0.1-TEST</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+      <version>3.5.2-alpha</version>
+    </dependency>
     <dependency>
       <groupId>redis.clients</groupId>
       <artifactId>jedis</artifactId>
