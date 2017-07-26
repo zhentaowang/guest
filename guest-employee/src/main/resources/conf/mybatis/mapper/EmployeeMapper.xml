@@ -58,7 +58,7 @@
 
 
   <select id="selectByIdAndAirportCode" parameterType="map" resultType="map">
-    select e.account,e.name,e.sex
+    select e.account,e.name,e.sex,e.employee_id as id
      from employee e
     where e.is_deleted = 0 and e.airport_code = #{airportCode} and e.employee_id = #{employeeId}
 
