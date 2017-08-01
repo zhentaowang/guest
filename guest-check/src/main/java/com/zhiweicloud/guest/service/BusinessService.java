@@ -183,10 +183,10 @@ public class BusinessService implements IBusinessService {
                 orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount(productName));
                 map.put("column", checkDynamicColumn.getHeader(productName));
 
-                orderCheckDetail.setQueryWhere("and customer_id = " + orderCheckDetail.getQueryCustomerId() +
-                        " and protocol_type = " + orderCheckDetail.getQueryProtocolType() +
-                        " and protocol_id = " + orderCheckDetail.getQueryProtocolId() +
-                        " and product_name = '" + orderCheckDetail.getQueryProductName() + "'");
+                orderCheckDetail.setQueryWhere("and o.customer_id = " + orderCheckDetail.getQueryCustomerId() +
+                        " and o.protocol_type = " + orderCheckDetail.getQueryProtocolType() +
+                        " and o.protocol_id = " + orderCheckDetail.getQueryProtocolId() +
+                        " and o.product_name = '" + orderCheckDetail.getQueryProductName() + "'");
             }
             //去掉了分页
             BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(0, 0));

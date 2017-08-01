@@ -110,8 +110,9 @@
       <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
         and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
       </if>
+        ${criteria.queryWhere}
       GROUP BY o.order_id
-    ) t where 1 = 1 ${criteria.queryWhere}
+    ) t where 1 = 1
 
   </select>
 
