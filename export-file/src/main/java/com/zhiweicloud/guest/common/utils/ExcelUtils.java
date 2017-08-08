@@ -410,6 +410,10 @@ public class ExcelUtils {
                     contentGenerator.createSheets();
                 }
                 workbook.write(out);
+            }else {
+                response.setContentType("application/x-msdownload");
+                response.setHeader("Content-Disposition", "attachment; filename="
+                        + URLEncoder.encode(fileName, "UTF-8"));
             }
             log.debug("导出Excel 完成");
             return;

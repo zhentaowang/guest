@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiweicloud.guest.mapper.CheckMapper">
+
+
+  <select id="selectCheckTotal" parameterType="com.zhiweicloud.guest.model.CheckQueryParam" resultType="int">
+    select count(t.orderId) from
+    (
+    select o.order_id as orderId from order_info o
+    inner join flight f on o.flight_id = f.flight_id
+
+    and  o.is_deleted = 0 and f.is_deleted = 0 and o.airport_code = #{airportCode}
+    <if test="queryFlightDateBegin != null and !''.equals(queryFlightDateBegin)">
+      and f.flight_date &gt;= #{queryFlightDateBegin}
+    </if>
+    <if test="queryFlightDateEnd != null and !''.equals(queryFlightDateEnd)">
+      and f.flight_date &lt;= #{queryFlightDateEnd}
+    </if>
+    <if test="queryCreateDateBegin != null and !''.equals(queryCreateDateBegin)">
+      and o.create_time &gt;= #{queryCreateDateBegin}
+    </if>
+    <if test="queryCreateDateEnd != null and !''.equals(queryCreateDateEnd)">
+      and o.create_time &lt;= #{queryCreateDateEnd}
+    </if>
+    <if test="queryCreateDateEnd != null and !''.equals(queryCreateDateEnd)">
+      and o.create_time &lt;= #{queryCreateDateEnd}
+    </if>
+    <if test="queryCustomerName != null and !''.equals(queryCustomerName)">
+      and o.customer_name like concat('%',#{queryCustomerName},'%')
+    </if>
+    <if test="queryProtocolName != null and !''.equals(queryProtocolName)">
+      and o.protocol_name like concat('%',#{queryProtocolName},'%')
+    </if>
+    <if test="queryProductId != null and !''.equals(queryProductId)">
+      and o.product_name in (${queryProductId})
+    </if>
+    <if test="queryProtocolType != null and !''.equals(queryProtocolType)">
+      and o.protocol_type in (${queryProtocolType})
+    </if>
+    GROUP BY o.customer_id,o.protocol_id,o.product_id
+    )t
+
+  </select>
+
+  <select id="selectCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
+    select count(order_id) as orderCount,o.customer_id as customerId,o.customer_name as customerName,o.protocol_id as protocolId,o.protocol_name as protocolName,o.protocol_type as protocolType,o.product_name as productName
+    from order_info o
+    inner join flight f on o.flight_id = f.flight_id
+
+    where o.is_deleted = 0 and f.is_deleted = 0 and o.airport_code = #{criteria.airportCode}
+    <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
+      and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
+    </if>
+    <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
+      and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
+    </if>
+    <if test="criteria.queryCreateDateBegin != null and !''.equals(criteria.queryCreateDateBegin)">
+      and o.create_time &gt;= #{criteria.queryCreateDateBegin}
+    </if>
+    <if test="criteria.queryCreateDateEnd != null and !''.equals(criteria.queryCreateDateEnd)">
+      and o.create_time &lt;= #{criteria.queryCreateDateEnd}
+    </if>
+    <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)">
+      and o.customer_name like concat('%',#{criteria.queryCustomerName},'%')
+    </if>
+    <if test="criteria.queryProtocolName != null and !''.equals(criteria.queryProtocolName)">
+      and o.protocol_name like concat('%',#{criteria.queryProtocolName},'%')
+    </if>
+    <if test="criteria.queryProtocolId != null and !''.equals(criteria.queryProtocolId)">
+      and o.protocol_id in (${criteria.queryProtocolId})
+    </if>
+    <if test="criteria.queryProductId != null and !''.equals(criteria.queryProductId)">
+      and o.product_name in (${criteria.queryProductId})
+    </if>
+    <if test="criteria.queryProtocolType != null and !''.equals(criteria.queryProtocolType)">
+      and o.protocol_type in (${criteria.queryProtocolType})
+    </if>
+    GROUP BY o.customer_id,o.protocol_id,o.product_id
+    limit #{page.startPageNo},#{page.pCount}
+  </select>
+
+
+  <resultMap id="OrderCheckDetailMap" type="com.zhiweicloud.guest.model.OrderCheckDetail">
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="protocol_id" jdbcType="BIGINT" property="protocolId" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="flight_date" jdbcType="TIMESTAMP" property="flightDate" />
+    <result column="plan_no" jdbcType="VARCHAR" property="planNo" />
+    <result column="flight_dep_airport" jdbcType="VARCHAR" property="flightDepAirport" />
+    <result column="flight_arr_airport" jdbcType="VARCHAR" property="flightArrAirport" />
+    <result column="is_in_or_out" jdbcType="SMALLINT" property="isInOrOut" />
+    <result column="vip_person_num" jdbcType="INTEGER" property="vipPersonNum" />
+    <result column="vip_price" jdbcType="DOUBLE" property="vipPrice" />
+    <result column="accompany_person_num" jdbcType="INTEGER" property="accompanyPersonNum" />
+    <result column="accompany_price" jdbcType="DOUBLE" property="accompanyPrice" />
+  </resultMap>
+
+
+  <select id="customerChecklist" resultType="map">
+    select *,${criteria.totalAmount} from (
+      select ${criteria.selectFields},o.customer_id,o.product_name,o.protocol_id,o.protocol_type
+      from order_info o
+      inner join flight f on f.flight_id = o.flight_id
+      inner join passenger p on p.order_id = o.order_id
+      where o.airport_code = #{criteria.airportCode} and o.is_deleted = 0 and o.order_status = '已使用'
+      <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
+        and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
+      </if>
+      <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
+        and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
+      </if>
+        ${criteria.queryWhere}
+      GROUP BY o.order_id
+    ) t where 1 = 1
+
+  </select>
+
+  <select id="selectSpecialCheckListTotal" parameterType="com.zhiweicloud.guest.model.CheckQueryParam" resultType="int">
+    select count(f.flight_id) from (
+        select o.flight_id,o.customer_id,o.customer_name,
+        sum(os.service_detail->>'$.serverNum') as serverPersonNum,os.price_rule->>'$.price' as price
+        from order_info o
+        inner join order_service os on o.order_id = os.order_id
+        <if test="queryProtocolId != null and !''.equals(queryProtocolId)">
+            and o.protocol_id = #{queryProtocolId}
+        </if>
+        and o.airport_code = #{airportCode} and o.is_deleted = 0
+        and os.service_detail->>'$.serviceId' = 5
+        and o.order_status = '已使用'
+        <if test="queryCustomerName != null and !''.equals(queryCustomerName)">
+          and o.customer_name like concat('%',#{queryCustomerName},'%')
+        </if>
+        GROUP BY o.flight_id,o.customer_id,o.customer_name
+    ) t INNER JOIN flight f on f.flight_id = t.flight_id
+      where 1 = 1
+      <if test="queryFlightDateBegin != null and !''.equals(queryFlightDateBegin)">
+          and f.flight_date &gt;= #{queryFlightDateBegin}
+      </if>
+      <if test="queryFlightDateEnd != null and !''.equals(queryFlightDateEnd)">
+          and f.flight_date &lt;= #{queryFlightDateEnd}
+      </if>
+  </select>
+
+  <select id="selectSpecialCheckList" parameterType="com.zhiweicloud.guest.pageUtil.BasePagination" resultType="map">
+    select f.flight_id as flightId,f.flight_date as flightDate, concat_ws(' - ',f.flight_depcode,f.flight_arrcode) as leg,f.flight_no as flightNo,f.plan_no as planNo,f.flight_depcode as flightDepcode,f.flight_arrcode as flightArrcode,
+     t.customerId,t.customer_name as customerName,
+     t.serverPersonNum,CAST(t.price AS SIGNED) as price,t.serverPersonNum * t.price as amount,t.airport_code as airportCode from (
+        select o.flight_id,o.customer_id as customerId,o.customer_name,o.airport_code,
+        sum(os.service_detail->>'$.serverNum') as serverPersonNum,os.price_rule->>'$.price' as price
+        from order_info o
+        inner join order_service os on o.order_id = os.order_id
+        <if test="criteria.queryProtocolId != null and !''.equals(criteria.queryProtocolId)">
+           and o.protocol_id = #{criteria.queryProtocolId}
+        </if>
+        and o.airport_code = #{criteria.airportCode} and o.is_deleted = 0
+        and os.service_detail->>'$.serviceId' = 5
+        and o.order_status = '已使用'
+        <if test="criteria.queryCustomerName != null and !''.equals(criteria.queryCustomerName)">
+          and o.customer_name like concat('%',#{criteria.queryCustomerName},'%')
+        </if>
+        GROUP BY o.flight_id,o.customer_id,o.customer_name,o.airport_code
+    ) t INNER JOIN flight f on f.flight_id = t.flight_id
+      where 1 = 1
+      <if test="criteria.queryFlightDateBegin != null and !''.equals(criteria.queryFlightDateBegin)">
+          and f.flight_date &gt;= #{criteria.queryFlightDateBegin}
+      </if>
+      <if test="criteria.queryFlightDateEnd != null and !''.equals(criteria.queryFlightDateEnd)">
+          and f.flight_date &lt;= #{criteria.queryFlightDateEnd}
+      </if>
+    limit #{page.startPageNo},#{page.pCount}
+  </select>
+
+  <resultMap id="excel_lounge" type="com.zhiweicloud.guest.model.LoungeCheckPo">
+    <id column="flight_id" jdbcType="BIGINT" property="flightId"/>
+    <result column="protocol_id" jdbcType="BIGINT" property="protocolId"/>
+    <result column="protocol_name" jdbcType="VARCHAR" property="protocolName"/>
+    <result column="flight_date" jdbcType="VARCHAR" property="flightDate"/>
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+    <collection property="orderCheckPos" column="" ofType="com.zhiweicloud.guest.model.OrderCheckPo">
+      <result column="flight_id" jdbcType="BIGINT" property="flightId"/>
+      <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+      <result column="server_num" jdbcType="INTEGER" property="serverNum"/>
+      <result column="person_num" jdbcType="INTEGER" property="guestNum"/>
+      <result column="server_name" jdbcType="VARCHAR" property="serverName"/>
+      <collection property="checkPassengerPos" ofType="com.zhiweicloud.guest.model.PassengerCheckPo">
+        <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+        <result column="sit_no" jdbcType="VARCHAR" property="sitNo"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="ticket_no" jdbcType="VARCHAR" property="ticketNo"/>
+        <result column="card_type" jdbcType="VARCHAR" property="cardType"/>
+        <result column="card_no" jdbcType="VARCHAR" property="cardNo"/>
+        <result column="cabin_no" jdbcType="VARCHAR" property="cabinNo"/>
+        <result column="plan_no" jdbcType="VARCHAR" property="planNo"/>
+        <result column="flight_no" jdbcType="VARCHAR" property="flightNo"/>
+        <result column="leg" jdbcType="VARCHAR" property="leg"/>
+        <result column="flight_type" jdbcType="VARCHAR" property="flightType"/>
+        <result column="expire_time" jdbcType="DATE" property="expireTime"/>
+        <result column="along_total" jdbcType="INTEGER" property="alongTotal"/>
+        <result column="airport_code" jdbcType="VARCHAR" property="airpotCode"/>
+        <result column="flight_depcode" jdbcType="VARCHAR" property="flightDepcode"/>
+        <result column="flight_arrcode" jdbcType="VARCHAR" property="flightArrcode"/>
+        <result column="passenger_type" jdbcType="SMALLINT" property="passengerType"/>
+      </collection>
+    </collection>
+  </resultMap>
+
+  <select id="selectLoungeCheckList" resultMap="excel_lounge">
+    SELECT
+      f.flight_date,
+      f.plan_no,
+      f.flight_no,
+      f.flight_depcode,
+      f.flight_arrcode,
+      concat_ws(' - ',f.flight_dep,f.flight_arr) AS leg,
+      o2.*
+    FROM
+      flight f
+    INNER JOIN (
+      SELECT
+        o1.*,
+        os.service_detail ->> '$.serverNum' AS server_num,
+        (SELECT COUNT(pp.passenger_id) FROM passenger pp WHERE pp.passenger_type = 0 AND pp.order_id = o1.order_id) AS person_num
+      FROM (
+        SELECT
+          oi.order_status,
+          oi.protocol_type,
+          oi.protocol_id,
+          oi.protocol_name,
+          oi.flight_id,
+          oi.customer_name,
+          p.sit_no,
+          oi.order_id,
+          oi.airport_code,
+          p.NAME name,
+          p.ticket_no,
+          p.card_type,
+          p.card_no,
+          p.cabin_no,
+          p.expire_time,
+          p.passenger_type,
+          concat_ws(',',oi.create_user_name,oi.server_create_user_name) server_name
+        FROM
+          order_info oi
+        LEFT JOIN passenger p ON oi.order_id = p.order_id
+        WHERE oi.order_status = '已使用' AND protocol_type = #{protocolType} AND oi.is_deleted = 0 AND p.is_deleted = 0
+        <if test="param.queryProtocolId != null and !''.equals(param.queryProtocolId)">
+          AND oi.protocol_id = #{param.queryProtocolId}
+        </if>
+        <if test="param.queryCustomerName != null and !''.equals(param.queryCustomerName)">
+          AND oi.customer_name LIKE concat('%',#{param.queryCustomerName},'%')
+        </if>
+      ) AS o1
+      INNER JOIN order_service os ON o1.order_id = os.order_id
+      AND os.service_detail ->> '$.serviceId' = 5
+      AND os.is_deleted = 0
+    ) o2 ON o2.flight_id = f.flight_id
+    WHERE
+    f.is_deleted = 0
+    <if test="param.queryFlightDateBegin != null and !''.equals(param.queryFlightDateBegin)">
+      AND f.flight_date >= #{param.queryFlightDateBegin}
+    </if>
+    <if test="param.queryFlightDateEnd != null and !''.equals(param.queryFlightDateEnd)">
+      AND f.flight_date &lt;= #{param.queryFlightDateEnd}
+    </if>
+    AND o2.airport_code = #{param.airportCode}
+  </select>
+
+</mapper>

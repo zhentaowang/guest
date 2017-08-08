@@ -72,7 +72,8 @@ public class ExportFileController {
         @HeaderParam("user_id") Long userId,
         @Context HttpServletResponse response) {
         try {
-            exportFileService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, airportCode);
+//            exportFileService.exportBill(checkQueryParam, checkQueryParam.getType(), response, userId, airportCode);
+            exportFileService.exportBill(checkQueryParam, checkQueryParam.getType(), response, 108L, "LJG");
         } catch (Exception e) {
             e.printStackTrace();
         }
