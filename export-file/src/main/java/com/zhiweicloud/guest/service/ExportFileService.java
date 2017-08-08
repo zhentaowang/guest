@@ -138,8 +138,6 @@ public class ExportFileService {
                 JSONObject object = (JSONObject) o;
                 String v = object.getString("displayName");
                 String k = object.getString("columnName");
-                System.out.println(k);
-                System.out.println(v);
                 key[n] = k;
                 value[n] = v;
                 HSSFCell row1Cell = row.createCell(n);
@@ -172,8 +170,16 @@ public class ExportFileService {
             }
 
             for (int j = 0; j < column.size() ; j++) {
-                // set length
-                sheet.setColumnWidth(j,sheet.getRow(1).getCell(j).getStringCellValue().getBytes().length * 256);
+
+                switch (sheet.getRow(1).getCell(j).getCellType()){
+                    case HSSFCell.CELL_TYPE_NUMERIC: // 数字
+                        break;
+                    case HSSFCell.CELL_TYPE_STRING: // 字符串
+                        sheet.setColumnWidth(j,sheet.getRow(1).getCell(j).getStringCellValue().getBytes().length * 256);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             try (OutputStream out = response.getOutputStream()) {
