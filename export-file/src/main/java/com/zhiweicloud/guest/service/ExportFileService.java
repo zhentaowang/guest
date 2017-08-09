@@ -4,32 +4,39 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wyun.thrift.client.utils.ClientUtil;
 import com.wyun.thrift.server.MyService;
 import com.wyun.thrift.server.Response;
 import com.wyun.utils.ByteBufferUtil;
 import com.wyun.utils.SpringBeanUtil;
+import com.zhiweicloud.guest.APIUtil.LZResult;
+import com.zhiweicloud.guest.APIUtil.LZStatus;
 import com.zhiweicloud.guest.common.utils.ExcelUtils;
 import com.zhiweicloud.guest.common.utils.StringUtils;
 import com.zhiweicloud.guest.generator.*;
 import com.zhiweicloud.guest.generator.train.CountBillGenerator;
 import com.zhiweicloud.guest.generator.train.DetailBillGenerator;
 import com.zhiweicloud.guest.generator.train.RetailBillGenerator;
+import com.zhiweicloud.guest.mapper.CheckMapper;
 import com.zhiweicloud.guest.model.CheckQueryParam;
 import com.zhiweicloud.guest.model.OrderCheckDetail;
 import com.zhiweicloud.guest.model.TrainPojo;
+import com.zhiweicloud.guest.pageUtil.BasePagination;
+import com.zhiweicloud.guest.pageUtil.PageModel;
 import com.zhiweicloud.guest.pojo.SheetContentPo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.util.List;
+import java.util.*;
 
 /**
  * 导出文件Service
@@ -90,8 +97,12 @@ public class ExportFileService {
     }
 
     public void exportExcel(OrderCheckDetail orderCheckDetail,String airportCode, Long userId,HttpServletResponse response){
-        JSONObject jsonObject = getMap(orderCheckDetail, airportCode, userId);
+        JSONObject jsonObject = getDateLocal(orderCheckDetail, airportCode, userId);
         JSONObject data = jsonObject.getJSONObject("data");
+        if (!data.containsKey("column")) {
+            return;
+        }
+        log.info(data.toJSONString());
         JSONArray column = data.getJSONArray("column");
         List rows = JSONArray.parseArray(data.getString("rows"));
 
@@ -127,8 +138,6 @@ public class ExportFileService {
                 JSONObject object = (JSONObject) o;
                 String v = object.getString("displayName");
                 String k = object.getString("columnName");
-                System.out.println(k);
-                System.out.println(v);
                 key[n] = k;
                 value[n] = v;
                 HSSFCell row1Cell = row.createCell(n);
@@ -161,7 +170,16 @@ public class ExportFileService {
             }
 
             for (int j = 0; j < column.size() ; j++) {
-                sheet.setColumnWidth(j,sheet.getRow(1).getCell(j).getStringCellValue().getBytes().length * 256);
+
+                switch (sheet.getRow(1).getCell(j).getCellType()){
+                    case HSSFCell.CELL_TYPE_NUMERIC: // 数字
+                        break;
+                    case HSSFCell.CELL_TYPE_STRING: // 字符串
+                        sheet.setColumnWidth(j,sheet.getRow(1).getCell(j).getStringCellValue().getBytes().length * 256);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             try (OutputStream out = response.getOutputStream()) {
@@ -287,14 +305,89 @@ public class ExportFileService {
         params.put("queryProductName",orderCheckDetail.getQueryProductName());
 
         JSONObject result = null;
-
-        Response re = ClientUtil.clientSendData(checkClient, "businessService", "customer-checklist",params);
-        if (re !=null && re.getResponeCode().getValue() == 200) {
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        try {
+            log.info("服务间调用_Begin");
+            Response re = ClientUtil.clientSendData(checkClient, "businessService", "customer-checklist",params);
+            if (re !=null && re.getResponeCode().getValue() == 200) {
+                result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+            }
+            log.info("调用结果_customer-checklist " + result.toJSONString());
+            log.info("服务间调用_End");
+        }catch (Exception e){
+            log.debug("服务间调用异常，需要熔断器");
+            throw e;
         }
-
         return result;
+    }
 
+    private JSONObject getDateLocal(OrderCheckDetail orderCheckDetail,String airportCode, Long userId){
+        return JSON.parseObject(customerChecklist(orderCheckDetail,airportCode,userId));
+    }
+
+    @Autowired
+    private CheckMapper checkMapper;
+
+    @Autowired
+    private CheckDynamicColumn checkDynamicColumn;
+
+    private String customerChecklist(OrderCheckDetail orderCheckDetail,String airportCode, Long userId){
+        LZResult result = new LZResult<>();
+        try {
+            orderCheckDetail.setAirportCode(airportCode);
+            Map<String, Object> map = new HashMap();
+            orderCheckDetail.setCreateUser(userId);
+            String productName = orderCheckDetail.getQueryProductName();
+
+            if (productName != null) {
+                if (productName.equals("两舱休息室") &&
+                        (orderCheckDetail.getQueryProtocolType() == 9 || orderCheckDetail.getQueryProtocolType() == 10)) {
+                    productName += orderCheckDetail.getQueryProtocolType().toString();
+                }
+                orderCheckDetail.setSelectFields(checkDynamicColumn.getColumn(productName));
+                orderCheckDetail.setTotalAmount(checkDynamicColumn.getTotalAmount(productName));
+                map.put("column", checkDynamicColumn.getHeader(productName));
+
+                orderCheckDetail.setQueryWhere("and o.customer_id = " + orderCheckDetail.getQueryCustomerId() +
+                        " and o.protocol_type = " + orderCheckDetail.getQueryProtocolType() +
+                        " and o.protocol_id = " + orderCheckDetail.getQueryProtocolId() +
+                        " and o.product_name = '" + orderCheckDetail.getQueryProductName() + "'");
+            }
+            //去掉了分页
+            BasePagination<OrderCheckDetail> queryCondition = new BasePagination<>(orderCheckDetail, new PageModel(0, 0));
+
+            List<Map<String, Object>> checkList = checkMapper.customerChecklist(queryCondition);
+            ArrayList<String> key = new ArrayList<>(Arrays.asList("vipPersonNum","accompanyPersonNum","restRoomPersonNum","securityCheckPersonNum","totalAmount"));
+            Map<String, Object> totalRow = new HashMap<>();
+
+            for(int k = 0; k < checkList.size();k++){
+                Map<String,Object> singleRow = checkList.get(k);
+                totalRow.put("orderNo","合计");
+                for(String dataKey : singleRow.keySet()){
+                    if (key.contains(dataKey) && singleRow.get(dataKey) != null){
+                        Float value = Float.parseFloat(singleRow.get(dataKey).toString());
+                        if (totalRow.containsKey(dataKey)){
+                            totalRow.put(dataKey, value + Float.parseFloat(totalRow.get(dataKey).toString()));
+                        } else {
+                            totalRow.put(dataKey, value);
+                        }
+                    }
+                }
+            }
+            checkList.add(totalRow);
+
+            map.put("total", checkList.size());
+            map.put("rows", checkList);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(map);
+            return JSON.toJSONString(result, SerializerFeature.WriteMapNullValue);
+        } catch (Exception e) {
+            log.error("CheckService.customerChecklist:", e);
+            result.setMsg(LZStatus.SUCCESS.display());
+            result.setStatus(LZStatus.SUCCESS.value());
+            result.setData(null);
+        }
+        return JSON.toJSONString(result);
     }
 
     private List<SheetContentPo> getSpecialDateList(CheckQueryParam checkQueryParam, String airportCode, Long userId) throws ParseException {
@@ -309,9 +402,17 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(checkClient, "businessService", "getSpecialDateList",params);
-        if (re !=null && re.getResponeCode().getValue() == 200) {
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        try {
+            log.info("服务间调用_Begin");
+            Response re = ClientUtil.clientSendData(checkClient, "businessService", "getSpecialDateList",params);
+            if (re !=null && re.getResponeCode().getValue() == 200) {
+                result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+            }
+            log.info("调用结果_getSpecialDateList " + result.toJSONString());
+            log.info("服务间调用_End");
+        }catch (Exception e){
+            log.debug("服务间调用异常，需要熔断器");
+            throw e;
         }
 
         return JSONObject.parseArray(result.getString("data"), SheetContentPo.class);
@@ -330,9 +431,17 @@ public class ExportFileService {
 
         JSONObject result = null;
 
-        Response re = ClientUtil.clientSendData(checkClient, "businessService", "getLoungeDateList",params);
-        if (re !=null && re.getResponeCode().getValue() == 200) {
-            result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+        try {
+            log.info("服务间调用_Begin");
+            Response re = ClientUtil.clientSendData(checkClient, "businessService", "getLoungeDateList",params);
+            if (re !=null && re.getResponeCode().getValue() == 200) {
+                result = ByteBufferUtil.convertByteBufferToJSON(re.getResponseJSON());
+            }
+            log.info("调用结果_getLoungeDateList " + result.toJSONString());
+            log.info("服务间调用_End");
+        }catch (Exception e){
+            log.debug("服务间调用异常，需要熔断器");
+            throw e;
         }
 
         return JSONObject.parseArray(result.getString("data"), SheetContentPo.class);
