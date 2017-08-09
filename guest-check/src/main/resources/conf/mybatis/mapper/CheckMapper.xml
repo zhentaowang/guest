@@ -122,6 +122,9 @@
         sum(os.service_detail->>'$.serverNum') as serverPersonNum,os.price_rule->>'$.price' as price
         from order_info o
         inner join order_service os on o.order_id = os.order_id
+        <if test="type != null and !''.equals(type)">
+          and o.protocol_type = #{type}
+        </if>
         <if test="queryProtocolId != null and !''.equals(queryProtocolId)">
             and o.protocol_id = #{queryProtocolId}
         </if>
@@ -150,6 +153,9 @@
         sum(os.service_detail->>'$.serverNum') as serverPersonNum,os.price_rule->>'$.price' as price
         from order_info o
         inner join order_service os on o.order_id = os.order_id
+        <if test="criteria.type != null and !''.equals(criteria.type)">
+          and o.protocol_type = #{criteria.type}
+        </if>
         <if test="criteria.queryProtocolId != null and !''.equals(criteria.queryProtocolId)">
            and o.protocol_id = #{criteria.queryProtocolId}
         </if>
