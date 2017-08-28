@@ -131,7 +131,7 @@ public class FirstClassContentGenerator extends ContentGenerator {
         penultCell1.setCellValue("合计人数");
         HSSFCell penultCell2 = rowPenult.createCell(1);
         penultCell2.setCellStyle(cellStyle);
-        penultCell2.setCellValue(sheetContentPo.getRowContentPos().size());
+        penultCell2.setCellValue(sheetContentPo.getTotal());
         HSSFCell penultCell3 = rowPenult.createCell(2);
         penultCell3.setCellStyle(cellStyle);
         penultCell3.setCellValue("服务人员");
