@@ -1,9 +1,7 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.ProtocolProduct;
-import com.zhiweicloud.guest.model.ProtocolProductServ;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 
 import java.util.List;

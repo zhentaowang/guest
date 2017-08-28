@@ -47,7 +47,6 @@ public class MyBatisMapperScannerConfig {
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         mapperScannerConfigurer.setBasePackage("com.zhiweicloud.guest.mapper");
         Properties properties = new Properties();
-        properties.setProperty("mappers", "com.zhiweicloud.guest.common.MyMapper");
         properties.setProperty("notEmpty", "false");
         properties.setProperty("IDENTITY", "MYSQL");
         mapperScannerConfigurer.setProperties(properties);

@@ -131,7 +131,7 @@
     <if test="criteria.name != null ">
       and r.name like concat('%',#{criteria.name},'%')
     </if>
-    order by r.role_id desc LIMIT #{page.startPageNo},#{page.pCount}
+    order by r.role_id desc <!--LIMIT #{page.startPageNo},#{page.pCount}-->
   </select>
 
 

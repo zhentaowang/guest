@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zhiweicloud.guest.mapper.ProductMapper">
-  <resultMap id="productResultMap" type="com.zhiweicloud.guest.model.Product">
+  <resultMap id="productResultMap" type="com.zhiweicloud.guest.model.ProductCart">
     <id column="product_id" jdbcType="BIGINT" property="productId" />
     <result column="product_name" jdbcType="VARCHAR" property="productName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,7 +18,7 @@
     product_id, concat('P',lpad(product_id,3,0)) AS product_no, product_name
   </sql>
 
-  <insert id="insertProduct" parameterType="com.zhiweicloud.guest.model.Product">
+  <insert id="insertProduct" parameterType="com.zhiweicloud.guest.model.ProductCart">
     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="productId">
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -28,7 +28,7 @@
       ( #{airportCode}, #{productName},0, NOW(), #{createUser}, #{updateTime}, #{updateUser})
   </insert>
 
-  <update id="updateProduct" parameterType="com.zhiweicloud.guest.model.Product">
+  <update id="updateProduct" parameterType="com.zhiweicloud.guest.model.ProductCart">
     UPDATE
       product
     SET
@@ -40,7 +40,7 @@
       product_id = #{productId} AND airport_code = #{airportCode}
   </update>
 
-  <update id="deleteProduct" parameterType="com.zhiweicloud.guest.model.Product">
+  <update id="deleteProduct" parameterType="com.zhiweicloud.guest.model.ProductCart">
     UPDATE
       product
     SET

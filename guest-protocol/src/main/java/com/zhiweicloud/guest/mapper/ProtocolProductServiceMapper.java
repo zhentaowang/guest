@@ -1,7 +1,6 @@
 package com.zhiweicloud.guest.mapper;
 
 
-import com.zhiweicloud.guest.common.MyMapper;
 import com.zhiweicloud.guest.model.ProtocolProductServ;
 import com.zhiweicloud.guest.pageUtil.BasePagination;
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +11,7 @@ import java.util.Map;
 /**
  * Created by wzt on 2017/1/4.
  */
-public interface ProtocolProductServiceMapper extends MyMapper<ProtocolProductServ> {
+public interface ProtocolProductServiceMapper{
     List<ProtocolProductServ> selectByProtocolProductId(Map<String, Object> map);
     ProtocolProductServ selectByProtocolProductServiceId(Map<String, Object> map);
     List<ProtocolProductServ> getListByConidition(BasePagination<Map<String, Object>> queryCondition);
